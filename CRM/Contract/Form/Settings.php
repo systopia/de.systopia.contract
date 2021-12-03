@@ -2,7 +2,7 @@
 class CRM_Contract_Form_Settings extends CRM_Core_Form{
   function buildQuickForm(){
     $this->addEntityRef('contract_modification_reviewers', 'Contract modification reviewers', ['multiple' => 'multiple']);
-    $this->add('select', 'contract_domain', 'Domain', ['AT' => 'Austria', 'PL' => 'Poland'], TRUE);
+    $this->add('select', 'contract_domain', 'Domain', ['AT' => 'Austria', 'PL' => 'Poland', 'TAZ' => 'TAZ'], TRUE);
     $this->addButtons([
       array('type' => 'cancel', 'name' => 'Cancel'),
       array('type' => 'submit', 'name' => 'Save')
