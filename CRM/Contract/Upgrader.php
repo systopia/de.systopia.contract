@@ -37,6 +37,7 @@ class CRM_Contract_Upgrader extends CRM_Contract_Upgrader_Base {
     $customData->syncCustomGroup(__DIR__ . '/../../resources/custom_group_membership_cancellation.json');
     $customData->syncCustomGroup(__DIR__ . '/../../resources/custom_group_membership_payment.json');
     $customData->syncCustomGroup(__DIR__ . '/../../resources/custom_group_membership_general.json');
+    $customData->syncOptionGroup(__DIR__ . '/../../resources/option_group_order_type.json');
     $customData->syncEntities(__DIR__ . '/../../resources/entities_membership_status.json');
 
     // create sub-type 'Dialoger'
