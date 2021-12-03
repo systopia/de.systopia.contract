@@ -248,12 +248,16 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
 
     if($submitted['groups']){
       foreach($submitted['groups'] as $groupTitle){
-        $group = civicrm_api3('Group', 'getsingle', [ 'title' => $groupTitle]);
+        try {
+          $group = civicrm_api3('Group', 'getsingle', [ 'title' => $groupTitle]);
 
-        civicrm_api3('GroupContact', 'create', [
-          'contact_id' => $contact['id'],
-          'group_id' => $group['id']
-        ]);
+          civicrm_api3('GroupContact', 'create', [
+              'contact_id' => $contact['id'],
+              'group_id' => $group['id']
+          ]);
+        } catch (CiviCRM_API3_Exception $ex) {
+          Civi::log()->debug("Group '{$groupTitle}' not found, new member not added.");
+        }
       }
     }
 
