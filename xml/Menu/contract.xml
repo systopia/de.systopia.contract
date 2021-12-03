@@ -25,6 +25,12 @@
     <access_arguments>edit memberships</access_arguments>
   </item>
   <item>
+    <path>civicrm/contract/rapidcreate/taz</path>
+    <title>Rapid Create contract</title>
+    <page_callback>CRM_Contract_Form_RapidCreate_TAZ</page_callback>
+    <access_arguments>edit memberships</access_arguments>
+  </item>
+  <item>
     <path>civicrm/contract/mandate</path>
     <title>Create mandate</title>
     <page_callback>CRM_Contract_Form_Mandate</page_callback>
