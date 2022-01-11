@@ -19,9 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
  */
 function contract_civicrm_container(ContainerBuilder $container) {
-  #if (class_exists('\Civi\Contract\ContainerSpecs')) {
+  if (class_exists('\Civi\Contract\ContainerSpecs')) {
       $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
-  #}
+  }
 }
 
 
