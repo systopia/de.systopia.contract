@@ -23,7 +23,7 @@ use \Civi\ActionProvider\Parameter\SpecificationBag;
 
 use CRM_Contract_ExtensionUtil as E;
 
-class CreateContract extends AbstractAction {
+class UpdateContract extends AbstractAction {
 
   /**
    * Returns the specification of the configuration options for the actual action.
@@ -32,6 +32,7 @@ class CreateContract extends AbstractAction {
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
+        new Specification('default_action',       'Integer', E::ts('Modify Action (default)'), true, null, null, $this->getModifyActions(), false),
         new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
         new Specification('default_creditor_id',       'Integer', E::ts('Creditor (default)'), true, null, null, $this->getCreditors(), false),
         new Specification('default_financial_type_id', 'Integer', E::ts('Financial Type (default)'), true, null, null, $this->getFinancialTypes(), false),
@@ -51,26 +52,42 @@ class CreateContract extends AbstractAction {
   public function getParameterSpecification() {
     return new SpecificationBag([
         // required fields
-        new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
+        new Specification('contact_id', 'Integer', E::ts('Contact ID'), false),
+        new Specification('contract_id', 'Integer', E::ts('Contract ID'), true),
         new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
+
+
+        /*
+       'contract_updates.ch_annual'                 => 'membership_payment.membership_annual',
+      'contract_updates.ch_from_ba'                => 'membership_payment.from_ba',
+      // 'contract_updates.ch_to_ba'                  => 'membership_payment.to_ba', // TODO: implement when multiple creditors are around
+      'contract_updates.ch_frequency'              => 'membership_payment.membership_frequency',
+      'contract_updates.ch_cycle_day'              => 'membership_payment.cycle_day',
+      'contract_updates.ch_recurring_contribution' => 'membership_payment.membership_recurring_contribution',
+      'contract_updates.ch_defer_payment_start'    => 'membership_payment.defer_payment_start',
+
+      campaign_id
+        */
+
         new Specification('iban',       'String',  E::ts('IBAN'), true),
         new Specification('bic',        'String',  E::ts('BIC'), true),
-        new Specification('amount',     'Money',   E::ts('Amount'), true),
-        new Specification('reference',  'String',  E::ts('Mandate Reference'), false),
+        new Specification('contract_updates.ch_annual',     'Money',   E::ts('Anual Amount'), true),
+        new Specification('contract_updates.reference',  'String',  E::ts('Mandate Reference'), false),
 
         // recurring information
-        new Specification('frequency',  'Integer', E::ts('Frequency'),      false, 12, null, $this->getFrequencies()),
-        new Specification('cycle_day',  'Integer', E::ts('Collection Day'), false, 1,  null, $this->getCollectionDays()),
+        new Specification('contract_updates.ch_frequency',  'Integer', E::ts('Frequency'),      false, 12, null, $this->getFrequencies()),
+        new Specification('contract_updates.ch_cycle_day',  'Integer', E::ts('Collection Day'), false, 1,  null, $this->getCollectionDays()),
 
+        new Specification('date',            'Date', E::ts('Date'),  false, date('Y-m-d H:i:s')),
         // basic overrides
-        new Specification('creditor_id',       'Integer', E::ts('Creditor (default)'), false, null, null, $this->getCreditors(), false),
-        new Specification('financial_type_id', 'Integer', E::ts('Financial Type (default)'), false, null, null, $this->getFinancialTypes(), false),
-        new Specification('campaign_id',       'Integer', E::ts('Campaign (default)'), false, null, null, $this->getCampaigns(), false),
+        #new Specification('creditor_id',       'Integer', E::ts('Creditor (default)'), false, null, null, $this->getCreditors(), false),
+        #new Specification('financial_type_id', 'Integer', E::ts('Financial Type (default)'), false, null, null, $this->getFinancialTypes(), false),
+        #new Specification('campaign_id',       'Integer', E::ts('Campaign (default)'), false, null, null, $this->getCampaigns(), false),
 
         // dates
-        new Specification('start_date',      'Date', E::ts('Start Date'), false, date('Y-m-d H:i:s')),
-        new Specification('date',            'Date', E::ts('Signature Date'),  false, date('Y-m-d H:i:s')),
-        new Specification('validation_date', 'Date', E::ts('Validation Date'), false, date('Y-m-d H:i:s')),
+        #new Specification('start_date',      'Date', E::ts('Start Date'), false, date('Y-m-d H:i:s')),
+
+        #new Specification('validation_date', 'Date', E::ts('Validation Date'), false, date('Y-m-d H:i:s')),
 
         # Contract stuff
         #new Specification('membership_payment.to_ba',       'String',  E::ts('IBAN'), true),
@@ -92,7 +109,6 @@ class CreateContract extends AbstractAction {
     return new SpecificationBag([
       new Specification('mandate_id',        'Integer', E::ts('Mandate ID'), false, null, null, null, false),
       new Specification('mandate_reference', 'String',  E::ts('Mandate Reference'), false, null, null, null, false),
-      new Specification('contract_id',        'Integer', E::ts('Contract ID'), false, null, null, null, false),
       new Specification('error',             'String',  E::ts('Error Message (if creation failed)'), false, null, null, null, false),
     ]);
   }
@@ -107,52 +123,16 @@ class CreateContract extends AbstractAction {
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
-    $mandate_data = ['type' => 'RCUR'];
-    // add basic fields to mandate_data
-    foreach (['contact_id', 'iban', 'bic', 'reference', 'amount', 'start_date', 'date', 'validation_date'] as $parameter_name) {
-      $value = $parameters->getParameter($parameter_name);
-      if (!empty($value)) {
-        $mandate_data[$parameter_name] = $value;
-      }
-    }
-
-    // add override fields to mandate_data
-    foreach (['creditor_id', 'financial_type_id', 'campaign_id', 'cycle_day', 'frequency'] as $parameter_name) {
-      $value = $parameters->getParameter($parameter_name);
-      if (empty($value)) {
-        $value = $this->configuration->getParameter("default_{$parameter_name}");
-      }
-      $mandate_data[$parameter_name] = $value;
-    }
-
-    // sort out frequency
-    $mandate_data['frequency_interval'] = 12 / $mandate_data['frequency'];
-    $mandate_data['frequency_unit'] = 'month';
-    unset($mandate_data['frequency']);
-
-    // verify/adjust start date
-    $buffer_days = (int) $this->configuration->getParameter('buffer_days');
-    $earliest_start_date = strtotime("+ {$buffer_days} days");
-    $current_start_date = strtotime($mandate_data['start_date']);
-    if ($current_start_date < $earliest_start_date) {
-      $mandate_data['start_date'] = date('YmdHis', $earliest_start_date);
-    }
-
-    // if not set, calculate the closest cycle day
-    if (empty($mandate_data['cycle_day'])) {
-      $mandate_data['cycle_day'] = $this->calculateSoonestCycleDay($mandate_data);
-    }
-
     $contract_data = [];
     // add basic fields to contract_data
-    foreach (['contact_id','membership_type_id'] as $parameter_name) {
+    foreach (['contact_id','date','membership_type_id','contract_updates.ch_annual','contract_updates.reference','contract_updates.ch_frequency','contract_updates.ch_cycle_day'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
       }
     }
     // add override fields to contract_data
-    foreach (['membership_type_id',] as $parameter_name) {
+    foreach (['membership_type_id','contact_id','contract_id'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (empty($value)) {
         $value = $this->configuration->getParameter("default_{$parameter_name}");
@@ -160,24 +140,45 @@ class CreateContract extends AbstractAction {
       $contract_data[$parameter_name] = $value;
     }
 
+    // add basic fields to banking_data
+    $banking_data = [];
+    foreach (['contact_id','iban', 'bic'] as $parameter_name) {
+      $value = $parameters->getParameter($parameter_name);
+      if (!empty($value)) {
+        $banking_data[$parameter_name] = $value;
+      }
+    }
 
-    // create mandate
     try {
-      $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
-      $mandate = \civicrm_api3('SepaMandate', 'getsingle', ['id' => $mandate['id'], 'return' => 'id,reference']);
-      $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['id'];
-      $contract = \civicrm_api3('Contract', 'create', $contract_data);
-      $output->setParameter('mandate_id', $mandate['id']);
-      $output->setParameter('mandate_reference', $mandate['reference']);
+      // Create Bank account if it does not exists
+      $bank_id = CRM_Contract_BankingLogic::getOrCreateBankAccount($banking_data['contact_id'],$banking_data['iban'],$banking_data['bic']);
+      // create mandate
+      $contract_data['contract_updates.ch_from_ba'] = $bank_id;
+      $contract = \civicrm_api3('Contract', 'modify', $contract_data);
       $output->setParameter('contract_id', $contract['id']);
     } catch (\Exception $ex) {
-      $output->setParameter('mandate_id', '');
-      $output->setParameter('mandate_reference', '');
       $output->setParameter('contract_id', '');
       $output->setParameter('error', $ex->getMessage());
     }
   }
 
+
+
+
+  /**
+   * Get a list of all modify actions
+   */
+  protected function getModifyActions() {
+  $modify_actions = [
+      'sign' => 'sign',
+      'cancel' => 'cancel',
+      'update' => 'update',
+      'resume' => 'resume',
+      'revive' => 'revive',
+      'pause' => 'pause',
+  ];
+  return $modify_actions;
+  }
 
   /**
    * Get a list of all membership types

@@ -31,14 +31,24 @@ class ContainerSpecs implements CompilerPassInterface {
       return;
     }
     $typeFactoryDefinition = $container->getDefinition('action_provider');
-    $typeFactoryDefinition->addMethodCall('addAction', ['CreateContract', 'Civi\Contract\ActionProvider\Action\CreateContract', E::ts('Create Contract'), [
+    $typeFactoryDefinition->addMethodCall('addAction', ['CreateContract', 'Civi\Contract\ActionProvider\Action\CreateContract', E::ts('Contract: Create'), [
         \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
     ]]);
-    /*$typeFactoryDefinition->addMethodCall('addAction', ['SepaMandateRCUR', 'Civi\Contract\ActionProvider\Action\CreateRecurringMandate', E::ts('Create SEPA Mandate (Recurring)'), [
+    $typeFactoryDefinition->addMethodCall('addAction', ['PauseContract', 'Civi\Contract\ActionProvider\Action\PauseContract', E::ts('Contract: Pause'), [
         \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
     ]]);
-    $typeFactoryDefinition->addMethodCall('addAction', ['FindMandate', 'Civi\Contract\ActionProvider\Action\FindMandate', E::ts('Find SEPA Mandate'), [
-        \Civi\ActionProvider\Action\AbstractAction::DATA_RETRIEVAL_TAG,
-    ]]);*/
+    $typeFactoryDefinition->addMethodCall('addAction', ['ResumeContract', 'Civi\Contract\ActionProvider\Action\ResumeContract', E::ts('Contract: Resume'), [
+        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ]]);
+    $typeFactoryDefinition->addMethodCall('addAction', ['CancelContract', 'Civi\Contract\ActionProvider\Action\CancelContract', E::ts('Contract: Cancel'), [
+        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ]]);
+    $typeFactoryDefinition->addMethodCall('addAction', ['ReviveContract', 'Civi\Contract\ActionProvider\Action\ReviveContract', E::ts('Contract: Revive'), [
+        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ]]);
+    $typeFactoryDefinition->addMethodCall('addAction', ['UpdateContract', 'Civi\Contract\ActionProvider\Action\UpdateContract', E::ts('Contract: Update'), [
+        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ]]);
+
   }
 }
