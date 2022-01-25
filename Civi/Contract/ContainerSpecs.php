@@ -34,6 +34,9 @@ class ContainerSpecs implements CompilerPassInterface {
     $typeFactoryDefinition->addMethodCall('addAction', ['CreateContract', 'Civi\Contract\ActionProvider\Action\CreateContract', E::ts('Contract: Create'), [
         \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
     ]]);
+    $typeFactoryDefinition->addMethodCall('addAction', ['GetContract', 'Civi\Contract\ActionProvider\Action\GetContract', E::ts('Contract: Get'), [
+        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ]]);
     $typeFactoryDefinition->addMethodCall('addAction', ['PauseContract', 'Civi\Contract\ActionProvider\Action\PauseContract', E::ts('Contract: Pause'), [
         \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
     ]]);
