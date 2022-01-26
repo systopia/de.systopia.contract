@@ -22,6 +22,7 @@ use \Civi\ActionProvider\Parameter\Specification;
 use \Civi\ActionProvider\Parameter\SpecificationBag;
 
 use CRM_Contract_ExtensionUtil as E;
+use CRM_Contract_BankingLogic as B;
 
 class UpdateContract extends AbstractAction {
 
@@ -52,7 +53,7 @@ class UpdateContract extends AbstractAction {
   public function getParameterSpecification() {
     return new SpecificationBag([
         // required fields
-        #new Specification('contact_id', 'Integer', E::ts('Contact ID'), false),
+        new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
         new Specification('contract_id', 'Integer', E::ts('Contract ID'), true),
         new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
 
@@ -125,7 +126,7 @@ class UpdateContract extends AbstractAction {
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
     $contract_data = ['action' => 'update'];
     // add basic fields to contract_data
-    foreach (['contact_id','date','membership_type_id','contract_updates.ch_annual','contract_updates.reference','contract_updates.ch_frequency','contract_updates.ch_cycle_day'] as $parameter_name) {
+    foreach (['contact_id','iban','bic','date','membership_type_id','contract_updates.ch_annual','contract_updates.reference','contract_updates.ch_frequency','contract_updates.ch_cycle_day'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
@@ -141,7 +142,12 @@ class UpdateContract extends AbstractAction {
     }
 
     try {
-      // update manadate
+      // update bank account if new iban is set
+      if ((!empty($parameters->getParameter('iban'))) or (!empty($parameters->getParameter('bic')))){
+        $contract_data['membership_payment.from_ba'] = B::getOrCreateBankAccount($parameters->getParameter('contact_id'), $parameters->getParameter('iban'), $parameters->getParameter('bic'));
+      }
+
+      // update contract
       $contract = \civicrm_api3('Contract', 'modify', $contract_data);
       $output->setParameter('contract_id', $contract['id']);
     } catch (\Exception $ex) {
