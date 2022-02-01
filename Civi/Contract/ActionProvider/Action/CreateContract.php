@@ -164,8 +164,8 @@ class CreateContract extends AbstractAction {
     // create mandate
     try {
       $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
-      $mandate = \civicrm_api3('SepaMandate', 'getsingle', ['id' => $mandate['id'], 'return' => 'id,reference']);
-      $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['id'];
+      $mandate = \civicrm_api3('SepaMandate', 'getsingle', ['id' => $mandate['id'], 'return' => 'id,entity_id,reference']);
+      $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['entity_id'];
       $contract = \civicrm_api3('Contract', 'create', $contract_data);
       $output->setParameter('mandate_id', $mandate['id']);
       $output->setParameter('mandate_reference', $mandate['reference']);
