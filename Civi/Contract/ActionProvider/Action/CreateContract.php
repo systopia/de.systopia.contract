@@ -160,7 +160,7 @@ class CreateContract extends AbstractAction {
 
     $contract_data = [];
     // add basic fields to contract_data
-    foreach (['contact_id','membership_type_id'] as $parameter_name) {
+    foreach (['contact_id','membership_type_id','start_date'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
@@ -179,8 +179,11 @@ class CreateContract extends AbstractAction {
     // create mandate
     try {
       $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
-      $mandate = \civicrm_api3('SepaMandate', 'getsingle', ['id' => $mandate['id'], 'return' => 'id,reference']);
-      $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['id'];
+      $mandate = \civicrm_api3('SepaMandate', 'getsingle', ['id' => $mandate['id'], 'return' => 'id,entity_id,reference']);
+      $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['entity_id'];
+      if (!empty($contract_data['start_date'])) {
+        $contract_data['join_date'] = $contract_data['start_date'];
+      }
       $contract = \civicrm_api3('Contract', 'create', $contract_data);
       $output->setParameter('mandate_id', $mandate['id']);
       $output->setParameter('mandate_reference', $mandate['reference']);
