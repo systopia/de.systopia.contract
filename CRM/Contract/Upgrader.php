@@ -91,4 +91,12 @@ class CRM_Contract_Upgrader extends CRM_Contract_Upgrader_Base {
     $customData->syncCustomGroup(__DIR__ . '/../../resources/custom_group_membership_general.json');
     return TRUE;
   }
+
+  public function upgrade_1403() {
+    $this->ctx->log->info('Applying updates for 14xx');
+    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData->syncOptionGroup(__DIR__ . '/../../resources/custom_group_contract_updates.json');
+    $customData->syncOptionGroup(__DIR__ . '/../../resources/custom_group_membership_payment.json');
+    return TRUE;
+  }
 }
