@@ -7,9 +7,10 @@
 | http://www.systopia.de/                                      |
 +-------------------------------------------------------------*}
 
+{crmScope extensionKey='de.systopia.contract'}
 <div class="crm-block crm-form-block">
 
-  <h3>Create a new contact with associated contract and mandate</h3>
+  <h3>{ts}Create a new contact with associated contract and mandate{/ts}</h3>
 
   <hr/>
 
@@ -267,3 +268,4 @@ cj(document).ready(function() {
 
 </script>
 {/literal}
+{/crmScope}
