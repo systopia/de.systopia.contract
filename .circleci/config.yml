@@ -1,5 +1,10 @@
 version: 2.1
 commands:
+  setup:
+    description: "Setup environment"
+    steps:
+      - run: |
+          composer self-update --1
   install_civicrm:
     description: "Install CiviCRM"
     parameters:
