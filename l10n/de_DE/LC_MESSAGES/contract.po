@@ -26,12 +26,12 @@ msgstr "%2 [%1] von %3 bis %4"
 
 #: CRM/Contract/Change/Cancel.php
 msgid "Cancel Contract"
-msgstr "Vertrag kündigen"
+msgstr "Vertrag beenden"
 
 #: CRM/Contract/Change/Cancel.php CRM/Contract/Form/Create.php
 #: CRM/Contract/Form/RapidCreate/TAZ.php CRM/Contract/Form/Settings.php
 msgid "Cancel"
-msgstr ""
+msgstr "Beenden"
 
 #: CRM/Contract/Change/Pause.php
 msgid "Resume date cannot be before or on the same day as the pause."
@@ -60,7 +60,7 @@ msgstr ""
 
 #: CRM/Contract/Change/Sign.php
 msgid "Sign Contract"
-msgstr ""
+msgstr "Vertrag unterschreiben"
 
 #: CRM/Contract/Change/Upgrade.php
 msgid "Update Contract"
@@ -97,11 +97,11 @@ msgstr ""
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 msgid "Start Date"
-msgstr ""
+msgstr "Startdatum"
 
 #: CRM/Contract/DAO/ContractPaymentLink.php
 msgid "End Date"
-msgstr ""
+msgstr "Enddatum"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment"
@@ -207,11 +207,11 @@ msgstr "Erstellen"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Unknown action '%1'."
-msgstr ""
+msgstr "Unbekannte Aktion '%1'."
 
 #: CRM/Contract/Form/Modify.php
 msgid "Invalid modification for status '%1'."
-msgstr ""
+msgstr "Ungültige Änderung für Status '%1'."
 
 #: CRM/Contract/Form/Modify.php
 msgid "Schedule date"
@@ -219,7 +219,7 @@ msgstr "Geplantes Ausführungsdatum"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Discard changes"
-msgstr ""
+msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
@@ -276,7 +276,7 @@ msgstr "Vorname"
 
 #: CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Last name"
-msgstr ""
+msgstr "Nachname"
 
 #: CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Phone"
@@ -352,11 +352,11 @@ msgstr "Speichern und neu"
 
 #: CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Please specify a frequency when specifying an amount"
-msgstr "Bitte gebe eine Zahlungsfrequenz an, wenn du einen Betrag eingibt."
+msgstr "Bitte gebe eine Zahlungsfrequenz an, wenn du einen Betrag eingibt"
 
 #: CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Please specify an amount when specifying a frequency"
-msgstr "Bitte gebe einen Betrag an, wenn du eine Zahlungsfrequenz eingibt."
+msgstr "Bitte gebe einen Betrag an, wenn du eine Zahlungsfrequenz eingibst."
 
 #: CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Annual amount too small."
@@ -580,7 +580,7 @@ msgstr ""
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
