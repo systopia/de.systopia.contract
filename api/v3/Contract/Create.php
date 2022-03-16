@@ -31,7 +31,7 @@ function _civicrm_api3_Contract_create_spec(&$params) {
    $params['end_date'] = array(
       'name'         => 'end_date',
       'title'        => 'End Date of the Membership',
-      'api.default'  => '',
+      'api.default'  => 'now',
       'description'  => 'end_date format Y-m-d H:i:s',
   );
    $params['activity_date_time'] = array(
