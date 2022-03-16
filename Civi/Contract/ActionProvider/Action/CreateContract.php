@@ -39,7 +39,7 @@ class CreateContract extends AbstractAction {
         new Specification('default_frequency',         'Integer', E::ts('Frequency (default)'), true, 12, null, $this->getFrequencies()),
         new Specification('default_cycle_day',         'Integer', E::ts('Collection Day (default)'), false, 0, null, $this->getCollectionDays()),
         new Specification('buffer_days',               'Integer', E::ts('Buffer Days'), true, 7),
-        new Specification('multiple_contracts',         'Integer', E::ts('If a Contract already exists'), false, 0, null, $this->getMultipleContractOptions()),
+        new Specification('prevent_multiple_contracts',         'Integer', E::ts('If a Contract already exists'), false, 0, null, $this->getMultipleContractOptions()),
 
     ]);
   }
@@ -111,7 +111,7 @@ class CreateContract extends AbstractAction {
     $mandate_data = ['type' => 'RCUR'];
 
     // If a Contract already exists: show error
-    if($this->configuration->getParameter('multiple_contracts') == 1){
+    if($this->configuration->getParameter('prevent_multiple_contracts') == 1){
         $getcount_params = ['contact_id' => $parameters->getParameter('contact_id'), 'active_only' => 1];
         $count = \civicrm_api3('Contract', 'getcount', $getcount_params);
         if ($count){
