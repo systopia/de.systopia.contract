@@ -91,6 +91,7 @@ class UpdateContract extends AbstractAction {
         #new Specification('validation_date', 'Date', E::ts('Validation Date'), false, date('Y-m-d H:i:s')),
 
         # Contract stuff
+        new Specification('account_holder',       'String',  E::ts('Members Bank Account'), false),
         #new Specification('membership_payment.to_ba',       'String',  E::ts('IBAN'), true),
         #new Specification('membership_payment.membership_annual',      'Money',  E::ts('Anual Amount'), false),
         #new Specification('membership_payment.membership_frequency',      'Integer',  E::ts('Frequency'), false),
@@ -139,6 +140,11 @@ class UpdateContract extends AbstractAction {
         $value = $this->configuration->getParameter("default_{$parameter_name}");
       }
       $contract_data[$parameter_name] = $value;
+    }
+    // add account holder
+    $account_holder = $parameters->getParameter('account_holder');
+    if(!empty($account_holder)){
+        $contract_data['membership_payment.from_name'] = $account_holder;
     }
 
     try {
