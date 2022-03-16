@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
 
   function buildQuickForm(){
@@ -15,28 +17,28 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
     CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/rapidcreate_address_autocomplete.js', 10, 'page-header');
     // ### Contact information ###
     $prefixes = array_column(civicrm_api3('OptionValue', 'get', ['option_group_id' => 'individual_prefix', 'is_active' => 1, 'options' => ['limit' => 0, 'sort' => 'weight']])['values'], 'label', 'value');
-    $this->add('select', 'prefix_id', 'Prefix', $prefixes, true);
-    $this->add('text', 'formal_title', 'Title', array('class' => 'huge'));
-    $this->add('text', 'first_name', 'First name', array('class' => 'huge'));
-    $this->add('text', 'last_name', 'Last name', array('class' => 'huge'), true);
-    $this->add('text', 'phone', 'Phone', array('class' => 'huge'));
-    $this->add('text', 'email', 'Email', array('class' => 'huge'));
-    $this->add('text', 'street_address', 'Address', array('class' => 'huge'));
-    $this->add('text', 'postal_code', 'Postcode', array('class' => 'huge'));
-    $this->add('text', 'city', 'City', array('class' => 'huge'));
+    $this->add('select', 'prefix_id', E::ts('Prefix'), $prefixes, true);
+    $this->add('text', 'formal_title', E::ts('Title'), array('class' => 'huge'));
+    $this->add('text', 'first_name', E::ts('First name'), array('class' => 'huge'));
+    $this->add('text', 'last_name', E::ts('Last name'), array('class' => 'huge'), true);
+    $this->add('text', 'phone', E::ts('Phone'), array('class' => 'huge'));
+    $this->add('text', 'email', E::ts('Email'), array('class' => 'huge'));
+    $this->add('text', 'street_address', E::ts('Address'), array('class' => 'huge'));
+    $this->add('text', 'postal_code', E::ts('Postcode'), array('class' => 'huge'));
+    $this->add('text', 'city', E::ts('City'), array('class' => 'huge'));
 
     $this->addChainSelect('state_province_id');
 
-    $country = array('' => ts('- select -')) + CRM_Core_PseudoConstant::country();
-    $this->add('select', 'country_id', ts('Country'), $country, TRUE, array('class' => 'crm-select2'));
+    $country = array('' => E::ts('- select -')) + CRM_Core_PseudoConstant::country();
+    $this->add('select', 'country_id', E::ts('Country'), $country, TRUE, array('class' => 'crm-select2'));
 
-    $this->addDate('birth_date', 'Date of Birth', true, array('formatType' => 'birth'));
+    $this->addDate('birth_date', E::ts('Date of Birth'), true, array('formatType' => 'birth'));
 
-    $this->addCheckbox('community_newsletter', 'Add to Community newsletter', ['' => true]);
+    $this->addCheckbox('community_newsletter', E::ts('Add to Community newsletter'), ['' => true]);
 
-    $this->addCheckbox('post_delivery_only_online', 'Post delivery only online', ['' => true]);
+    $this->addCheckbox('post_delivery_only_online', E::ts('Post delivery only online'), ['' => true]);
 
-    $this->add('select', 'interest', 'Interest', [
+    $this->add('select', 'interest', E::ts('Interest'), [
       '' => "- none -",
       'Wald' => "Interesse an Wald",
       'Landwirtschaft (aka Gentech)' => "Interesse an Landwirtschaft (aka Gentech)",
@@ -46,7 +48,7 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
       'Atom/Kohle/Erneuerbare' => "Interesse an Atom/Kohle/Erneuerbare"
     ]);
 
-    $this->add('select', 'talk_topic', 'Talk topic', [
+    $this->add('select', 'talk_topic', E::ts('Talk topic'), [
       '' => "- none -",
       'Ökobürger' => "DD Ökobürger",
       'Rationalisten' => "DD Rationalisten",
@@ -54,7 +56,7 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
       'Aktivisten' => "DD Aktivisten"
     ]);
 
-    $this->add('select', 'groups', 'Additional groups', [
+    $this->add('select', 'groups', E::ts('Additional groups'), [
       '' => "- none -",
       'kein ACT' => "kein ACT",
       'kein Danke' => "kein Danke",
@@ -64,14 +66,14 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
       'keine Lotterie' => "keine Lotterie"
     ], null, array('class' => 'crm-select2', 'multiple' => 'multiple') );
 
-    $this->addCheckbox('tshirt_order', 'Is this a T-shirt order?', ['' => true]);
+    $this->addCheckbox(E::ts('tshirt_order'), E::ts('Is this a T-shirt order?'), ['' => true]);
     // A dropdown-field "Shirt Type" needs to be in rthe form - the T-Shirt types available should be taken from the option group "shirt_type"
     $shirtDesigns = array_column(civicrm_api3('OptionValue', 'get', ['option_group_id' => 'order_type', 'label' => ['LIKE' => '%T-Shirt%'], 'options' => ['limit' => 0, 'sort' => 'weight']])['values'], 'name', 'value');
     $shirtSizes = array_column(civicrm_api3('OptionValue', 'get', ['option_group_id' => 'shirt_size', 'options' => ['limit' => 0, 'sort' => 'weight']])['values'], 'name', 'value');
     $shirtTypes = array_column(civicrm_api3('OptionValue', 'get', ['option_group_id' => 'shirt_type', 'options' => ['limit' => 0, 'sort' => 'weight']])['values'], 'name', 'value');
-    $this->add('select', 'shirt_design', 'Shirt design', $shirtDesigns);
-    $this->add('select', 'shirt_type', 'Shirt cut', $shirtTypes);
-    $this->add('select', 'shirt_size', 'Shirt size', $shirtSizes);
+    $this->add('select', 'shirt_design', E::ts('Shirt design'), $shirtDesigns);
+    $this->add('select', 'shirt_type', E::ts('Shirt cut'), $shirtTypes);
+    $this->add('select', 'shirt_size', E::ts('Shirt size'), $shirtSizes);
 
 
     // ### Mandate information ###
@@ -80,37 +82,37 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
       'frequencies' => CRM_Contract_SepaLogic::getPaymentFrequencies()));
     CRM_Contract_SepaLogic::addJsSepaTools();
 
-    $this->add('select', 'cycle_day', ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
-    $this->add('text',   'iban', ts('IBAN'), array('class' => 'huge'), true);
-    $this->add('text',   'bic', ts('BIC'), null, true);
-    $this->add('text',   'payment_amount', ts('Installment amount'), array('size' => 6));
-    $this->add('select', 'payment_frequency', ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
+    $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
+    $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'), true);
+    $this->add('text',   'bic', E::ts('BIC'), null, true);
+    $this->add('text',   'payment_amount', E::ts('Installment amount'), array('size' => 6));
+    $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
     $this->assign('bic_lookup_accessible', CRM_Contract_SepaLogic::isLittleBicExtensionAccessible());
 
     // ### Contract information ###
-    $this->addDate('join_date', ts('Member since'), TRUE, array('formatType' => 'activityDate'));
-    $this->addDate('start_date', ts('Membership start date'), TRUE, array('formatType' => 'activityDate'));
-    $this->add('select', 'campaign_id', ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), TRUE, array('class' => 'crm-select2'));
-    // $this->addEntityRef('campaign_id', ts('Campaign'), [
+    $this->addDate('join_date', E::ts('Member since'), TRUE, array('formatType' => 'activityDate'));
+    $this->addDate('start_date', E::ts('Membership start date'), TRUE, array('formatType' => 'activityDate'));
+    $this->add('select', 'campaign_id', E::ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), TRUE, array('class' => 'crm-select2'));
+    // $this->addEntityRef('campaign_id', E::ts('Campaign'), [
     //   'entity' => 'campaign',
-    //   'placeholder' => ts('- none -')
+    //   'placeholder' => E::ts('- none -')
     // ], true);
     // Membership type (membership)
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
     };
-    $this->add('select', 'membership_type_id', ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
+    $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
     // Source media (activity)
     foreach(civicrm_api3('Activity', 'getoptions', ['field' => "activity_medium_id", 'options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $key => $value){
       $mediumOptions[$key] = $value;
     }
-    $this->add('select', 'activity_medium', ts('Source media'), array('' => '- none -') + $mediumOptions, false, array('class' => 'crm-select2'));
+    $this->add('select', 'activity_medium', E::ts('Source media'), array('' => '- none -') + $mediumOptions, false, array('class' => 'crm-select2'));
     // Reference number text
-    $this->add('text', 'membership_reference', ts('Reference number'));
+    $this->add('text', 'membership_reference', E::ts('Reference number'));
     // Contract number text
-    $this->add('text', 'membership_contract', ts('Contract number'), null, true);
+    $this->add('text', 'membership_contract', E::ts('Contract number'), null, true);
     // DD-Fundraiser
-    $this->addEntityRef('membership_dialoger', ts('DD-Fundraiser'), array('api' => array('params' => array('contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger'))), true);
+    $this->addEntityRef('membership_dialoger', E::ts('DD-Fundraiser'), array('api' => array('params' => array('contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger'))), true);
     // Membership channel
     foreach(civicrm_api3('OptionValue', 'get', [
       'option_group_id' => 'contact_channel',
@@ -118,20 +120,20 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
       'options'         => ['limit' => 0, 'sort' => 'weight']])['values'] as $optionValue){
       $membershipChannelOptions[$optionValue['value']] = $optionValue['label'];
     };
-    $this->add('select', 'membership_channel', ts('Membership channel'), array('' => '- none -') + $membershipChannelOptions, true, array('class' => 'crm-select2'));
+    $this->add('select', 'membership_channel', E::ts('Membership channel'), array('' => '- none -') + $membershipChannelOptions, true, array('class' => 'crm-select2'));
 
     // Notes
     if (version_compare(CRM_Utils_System::version(), '4.7', '<')) {
-      $this->addWysiwyg('activity_details', ts('Notes'), ['class' => 'huge'], TRUE);
+      $this->addWysiwyg('activity_details', E::ts('Notes'), ['class' => 'huge'], TRUE);
     } else {
-      $this->add('wysiwyg', 'activity_details', ts('Notes'));
+      $this->add('wysiwyg', 'activity_details', E::ts('Notes'));
     }
 
 
     $this->addButtons([
-      ['type' => 'submit', 'name' => 'Save', 'subName' => 'done', 'isDefault' => TRUE, 'icon' => 'check', 'submitOnce' => TRUE],
-      ['type' => 'submit', 'name' => 'Save and new', 'subName' => 'new', 'submitOnce' => TRUE],
-      ['type' => 'cancel', 'name' => 'Cancel', 'submitOnce' => TRUE],
+      ['type' => 'submit', 'name' => E::ts('Save'), 'subName' => 'done', 'isDefault' => TRUE, 'icon' => 'check', 'submitOnce' => TRUE],
+      ['type' => 'submit', 'name' => E::ts('Save and new'), 'subName' => 'new', 'submitOnce' => TRUE],
+      ['type' => 'cancel', 'name' => E::ts('Cancel'), 'submitOnce' => TRUE],
     ]);
 
     $this->setDefaults();
@@ -145,26 +147,26 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
     $submitted = $this->exportValues();
 
     if($submitted['payment_amount'] && !$submitted['payment_frequency']){
-      HTML_QuickForm::setElementError ( 'payment_frequency', 'Please specify a frequency when specifying an amount');
+      HTML_QuickForm::setElementError ( 'payment_frequency', E::ts('Please specify a frequency when specifying an amount'));
     }
     if($submitted['payment_frequency'] && !$submitted['payment_amount']){
-      HTML_QuickForm::setElementError ( 'payment_amount', 'Please specify an amount when specifying a frequency');
+      HTML_QuickForm::setElementError ( 'payment_amount', E::ts('Please specify an amount when specifying a frequency'));
     }
 
     $amount = CRM_Contract_SepaLogic::formatMoney(CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']) / $submitted['payment_frequency']);
     if ($amount < 0.01) {
-      HTML_QuickForm::setElementError ( 'payment_amount', 'Annual amount too small.');
+      HTML_QuickForm::setElementError ( 'payment_amount', E::ts('Annual amount too small.'));
     }
 
     // SEPA validation
     if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
-      HTML_QuickForm::setElementError ( 'iban', 'Please enter a valid IBAN');
+      HTML_QuickForm::setElementError ( 'iban', E::ts('Please enter a valid IBAN'));
     }
     if (!empty($submitted['iban']) && CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
-      HTML_QuickForm::setElementError ( 'iban', "Do not use any of the organisation's own IBANs");
+      HTML_QuickForm::setElementError ( 'iban', E::ts("Do not use any of the organisation's own IBANs"));
     }
     if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
-      HTML_QuickForm::setElementError ( 'bic', 'Please enter a valid BIC');
+      HTML_QuickForm::setElementError ( 'bic', E::ts('Please enter a valid BIC'));
     }
 
     // contract number
@@ -176,12 +178,12 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
     }
 
     if (!empty($submitted['join_date']) && CRM_Utils_Date::processDate(date('Ymd')) < CRM_Utils_Date::processDate($submitted['join_date'])) {
-      HTML_QuickForm::setElementError('join_date', ts('Join date cannot be in the future.'));
+      HTML_QuickForm::setElementError('join_date', E::ts('Join date cannot be in the future.'));
     }
 
     if (!empty($submitted['start_date']) && !empty($submitted['join_date'])) {
       if (CRM_Utils_Date::processDate($submitted['start_date']) < CRM_Utils_Date::processDate($submitted['join_date'])) {
-        HTML_QuickForm::setElementError('start_date', ts('Start date must be the same or later than Member since.'));
+        HTML_QuickForm::setElementError('start_date', E::ts('Start date must be the same or later than Member since.'));
       }
     }
 
