@@ -85,19 +85,19 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     // Add fields that are present on all contact history forms
 
     // Add the date that this update should take effect (leave blank for now)
-    $this->addDateTime('activity_date', ts('Schedule date'), TRUE);
+    $this->addDateTime('activity_date', E::ts('Schedule date'), TRUE);
 
     // Add the interaction medium
     foreach(civicrm_api3('Activity', 'getoptions', ['field' => "activity_medium_id", 'options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $key => $value){
       $mediumOptions[$key] = $value;
     }
-    $this->add('select', 'activity_medium', ts('Source media'), array('' => '- none -') + $mediumOptions, false, array('class' => 'crm-select2'));
+    $this->add('select', 'activity_medium', E::ts('Source media'), array('' => '- none -') + $mediumOptions, false, array('class' => 'crm-select2'));
 
     // Add a note field
     if (version_compare(CRM_Utils_System::version(), '4.7', '<')) {
-      $this->addWysiwyg('activity_details', ts('Notes'), []);
+      $this->addWysiwyg('activity_details', E::ts('Notes'), []);
     } else {
-      $this->add('wysiwyg', 'activity_details', ts('Notes'));
+      $this->add('wysiwyg', 'activity_details', E::ts('Notes'));
     }
 
     // Then add fields that are dependent on the action
@@ -110,7 +110,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     }
 
     $this->addButtons([
-      ['type' => 'cancel', 'name' => 'Discard changes', 'submitOnce' => TRUE], // since Cancel looks bad when viewed next to the Cancel action
+      ['type' => 'cancel', 'name' => E::ts('Discard changes'), 'submitOnce' => TRUE], // since Cancel looks bad when viewed next to the Cancel action
       ['type' => 'submit', 'name' => $this->change_class::getChangeTitle(), 'isDefault' => true, 'submitOnce' => TRUE],
     ]);
 
@@ -153,7 +153,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     if ($this->modify_action == 'update') {
       $payment_options =  array('nochange' => 'no change') + $payment_options;
     }
-    $this->add('select', 'payment_option', ts('Payment'), $payment_options);
+    $this->add('select', 'payment_option', E::ts('Payment'), $payment_options);
 
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
@@ -163,20 +163,20 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
     };
-    $this->add('select', 'membership_type_id', ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
+    $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
 
     // Campaign
-    $this->add('select', 'campaign_id', ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), FALSE, array('class' => 'crm-select2'));
-    // $this->addEntityRef('campaign_id', ts('Campaign'), [
+    $this->add('select', 'campaign_id', E::ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), FALSE, array('class' => 'crm-select2'));
+    // $this->addEntityRef('campaign_id', E::ts('Campaign'), [
     //   'entity' => 'campaign',
-    //   'placeholder' => ts('- none -'),
+    //   'placeholder' => E::ts('- none -'),
     // ]);
 
-    $this->add('select', 'cycle_day', ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
-    $this->add('text',   'iban', ts('IBAN'), array('class' => 'huge'));
-    $this->add('text',   'bic', ts('BIC'));
-    $this->add('text',   'payment_amount', ts('Installment Amount'), array('size' => 6));
-    $this->add('select', 'payment_frequency', ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
+    $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
+    $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'));
+    $this->add('text',   'bic', E::ts('BIC'));
+    $this->add('text',   'payment_amount', E::ts('Installment Amount'), array('size' => 6));
+    $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
   }
 
 
@@ -191,7 +191,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       $cancelOptions[$cancelReason['value']] = $cancelReason['label'];
     };
     $this->addRule('activity_date', 'Scheduled date is required for a cancellation', 'required');
-    $this->add('select', 'cancel_reason', ts('Cancellation reason'), array('' => '- none -') + $cancelOptions, true, array('class' => 'crm-select2 huge'));
+    $this->add('select', 'cancel_reason', E::ts('Cancellation reason'), array('' => '- none -') + $cancelOptions, true, array('class' => 'crm-select2 huge'));
 
   }
 
@@ -199,7 +199,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
   function addPauseFields(){
 
     // Resume date
-    $this->addDate('resume_date', ts('Resume Date'), TRUE, array('formatType' => 'activityDate'));
+    $this->addDate('resume_date', E::ts('Resume Date'), TRUE, array('formatType' => 'activityDate'));
 
   }
 
