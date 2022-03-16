@@ -39,6 +39,7 @@ class CreateContract extends AbstractAction {
         new Specification('default_frequency',         'Integer', E::ts('Frequency (default)'), true, 12, null, $this->getFrequencies()),
         new Specification('default_cycle_day',         'Integer', E::ts('Collection Day (default)'), false, 0, null, $this->getCollectionDays()),
         new Specification('buffer_days',               'Integer', E::ts('Buffer Days'), true, 7),
+        new Specification('multiple_contracts',         'Integer', E::ts('If a Contract already exists'), false, 0, null, $this->getMultipleContractOptions()),
 
     ]);
   }
@@ -108,6 +109,20 @@ class CreateContract extends AbstractAction {
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
     $mandate_data = ['type' => 'RCUR'];
+
+    // If a Contract already exists: show error
+    if($this->configuration->getParameter('multiple_contracts') == 1){
+        $getcount_params = ['contact_id' => $parameters->getParameter('contact_id'), 'active_only' => 1];
+        $count = \civicrm_api3('Contract', 'getcount', $getcount_params);
+        if ($count){
+          $output->setParameter('mandate_id', '');
+          $output->setParameter('mandate_reference', '');
+          $output->setParameter('contract_id', '');
+          $output->setParameter('error', E::ts("Contract already exists"));
+          return;
+        }
+    }
+
     // add basic fields to mandate_data
     foreach (['contact_id', 'iban', 'bic', 'reference', 'amount', 'start_date', 'date', 'validation_date'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
@@ -297,4 +312,13 @@ class CreateContract extends AbstractAction {
       // no hit? that shouldn't happen...
       return 1;
   }
+
+  protected function getMultipleContractOptions() {
+    return [
+        0  => E::ts("ignore"),
+        1  => E::ts("show error message"),
+    ];
+  }
+
+
 }
