@@ -36,7 +36,8 @@ msgstr "Beenden"
 #: CRM/Contract/Change/Pause.php
 msgid "Resume date cannot be before or on the same day as the pause."
 msgstr ""
-"Resume Datum kann nicht vor oder am selben Tag sein wie die Pausierung."
+"Wiederaufnahmedatum kann nicht vor oder am selben Tag sein wie die "
+"Pausierung."
 
 #: CRM/Contract/Change/Pause.php
 msgid "Pause Contract"
@@ -48,15 +49,15 @@ msgstr "Pausieren"
 
 #: CRM/Contract/Change/Resume.php
 msgid "Resume Contract"
-msgstr ""
+msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
 
 #: CRM/Contract/Change/Revive.php
 msgid "Revive Contract"
-msgstr ""
+msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
 
 #: CRM/Contract/Change/Revive.php
 msgid "Revive"
-msgstr ""
+msgstr "Wiederaufnehmen (nach Beendigung)"
 
 #: CRM/Contract/Change/Sign.php
 msgid "Sign Contract"
@@ -64,11 +65,11 @@ msgstr "Vertrag unterschreiben"
 
 #: CRM/Contract/Change/Upgrade.php
 msgid "Update Contract"
-msgstr ""
+msgstr "Vertrag aktualisieren"
 
 #: CRM/Contract/Change/Upgrade.php
 msgid "Update"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: CRM/Contract/Configuration.php
 msgid "- none -"
@@ -135,7 +136,7 @@ msgstr "BIC"
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/RapidCreate/AT.php
 #: CRM/Contract/Form/RapidCreate/PL.php CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Installment amount"
-msgstr ""
+msgstr "Einzugsbetrag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: CRM/Contract/Form/RapidCreate/AT.php CRM/Contract/Form/RapidCreate/PL.php
@@ -173,7 +174,7 @@ msgstr "Mitgliedschaftstyp"
 #: CRM/Contract/Form/RapidCreate/AT.php CRM/Contract/Form/RapidCreate/PL.php
 #: CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Source media"
-msgstr ""
+msgstr "Anwerbemedium"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/RapidCreate/AT.php
 #: CRM/Contract/Form/RapidCreate/PL.php CRM/Contract/Form/RapidCreate/TAZ.php
@@ -193,7 +194,7 @@ msgstr ""
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/RapidCreate/AT.php
 #: CRM/Contract/Form/RapidCreate/PL.php CRM/Contract/Form/RapidCreate/TAZ.php
 msgid "Membership channel"
-msgstr ""
+msgstr "Anwerbekanal"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: CRM/Contract/Form/RapidCreate/AT.php CRM/Contract/Form/RapidCreate/PL.php
@@ -223,7 +224,7 @@ msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
-msgstr ""
+msgstr "Einzugsbetrag"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Cancellation reason"
@@ -232,7 +233,7 @@ msgstr "Kündigungsgrund"
 #: CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
 msgid "Resume Date"
-msgstr ""
+msgstr "Wiederaufnahmedatum"
 
 #: CRM/Contract/Form/RapidCreate/AT.php CRM/Contract/Form/RapidCreate/PL.php
 #: CRM/Contract/Form/RapidCreate/TAZ.php
@@ -256,7 +257,7 @@ msgstr "Startdatum darf nicht vor Eintrittsdatum liegen."
 
 #: CRM/Contract/Form/RapidCreate/PL.php
 msgid "DD-Venue"
-msgstr ""
+msgstr "Ort der Anwerbung"
 
 #: CRM/Contract/Form/RapidCreate/PL.php
 msgid "TS Week"
@@ -402,7 +403,7 @@ msgstr "Zuwendungsart anpassen"
 #: CRM/Contract/Form/Task/AssignContributions.php
 #: templates/CRM/Contract/Form/Task/AssignContributions.tpl
 msgid "Re-Assign"
-msgstr "Neu zuordnen"
+msgstr ""
 
 #: CRM/Contract/Form/Task/AssignContributions.php
 msgid "Assign to Recurring"
@@ -451,7 +452,7 @@ msgstr "[%4] '%1' seit %2 (%3) - %5"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Detach Contributions from Membership"
-msgstr "Trenne Zuwendungen von Mitgliedschaft"
+msgstr "Entkoppel Zuwendungen von Mitgliedschaft"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid ""
@@ -463,7 +464,7 @@ msgstr ""
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Detach from %1 recurring contributions"
-msgstr "Trenne von %1 wiederkehrenden Zuwendungen"
+msgstr "Entkoppel von %1 wiederkehrenden Zuwendungen"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Update Financial Type"
@@ -475,15 +476,15 @@ msgstr "Auch Zuwendungsart der wiederkehrenden Zuwendung aktualisieren."
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Detach"
-msgstr ""
+msgstr "Abkoppeln"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "All contribution(s) have been detached from their memberships."
-msgstr "Alle Zuwendungen wurden von ihren Mitgliedschaften getrennt."
+msgstr "Alle Zuwendungen wurden von ihren Mitgliedschaften abgekoppelt."
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Contribution [%1] couldn't be detached: %2"
-msgstr "Zuwendung [%1] konnte nicht getrennt werden: %2"
+msgstr "Zuwendung [%1] konnte nicht abgekoppelt werden: %2"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Error"
@@ -491,7 +492,8 @@ msgstr ""
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "%1 contribution(s) have been detached from the recurring contribution."
-msgstr "%1 Zuwendungen wurden von ihren wiederkehrenden Zuwendungen getrennt."
+msgstr ""
+"%1 Zuwendungen wurden von ihren wiederkehrenden Zuwendungen abgekoppelt."
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid ""
@@ -499,7 +501,7 @@ msgid ""
 "recurring contribution, because they belong to a CiviSEPA mandate."
 msgstr ""
 "%1 Zuwendungen wurden <strong>nicht</strong> von ihren wiederkehrenden "
-"Zuwendungen getrennt, da sie zu einem CiviSEPA Mandat gehören."
+"Zuwendungen abgekoppelt, da sie zu einem CiviSEPA Mandat gehören."
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Cannot Detach"
@@ -572,7 +574,7 @@ msgstr "Kündigungsgrund (default)"
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Contact ID"
-msgstr ""
+msgstr "CiviCRM ID"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
@@ -728,19 +730,19 @@ msgstr "Zahlungsbeginn aufschieben"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 msgid "Currency"
-msgstr ""
+msgstr "Währung"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 msgid "Frequency Unit"
-msgstr ""
+msgstr "Einheit des Einzugsintervalls"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 msgid "Frequency Interval"
-msgstr ""
+msgstr "Einzugsintervall"
 
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
 msgid "Recurring Contribution ID"
-msgstr ""
+msgstr "ID der wiederkehrenden Zuwendung"
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Anual Amount"
@@ -748,7 +750,7 @@ msgstr "jährlicher Betrag"
 
 #: Civi/Contract/ContainerSpecs.php
 msgid "Contract: Create"
-msgstr "Vertrag erstellen"
+msgstr ""
 
 #: Civi/Contract/ContainerSpecs.php
 msgid "Contract: Get"
@@ -784,7 +786,7 @@ msgstr "Vertrag zuweisen"
 
 #: contract.php
 msgid "Detach from Contract"
-msgstr "Von Vertrag trennen"
+msgstr "Zuwendung(en) vom Vertrag abkoppeln"
 
 #: contract.php
 msgid "CiviContract: Edit core membership"
@@ -800,7 +802,7 @@ msgstr "Vertrags Reviewer"
 
 #: settings/contract.setting.php
 msgid "Contacts that will be notified of updates that need review."
-msgstr ""
+msgstr "Kontakte, die über zu prüfende updates informiert werden."
 
 #: settings/contract.setting.php
 msgid "Contract Domain"
@@ -811,6 +813,8 @@ msgid ""
 "Some features like the Rapid Create form might work or\n"
 "                      look different depending on the selected value."
 msgstr ""
+"Einige Features wie das Rapid Create Formular könnten unterschiedlich "
+"aussehen oder funktionieren abhängig vom hier ausgewählten Wert."
 
 #: templates/CRM/Contract/Form/Modify.tpl
 msgid "(currently: %1)"
@@ -854,7 +858,7 @@ msgstr ""
 
 #: templates/CRM/Contract/Form/Task/AssignContributions.tpl
 msgid "Assign to Recurring Contribution"
-msgstr ""
+msgstr "Wiederkehrender Zuwendung zuweisen"
 
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Pays for Contract"
