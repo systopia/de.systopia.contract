@@ -71,6 +71,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
       'membership_payment.from_ba'                           => 'contract_updates.ch_from_ba',
       'membership_payment.to_ba'                             => 'contract_updates.ch_to_ba',
       'membership_payment.cycle_day'                         => 'contract_updates.ch_cycle_day',
+      'membership_payment.from_name'                         => 'contract_updates.ch_from_name',
   ];
 
 
@@ -245,6 +246,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
           $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($sepaMandate['contact_id'], $sepaMandate['iban'], $sepaMandate['bic']);
           $contract['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
+          $contract['membership_payment.from_name']= $sepaMandate['account_holder'];
 
         } elseif ($sepaMandateResult['count'] == 0) {
           // this should be a recurring contribution -> get from the latest contribution
@@ -256,6 +258,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
           // this is an error:
           $contract['membership_payment.from_ba'] = '';
           $contract['membership_payment.to_ba']   = '';
+          $contract['membership_payment.from_name']   = '';
 
         }
       } catch(Exception $ex) {
