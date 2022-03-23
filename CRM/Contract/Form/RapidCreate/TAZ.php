@@ -85,6 +85,7 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
     $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
     $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'), true);
     $this->add('text',   'bic', E::ts('BIC'), null, true);
+    $this->add('text', 'account_holder', E::ts('Members Bank Account'), array('class' => 'huge'));
     $this->add('text',   'payment_amount', E::ts('Installment amount'), array('size' => 6));
     $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
     $this->assign('bic_lookup_accessible', CRM_Contract_SepaLogic::isLittleBicExtensionAccessible());
@@ -314,6 +315,7 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
       'validation_date'    => date('YmdHis'), // NOW
       'iban'               => $submitted['iban'],
       'bic'                => $submitted['bic'],
+      'account_holder'     => $submitted['account_holder'],
       // 'source'             => ??
       'campaign_id'        => $submitted['campaign_id'],
       'financial_type_id'  => 2, // Membership Dues
@@ -337,6 +339,7 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
     $contractParams['membership_general.membership_dialoger']  = $submitted['membership_dialoger'];  // DD fundraiser
     $contractParams['membership_general.membership_channel']   = $submitted['membership_channel'];   // Membership Channel
 
+    $contractParams['membership_payment.from_name'] = $submitted['account_holder'];
     $contractParams['note'] = $submitted['activity_details']; // Membership channel
     $contractParams['medium_id'] = $submitted['activity_medium']; // Membership channel
 
