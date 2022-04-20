@@ -67,7 +67,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
     };
-    $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
+    $this->add('select', 'membership_type_id', E::ts('Membership type'), $MembershipTypeOptions, false, array('class' => 'crm-select2'));
 
     // Source media (activity)
     foreach(civicrm_api3('Activity', 'getoptions', ['field' => "activity_medium_id", 'options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $key => $value){
@@ -76,10 +76,10 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add('select', 'activity_medium', E::ts('Source media'), array('' => '- none -') + $mediumOptions, false, array('class' => 'crm-select2'));
 
     // Reference number text
-    $this->add('text', 'membership_reference', E::ts('Reference number'));
+    //$this->add('text', 'membership_reference', E::ts('Reference number'));
 
     // Contract number text
-    $this->add('text', 'membership_contract', E::ts('Contract number'));
+    //$this->add('text', 'membership_contract', E::ts('Contract number'));
 
     // DD-Fundraiser
     $this->addEntityRef('membership_dialoger', E::ts('DD-Fundraiser'), array('api' => array('params' => array('contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger'))));

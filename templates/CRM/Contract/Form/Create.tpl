@@ -13,12 +13,13 @@
 
   <hr/>
 
+  <!--
   <div class="crm-section">
     <div class="label">Payment Preview</div>
     <div class="content recurring-contribution-summary-text">None</div>
     <div class="clear"></div>
   </div>
-
+  -->
   <div class="crm-section">
     <div class="label">{$form.payment_option.label}</div>
     <div class="content">{$form.payment_option.html}</div>
@@ -91,27 +92,31 @@
     <div class="content">{$form.activity_medium.html}</div>
     <div class="clear"></div>
   </div>
-  <hr />
+  <!--<hr />-->
   <div class="crm-section">
     <div class="label">{$form.membership_reference.label}</div>
     <div class="content">{$form.membership_reference.html}</div>
     <div class="clear"></div>
   </div>
+  <!--
   <div class="crm-section">
     <div class="label">{$form.membership_contract.label}</div>
     <div class="content">{$form.membership_contract.html}</div>
     <div class="clear"></div>
   </div>
+  -->
   <div class="crm-section">
     <div class="label">{$form.membership_dialoger.label}</div>
     <div class="content">{$form.membership_dialoger.html}</div>
     <div class="clear"></div>
   </div>
+  <!--
   <div class="crm-section">
     <div class="label">{$form.membership_channel.label}</div>
     <div class="content">{$form.membership_channel.html}</div>
     <div class="clear"></div>
   </div>
+  -->
   <hr />
   <div class="crm-section">
     <div class="label">{$form.activity_details.label}</div>

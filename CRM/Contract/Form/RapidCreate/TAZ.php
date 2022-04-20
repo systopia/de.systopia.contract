@@ -13,7 +13,7 @@ use CRM_Contract_ExtensionUtil as E;
 class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
 
   function buildQuickForm(){
-    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'templates/CRM/Contract/Form/RapidCreate/AT.js');
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'templates/CRM/Contract/Form/RapidCreate/TAZ.js');
     CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/rapidcreate_address_autocomplete.js', 10, 'page-header');
     // ### Contact information ###
     $prefixes = array_column(civicrm_api3('OptionValue', 'get', ['option_group_id' => 'individual_prefix', 'is_active' => 1, 'options' => ['limit' => 0, 'sort' => 'weight']])['values'], 'label', 'value');
@@ -92,7 +92,7 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
     // ### Contract information ###
     $this->addDate('join_date', E::ts('Member since'), TRUE, array('formatType' => 'activityDate'));
     $this->addDate('start_date', E::ts('Membership start date'), TRUE, array('formatType' => 'activityDate'));
-    $this->add('select', 'campaign_id', E::ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), TRUE, array('class' => 'crm-select2'));
+    $this->add('select', 'campaign_id', E::ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), False, array('class' => 'crm-select2'));
     // $this->addEntityRef('campaign_id', E::ts('Campaign'), [
     //   'entity' => 'campaign',
     //   'placeholder' => E::ts('- none -')
@@ -101,18 +101,14 @@ class CRM_Contract_Form_RapidCreate_TAZ extends CRM_Core_Form{
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
     };
-    $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
+    $this->add('select', 'membership_type_id', E::ts('Membership type'), $MembershipTypeOptions, true, array('class' => 'crm-select2'));
     // Source media (activity)
     foreach(civicrm_api3('Activity', 'getoptions', ['field' => "activity_medium_id", 'options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $key => $value){
       $mediumOptions[$key] = $value;
     }
     $this->add('select', 'activity_medium', E::ts('Source media'), array('' => '- none -') + $mediumOptions, false, array('class' => 'crm-select2'));
-    // Reference number text
-    $this->add('text', 'membership_reference', E::ts('Reference number'));
-    // Contract number text
-    $this->add('text', 'membership_contract', E::ts('Contract number'), null, true);
     // DD-Fundraiser
-    $this->addEntityRef('membership_dialoger', E::ts('DD-Fundraiser'), array('api' => array('params' => array('contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger'))), true);
+    $this->addEntityRef('membership_dialoger', E::ts('DD-Fundraiser'), array('api' => array('params' => array('contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger'))));
     // Membership channel
     foreach(civicrm_api3('OptionValue', 'get', [
       'option_group_id' => 'contact_channel',
