@@ -49,10 +49,12 @@ class CRM_Contract_Configuration {
   /**
    * Allows you to suppress the automatic creation of the given activity types
    *
-   * @todo: make configurable
+   * @return array list of civicrm activity types that aber being automatically created,
+   *  but should be suppressed or removed
    */
   public static function suppressSystemActivityTypes() {
-    return ['Membership Signup', 'Change Membership Status', 'Change Membership Type'];
+    $default_types = ['Membership Signup', 'Change Membership Status', 'Change Membership Type'];
+    return \Civi\Contract\Event\SuppressedSystemActivityTypes::getSuppressedChangeActivityTypes($default_types);
   }
 
   /**

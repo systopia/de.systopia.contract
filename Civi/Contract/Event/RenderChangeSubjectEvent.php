@@ -15,8 +15,8 @@ use \CRM_Contract_Change as CRM_Contract_Change;
 /**
  * Class RenderChangeSubjectEvent
  *
- * Allows extensions to provide/customise the rapid create form,
- *   which is triggered when a new membership is to be created with a new contact
+ * Allows extensions to provide a custom renderer for
+ *  the subjects of change events
  *
  * @package Civi\RemoteEvent\Event
  *
@@ -58,8 +58,6 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @param array $contract_data_after
    *   the state of the contract after the change
    *
-   * @return string
-   *   the subject line of the given change activity
    */
   public function __construct($change, $contract_data_before, $contract_data_after)
   {
