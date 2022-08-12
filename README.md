@@ -23,8 +23,8 @@ environments.
 To allow customisation to your organisation, the contract extension currently offers
 the following Symfony events:
 
-| event name                       | purpose                                                                                                                                             | since version |
-|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| ``de.contract.rapidcreateform``  | You can supply an optimised "rapid create" form, that let's you efficiently register new members, i.e. creates a new contact and a new membership   | 1.4           |
-|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-
+| event name                          | purpose                                                                                                                                               | since version   |
+|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|
+| ``de.contract.rapidcreateform``     | You can supply an optimised "rapid create" form, that let's you efficiently register new members, i.e. creates a new contact and a new membership     | 1.4             |
+| ``de.contract.renderchangesubject`` | You can render custom subject lines for the contract change activities                                                                                | 1.4             |
+|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|
