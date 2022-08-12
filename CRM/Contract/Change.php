@@ -15,7 +15,7 @@ use CRM_Contract_ExtensionUtil as E;
  * This new 'Change' concept is the replacement for the CRM_Contract_ModificationActivity
  *  and the CRM_Contract_Handlers
  */
-abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRendererInterface {
+abstract class CRM_Contract_Change {
 
   /**
    * Data representing the data. Will mostly be the activity data
