@@ -1,13 +1,23 @@
+<?php
 /*-------------------------------------------------------------+
 | SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2017-2019 SYSTOPIA                             |
+| Copyright (C) 2022 SYSTOPIA                                  |
 | Author: B. Endres (endres -at- systopia.de)                  |
-|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
-|         P. Figel (pfigel -at- greenpeace.org)                |
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+namespace Civi\Contract\Event;
 
-CRM.$(function($) {
-  // nothing to do yet
-});
+use Symfony\Component\EventDispatcher\Event;
+
+/**
+ * Class RemoteEvent
+ *
+ * @package Civi\Contract\Event
+ *
+ * Abstract event class to provide some basic functions
+ */
+abstract class ConfigurationEvent extends Event
+{
+
+}

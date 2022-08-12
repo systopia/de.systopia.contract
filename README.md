@@ -16,3 +16,15 @@ contract reference will not be shown as a link.
 You must create a directory or symlink in CiviCRM customFilesUploadDir
 "contracts". eg. `sites/default/files/civicrm/custom/contracts` for Drupal
 environments.
+
+
+## Customisation
+
+To allow customisation to your organisation, the contract extension currently offers
+the following Symfony events:
+
+| event name                       | purpose                                                                                                                                             | since version |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| ``de.contract.rapidcreateform``  | You can supply an optimised "rapid create" form, that let's you efficiently register new members, i.e. creates a new contact and a new membership   | 1.4           |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+
