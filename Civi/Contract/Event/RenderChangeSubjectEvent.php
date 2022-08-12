@@ -89,7 +89,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   {
     $event = new RenderChangeSubjectEvent($change, $contract_data_before, $contract_data_after);
     \Civi::dispatcher()->dispatch(self::$event_name, $event);
-    return $event->subject;
+    return $event->getSubject();
   }
 
   /**
@@ -109,7 +109,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * return string $subject
    *    the proposed subject for the change
    */
-  public function getSubject($subject)
+  public function getSubject()
   {
     return $this->subject;
   }
