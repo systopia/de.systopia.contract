@@ -85,7 +85,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return string
    *   the subject line of the given change activity
    */
-  public function renderCustomSubject($change, $contract_data_before, $contract_data_after)
+  public static function renderCustomSubject($change, $contract_data_before, $contract_data_after)
   {
     $event = new RenderChangeSubjectEvent($change, $contract_data_before, $contract_data_after);
     \Civi::dispatcher()->dispatch(self::$event_name, $event);

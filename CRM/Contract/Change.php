@@ -316,7 +316,9 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
    * @return string subject line
    */
   public function getSubject($contract_after, $contract_before = NULL) {
+    // call custom subject renderers
     $custom_subject = \Civi\Contract\Event\RenderChangeSubjectEvent::renderCustomSubject($this, $contract_before, $contract_after);
+    // if there's no subject, use the default renderer
     return $custom_subject ?? $this->renderChangeSubject($this, $contract_after, $contract_before);
   }
 
