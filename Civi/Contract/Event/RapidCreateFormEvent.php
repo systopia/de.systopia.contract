@@ -26,7 +26,8 @@ class RapidCreateFormEvent extends ConfigurationEvent
   /**
    * @var string URL to a rapid create from - if one exists
    */
-  protected string $url;
+  protected ?string $url = null;
+
 
   /**
    * Set/override the url for the rapid create form
@@ -47,9 +48,9 @@ class RapidCreateFormEvent extends ConfigurationEvent
   /**
    * Get the currently set url for the rapid create form
    *
-   * @return string|null
+   * @return ?string
    */
-  public function getRapidCreateFormUrl()
+  public function getRapidCreateFormUrl(): ?string
   {
     return $this->url;
   }

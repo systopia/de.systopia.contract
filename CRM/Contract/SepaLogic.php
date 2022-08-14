@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 /**
  * Interface to CiviSEPA functions
  *
@@ -540,7 +542,16 @@ class CRM_Contract_SepaLogic {
    */
   public static function getCycleDays() {
     $creditor = CRM_Contract_SepaLogic::getCreditor();
-    return CRM_Sepa_Logic_Settings::getListSetting("cycledays", range(1, 28), $creditor->id);
+    if (empty($creditor)) {
+      CRM_Core_Session::setStatus(
+          E::ts("Please configure at least one CiviSEPA creditor!"),
+          E::ts("Serious Configuration Issue"),
+          'alert',
+          ['expires' => 0]);
+      return [1];
+    } else {
+      return CRM_Sepa_Logic_Settings::getListSetting("cycledays", range(1, 28), $creditor->id);
+    }
   }
 
   /**
@@ -560,6 +571,15 @@ class CRM_Contract_SepaLogic {
    */
   public static function nextCycleDay() {
     $creditor = CRM_Sepa_Logic_Settings::defaultCreditor();
+    if (empty($creditor)) {
+      CRM_Core_Session::setStatus(
+          E::ts("Please configure at least one CiviSEPA creditor!"),
+          E::ts("Serious Configuration Issue"),
+          'alert',
+          ['expires' => 0]);
+      return 1;
+    }
+
     $buffer_days = (int) CRM_Sepa_Logic_Settings::getSetting("pp_buffer_days") + (int) CRM_Sepa_Logic_Settings::getSetting("batching.FRST.notice", $creditor->id);
     $cycle_days = self::getCycleDays();
 
@@ -665,7 +685,17 @@ class CRM_Contract_SepaLogic {
   public static function addJsSepaTools() {
     // calculate creditor parameters
     $creditor_parameters = civicrm_api3('SepaCreditor', 'get', array(
-      'options.limit' => 0))['values'];
+      'options.limit' => 0));
+    if (empty($creditor_parameters['values'])) {
+      CRM_Core_Session::setStatus(
+          E::ts("Please configure at least one CiviSEPA creditor!"),
+          E::ts("Serious Configuration Issue"),
+          'alert',
+          ['expires' => 0]);
+      return;
+    }
+
+    $creditor_parameters = $creditor_parameters['values'];
     foreach ($creditor_parameters as &$creditor) {
       $creditor['grace']  = (int) CRM_Sepa_Logic_Settings::getSetting("batching.RCUR.grace", $creditor['id']);
       $creditor['notice'] = (int) CRM_Sepa_Logic_Settings::getSetting("batching.RCUR.notice", $creditor['id']);
