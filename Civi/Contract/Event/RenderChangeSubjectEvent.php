@@ -19,8 +19,6 @@ use \CRM_Contract_Change as CRM_Contract_Change;
  *  the subjects of change events
  *
  * @package Civi\RemoteEvent\Event
- *
- * Abstract event class to provide some basic functions
  */
 class RenderChangeSubjectEvent extends ConfigurationEvent
 {
@@ -69,7 +67,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
 
 
   /**
-   * Allows you to render the subject of a new change record (activity)
+   * Issue a Symfony event to render a contract change's subject/title
    *
    * @param CRM_Contract_Change $change
    *   the change object

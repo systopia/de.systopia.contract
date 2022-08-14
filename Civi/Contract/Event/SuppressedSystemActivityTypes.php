@@ -13,13 +13,11 @@ use Symfony\Component\EventDispatcher\Event;
 use \CRM_Contract_Change as CRM_Contract_Change;
 
 /**
- * Class RenderChangeSubjectEvent
+ * Class SuppressedSystemActivityTypes
  *
  * Allows extensions adjust the list of system-generated change activities that should be suppressed
  *
  * @package Civi\RemoteEvent\Event
- *
- * Abstract event class to provide some basic functions
  */
 class SuppressedSystemActivityTypes extends ConfigurationEvent
 {
@@ -78,5 +76,35 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
   public function getSuppressedActivityTypes()
   {
     return $this->activity_types;
+  }
+
+  /**
+   * Add a suppressed activity type
+   *
+   * @param string $activity_type_name
+   *   activity type name
+   */
+  public function addSuppressedActivityType($activity_type_name)
+  {
+    if (!in_array($activity_type_name, $this->activity_types)) {
+      $this->activity_types[] = $activity_type_name;
+    }
+  }
+
+  /**
+   * Remove an activity type from the suppression list
+   *
+   * @param string $activity_type_name
+   *   activity type name
+   */
+  public function removeSuppressedActivityType($activity_type_name)
+  {
+    $new_list = [];
+    foreach ($this->activity_types as $activity_type) {
+      if ($activity_type != $activity_type_name) {
+        $new_list[] = $activity_type;
+      }
+    }
+    $this->activity_types = $new_list;
   }
 }

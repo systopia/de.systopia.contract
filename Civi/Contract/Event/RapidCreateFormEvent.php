@@ -18,8 +18,6 @@ use Symfony\Component\EventDispatcher\Event;
  *   which is triggered when a new membership is to be created with a new contact
  *
  * @package Civi\RemoteEvent\Event
- *
- * Abstract event class to provide some basic functions
  */
 class RapidCreateFormEvent extends ConfigurationEvent
 {

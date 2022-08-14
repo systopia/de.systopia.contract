@@ -13,8 +13,6 @@
  */
 class CRM_Contract_Configuration {
 
-  protected static $eligible_campaigns = NULL;
-
   /**
    * Disable monitoring relevant entities, so we don't accidentally
    *  record our own changes
@@ -58,21 +56,29 @@ class CRM_Contract_Configuration {
   }
 
   /**
-   * derive gender_id from the given prefix_id
+   * Allows you to adjust the list of eligible campaigns
    *
-   * @todo: make configurable
+   * @return array list of civicrm activity types that aber being automatically created,
+   *  but should be suppressed or removed
    */
-  public static function getGenderID($prefix_id) {
-    switch ($prefix_id) {
-      case 2: // Frau
-        return 1; // female
-
-      case 3: // Herr
-        return 2; // male
-
-      default:
-        return '';
+  public static function getCampaignList() {
+    // default is all campaigns (pulled on first call)
+    static $all_campaigns = null;
+    if ($all_campaigns === null) {
+      $all_campaigns = ['' => ts('- none -')];
+      $campaign_query = civicrm_api3('Campaign', 'get', [
+          'sequential'   => 1,
+          'is_active'    => 1,
+          'option.limit' => 0,
+          'return'       => 'id,title'
+      ]);
+      foreach ($campaign_query['values'] as $campaign) {
+        $all_campaigns[$campaign['id']] = $campaign['title'];
+      }
     }
+
+    // run a symfony event to restrict that
+    return \Civi\Contract\Event\EligibleContractCampaigns::getAllEligibleCampaigns($all_campaigns);
   }
 
   /**
@@ -80,7 +86,7 @@ class CRM_Contract_Configuration {
    * new contracts
    * @todo configure
    */
-  public static function getCampaignList() {
+  public static function _getCampaignList() {
     if (self::$eligible_campaigns === NULL) {
       self::$eligible_campaigns = array(
         '' => ts('- none -'));
