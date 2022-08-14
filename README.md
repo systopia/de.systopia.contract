@@ -29,4 +29,4 @@ the following Symfony events:
 | ``de.contract.renderchangesubject``            | Render custom subject lines for the contract change activities                                                                                          | 1.4             |
 | ``de.contract.eligible_campaigns``             | Define the eligible campaigns for a contract                                                                                                            | 1.4             |
 | ``de.contract.suppress_system_activity_types`` | Change the list of (automatically generated) acitivies to be suppressed                                                                                 | 1.4             |
-| -------------------------------------          | ------------------------------------------------------------------------------------------------------------------------------------------------------- |-----------------|
+|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|
