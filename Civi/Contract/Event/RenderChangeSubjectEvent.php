@@ -18,11 +18,11 @@ use \CRM_Contract_Change as CRM_Contract_Change;
  * Allows extensions to provide a custom renderer for
  *  the subjects of change events
  *
- * @package Civi\RemoteEvent\Event
+ * @package Civi\Contract\Event
  */
 class RenderChangeSubjectEvent extends ConfigurationEvent
 {
-  public static string $event_name = 'de.contract.renderchangesubject';
+  public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
    * @var CRM_Contract_Change the change object
@@ -84,7 +84,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public static function renderCustomSubject($change, $contract_data_before, $contract_data_after)
   {
     $event = new RenderChangeSubjectEvent($change, $contract_data_before, $contract_data_after);
-    \Civi::dispatcher()->dispatch(self::$event_name, $event);
+    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->getSubject();
   }
 

@@ -17,11 +17,11 @@ use \CRM_Contract_Change as CRM_Contract_Change;
  *
  * Allows extensions adjust the list of system-generated change activities that should be suppressed
  *
- * @package Civi\RemoteEvent\Event
+ * @package Civi\Contract\Event
  */
 class SuppressedSystemActivityTypes extends ConfigurationEvent
 {
-  public static string $event_name = 'de.contract.suppress_system_activity_types';
+  public const EVENT_NAME = 'de.contract.suppress_system_activity_types';
 
   /**
    * @var array
@@ -52,7 +52,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
   public static function getSuppressedChangeActivityTypes($suppressed_activity_types = [])
   {
     $event = new SuppressedSystemActivityTypes($suppressed_activity_types);
-    \Civi::dispatcher()->dispatch(self::$event_name, $event);
+    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->activity_types;
   }
 

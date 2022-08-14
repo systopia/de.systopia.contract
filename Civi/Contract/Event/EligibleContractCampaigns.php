@@ -17,11 +17,11 @@ use \CRM_Contract_Change as CRM_Contract_Change;
  *
  * Allows extensions adjust the list of eligible campaigns
  *
- * @package Civi\RemoteEvent\Event
+ * @package Civi\Contract\Event
  */
 class EligibleContractCampaigns extends ConfigurationEvent
 {
-  public static string $event_name = 'de.contract.eligible_campaigns';
+  public const EVENT_NAME = 'de.contract.eligible_campaigns';
 
   /**
    * @var array
@@ -52,7 +52,7 @@ class EligibleContractCampaigns extends ConfigurationEvent
   public static function getAllEligibleCampaigns($eligible_campaigns = [])
   {
     $event = new EligibleContractCampaigns($eligible_campaigns);
-    \Civi::dispatcher()->dispatch(self::$event_name, $event);
+    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->campaigns;
   }
 

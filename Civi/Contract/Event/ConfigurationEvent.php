@@ -11,7 +11,7 @@ namespace Civi\Contract\Event;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class RemoteEvent
+ * Class ConfigurationEvent
  *
  * @package Civi\Contract\Event
  *

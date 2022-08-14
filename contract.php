@@ -142,7 +142,7 @@ function contract_civicrm_pageRun( &$page ){
 }
 
 /**
- * UI Adjustements for membership forms
+ * UI Adjustments for membership forms
  *
  * @todo shorten this function call - move into an 1 or more alter functions
  */

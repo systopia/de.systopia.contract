@@ -17,13 +17,16 @@ use Symfony\Component\EventDispatcher\Event;
  * Allows extensions to provide/customise the rapid create form,
  *   which is triggered when a new membership is to be created with a new contact
  *
- * @package Civi\RemoteEvent\Event
+ * @package Civi\Contract\Event
  */
 class RapidCreateFormEvent extends ConfigurationEvent
 {
-  public static string $event_name = 'de.contract.rapidcreateform';
+  public const EVENT_NAME = 'de.contract.rapidcreateform';
 
-  protected $url = null;
+  /**
+   * @var string URL to a rapid create from - if one exists
+   */
+  protected string $url;
 
   /**
    * Set/override the url for the rapid create form
@@ -59,7 +62,7 @@ class RapidCreateFormEvent extends ConfigurationEvent
   public static function getUrl()
   {
     $event = new RapidCreateFormEvent();
-    \Civi::dispatcher()->dispatch(self::$event_name, $event);
+    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->getRapidCreateFormUrl();
   }
 }
