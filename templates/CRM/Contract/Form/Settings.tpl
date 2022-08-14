@@ -7,16 +7,12 @@
 +-------------------------------------------------------------*}
 
 <div class="crm-block crm-form-block">
+    <div class="help">{ts}Configuration Options for the Contract Extension{/ts}</div>
+
     <div class="crm-section payment-modify">
       <div class="label">{$form.contract_modification_reviewers.label}</div>
       <div class="content">{$form.contract_modification_reviewers.html}</div>
       <div class="clear"></div>
-    </div>
-
-    <div class="crm-section payment-modify">
-        <div class="label">{$form.contract_domain.label}</div>
-        <div class="content">{$form.contract_domain.html}</div>
-        <div class="clear"></div>
     </div>
 
     <div class="crm-submit-buttons">
