@@ -30,19 +30,19 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   protected CRM_Contract_Change $change;
 
   /**
-   * @var array the raw contract data before
+   * @var ?array the raw contract data before
    */
-  protected array $contract_data_before;
+  protected ?array $contract_data_before;
 
   /**
-   * @var array the raw contract data after
+   * @var ?array the raw contract data after
    */
-  protected array $contract_data_after;
+  protected ?array $contract_data_after;
 
   /**
-   * @var string the raw contract data after
+   * @var ?string the raw contract data after
    */
-  protected string $subject;
+  protected ?string $subject;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
@@ -91,7 +91,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Set/override the url for the rapid create form
    *
-   * @param string $subject
+   * @param ?string $subject
    *    the proposed subject for the change
    */
   public function setSubject($subject)
@@ -102,7 +102,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Get the currently proposed subject
    *
-   * return string $subject
+   * @return string $subject
    *    the proposed subject for the change
    */
   public function getSubject()

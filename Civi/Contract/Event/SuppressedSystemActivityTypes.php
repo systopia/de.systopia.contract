@@ -24,10 +24,10 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
   public const EVENT_NAME = 'de.contract.suppress_system_activity_types';
 
   /**
-   * @var array
+   * @var ?array
    *  the list of activity types (names or ids) to be suppressed
    */
-  protected array $activity_types;
+  protected ?array $activity_types;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
@@ -59,7 +59,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
   /**
    * Set/override the url for the rapid create form
    *
-   * @param array $activity_types
+   * @param ?array $activity_types
    *    the proposed subject for the change
    */
   public function setSuppressedActivityTypes($activity_types)

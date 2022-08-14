@@ -24,10 +24,10 @@ class EligibleContractCampaigns extends ConfigurationEvent
   public const EVENT_NAME = 'de.contract.eligible_campaigns';
 
   /**
-   * @var array
+   * @var ?array
    *  the list of eligible campaigns [id => label]
    */
-  protected array $campaigns;
+  protected ?array $campaigns;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
