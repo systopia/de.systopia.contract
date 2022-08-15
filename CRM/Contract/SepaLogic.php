@@ -647,6 +647,18 @@ class CRM_Contract_SepaLogic {
   }
 
   /**
+   * Formats an IBAN:
+   *  - all upper case
+   *  - strip whitespaces
+   */
+  public static function formatIBAN($raw_iban)
+  {
+    $formatted_iban = strtoupper($raw_iban);
+    $formatted_iban = preg_replace('/[ .-]/', '', $raw_iban);
+    return $formatted_iban;
+  }
+
+    /**
    * formats a value to the CiviCRM failsafe format: 0.00 (e.g. 999999.90)
    * even if there are ',' in there, which are used in some countries
    * (e.g. Germany, Austria,) as a decimal point.
