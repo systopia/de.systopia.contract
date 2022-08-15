@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-15 14:46+0200\n"
+"POT-Creation-Date: 2022-08-15 15:04+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -197,6 +197,18 @@ msgstr "Geplantes Ausführungsdatum"
 #: CRM/Contract/Form/Modify.php
 msgid "Discard changes"
 msgstr "Änderungen verwerfen"
+
+#: CRM/Contract/Form/Modify.php
+msgid "select other"
+msgstr "bestehende Zahlung"
+
+#: CRM/Contract/Form/Modify.php
+msgid "modify"
+msgstr "anpassen"
+
+#: CRM/Contract/Form/Modify.php
+msgid "no change"
+msgstr "keine Änderung"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
@@ -668,9 +680,18 @@ msgstr "Vertrags Reviewer"
 msgid "Contacts that will be notified of updates that need review."
 msgstr "Kontakte, die über zu prüfende updates informiert werden."
 
+#: templates/CRM/Contract/Form/Create.tpl
+msgid "Create a new contract for %1"
+msgstr ""
+
+#: templates/CRM/Contract/Form/Create.tpl
+#: templates/CRM/Contract/Form/Modify.tpl
+msgid "Payment Preview"
+msgstr "Vorschau Zahlung"
+
 #: templates/CRM/Contract/Form/Modify.tpl
 msgid "(currently: %1)"
-msgstr ""
+msgstr "(aktuell: %1)"
 
 #: templates/CRM/Contract/Form/Settings.tpl
 msgid "Configuration Options for the Contract Extension"
@@ -719,9 +740,6 @@ msgstr ""
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr ""
-
-#~ msgid "- select -"
-#~ msgstr "-auswählen-"
 
 #~ msgid "Join date cannot be in the future."
 #~ msgstr "Eintrittsdatum kann nicht in der Zukunft liegen."

@@ -145,13 +145,14 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     CRM_Contract_SepaLogic::addJsSepaTools();
 
     // add a generic switch to clean up form
-    $payment_options = array(
-      'select'   => 'select other',
-      'modify'   => 'modify');
+    $payment_options = [
+      'select'   => E::ts('select other'),
+      'modify'   => E::ts('modify')
+    ];
 
     // update also has the option of no change to payment contract
     if ($this->modify_action == 'update') {
-      $payment_options =  array('nochange' => 'no change') + $payment_options;
+      $payment_options =  ['nochange' => E::ts('no change')] + $payment_options;
     }
     $this->add('select', 'payment_option', E::ts('Payment'), $payment_options);
 
