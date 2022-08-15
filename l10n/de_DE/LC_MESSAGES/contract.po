@@ -68,7 +68,7 @@ msgstr "Vertrag aktualisieren"
 
 #: CRM/Contract/Change/Upgrade.php
 msgid "Update"
-msgstr "Anpassen"
+msgstr "Ändern"
 
 #: CRM/Contract/Configuration.php
 msgid "- none -"
