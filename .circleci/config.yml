@@ -1,5 +1,10 @@
 version: 2.1
 commands:
+  setup:
+    description: "Setup environment"
+    steps:
+      - run: |
+          composer self-update --1
   install_civicrm:
     description: "Install CiviCRM"
     parameters:
@@ -32,8 +37,8 @@ commands:
       - run: |
           EXT_DIR=/buildkit/build/<< parameters.build_name >>/web/sites/default/files/civicrm/ext
           cd $EXT_DIR
-          git clone https://github.com/Project60/org.project60.sepa.git
-          git clone https://github.com/Project60/org.project60.banking.git banking-src
+          git clone git@github.com:Project60/org.project60.sepa.git
+          git clone git@github.com:Project60/org.project60.banking.git banking-src
           mv banking-src/extension org.project60.banking
           rm -rf banking-src
           chown buildkit:buildkit org.project60.sepa org.project60.banking -R
