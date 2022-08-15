@@ -383,8 +383,8 @@ function contract_civicrm_searchTasks($objectType, &$tasks) {
 function contract_civicrm_permission(&$permissions) {
   $permissions += [
     'edit core membership CiviContract' => [
-      ts('CiviContract: Edit core membership', ['domain' => 'de.systopia.contract']),
-      ts('Allow editing memberships using the core membership form', array('domain' => 'de.systopia.contract')),
+      E::ts('CiviContract: Edit core membership'),
+      E::ts('Allow editing memberships using the core membership form'),
     ]
   ];
 }
@@ -401,4 +401,3 @@ function contract_civicrm_entityTypes(&$entityTypes) {
       'table' => 'civicrm_contract_payment',
   );
 }
-
