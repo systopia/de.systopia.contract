@@ -26,7 +26,6 @@ function contract_civicrm_container(ContainerBuilder $container) {
   }
 }
 
-
 /**
  * Implements hook_civicrm_config().
  *
@@ -34,15 +33,6 @@ function contract_civicrm_container(ContainerBuilder $container) {
  */
 function contract_civicrm_config(&$config) {
   _contract_civix_civicrm_config($config);
-}
-
-/**
- * Implements hook_civicrm_xmlMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
- */
-function contract_civicrm_xmlMenu(&$files) {
-  _contract_civix_civicrm_xmlMenu($files);
 }
 
 /**
@@ -111,14 +101,7 @@ function contract_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
 //   _contract_civix_civicrm_managed($entities);
 // }
 
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
- */
-function contract_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _contract_civix_civicrm_alterSettingsFolders($metaDataFolders);
-}
+
 
 /**
  * UI Adjustements for membership forms
@@ -301,7 +284,6 @@ function contract_civicrm_links( $op, $objectName, $objectId, &$links, &$mask, &
     }
   }
 }
-
 
 /**
  * CiviCRM PRE hook: Monitoring of relevant entity changes
