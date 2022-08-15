@@ -116,6 +116,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   function validate() {
     $submitted = $this->exportValues();
 
+    // check if all values for 'create new mandate' are there
     if ($submitted['payment_option'] == 'create') {
       if(empty($submitted['payment_frequency'])) {
         HTML_QuickForm::setElementError ( 'payment_frequency', 'Please specify a frequency');
@@ -130,6 +131,14 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       // }
 
       // SEPA validation
+      if (empty($submitted['iban'])) {
+        HTML_QuickForm::setElementError ( 'iban', 'IBAN required');
+      }
+
+      if (empty($submitted['bic'])) {
+        HTML_QuickForm::setElementError ( 'bic', 'BIC required');
+      }
+
       if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
         HTML_QuickForm::setElementError ( 'iban', 'Please enter a valid IBAN');
       }
