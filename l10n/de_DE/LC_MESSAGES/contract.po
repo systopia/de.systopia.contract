@@ -158,7 +158,7 @@ msgstr "Mitgliedschaftstyp"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Source media"
-msgstr "Anwerbemedium"
+msgstr "Kanal Kontaktaufnahme"
 
 #: CRM/Contract/Form/Create.php
 msgid "Reference number"
@@ -170,7 +170,7 @@ msgstr "Vertragsnummer"
 
 #: CRM/Contract/Form/Create.php
 msgid "DD-Fundraiser"
-msgstr ""
+msgstr "Akquise durch"
 
 #: CRM/Contract/Form/Create.php
 msgid "Membership channel"
@@ -401,11 +401,11 @@ msgstr "Potentielles Problem"
 
 #: CRM/Contract/SepaLogic.php
 msgid "Please configure at least one CiviSEPA creditor!"
-msgstr ""
+msgstr "Bitte mindestens einen CiviSEPA Kreditor konfigurieren!"
 
 #: CRM/Contract/SepaLogic.php
 msgid "Serious Configuration Issue"
-msgstr ""
+msgstr "Konfigurationsproblem"
 
 #: CRM/Contract/Upgrader/Base.php
 msgid "Upgrade %1 to revision %2"
@@ -496,7 +496,7 @@ msgstr "Puffertage"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "If a Contract already exists"
-msgstr ""
+msgstr "Falls der Vertrag bereits besteht"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
@@ -688,7 +688,7 @@ msgstr "Kontakte, die über zu prüfende updates informiert werden."
 
 #: templates/CRM/Contract/Form/Create.tpl
 msgid "Create a new contract for %1"
-msgstr ""
+msgstr "Neuen Vertrag für %1 erstellen"
 
 #: templates/CRM/Contract/Form/Create.tpl
 #: templates/CRM/Contract/Form/Modify.tpl
@@ -767,7 +767,7 @@ msgstr "erfasst von"
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Edit"
@@ -775,7 +775,7 @@ msgstr "bearbeiten"
 
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Pays for Contract"
-msgstr "Zahlt Vertrag"
+msgstr "Zahlung für Mitgliedschaft / Vertrag"
 
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
