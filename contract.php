@@ -13,6 +13,7 @@ require_once 'contract.civix.php';
 use CRM_Contract_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Civi\Contract\Event\RapidCreateFormEvent as RapidCreateFormEvent;
+use \Civi\Contract\Event\ContractCreateFormEvent as ContractCreateFormEvent;
 
 /**
  * Implements hook_civicrm_container()
@@ -213,8 +214,11 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       if($form->getAction() === CRM_Core_Action::ADD){
         if($cid = CRM_Utils_Request::retrieve('cid', 'Integer')){
-          // if the cid is given, this is an edit
-          CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contract/create', 'cid='.$cid, true));
+          // if the cid is given, it's the "add membership" for an existing contract
+          $contract_create_form_url = ContractCreateFormEvent::getUrl($cid);
+          if ($contract_create_form_url) {
+            CRM_Utils_System::redirect($contract_create_form_url);
+          }
         }else{
           // no id - this is a 'create new membership':
           //   check if somebody registered a rapid create form and redirect
