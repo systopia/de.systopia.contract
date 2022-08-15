@@ -206,7 +206,7 @@ msgstr "bestehender Zahlungsvertrag"
 
 #: CRM/Contract/Form/Modify.php
 msgid "modify"
-msgstr "anpassen"
+msgstr "Ändern"
 
 #: CRM/Contract/Form/Modify.php
 msgid "no change"
