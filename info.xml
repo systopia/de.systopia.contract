@@ -25,6 +25,9 @@
     <ext>org.project60.banking</ext>
   </requires>
   <comments>Concept by B. Endres and M. Haefner, Greenpeace CEE. First implementation by Michael McAndrew, michaelmcandrew@thirdsectordesign.org</comments>
+  <classloader>
+    <psr4 prefix="Civi\" path="Civi" />
+  </classloader>
   <civix>
     <namespace>CRM/Contract</namespace>
   </civix>

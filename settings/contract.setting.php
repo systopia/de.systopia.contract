@@ -54,7 +54,7 @@ return array(
     'group' => 'Contract preferences',
     'name' => 'contract_domain',
     'type' => 'string',
-    'default' => 'AT',
+    'default' => 'TAZ',
     'add' => '1.0',
     'title' => 'Contract Domain',
     'is_domain' => 1,

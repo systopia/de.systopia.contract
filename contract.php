@@ -11,6 +11,19 @@
 
 require_once 'contract.civix.php';
 use CRM_Contract_ExtensionUtil as E;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+/**
+ * Implements hook_civicrm_container()
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
+ */
+function contract_civicrm_container(ContainerBuilder $container) {
+  if (class_exists('\Civi\Contract\ContainerSpecs')) {
+      $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
+  }
+}
+
 
 /**
  * Implements hook_civicrm_config().
@@ -388,3 +401,4 @@ function contract_civicrm_entityTypes(&$entityTypes) {
       'table' => 'civicrm_contract_payment',
   );
 }
+
