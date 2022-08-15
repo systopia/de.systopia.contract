@@ -7,7 +7,7 @@
 | http://www.systopia.de/                                      |
 +-------------------------------------------------------------*}
 {crmScope extensionKey='de.systopia.contract'}
-<table>
+<table class="contract-history-table">
   <tr>
 
     <th>{ts}Modification{/ts}</th>
@@ -20,8 +20,8 @@
     <th>{ts}Type{/ts}</th>
     <th>{ts}Campaign{/ts}</th>
 
-    <th>{ts}Medium{/ts}</th>
-    <th>{ts}Note{/ts}</th>
+    <th style="display: none;">{ts}Medium{/ts}</th>
+    <th style="display: none;">{ts}Note{/ts}</th>
     <th>{ts}Cancel reason{/ts}</th>
     <th>{ts}Added by{/ts}</th>
 
