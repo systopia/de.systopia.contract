@@ -128,3 +128,10 @@ CRM.$(function($) {
     CRM.vars['de.systopia.contract'].listenersLoaded = true;
   }
 });
+
+// minor adjustments
+cj(document).ready(function() {
+  // hide the 7th/8th column
+  cj('td:nth-child(6),th:nth-child(6)').hide();
+  cj('td:nth-child(7),th:nth-child(7)').hide();
+});
