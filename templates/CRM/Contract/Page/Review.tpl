@@ -6,27 +6,27 @@
 |         P. Figel (pfigel -at- greenpeace.org)                |
 | http://www.systopia.de/                                      |
 +-------------------------------------------------------------*}
-
+{crmScope extensionKey='de.systopia.contract'}
 <table>
   <tr>
 
-    <th>Modification</th>
-    <th>Date</th>
-    <th>Payment method</th>
-    <th>Amount</th>
+    <th>{ts}Modification{/ts}</th>
+    <th>{ts}Date{/ts}</th>
+    <th>{ts}Payment method{/ts}</th>
+    <th>{ts}Amount{/ts}</th>
 
-    <th>Frequency</th>
-    <th>Cycle day</th>
-    <th>Type</th>
-    <th>Campaign</th>
+    <th>{ts}Frequency{/ts}</th>
+    <th>{ts}Cycle day{/ts}</th>
+    <th>{ts}Type{/ts}</th>
+    <th>{ts}Campaign{/ts}</th>
 
-    <th>Medium</th>
-    <th>Note</th>
-    <th>Cancel reason</th>
-    <th>Added by</th>
+    <th>{ts}Medium{/ts}</th>
+    <th>{ts}Note{/ts}</th>
+    <th>{ts}Cancel reason{/ts}</th>
+    <th>{ts}Added by{/ts}</th>
 
-    <th>Status</th>
-    <th>Edit</th>
+    <th>{ts}Status{/ts}</th>
+    <th>{ts}Edit{/ts}</th>
 
   </tr>
 
@@ -53,3 +53,4 @@
     </tr>
   {/foreach}
 </table>
+{/crmScope}

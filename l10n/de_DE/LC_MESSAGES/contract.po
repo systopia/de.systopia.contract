@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-15 15:04+0200\n"
+"POT-Creation-Date: 2022-08-15 15:17+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -109,6 +109,7 @@ msgstr "Zahlung"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Cycle day"
 msgstr "Einzugstag"
 
@@ -132,7 +133,7 @@ msgstr "Einzugsbetrag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment Frequency"
-msgstr "Zahlungsfrequenz"
+msgstr "Turnus"
 
 #: CRM/Contract/Form/Create.php
 msgid "Member since"
@@ -147,6 +148,7 @@ msgid "End date"
 msgstr "Enddatum"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Campaign"
 msgstr "Kampagne"
 
@@ -441,6 +443,7 @@ msgstr "CiviCRM ID"
 #: Civi/Contract/ActionProvider/Action/ResumeContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Date"
 msgstr "Datum"
 
@@ -497,6 +500,7 @@ msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Amount"
 msgstr "Summe"
 
@@ -508,6 +512,7 @@ msgstr "Mandatsreferenz"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Frequency"
 msgstr "Zahlungsrhytmus"
 
@@ -597,8 +602,9 @@ msgid "Donor's Bank Account"
 msgstr "Konto der Spender_in"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
-msgstr "Zahlungsmethoden"
+msgstr "Zahlungsmittel"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 msgid "Defer Payment Start"
@@ -733,13 +739,47 @@ msgstr ""
 msgid "Assign to Recurring Contribution"
 msgstr "Wiederkehrender Zuwendung zuweisen"
 
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Modification"
+msgstr "Änderung"
+
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Type"
+msgstr "Typ"
+
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Medium"
+msgstr ""
+
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Note"
+msgstr "Notiz"
+
+#: templates/CRM/Contract/Page/Review.tpl
+#, fuzzy
+#| msgid "Cancel Reason"
+msgid "Cancel reason"
+msgstr "Kündigungsgrund"
+
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Added by"
+msgstr "erfasst von"
+
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Status"
+msgstr ""
+
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Edit"
+msgstr "bearbeiten"
+
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Pays for Contract"
-msgstr ""
+msgstr "Zahlt Vertrag"
 
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
-msgstr ""
+msgstr "Zahlte Vertrag"
 
 #~ msgid "Join date cannot be in the future."
 #~ msgstr "Eintrittsdatum kann nicht in der Zukunft liegen."
