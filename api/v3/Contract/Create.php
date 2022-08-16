@@ -50,6 +50,7 @@ function civicrm_api3_Contract_create($params){
   $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
   $change->setStatus('Completed');
   $change->populateData();
+  $change->customiseData();
   $change->verifyData();
   $change->shouldBeAccepted();
   $change->save();

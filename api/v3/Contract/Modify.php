@@ -81,6 +81,7 @@ function civicrm_api3_Contract_modify($params) {
   $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
   $change->setStatus('Scheduled');
   $change->populateData();
+  $change->customiseData();
   $change->verifyData();
   $change->shouldBeAccepted();
   $change->save();

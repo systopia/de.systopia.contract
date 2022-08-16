@@ -6,7 +6,6 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
-use Civi\Contract\Event\RenderChangeSubjectEvent as RenderChangeSubjectEvent;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -175,6 +174,14 @@ abstract class CRM_Contract_Change {
   }
 
   /**
+   * Get the raw change data
+   * @return mixed|null
+   */
+  public function getRawData() {
+    return $this->data;
+  }
+
+  /**
    * Derive/populate additional data
    */
   public function populateData() {
@@ -195,6 +202,18 @@ abstract class CRM_Contract_Change {
   }
 
   /**
+   * allow hooks, etc. to adjust data before using/writing it
+   */
+  public function customiseData($contract_before = []) {
+    // customise subject
+    $custom_subject = Civi\Contract\Event\RenderChangeSubjectEvent::renderCustomSubject($this->getActionName(), $contract_before, $this->getRawData());
+//    Civi::dispatcher()->dispatch(RenderChangeSubjectEvent::EVENT_NAME, $event);
+//    $custom_subject = $event->getRenderedSubject();
+    Civi::log()->debug("rendered: " . $custom_subject);
+    $this->data['subject'] = $custom_subject ?? $this->renderChangeSubject($this, $this->getRawData(), $contract_before);
+  }
+
+    /**
    * Get the contract data
    *
    * @param boolean $with_payment_data
@@ -318,9 +337,14 @@ abstract class CRM_Contract_Change {
    */
   public function getSubject($contract_after, $contract_before = NULL) {
     // call custom subject renderers
-    $custom_subject = RenderChangeSubjectEvent::renderCustomSubject($this, $contract_before, $contract_after);
-    // if there's no subject (i.e. null), use the default renderers in the change objects
-    return $custom_subject ?? $this->renderChangeSubject($this, $contract_after, $contract_before);
+//    $event = new RenderChangeSubjectEvent($this->getActionName(), $this->getRawData(), $contract_before, $contract_after);
+//    Civi::dispatcher()->dispatch(RenderChangeSubjectEvent::EVENT_NAME, $event);
+//    $custom_subject = $event->getRenderedSubject();
+//    //return $event->getRenderedSubject();
+////    $custom_subject = RenderChangeSubjectEvent::renderCustomSubject($this, $contract_before, $contract_after);
+//    // if there's no subject (i.e. null), use the default renderers in the change objects
+//    return $custom_subject ?? $this->renderChangeSubject($this, $contract_after, $contract_before);
+    return $this->renderChangeSubject($this, $contract_after, $contract_before);
   }
 
   /**
@@ -754,10 +778,5 @@ abstract class CRM_Contract_Change {
       }
     }
     return $data;
-  }
-
-  public function __toString()
-  {
-    return $this->getActionName();
   }
 }

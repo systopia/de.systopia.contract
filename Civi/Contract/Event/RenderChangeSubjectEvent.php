@@ -10,7 +10,6 @@
 namespace Civi\Contract\Event;
 
 use Civi;
-use CRM_Contract_Change as CRM_Contract_Change;
 
 /**
  * Class RenderChangeSubjectEvent
@@ -25,9 +24,9 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
-   * @var CRM_Contract_Change the change object
+   * @var string the change object
    */
-  protected $change;
+  protected $change_type;
 
   /**
    * @var array the raw contract data before
@@ -47,8 +46,8 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Symfony event to allow customisation of a contract change event subject
    *
-   * @param CRM_Contract_Change $change
-   *   the change object
+   * @param string $change_type
+   *   the change type
    *
    * @param array $contract_data_before
    *   the state of the contract before the change
@@ -57,10 +56,10 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    *   the state of the contract after the change
    *
    */
-  public function __construct($change, $contract_data_before, $contract_data_after)
+  public function __construct($change_type, $contract_data_before, $contract_data_after)
   {
     $this->subject = null;
-    $this->change = $change;
+    $this->change_type = $change_type;
     $this->contract_data_before = $contract_data_before;
     $this->contract_data_after = $contract_data_after;
   }
@@ -69,8 +68,8 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Issue a Symfony event to render a contract change's subject/title
    *
-   * @param CRM_Contract_Change $change
-   *   the change object
+   * @param string $change_type
+   *   change type
    *
    * @param array $contract_data_before
    *   the state of the contract before the change
@@ -81,16 +80,34 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return string
    *   the subject line of the given change activity
    */
-  public static function renderCustomSubject($change, $contract_data_before, $contract_data_after)
+  public static function renderCustomSubject($change_type, $contract_data_before, $contract_data_after)
   {
-    $event = new RenderChangeSubjectEvent($change, $contract_data_before, $contract_data_after);
+    $custom_subject = "error";
+    Civi::log()->debug("renderCustomSubject: start");
+    Civi::log()->debug("change type: {$change_type}");
+    $event = new RenderChangeSubjectEvent($change_type, $contract_data_before, $contract_data_after);
+    Civi::log()->debug("renderCustomSubject: created");
+    $event->setRenderedSubject("TOOOO");
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
+    Civi::log()->debug("renderCustomSubject: dispatched");
     $custom_subject = $event->getRenderedSubject();
+    Civi::log()->debug("rendered: " . $custom_subject);
     if ($custom_subject) {
       // todo: remove
       Civi::log()->debug("Custom subject generated: {$custom_subject}");
     }
     return $custom_subject;
+  }
+
+  /**
+   * Get the currently proposed subject
+   *
+   * @return string
+   *    get the change type
+   */
+  public function getChangeType()
+  {
+    return $this->change_type;
   }
 
   /**
@@ -151,16 +168,5 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public function getAttribute($attribute_name)
   {
     return $this->contract_data_after[$attribute_name] ?? $this->contract_data_before[$attribute_name] ?? null;
-  }
-
-  /**
-   * Get the contract data after this change
-   *
-   * @return CRM_Contract_Change $change
-   *    the change object that needs the subject
-   */
-  public function getChange()
-  {
-    return $this->change;
   }
 }
