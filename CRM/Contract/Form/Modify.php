@@ -163,7 +163,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     // Membership type (membership)
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
-    };
+    }
     $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
 
     // Campaign
@@ -190,7 +190,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       'is_active'       => 1,
       'options'         => ['limit' => 0, 'sort' => 'weight']])['values'] as $cancelReason){
       $cancelOptions[$cancelReason['value']] = $cancelReason['label'];
-    };
+    }
     $this->addRule('activity_date', 'Scheduled date is required for a cancellation', 'required');
     $this->add('select', 'cancel_reason', E::ts('Cancellation reason'), array('' => '- none -') + $cancelOptions, true, array('class' => 'crm-select2 huge'));
 

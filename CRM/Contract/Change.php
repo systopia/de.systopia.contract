@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use Civi\Contract\Event\RenderChangeSubjectEvent as RenderChangeSubjectEvent;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -278,7 +279,7 @@ abstract class CRM_Contract_Change {
     $id2class = self::getActivityTypeId2Class();
     $class2id = array_flip($id2class);
     if (!isset($class2id[get_class($this)])) {
-      throw Exception("Missing contract change activity type: " . get_class($this));
+      throw new CRM_Core_Exception("Missing contract change activity type: " . get_class($this));
     }
     $activity_type_id = $class2id[get_class($this)];
     return $activity_type_id;
@@ -462,7 +463,7 @@ abstract class CRM_Contract_Change {
    * @param $field_name  string field this value is from
    * @return string      string labelled value
    */
-  protected function labelValue($value, $field_name) {
+  public function labelValue($value, $field_name) {
     switch ($field_name) {
       case 'membership_type_id':
       case 'contract_updates.ch_membership_type':

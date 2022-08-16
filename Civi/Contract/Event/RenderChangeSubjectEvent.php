@@ -9,8 +9,8 @@
 
 namespace Civi\Contract\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-use \CRM_Contract_Change as CRM_Contract_Change;
+use Civi;
+use CRM_Contract_Change as CRM_Contract_Change;
 
 /**
  * Class RenderChangeSubjectEvent
@@ -27,22 +27,22 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * @var CRM_Contract_Change the change object
    */
-  protected CRM_Contract_Change $change;
+  protected $change;
 
   /**
-   * @var ?array the raw contract data before
+   * @var array the raw contract data before
    */
-  protected ?array $contract_data_before;
+  protected $contract_data_before;
 
   /**
-   * @var ?array the raw contract data after
+   * @var array the raw contract data after
    */
-  protected ?array $contract_data_after;
+  protected $contract_data_after;
 
   /**
-   * @var ?string the raw contract data after
+   * @var string the raw contract data after
    */
-  protected ?string $subject;
+  protected $subject;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
@@ -84,17 +84,17 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public static function renderCustomSubject($change, $contract_data_before, $contract_data_after)
   {
     $event = new RenderChangeSubjectEvent($change, $contract_data_before, $contract_data_after);
-    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
-    return $event->getSubject();
+    Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
+    return $event->getRenderedSubject();
   }
 
   /**
    * Set/override the url for the rapid create form
    *
-   * @param ?string $subject
+   * @param string $subject
    *    the proposed subject for the change
    */
-  public function setSubject($subject)
+  public function setRenderedSubject($subject)
   {
     $this->subject = $subject;
   }
@@ -105,7 +105,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return string $subject
    *    the proposed subject for the change
    */
-  public function getSubject()
+  public function getRenderedSubject()
   {
     return $this->subject;
   }
@@ -114,7 +114,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * Get the contract data before this change
    *
    * @return array $subject
-   *    the proposed subject for the change
+   *    raw contract data before the change
    */
   public function getContractDataBefore()
   {
@@ -125,10 +125,37 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * Get the contract data after this change
    *
    * @return array $subject
-   *    the proposed subject for the change
+   *    raw contract data after the change
    */
   public function getContractDataAfter()
   {
     return $this->contract_data_after;
+  }
+
+  /**
+   * Get a value from the data provided. It will first be taken from
+   *   the *after* data, but if it doesn't contain any iformation,
+   *   it'll use the *before* data for the lookup
+   *
+   * @param string $attribute_name
+   *   attribute name
+   *
+   * @return mixed|null
+   *   the value
+   */
+  public function getAttribute($attribute_name)
+  {
+    return $this->contract_data_after[$attribute_name] ?? $this->contract_data_before[$attribute_name] ?? null;
+  }
+
+  /**
+   * Get the contract data after this change
+   *
+   * @return CRM_Contract_Change $change
+   *    the change object that needs the subject
+   */
+  public function getChange()
+  {
+    return $this->change;
   }
 }

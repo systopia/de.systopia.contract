@@ -9,6 +9,9 @@
 
 namespace Civi\Contract\Event;
 
+use Civi;
+use CRM_Utils_System;
+
 /**
  * Class ContractCreateFormEvent
  *
@@ -22,17 +25,17 @@ class ContractCreateFormEvent extends ConfigurationEvent
   public const EVENT_NAME = 'de.contract.createform';
 
   /** @var int ID of the contact involved */
-  protected int $contact_id;
+  protected $contact_id;
 
   /**
    * @var string|null URL to a contract create from - if one exists
    */
-  protected ?string $url = null;
+  protected $url = null;
 
   protected function __construct($contact_id)
   {
     $this->contact_id = $contact_id;
-    $this->url = \CRM_Utils_System::url('civicrm/contract/create', 'cid='.$contact_id, true);
+    $this->url = CRM_Utils_System::url('civicrm/contract/create', 'cid='.$contact_id, true);
   }
 
   /**
@@ -64,7 +67,7 @@ class ContractCreateFormEvent extends ConfigurationEvent
   /**
    * Get the currently set url for the contract create form
    *
-   * @return ?string
+   * @return string
    */
   public function getContractCreateFormUrl(): ?string
   {
@@ -82,7 +85,7 @@ class ContractCreateFormEvent extends ConfigurationEvent
   public static function getUrl($contact_id)
   {
     $event = new ContractCreateFormEvent($contact_id);
-    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
+    Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->getContractCreateFormUrl();
   }
 }

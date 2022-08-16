@@ -19,5 +19,4 @@ use Symfony\Component\EventDispatcher\Event;
  */
 abstract class ConfigurationEvent extends Event
 {
-
 }

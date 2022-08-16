@@ -9,6 +9,7 @@
 
 namespace Civi\Contract\Event;
 
+use Civi;
 use Symfony\Component\EventDispatcher\Event;
 use \CRM_Contract_Change as CRM_Contract_Change;
 
@@ -24,10 +25,10 @@ class EligibleContractCampaigns extends ConfigurationEvent
   public const EVENT_NAME = 'de.contract.eligible_campaigns';
 
   /**
-   * @var ?array
+   * @var array
    *  the list of eligible campaigns [id => label]
    */
-  protected ?array $campaigns;
+  protected $campaigns;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
@@ -52,7 +53,7 @@ class EligibleContractCampaigns extends ConfigurationEvent
   public static function getAllEligibleCampaigns($eligible_campaigns = [])
   {
     $event = new EligibleContractCampaigns($eligible_campaigns);
-    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
+    Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->campaigns;
   }
 

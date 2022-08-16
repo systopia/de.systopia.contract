@@ -66,7 +66,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     // Membership type (membership)
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
-    };
+    }
     $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
 
     // Source media (activity)
@@ -90,7 +90,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'is_active'       => 1,
       'options'         => ['limit' => 0, 'sort' => 'weight']])['values'] as $optionValue){
       $membershipChannelOptions[$optionValue['value']] = $optionValue['label'];
-    };
+    }
     $this->add('select', 'membership_channel', E::ts('Membership channel'), array('' => '- none -') + $membershipChannelOptions, false, array('class' => 'crm-select2'));
 
     // Notes
