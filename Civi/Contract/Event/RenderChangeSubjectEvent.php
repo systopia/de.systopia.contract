@@ -85,7 +85,12 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   {
     $event = new RenderChangeSubjectEvent($change, $contract_data_before, $contract_data_after);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
-    return $event->getRenderedSubject();
+    $custom_subject = $event->getRenderedSubject();
+    if ($custom_subject) {
+      // todo: remove
+      Civi::log()->debug("Custom subject generated: {$custom_subject}");
+    }
+    return $custom_subject;
   }
 
   /**
