@@ -12,6 +12,8 @@
 require_once 'contract.civix.php';
 use CRM_Contract_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use \Civi\Contract\Event\RapidCreateFormEvent as RapidCreateFormEvent;
+use \Civi\Contract\Event\ContractCreateFormEvent as ContractCreateFormEvent;
 
 /**
  * Implements hook_civicrm_container()
@@ -24,7 +26,6 @@ function contract_civicrm_container(ContainerBuilder $container) {
   }
 }
 
-
 /**
  * Implements hook_civicrm_config().
  *
@@ -32,15 +33,6 @@ function contract_civicrm_container(ContainerBuilder $container) {
  */
 function contract_civicrm_config(&$config) {
   _contract_civix_civicrm_config($config);
-}
-
-/**
- * Implements hook_civicrm_xmlMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
- */
-function contract_civicrm_xmlMenu(&$files) {
-  _contract_civix_civicrm_xmlMenu($files);
 }
 
 /**
@@ -109,14 +101,7 @@ function contract_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
 //   _contract_civix_civicrm_managed($entities);
 // }
 
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
- */
-function contract_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _contract_civix_civicrm_alterSettingsFolders($metaDataFolders);
-}
+
 
 /**
  * UI Adjustements for membership forms
@@ -141,7 +126,7 @@ function contract_civicrm_pageRun( &$page ){
 }
 
 /**
- * UI Adjustements for membership forms
+ * UI Adjustments for membership forms
  *
  * @todo shorten this function call - move into an 1 or more alter functions
  */
@@ -212,20 +197,18 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       if($form->getAction() === CRM_Core_Action::ADD){
         if($cid = CRM_Utils_Request::retrieve('cid', 'Integer')){
-          CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contract/create', 'cid='.$cid, true));
-        }else{
-          $domain = strtolower(civicrm_api3('Setting', 'GetValue', [
-            'name' => 'contract_domain',
-            'group' => 'Contract preferences'
-          ]));
-          if (empty($domain)) {
-            $default = civicrm_api3('Setting', 'getdefaults', [
-              'name' => 'contract_domain',
-              'group' => 'Contract preferences'
-            ]);
-            $domain = strtolower(reset($default['values'])['contract_domain']);
+          // if the cid is given, it's the "add membership" for an existing contract
+          $contract_create_form_url = ContractCreateFormEvent::getUrl($cid);
+          if ($contract_create_form_url) {
+            CRM_Utils_System::redirect($contract_create_form_url);
           }
-          CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/contract/rapidcreate/' . $domain, true));
+        }else{
+          // no id - this is a 'create new membership':
+          //   check if somebody registered a rapid create form and redirect
+          $rapid_create_form_url = RapidCreateFormEvent::getUrl();
+          if ($rapid_create_form_url) {
+            CRM_Utils_System::redirect($rapid_create_form_url);
+          }
         }
       }
 
@@ -301,7 +284,6 @@ function contract_civicrm_links( $op, $objectName, $objectId, &$links, &$mask, &
     }
   }
 }
-
 
 /**
  * CiviCRM PRE hook: Monitoring of relevant entity changes

@@ -145,13 +145,14 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     CRM_Contract_SepaLogic::addJsSepaTools();
 
     // add a generic switch to clean up form
-    $payment_options = array(
-      'select'   => 'select other',
-      'modify'   => 'modify');
+    $payment_options = [
+      'select'   => E::ts('select other'),
+      'modify'   => E::ts('modify')
+    ];
 
     // update also has the option of no change to payment contract
     if ($this->modify_action == 'update') {
-      $payment_options =  array('nochange' => 'no change') + $payment_options;
+      $payment_options =  ['nochange' => E::ts('no change')] + $payment_options;
     }
     $this->add('select', 'payment_option', E::ts('Payment'), $payment_options);
 
@@ -162,7 +163,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     // Membership type (membership)
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
-    };
+    }
     $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
 
     // Campaign
@@ -189,7 +190,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       'is_active'       => 1,
       'options'         => ['limit' => 0, 'sort' => 'weight']])['values'] as $cancelReason){
       $cancelOptions[$cancelReason['value']] = $cancelReason['label'];
-    };
+    }
     $this->addRule('activity_date', 'Scheduled date is required for a cancellation', 'required');
     $this->add('select', 'cancel_reason', E::ts('Cancellation reason'), array('' => '- none -') + $cancelOptions, true, array('class' => 'crm-select2 huge'));
 

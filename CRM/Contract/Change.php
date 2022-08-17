@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use Civi\Contract\Event\RenderChangeSubjectEvent as RenderChangeSubjectEvent;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -15,7 +16,7 @@ use CRM_Contract_ExtensionUtil as E;
  * This new 'Change' concept is the replacement for the CRM_Contract_ModificationActivity
  *  and the CRM_Contract_Handlers
  */
-abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRendererInterface {
+abstract class CRM_Contract_Change {
 
   /**
    * Data representing the data. Will mostly be the activity data
@@ -278,7 +279,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
     $id2class = self::getActivityTypeId2Class();
     $class2id = array_flip($id2class);
     if (!isset($class2id[get_class($this)])) {
-      throw Exception("Missing contract change activity type: " . get_class($this));
+      throw new CRM_Core_Exception("Missing contract change activity type: " . get_class($this));
     }
     $activity_type_id = $class2id[get_class($this)];
     return $activity_type_id;
@@ -316,11 +317,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
    * @return string subject line
    */
   public function getSubject($contract_after, $contract_before = NULL) {
-    $subject_renderer = CRM_Contract_Configuration::getSubjectRender();
-    if (!$subject_renderer) {
-      $subject_renderer = $this; // use default renderer
-    }
-    return $subject_renderer->renderChangeSubject($this, $contract_after, $contract_before);
+    return $this->renderChangeSubject($this, $contract_after, $contract_before);
   }
 
   /**
@@ -463,7 +460,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
    * @param $field_name  string field this value is from
    * @return string      string labelled value
    */
-  protected function labelValue($value, $field_name) {
+  public function labelValue($value, $field_name) {
     switch ($field_name) {
       case 'membership_type_id':
       case 'contract_updates.ch_membership_type':
@@ -754,5 +751,10 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
       }
     }
     return $data;
+  }
+
+  public function __toString()
+  {
+    return $this->getActionName();
   }
 }

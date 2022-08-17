@@ -5,7 +5,7 @@
 | B. Endres (endres -at- systopia.de)                          |
 | http://www.systopia.de/                                      |
 +-------------------------------------------------------------*}
-
+{crmScope extensionKey='de.systopia.contract'}
 <div class="crm-block crm-form-block">
 
   <!-- <h3>
@@ -20,7 +20,7 @@
   {if $modificationActivity eq 'update' OR $modificationActivity eq 'revive' }
 
     <div class="crm-section">
-      <div class="label">Payment Preview</div>
+      <div class="label">{ts}Payment Preview{/ts}</div>
       <div class="content recurring-contribution-summary-text">None</div>
       <div class="clear"></div>
     </div>
@@ -235,3 +235,4 @@ cj(document).ready(function() {
 </script>
 {/literal}
 {/if}
+{/crmScope}
