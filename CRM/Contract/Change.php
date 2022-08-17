@@ -317,10 +317,7 @@ abstract class CRM_Contract_Change {
    * @return string subject line
    */
   public function getSubject($contract_after, $contract_before = NULL) {
-    // call custom subject renderers
-    $custom_subject = RenderChangeSubjectEvent::renderCustomSubject($this, $contract_before, $contract_after);
-    // if there's no subject (i.e. null), use the default renderers in the change objects
-    return $custom_subject ?? $this->renderChangeSubject($this, $contract_after, $contract_before);
+    return $this->renderChangeSubject($this, $contract_after, $contract_before);
   }
 
   /**

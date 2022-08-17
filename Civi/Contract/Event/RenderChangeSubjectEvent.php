@@ -15,6 +15,11 @@ use CRM_Contract_Change as CRM_Contract_Change;
 /**
  * Class RenderChangeSubjectEvent
  *
+ * @note  currently, this doesn't work during the creation of the change activities,
+ *   because the symfony events cause havoc there
+ *
+ * @todo this needs to be refactored into a post hook for the creation of change activites
+ *
  * Allows extensions to provide a custom renderer for
  *  the subjects of change events
  *
