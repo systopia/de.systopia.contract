@@ -37,6 +37,10 @@ commands:
       - run: |
           EXT_DIR=/buildkit/build/<< parameters.build_name >>/web/sites/default/files/civicrm/ext
           cd $EXT_DIR
+          wget https://github.com/Project60/org.project60.sepa/releases/download/1.6.1/org.project60.sepa-1.6.1.tar.gz
+          tar xfz org.project60.sepa-1.6.1.tar.gz
+          chown buildkit:buildkit org.project60.sepa -R
+          
           git clone https://github.com/systopia/org.project60.sepa.git org.project60.sepa
           chown buildkit:buildkit org.project60.sepa -R
           git clone https://github.com/systopia/org.project60.banking.git banking-src
