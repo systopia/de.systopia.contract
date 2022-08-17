@@ -4,7 +4,7 @@ commands:
     description: "Setup environment"
     steps:
       - run: |
-          composer self-update --1
+          composer self-update
   install_civicrm:
     description: "Install CiviCRM"
     parameters:
