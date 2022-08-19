@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-15 15:17+0200\n"
+"POT-Creation-Date: 2022-08-19 15:22+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -127,7 +127,8 @@ msgstr "IBAN"
 msgid "BIC"
 msgstr "BIC"
 
-#: CRM/Contract/Form/Create.php
+#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
 msgid "Installment amount"
 msgstr "Einzugsbetrag"
 
@@ -224,6 +225,51 @@ msgstr "Kündigungsgrund"
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
 msgid "Resume Date"
 msgstr "Wiederaufnahmedatum"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+msgid "Debitor name"
+msgstr "Name der Spender_in"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+#, fuzzy
+#| msgid "Donor's Bank Account"
+msgid "Debitor account"
+msgstr "Konto der Spender_in"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+msgid "Creditor name"
+msgstr "Kreditor"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+msgid "Creditor account"
+msgstr "Kreditor Konto"
+
+#: CRM/Contract/Form/Modify.php js/contract_modify_tools.js
+msgid "Payment method: SEPA Direct Debit"
+msgstr "Zahlungsart: SEPA Direct Debit"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: js/contract_modify_tools.js templates/CRM/Contract/Page/Review.tpl
+msgid "Frequency"
+msgstr "Zahlungsrhytmus"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+#, fuzzy
+#| msgid "Anual Amount"
+msgid "Annual amount"
+msgstr "Jährlicher Betrag"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+msgid "Next debit"
+msgstr ""
 
 #: CRM/Contract/Form/Settings.php
 msgid "Contract modification reviewers"
@@ -391,6 +437,12 @@ msgstr "Mandat / Wiederkehrende Zuwendung"
 msgid "NOT FOUND!"
 msgstr "NICHT GEFUNDEN!"
 
+#: CRM/Contract/RecurringContribution.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Payment method"
+msgstr "Zahlungsart"
+
 #: CRM/Contract/SepaLogic.php
 msgid "The created mandate for membership [%1] has no BIC."
 msgstr "Das erstellte Mandat für die Mitgliedschaft  [%1] hat keine BIC."
@@ -512,12 +564,6 @@ msgstr "Mandatsreferenz"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Frequency"
-msgstr "Zahlungsrhytmus"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Collection Day"
 msgstr "Einzugstag"
 
@@ -602,11 +648,6 @@ msgid "Donor's Bank Account"
 msgstr "Konto der Spender_in"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Payment method"
-msgstr "Zahlungsmittel"
-
-#: Civi/Contract/ActionProvider/Action/GetContract.php
 msgid "Defer Payment Start"
 msgstr "Zahlungsbeginn aufschieben"
 
@@ -676,6 +717,14 @@ msgstr ""
 
 #: contract.php
 msgid "Allow editing memberships using the core membership form"
+msgstr ""
+
+#: js/contract_modify_tools.js templates/CRM/Contract/Form/Modify.tpl
+msgid "None"
+msgstr ""
+
+#: js/contract_modify_tools.js
+msgid "de.systopia.contract"
 msgstr ""
 
 #: settings/contract.setting.php
@@ -789,9 +838,6 @@ msgstr "Zahlte Vertrag"
 
 #~ msgid "DD-Venue"
 #~ msgstr "Ort der Anwerbung"
-
-#~ msgid "First name"
-#~ msgstr "Vorname"
 
 #~ msgid "Last name"
 #~ msgstr "Nachname"
