@@ -67,6 +67,8 @@ function updatePaymentSummaryText() { (function (cj, ts){
     } else if (mode === "modify") {
         // render the current SEPA values
         let current_values = CRM.vars['de.systopia.contract'].current_contract;
+        console.log("HERE");
+        console.log(current_values);
         let creditor = CRM.vars['de.systopia.contract'].creditor;
         let debitor_name = CRM.vars['de.systopia.contract'].debitor_name;
         let cycle_day = cj('[name=cycle_day]').val();
@@ -85,6 +87,11 @@ function updatePaymentSummaryText() { (function (cj, ts){
         } else {
             next_collection = nextCollectionDate(cycle_day, start_date, null);
         }
+
+        // add placeholders for IBAN,BIC,AMOUNT
+        cj("#iban").attr("placeholder", current_values.fields.iban);
+        cj("#bic").attr("placeholder", current_values.fields.bic);
+        cj("#payment_amount").attr("placeholder", current_values.fields.amount);
 
         // fill with old fields
         if (!iban.length) {

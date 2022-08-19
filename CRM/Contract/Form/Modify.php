@@ -150,7 +150,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     // add a generic switch to clean up form
     $payment_options = [
       'select'   => E::ts('select other'),
-      'modify'   => E::ts('modify')
+      'modify'   => E::ts('modify contract')
     ];
 
     // update also has the option of no change to payment contract

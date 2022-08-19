@@ -176,6 +176,7 @@ class CRM_Contract_RecurringContribution {
       $mandate = $this->getSepaByRecurringContributionId($cr['id'], $sepaMandates);
       $result['fields']['payment_instrument'] = "SEPA Direct Debit";
       $result['fields']['iban'] = $mandate['iban'];
+      $result['fields']['bic'] = $mandate['bic'];
       $result['fields']['org_iban'] = $sepaCreditors[$mandate['creditor_id']]['iban'];
       $result['fields']['creditor_name'] = $sepaCreditors[$mandate['creditor_id']]['name'];
       // $result['fields']['org_iban'] = $sepa;
