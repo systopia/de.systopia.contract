@@ -135,7 +135,8 @@ jobs:
       - run_all:
           build_name: civi-5.50.4
           version: "5.50.4"
-          url: http://localhost:8082  build_mariadb_10_4:
+          url: http://localhost:8082
+  build_mariadb_10_4:
     executor: civicrm
     docker:
       - image: michaelmcandrew/civicrm-buildkit
