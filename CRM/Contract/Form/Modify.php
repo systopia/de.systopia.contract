@@ -109,6 +109,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       $this->addPauseFields();
     }
 
+    // add the JS file for the payment preview
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/contract_modify_tools.js');
+
     $this->addButtons([
       ['type' => 'cancel', 'name' => E::ts('Discard changes'), 'submitOnce' => TRUE], // since Cancel looks bad when viewed next to the Cancel action
       ['type' => 'submit', 'name' => $this->change_class::getChangeTitle(), 'isDefault' => true, 'submitOnce' => TRUE],
@@ -318,5 +321,18 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     }
     civicrm_api3('Contract', 'modify', $params);
     civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
+  }
+
+  public function __expose_js_translations()
+  {
+    E::ts("Debitor name");
+    E::ts("Debitor account");
+    E::ts("Creditor name");
+    E::ts("Creditor account");
+    E::ts("Payment method: SEPA Direct Debit");
+    E::ts("Frequency");
+    E::ts("Annual amount");
+    E::ts("Installment amount");
+    E::ts("Next debit");
   }
 }
