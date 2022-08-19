@@ -132,8 +132,10 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
         'return' => 'display_name'));
     }
 
+    // load current contract
+    $current_contract = CRM_Contract_RecurringContribution::getCurrentContract($this->membership['contact_id'], $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')]);
     // JS for the pop up
-    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', array(
+    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', [
       'cid'                     => $this->membership['contact_id'],
       'current_recurring'       => $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')],
       'debitor_name'            => $this->contact['display_name'],
@@ -143,9 +145,18 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       'grace_end'               => CRM_Contract_SepaLogic::getNextInstallmentDate($this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')]),
       // 'graceful_collections'    => CRM_Contract_SepaLogic::getNextCollections(),
       'action'                  => $this->modify_action,
-      'current_contract'        => CRM_Contract_RecurringContribution::getCurrentContract($this->membership['contact_id'], $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')]),
-      'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->membership['contact_id'], TRUE, $this->get('id'))));
+      'current_contract'        => $current_contract,
+      'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->membership['contact_id'], TRUE, $this->get('id'))
+  ]);
+
+    // pass the current_contract_amount
+    if (isset($current_contract['fields']['amount'])) {
+      $this->addElement('hidden', 'current_contract_amount', $current_contract['fields']['amount']);
+    }
+
+    // add the JS tools
     CRM_Contract_SepaLogic::addJsSepaTools();
+
 
     // add a generic switch to clean up form
     $payment_options = [
@@ -158,7 +169,6 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       $payment_options =  ['nochange' => E::ts('no change')] + $payment_options;
     }
     $this->add('select', 'payment_option', E::ts('Payment'), $payment_options);
-
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
     $formUtils->addPaymentContractSelect2('recurring_contribution', $this->membership['contact_id'], false, $this->get('id'));
@@ -252,7 +262,11 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
         HTML_QuickForm::setElementError ( 'payment_frequency', 'Please specify a frequency when specifying an amount');
       }
       if($submitted['payment_frequency'] && !$submitted['payment_amount']){
-        HTML_QuickForm::setElementError ( 'payment_amount', 'Please specify an amount when specifying a frequency');
+        if (trim($submitted['payment_amount']) == '') {
+          // empty values are ok, will later be filled with previous values
+        } else {
+          HTML_QuickForm::setElementError ( 'payment_amount', 'Please specify an amount when specifying a frequency');
+        }
       }
 
       // SEPA validation
@@ -293,6 +307,10 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
           break;
 
         case 'modify': // manually modify the existing
+          if (trim($submitted['payment_amount']) == '') {
+            // empty means, use the last one:
+            $submitted['payment_amount'] = $submitted['current_contract_amount'];
+          }
           $params['membership_payment.membership_annual'] = CRM_Contract_SepaLogic::formatMoney($submitted['payment_frequency'] * CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']));
           $params['membership_payment.membership_frequency'] = $submitted['payment_frequency'];
           $params['membership_payment.cycle_day'] = $submitted['cycle_day'];
@@ -323,7 +341,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
   }
 
-  public function __expose_js_translations()
+  // this is just a crutch since civistrings doesn't pick up those strings in my .js files
+  public function __expose_missing_js_translations()
   {
     E::ts("Debitor name");
     E::ts("Debitor account");

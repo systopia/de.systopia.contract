@@ -16,6 +16,9 @@
     Please confirm that you want to {$historyAction} this contract by clicking on '{$historyAction|ucfirst}' below.
   {/if}
 </h3> -->
+  {* add some more info to the form *}
+  {$form.current_contract_amount.html}
+
   {if $modificationActivity eq 'update' OR $modificationActivity eq 'revive' }
 
     <div class="crm-section">
