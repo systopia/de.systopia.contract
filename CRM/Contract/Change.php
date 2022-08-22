@@ -629,6 +629,16 @@ abstract class CRM_Contract_Change {
   }
 
   /**
+   * Get the action name for the given class name
+   *
+   * @param $class_name string action class name
+   * @return string action name, e.g. 'cancel'
+   */
+  public static function getActionByClass($class_name) {
+    return CRM_Utils_Array::value($class_name, array_flip(self::$action2class));
+  }
+
+  /**
    * Get the list of activity type ID to class
    *
    * @return array activity_type_id => class name
