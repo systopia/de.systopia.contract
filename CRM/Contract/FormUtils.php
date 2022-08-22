@@ -79,7 +79,7 @@ class CRM_Contract_FormUtils
       $recContribution = civicrm_api3('ContributionRecur', 'getsingle', array('id' => $recContributionId));
       $customGroupTableId = key($details[$result['custom_group_id']]);
       $result = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_annual'));
-      $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = CRM_Utils_Money::format($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'], $recContribution['currency']);
+      $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = CRM_Utils_Money::format($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'], $recContribution['currency'] ?? 'EUR');
       $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_data_type'] = 'String';
       $this->form->assign('viewCustomData', $details);
     }
