@@ -397,7 +397,12 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
 
     // load activities
     $result = $this->callAPISuccess('Activity', 'get', $query);
-    return $result['values'];
+    $activities = $result['values'];
+    foreach ($activities as &$activity) {
+      CRM_Contract_CustomData::labelCustomFields($activity);
+    }
+
+    return $activities;
   }
 
 
