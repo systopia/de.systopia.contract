@@ -733,7 +733,7 @@ msgstr "geplante Änderungen"
 
 #: contract.php
 msgid "scheduled review"
-msgstr "Prüfung"
+msgstr "anzeigen"
 
 #: contract.php
 msgid "hide"

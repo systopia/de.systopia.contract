@@ -28,7 +28,7 @@ CRM.$(function($) {
     var link = $(document).find('#crm-membership-review-link_' + membershipId);
     if (link.length == 0) {
       var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
-      link = " <a class='toggle-review' id='crm-membership-review-link_" + membershipId + "' href='" + queryURL + "'>" + getReviewLinkText(membershipId) + "</a>";
+      link = " <a class='toggle-review' id='crm-membership-review-link_" + membershipId + "' href='" + queryURL + "'>[" + getReviewLinkText(membershipId) + "]</a>";
       $(this).after("<tr class='crm-membership crm-membership-review odd odd-row' id='crm-membership-review_" + membershipId + "'><td colspan='" + $(this).find('td').length + "'></td></tr>");
       $(this).find('td.crm-membership-status').append(link);
     }
@@ -68,12 +68,12 @@ CRM.$(function($) {
     var reviewLink = $(document).find('#crm-membership-review-link_' + membershipId);
     if(reviewRow.is(":visible")){
       reviewRow.hide();
-      reviewLink.html(getReviewLinkText(membershipId));
+      reviewLink.html('[' + getReviewLinkText(membershipId) + ']');
     }else{
       var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
       reviewRow.find('td').load(queryURL, function(){
         reviewRow.show();
-        reviewLink.html(reviewLinkTitles['hide']);
+        reviewLink.html('[' + reviewLinkTitles['hide'] + ']');
       });
     }
   }
