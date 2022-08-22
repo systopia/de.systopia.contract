@@ -100,6 +100,8 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       $this->add('wysiwyg', 'activity_details', E::ts('Notes'));
     }
 
+    // add the JS file for the payment preview
+    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/contract_modify_tools.js');
 
     $this->addButtons([
       ['type' => 'cancel', 'name' => E::ts('Cancel'), 'submitOnce' => TRUE],

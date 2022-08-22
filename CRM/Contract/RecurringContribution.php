@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 class CRM_Contract_RecurringContribution {
 
   /** cached variables */
@@ -174,6 +176,7 @@ class CRM_Contract_RecurringContribution {
       $mandate = $this->getSepaByRecurringContributionId($cr['id'], $sepaMandates);
       $result['fields']['payment_instrument'] = "SEPA Direct Debit";
       $result['fields']['iban'] = $mandate['iban'];
+      $result['fields']['bic'] = $mandate['bic'];
       $result['fields']['org_iban'] = $sepaCreditors[$mandate['creditor_id']]['iban'];
       $result['fields']['creditor_name'] = $sepaCreditors[$mandate['creditor_id']]['name'];
       // $result['fields']['org_iban'] = $sepa;
@@ -182,15 +185,15 @@ class CRM_Contract_RecurringContribution {
       $result['label'] = "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandate['reference']})";
 
       $result['text_summary'] = "
-        Debitor name: {$result['fields']['display_name']}<br />
-        Debitor account: {$result['fields']['iban']}<br />
-        Creditor name: {$result['fields']['creditor_name']}<br />
-        Creditor account: {$result['fields']['org_iban']}<br />
-        Payment method: {$result['fields']['payment_instrument']}<br />
-        Frequency: {$result['fields']['frequency']}<br />
-        Annual amount: {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />
-        Installment amount: {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />
-        Next debit: {$result['fields']['next_debit']}
+        " . E::ts("Debitor name") . ": {$result['fields']['display_name']}<br />
+        " . E::ts("Debitor account") . ": {$result['fields']['iban']}<br />
+        " . E::ts("Creditor name") . ": {$result['fields']['creditor_name']}<br />
+        " . E::ts("Creditor account") . ": {$result['fields']['org_iban']}<br />
+        " . E::ts("Payment method") . ": {$result['fields']['payment_instrument']}<br />
+        " . E::ts("Frequency") . ": {$result['fields']['frequency']}<br />
+        " . E::ts("Annual amount") . ": {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />
+        " . E::ts("Installment amount") . ": {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />
+        " . E::ts("Next debit") . ": {$result['fields']['next_debit']}
       ";
 
     } else {

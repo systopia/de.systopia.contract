@@ -122,6 +122,12 @@ function contract_civicrm_pageRun( &$page ){
     CRM_Core_Resources::singleton()->addVars('de.systopia.contract', array('contractStatuses' => $contractStatuses));
     CRM_Core_Resources::singleton()->addVars('de.systopia.contract', array('cid' => $page->_contactId));
     CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'templates/CRM/Member/Page/Tab.js');
+    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', ['reviewLinkTitles' => [
+        'needs review' => E::ts("needs review"),
+        'scheduled modifications' => E::ts("scheduled modifications"),
+        'scheduled review' => E::ts("scheduled review"),
+        'hide' => E::ts("hide"),
+    ]]);
   }
 }
 
