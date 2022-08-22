@@ -11,6 +11,7 @@
 CRM.$(function($) {
 
   var contractStatuses = CRM.vars['de.systopia.contract'].contractStatuses;
+  var reviewLinkTitles = CRM.vars['de.systopia.contract'].reviewLinkTitles;
 
   // # Link to membership create should be replaced with contract create #
   $('a[href="/civicrm/contact/view/membership?reset=1&action=add&cid=' + CRM.vars['de.systopia.contract'].cid + '&context=membership"]')
@@ -38,11 +39,11 @@ CRM.$(function($) {
 
   function getReviewLinkText(membershipId){
     if(contractStatuses[membershipId].needs_review > 0){
-      return 'needs review';
+      return reviewLinkTitles['needs review'];
     }else if(contractStatuses[membershipId].scheduled > 0) {
-      return 'scheduled modifications';
+      return reviewLinkTitles['scheduled modifications'];
     }
-    return 'review';
+    return reviewLinkTitles['scheduled review'];
   }
 
   function decorateRow(membershipId){
@@ -72,7 +73,7 @@ CRM.$(function($) {
       var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
       reviewRow.find('td').load(queryURL, function(){
         reviewRow.show();
-        reviewLink.html('hide');
+        reviewLink.html(reviewLinkTitles['hide']);
       });
     }
   }

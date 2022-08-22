@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: de.systopia.contract\n"
-"POT-Creation-Date: 2022-08-19 15:39+0200\n"
+"POT-Creation-Date: 2022-08-22 13:57+0200\n"
 "Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -449,6 +449,30 @@ msgstr ""
 msgid "Upgrade %1 to revision %2"
 msgstr ""
 
+#: CRM/Contract/Utils.php
+msgid "New"
+msgstr ""
+
+#: CRM/Contract/Utils.php
+msgid "Current"
+msgstr ""
+
+#: CRM/Contract/Utils.php
+msgid "Grace"
+msgstr ""
+
+#: CRM/Contract/Utils.php
+msgid "Pending"
+msgstr ""
+
+#: CRM/Contract/Utils.php
+msgid "Cancelled"
+msgstr ""
+
+#: CRM/Contract/Utils.php
+msgid "Paused"
+msgstr ""
+
 #: CRM/Contract/Validation/ContractNumber.php
 msgid "Reference '%1' is already in use!"
 msgstr ""
@@ -687,6 +711,22 @@ msgstr ""
 
 #: Civi/Contract/ContainerSpecs.php
 msgid "Contract: Update"
+msgstr ""
+
+#: contract.php
+msgid "needs review"
+msgstr ""
+
+#: contract.php
+msgid "scheduled modifications"
+msgstr ""
+
+#: contract.php
+msgid "scheduled review"
+msgstr ""
+
+#: contract.php
+msgid "hide"
 msgstr ""
 
 #: contract.php
