@@ -207,7 +207,7 @@ msgstr "bestehendes Mandat"
 
 #: CRM/Contract/Form/Modify.php
 msgid "modify contract"
-msgstr "Vertrag anpassen"
+msgstr "Mandat anpassen"
 
 #: CRM/Contract/Form/Modify.php
 msgid "no change"
