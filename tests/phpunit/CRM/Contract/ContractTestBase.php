@@ -272,6 +272,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
         // custom stuff:
         'membership_payment.membership_recurring_contribution' => $params['membership_payment.membership_recurring_contribution'],
         'membership_general.membership_dialoger'               => $contact_id,
+        'membership_payment.from_name'                         => 'Johannes',
         // membership_general.membership_contract   // Contract number
         // membership_general.membership_reference  // Reference number
         // membership_general.membership_contract   // Contract number
