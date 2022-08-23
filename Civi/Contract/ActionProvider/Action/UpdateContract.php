@@ -33,6 +33,8 @@ class UpdateContract extends AbstractAction {
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
+
+        new Specification('process_scheduled_modifications',         'Integer', E::ts('directly process scheduled changes'), false, 0, null, $this->yesNoOptions()),
         #new Specification('default_action',       'Integer', E::ts('Modify Action (default)'), true, null, null, $this->getModifyActions(), false),
         #new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
         #new Specification('default_creditor_id',       'Integer', E::ts('Creditor (default)'), true, null, null, $this->getCreditors(), false),
@@ -91,6 +93,7 @@ class UpdateContract extends AbstractAction {
         #new Specification('validation_date', 'Date', E::ts('Validation Date'), false, date('Y-m-d H:i:s')),
 
         # Contract stuff
+        new Specification('account_holder',       'String',  E::ts('Members Bank Account'), false),
         #new Specification('membership_payment.to_ba',       'String',  E::ts('IBAN'), true),
         #new Specification('membership_payment.membership_annual',      'Money',  E::ts('Anual Amount'), false),
         #new Specification('membership_payment.membership_frequency',      'Integer',  E::ts('Frequency'), false),
@@ -140,6 +143,11 @@ class UpdateContract extends AbstractAction {
       }
       $contract_data[$parameter_name] = $value;
     }
+    // add account holder
+    $account_holder = $parameters->getParameter('account_holder');
+    if(!empty($account_holder)){
+        $contract_data['membership_payment.from_name'] = $account_holder;
+    }
 
     try {
       // update bank account if new iban is set
@@ -150,6 +158,10 @@ class UpdateContract extends AbstractAction {
       // update contract
       $contract = \civicrm_api3('Contract', 'modify', $contract_data);
       $output->setParameter('contract_id', $contract['id']);
+
+      if ($this->configuration->getParameter('process_scheduled_modifications') == 1){
+        $process_scheduled_modifications = \civicrm_api3('Contract', 'process_scheduled_modifications', array('contract_id' => $contract['contract_id']));
+      }
     } catch (\Exception $ex) {
       $output->setParameter('contract_id', '');
       $output->setParameter('error', $ex->getMessage());
@@ -291,5 +303,11 @@ class UpdateContract extends AbstractAction {
 
       // no hit? that shouldn't happen...
       return 1;
+  }
+  protected function yesNoOptions() {
+    return [
+        0  => E::ts("no"),
+        1  => E::ts("yes"),
+    ];
   }
 }

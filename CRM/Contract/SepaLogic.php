@@ -53,6 +53,7 @@ class CRM_Contract_SepaLogic {
     $mandate_relevant_fields = [
       'contract_updates.ch_annual'                 => 'membership_payment.membership_annual',
       'contract_updates.ch_from_ba'                => 'membership_payment.from_ba',
+      'contract_updates.ch_from_name'                => 'membership_payment.from_name',
       // 'contract_updates.ch_to_ba'                  => 'membership_payment.to_ba', // TODO: implement when multiple creditors are around
       'contract_updates.ch_frequency'              => 'membership_payment.membership_frequency',
       'contract_updates.ch_cycle_day'              => 'membership_payment.cycle_day',
@@ -93,6 +94,8 @@ class CRM_Contract_SepaLogic {
                         /* fallback: membership */ CRM_Utils_Array::value('membership_payment.membership_annual', $current_state));
       $frequency     = (int) CRM_Utils_Array::value('contract_updates.ch_frequency',
                         /* fallback: membership */ $desired_state, CRM_Utils_Array::value('membership_payment.membership_frequency', $current_state));
+      $account_holder       = CRM_Utils_Array::value('contract_updates.ch_from_name', $desired_state,
+                        /* fallback: membership */ CRM_Utils_Array::value('membership_payment.from_name', $current_state));
 
       $recurring_contribution = null;
       $recurring_contribution_id = (int) CRM_Utils_Array::value('membership_payment.membership_recurring_contribution', $current_state);
@@ -181,6 +184,7 @@ class CRM_Contract_SepaLogic {
         'frequency_unit'     => 'month',
         'cycle_day'          => $cycle_day,
         'frequency_interval' => $frequency_interval,
+        'account_holder'     => $account_holder,
         );
 
       // create and reload (to get all data)

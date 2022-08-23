@@ -189,6 +189,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
     $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'));
     $this->add('text',   'bic', E::ts('BIC'));
+    $this->add('text',   'account_holder', E::ts('Members Bank Account'), array('class' => 'huge'));
     $this->add('text',   'payment_amount', E::ts('Installment Amount'), array('size' => 6));
     $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
   }
@@ -316,6 +317,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
           $params['membership_payment.cycle_day'] = $submitted['cycle_day'];
           $params['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
           $params['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($this->membership['contact_id'], $submitted['iban'], $submitted['bic']);
+          $params['membership_payment.from_name'] = $submitted['account_holder'];
           break;
 
         default:
