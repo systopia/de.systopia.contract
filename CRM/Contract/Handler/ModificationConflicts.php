@@ -14,7 +14,7 @@ class CRM_Contract_Handler_ModificationConflicts{
   private $contractId = NULL;
 
   function __construct(){
-    $this->needsReviewStatusId = civicrm_api3('OptionValue', 'getvalue', [ 'return' => "value", 'option_group_id' => "activity_status", 'name' => 'Needs Review']);;
+    $this->needsReviewStatusId = civicrm_api3('OptionValue', 'getvalue', [ 'return' => "value", 'option_group_id' => "activity_status", 'name' => 'Needs Review']);
   }
 
   function checkForConflicts($contractId){

@@ -6,34 +6,33 @@
 |         P. Figel (pfigel -at- greenpeace.org)                |
 | http://www.systopia.de/                                      |
 +-------------------------------------------------------------*}
-
-<table>
+{crmScope extensionKey='de.systopia.contract'}
+<table class="contract-history-table">
   <tr>
 
-    <th>Modification</th>
-    <th>Date</th>
-    <th>Payment method</th>
-    <th>Amount</th>
+    <th>{ts}Modification{/ts}</th>
+    <th>{ts}Date{/ts}</th>
+    <th>{ts}Payment method{/ts}</th>
+    <th>{ts}Amount{/ts}</th>
 
-    <th>Frequency</th>
-    <th>Cycle day</th>
-    <th>Type</th>
-    <th>Campaign</th>
+    <th>{ts}Frequency{/ts}</th>
+    <th>{ts}Cycle day{/ts}</th>
+    <th>{ts}Type{/ts}</th>
+    <th>{ts}Campaign{/ts}</th>
 
-    <th>Medium</th>
-    <th>Note</th>
-    <th>Cancel reason</th>
-    <th>Added by</th>
+    <th>{ts}Medium{/ts}</th>
+    <th>{ts}Note{/ts}</th>
+    <th>{ts}Cancel reason{/ts}</th>
+    <th>{ts}Added by{/ts}</th>
 
-    <th>Status</th>
-    <th>Edit</th>
+    <th>{ts}Status{/ts}</th>
+    <th>{ts}Edit{/ts}</th>
 
   </tr>
 
   {foreach from=$activities item=a}
-    <tr class="{if $activityStatuses[$a.status_id] eq 'Needs Review'}needs-review{/if} {if $activityStatuses[$a.status_id] eq 'Scheduled'}scheduled{/if}">
-
-      <td>{$a.id} {$activityTypes[$a.activity_type_id]}</td>
+    <tr class="{if $activityStatuses[$a.status_id] eq 'Needs Review'}needs-review{/if} {if $activityStatuses[$a.status_id] eq 'Scheduled'}scheduled{/if} {if $activityStatuses[$a.status_id] eq 'Failed'}failed{/if}">
+      <td title="{$a.display_hover_title}">{$a.display_title}</td>
       <td>{$a.activity_date_time|crmDate}</td>
       <td><a href="{crmURL p='civicrm/contact/view/contributionrecur' q="reset=1&id=`$a.contract_updates_ch_recurring_contribution`&cid=`$a.recurring_contribution_contact_id`"}" class="crm-popup">{$paymentInstruments[$a.payment_instrument_id]}</a></td>
       <td>{if $a.contract_updates_ch_annual || $a.contract_updates_ch_amount}{$a.contract_updates_ch_annual|crmMoney:$currency} ({$a.contract_updates_ch_amount|crmMoney:$currency}){/if}</td>
@@ -53,3 +52,4 @@
     </tr>
   {/foreach}
 </table>
+{/crmScope}

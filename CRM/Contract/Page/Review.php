@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use \Civi\Contract\Event\DisplayChangeTitle as DisplayChangeTitle;
+
 class CRM_Contract_Page_Review extends CRM_Core_Page {
 
   public function run() {
@@ -58,8 +60,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     $campaigns=[];
     $contacts=[];
 
-
-
+    // todo: refactor for better performance
     foreach($activities as $key => $activity){
 
       foreach($activity as $innerKey => $field){
@@ -86,6 +87,12 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
       if(isset($activities[$key]['source_contact_id'])){
         $contacts[] = $activities[$key]['source_contact_id'];
       }
+
+      // add title/hover title
+      $display_titles = DisplayChangeTitle::renderDisplayChangeTitleAndHoverText(
+                            $activities[$key]['activity_type_id'], $activities[$key]['id']);
+      $activities[$key]['display_title'] = $display_titles->getDisplayTitle();
+      $activities[$key]['display_hover_title'] = $display_titles->getDisplayHover();
     }
 
     $this->assign('activities', $activities);

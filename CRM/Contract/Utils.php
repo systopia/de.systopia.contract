@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 class CRM_Contract_Utils
 {
 
@@ -263,7 +265,6 @@ class CRM_Contract_Utils
     return $e->getMessage() . "\r\n" . $e->getTraceAsString();
   }
 
-
   /**
    * Strip all custom_* elements from $data unless they're contract activity fields
    *
@@ -294,5 +295,4 @@ class CRM_Contract_Utils
       }
     }
   }
-
 }

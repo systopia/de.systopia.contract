@@ -35,6 +35,9 @@
 /*
  * Settings metadata file
  */
+
+use CRM_Contract_ExtensionUtil as E;
+
 return array(
   'contract_modification_reviewers' => array(
     'group_name' => 'Contract preferences',
@@ -43,24 +46,10 @@ return array(
     'type' => 'string',
     'default' => '',
     'add' => '1.0',
-    'title' => 'Contract modification reviewer(s)',
+    'title' => E::ts('Contract modification reviewer(s)'),
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => 'Contacts that will be notified of updates that need review.',
+    'description' => E::ts('Contacts that will be notified of updates that need review.'),
     'help_text' => NULL,
   ),
-  'contract_domain' => array(
-    'group_name' => 'Contract preferences',
-    'group' => 'Contract preferences',
-    'name' => 'contract_domain',
-    'type' => 'string',
-    'default' => 'AT',
-    'add' => '1.0',
-    'title' => 'Contract Domain',
-    'is_domain' => 1,
-    'is_contact' => 0,
-    'description' => 'Some features like the Rapid Create form might work or
-                      look different depending on the selected value.',
-    'help_text' => NULL,
-  )
 );
