@@ -32,8 +32,7 @@
 
   {foreach from=$activities item=a}
     <tr class="{if $activityStatuses[$a.status_id] eq 'Needs Review'}needs-review{/if} {if $activityStatuses[$a.status_id] eq 'Scheduled'}scheduled{/if}">
-
-      <td>{$a.id} {$activityTypes[$a.activity_type_id]}</td>
+      <td title="{$a.display_hover_title}">{$a.display_title}</td>
       <td>{$a.activity_date_time|crmDate}</td>
       <td><a href="{crmURL p='civicrm/contact/view/contributionrecur' q="reset=1&id=`$a.contract_updates_ch_recurring_contribution`&cid=`$a.recurring_contribution_contact_id`"}" class="crm-popup">{$paymentInstruments[$a.payment_instrument_id]}</a></td>
       <td>{if $a.contract_updates_ch_annual || $a.contract_updates_ch_amount}{$a.contract_updates_ch_annual|crmMoney:$currency} ({$a.contract_updates_ch_amount|crmMoney:$currency}){/if}</td>
