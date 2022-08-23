@@ -100,7 +100,7 @@ class CRM_Contract_Upgrader extends CRM_Contract_Upgrader_Base {
     return TRUE;
   }
 
-  public function upgrade_1500() {
+  public function upgrade_1501() {
     $this->ctx->log->info('Applying localisation');
     $customData = new CRM_Contract_CustomData('de.systopia.contract');
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
