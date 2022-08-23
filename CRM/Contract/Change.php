@@ -156,7 +156,7 @@ abstract class CRM_Contract_Change {
    * Get the change ID
    */
   public function getID() {
-    return $this->data['id'];
+    return $this->data['id'] ?? null;
   }
 
   /**

@@ -71,7 +71,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Issue a Symfony event to render a contract change's subject/title
    *
-   * @param integer $change_id
+   * @param integer|null $change_id
    *   the id of the change record (activity)
    *
    * @param array|null $contract_data_before
@@ -98,7 +98,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   }
 
   /**
-   * Set/override the url for the rapid create form
+   * Set/override the subject for the change activity
    *
    * @param string $subject
    *    the proposed subject for the change
@@ -143,7 +143,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
 
   /**
    * Get a value from the data provided. It will first be taken from
-   *   the *after* data, but if it doesn't contain any iformation,
+   *   the *after* data, but if it doesn't contain any information,
    *   it'll use the *before* data for the lookup
    *
    * @param string $attribute_name
