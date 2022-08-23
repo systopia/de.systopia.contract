@@ -33,6 +33,8 @@ class UpdateContract extends AbstractAction {
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
+
+        new Specification('process_scheduled_modifications',         'Integer', E::ts('directly process scheduled changes'), false, 0, null, $this->yesNoOptions()),
         #new Specification('default_action',       'Integer', E::ts('Modify Action (default)'), true, null, null, $this->getModifyActions(), false),
         #new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
         #new Specification('default_creditor_id',       'Integer', E::ts('Creditor (default)'), true, null, null, $this->getCreditors(), false),
@@ -150,6 +152,10 @@ class UpdateContract extends AbstractAction {
       // update contract
       $contract = \civicrm_api3('Contract', 'modify', $contract_data);
       $output->setParameter('contract_id', $contract['id']);
+
+      if ($this->configuration->getParameter('process_scheduled_modifications') == 1){
+        $process_scheduled_modifications = \civicrm_api3('Contract', 'process_scheduled_modifications', array('contract_id' => $contract['contract_id']));
+      }
     } catch (\Exception $ex) {
       $output->setParameter('contract_id', '');
       $output->setParameter('error', $ex->getMessage());
@@ -291,5 +297,11 @@ class UpdateContract extends AbstractAction {
 
       // no hit? that shouldn't happen...
       return 1;
+  }
+  protected function yesNoOptions() {
+    return [
+        0  => E::ts("no"),
+        1  => E::ts("yes"),
+    ];
   }
 }
