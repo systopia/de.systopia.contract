@@ -70,6 +70,7 @@ class CreateContract extends AbstractAction {
 
         // dates
         new Specification('start_date',      'Date', E::ts('Start Date'), false, date('Y-m-d H:i:s')),
+        new Specification('join_date',      'Date', E::ts('Member Since'), false, date('Y-m-d')),
         new Specification('date',            'Date', E::ts('Signature Date'),  false, date('Y-m-d H:i:s')),
         new Specification('validation_date', 'Date', E::ts('Validation Date'), false, date('Y-m-d H:i:s')),
 
@@ -161,7 +162,7 @@ class CreateContract extends AbstractAction {
 
     $contract_data = [];
     // add basic fields to contract_data
-    foreach (['contact_id','membership_type_id','start_date'] as $parameter_name) {
+    foreach (['contact_id','membership_type_id','start_date','join_date'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
@@ -187,7 +188,7 @@ class CreateContract extends AbstractAction {
       $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
       $mandate = \civicrm_api3('SepaMandate', 'getsingle', ['id' => $mandate['id'], 'return' => 'id,entity_id,reference']);
       $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['entity_id'];
-      if (!empty($contract_data['start_date'])) {
+      if (empty($contract_data['join_date']) and (!empty($contract_data['start_date']))) {
         $contract_data['join_date'] = $contract_data['start_date'];
       }
       $contract = \civicrm_api3('Contract', 'create', $contract_data);
