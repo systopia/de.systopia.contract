@@ -317,19 +317,29 @@ abstract class CRM_Contract_Change {
    * @return string subject line
    */
   public function getSubject($contract_after, $contract_before = NULL) {
+    // fir
     return $this->renderChangeSubject($this, $contract_after, $contract_before);
   }
 
   /**
    * Calculate the activities subject
    *
-   * @param $change               CRM_Contract_Change the change object
-   * @param $contract_before      array  data of the contract before
-   * @param null $contract_after  array  data of the contract after
-   * @return                      string the subject line
+   * @param $change                CRM_Contract_Change the change object
+   * @param $contract_before       array  data of the contract before
+   * @param $contract_after        array  data of the contract after
+   * @return                       string the subject line
    */
   public function renderChangeSubject($change, $contract_after, $contract_before = NULL) {
-    return $change->renderDefaultSubject($contract_after, $contract_before);
+    // first, try to see if there is some customisation:
+    $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
+        $change->getID(),
+        $contract_before,
+        $contract_after);
+    if ($rendered_subject !== null) {
+      return $rendered_subject;
+    } else {
+      return $change->renderDefaultSubject($contract_after, $contract_before);
+    }
   }
 
 
