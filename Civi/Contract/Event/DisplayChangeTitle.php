@@ -11,6 +11,7 @@ namespace Civi\Contract\Event;
 
 use Civi;
 use CRM_Contract_Change as CRM_Contract_Change;
+use \civicrm_api3 as civicrm_api3;
 
 /**
  * Class DisplayChangeTitle
@@ -40,6 +41,13 @@ class DisplayChangeTitle extends ConfigurationEvent
    * @var integer
    */
   protected $change_activity_type_id;
+
+  /**
+   * The change activity data
+   *
+   * @var array
+   */
+  protected $change_activity_data = null;
 
   /**
    * The change's display title
@@ -142,5 +150,72 @@ class DisplayChangeTitle extends ConfigurationEvent
   public function setDisplayHoverTitle($title)
   {
     $this->change_activity_display_hover_title = $title;
+  }
+
+  /**
+   * Get the activity data
+   *
+   * @return array activity data
+   */
+  public function getChangeActivityData()
+  {
+    if (empty($this->change_activity_data) && !empty($this->getActivityID())) {
+      // todo: isn't that cached somewhere?
+      $this->change_activity_data = civicrm_api3('Activity','getsingle', ['id' => $this->getActivityID()]);
+      \CRM_Contract_CustomData::labelCustomFields($this->change_activity_data);
+    }
+    return $this->change_activity_data;
+  }
+
+  /**
+   * Returns true if the action is scheduled, or false if it's already been executed or cancelled
+   *
+   * @return boolean is scheduled
+   */
+  public function isActionScheduled()
+  {
+    $data = $this->getChangeActivityData();
+    return ($data['status_id'] != 2); // Completed
+  }
+
+  /**
+   * Get the ID of the change activity
+   *
+   * @return int
+   */
+  public function getActivityID()
+  {
+    return $this->change_activity_id;
+  }
+
+  /**
+   * Get the ID of the change activity
+   *
+   * @return int
+   */
+  public function getActivityTypeID()
+  {
+    return $this->change_activity_type_id;
+  }
+
+  /**
+   * Get the ID of the change activity
+   *
+   * @return string
+   */
+  public function getActivityClass()
+  {
+    return CRM_Contract_Change::getClassByActivityType($this->change_activity_type_id);
+  }
+
+  /**
+   * Get the action name of the change
+   *
+   * @return string
+   */
+  public function getActivityAction()
+  {
+    $class = $this->getActivityClass();
+    return CRM_Contract_Change::getActionByClass($class);
   }
 }
