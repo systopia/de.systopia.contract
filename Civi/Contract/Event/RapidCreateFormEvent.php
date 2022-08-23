@@ -11,6 +11,7 @@ namespace Civi\Contract\Event;
 
 use Civi;
 use Symfony\Component\EventDispatcher\Event;
+use CRM_Contract_ExtensionUtil as E;
 
 /**
  * Class RapidCreateFormEvent
@@ -73,6 +74,17 @@ class RapidCreateFormEvent extends ConfigurationEvent
   {
     $event = new RapidCreateFormEvent();
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
-    return $event->getRapidCreateFormUrl();
+    $rapid_create_url = $event->getRapidCreateFormUrl();
+
+    // make sure that we don't end up in the classic form if not rapid create form is defined
+    if (empty($rapid_create_url)) {
+      \CRM_Core_Session::setStatus(
+          E::ts("No form for the quick entry of contact and membership data, please use the 'add membership' form in the contact's membership tab. Please contact an expert should you need such a form."),
+          E::ts("'Rapid Create' form not available"),
+      );
+      $rapid_create_url = \CRM_Utils_System::url('civicrm/dashboard');
+    }
+
+    return $rapid_create_url;
   }
 }
