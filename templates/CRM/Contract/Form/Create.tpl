@@ -9,14 +9,11 @@
 
 {crmScope extensionKey='de.systopia.contract'}
 <div class="crm-block crm-form-block">
-
-  <h3>{ts 1=$contact.display_name}Create a new contract for %1{/ts}</h3>
-
   <hr/>
 
   <div class="crm-section">
     <div class="label">{ts}Payment Preview{/ts}</div>
-    <div class="content recurring-contribution-summary-text">None</div>
+    <div class="content recurring-contribution-summary-text">{ts}None{/ts}</div>
     <div class="clear"></div>
   </div>
 

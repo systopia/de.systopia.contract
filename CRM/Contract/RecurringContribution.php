@@ -199,11 +199,11 @@ class CRM_Contract_RecurringContribution {
     } else {
       // this is a non-SEPA recurring contribution
       $result['text_summary'] = "
-        Debitor name: {$result['fields']['display_name']}<br />
-        Payment method: {$result['fields']['payment_instrument']}<br />
-        Frequency: {$result['fields']['frequency']}<br />
-        Annual amount: {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />
-        Installment amount: {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />
+        " . E::ts("Debitor name") . ": {$result['fields']['display_name']}<br />
+        " . E::ts("Payment method") . ": {$result['fields']['payment_instrument']}<br />
+        " . E::ts("Frequency") . ": {$result['fields']['frequency']}<br />
+        " . E::ts("Annual amount") . ": {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />
+        " . E::ts("Installment amount") . ": {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />
       ";
       $result['label'] = "{$result['fields']['payment_instrument']}, {$result['fields']['amount']} {$result['fields']['frequency']}";
     }

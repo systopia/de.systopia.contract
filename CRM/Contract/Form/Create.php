@@ -13,8 +13,6 @@ use CRM_Contract_ExtensionUtil as E;
 class CRM_Contract_Form_Create extends CRM_Core_Form {
 
   function buildQuickForm() {
-
-
     $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer');
     if (empty($this->cid)) {
       $this->cid = $this->get('cid');
@@ -29,6 +27,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->assign('cid', $this->get('cid'));
     $this->contact = civicrm_api3('Contact', 'getsingle', ['id' => $this->get('cid')]);
     $this->assign('contact', $this->contact);
+    self::setTitle(E::ts("Create a new contract for %1", [1 => $this->contact['display_name']]));
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
     $formUtils->addPaymentContractSelect2('recurring_contribution', $this->get('cid'), false, null);
@@ -43,7 +42,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     CRM_Contract_SepaLogic::addJsSepaTools();
 
     // Payment dates
-    $this->add('select', 'payment_option', E::ts('Payment'), array('create' => 'create new mandate', 'select' => 'select existing contract'));
+    $this->add('select', 'payment_option', E::ts('Payment'), array('create' => E::ts('create new mandate'), 'select' => E::ts('select existing contract')));
     $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
     $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'));
     $this->add('text',   'bic', E::ts('BIC'));

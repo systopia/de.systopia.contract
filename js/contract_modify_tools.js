@@ -118,7 +118,7 @@ function updatePaymentSummaryText() { (function (cj, ts){
         );
 
         cj('#payment_amount_currency').text(creditor.currency);
-    }
+      }
     }(CRM.$, CRM.ts('de.systopia.contract')));
 }
 
