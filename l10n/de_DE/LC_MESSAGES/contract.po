@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-23 11:55+0200\n"
+"POT-Creation-Date: 2022-08-23 15:28+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -24,7 +24,7 @@ msgstr "%2 [%1] seit %3"
 msgid "%2 [%1] from %3 to %4"
 msgstr "%2 [%1] von %3 bis %4"
 
-#: CRM/Contract/Change/Cancel.php l10n.php
+#: CRM/Contract/Change/Cancel.php l10n.php resources/l10n.php
 msgid "Cancel Contract"
 msgstr "Vertrag beenden"
 
@@ -38,7 +38,7 @@ msgstr ""
 "Wiederaufnahmedatum kann nicht vor oder am selben Tag sein wie die "
 "Pausierung."
 
-#: CRM/Contract/Change/Pause.php l10n.php
+#: CRM/Contract/Change/Pause.php l10n.php resources/l10n.php
 msgid "Pause Contract"
 msgstr "Vertrag pausieren"
 
@@ -46,11 +46,11 @@ msgstr "Vertrag pausieren"
 msgid "Pause"
 msgstr "Pausieren"
 
-#: CRM/Contract/Change/Resume.php l10n.php
+#: CRM/Contract/Change/Resume.php l10n.php resources/l10n.php
 msgid "Resume Contract"
 msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
 
-#: CRM/Contract/Change/Revive.php l10n.php
+#: CRM/Contract/Change/Revive.php l10n.php resources/l10n.php
 msgid "Revive Contract"
 msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
 
@@ -58,11 +58,11 @@ msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
 msgid "Revive"
 msgstr "Wiederaufnehmen (nach Beendigung)"
 
-#: CRM/Contract/Change/Sign.php l10n.php
+#: CRM/Contract/Change/Sign.php l10n.php resources/l10n.php
 msgid "Sign Contract"
 msgstr "Vertrag unterschreiben"
 
-#: CRM/Contract/Change/Upgrade.php l10n.php
+#: CRM/Contract/Change/Upgrade.php l10n.php resources/l10n.php
 msgid "Update Contract"
 msgstr "Vertrag aktualisieren"
 
@@ -109,7 +109,7 @@ msgstr "Zahlung"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php l10n.php
-#: templates/CRM/Contract/Page/Review.tpl
+#: resources/l10n.php templates/CRM/Contract/Page/Review.tpl
 msgid "Cycle day"
 msgstr "Einzugstag"
 
@@ -126,6 +126,12 @@ msgstr "IBAN"
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "BIC"
 msgstr "BIC"
+
+#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
+msgid "Members Bank Account"
+msgstr "Mitgliedskonto"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
@@ -184,6 +190,10 @@ msgstr "Notizen"
 #: CRM/Contract/Form/Create.php
 msgid "Create"
 msgstr "Erstellen"
+
+#: CRM/Contract/Form/Create.php
+msgid "Join date cannot be in the future."
+msgstr "Eintrittsdatum kann nicht in der Zukunft liegen."
 
 #: CRM/Contract/Form/Modify.php
 msgid "Unknown action '%1'."
@@ -306,10 +316,12 @@ msgid "Assign to Recurring"
 msgstr "Wiederkehrender Zahlung (RCUR) zuordnen"
 
 #: CRM/Contract/Form/Task/AssignContributions.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "no"
 msgstr "nein"
 
 #: CRM/Contract/Form/Task/AssignContributions.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "yes"
 msgstr "ja"
 
@@ -401,7 +413,7 @@ msgstr ""
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Cannot Detach"
-msgstr "Kann nicht getrennt werden."
+msgstr "Kann nicht abgelöst werden"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Financial type for contribution [%1] couldn't be changed: %2"
@@ -435,7 +447,7 @@ msgstr "NICHT GEFUNDEN!"
 
 #: CRM/Contract/RecurringContribution.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php l10n.php
-#: templates/CRM/Contract/Page/Review.tpl
+#: resources/l10n.php templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr "Zahlungsart"
 
@@ -506,6 +518,7 @@ msgid "Membership Type ID"
 msgstr "Mitgliedschaftstyp-ID"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php l10n.php
+#: resources/l10n.php
 msgid "Cancel Reason"
 msgstr "Kündigungsgrund"
 
@@ -564,6 +577,12 @@ msgid "Collection Day"
 msgstr "Einzugstag"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
+#, fuzzy
+#| msgid "Member since"
+msgid "Member Since"
+msgstr "Mitglied seit"
+
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Signature Date"
 msgstr "Unterschriftsdatum"
 
@@ -582,26 +601,31 @@ msgstr "Vertrag besteht bereits"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php l10n.php
+#: resources/l10n.php
 msgid "annually"
 msgstr "jährlich"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php l10n.php
+#: resources/l10n.php
 msgid "semi-annually"
 msgstr "halbjährlich"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php l10n.php
+#: resources/l10n.php
 msgid "quarterly"
 msgstr "vierteljährlich"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php l10n.php
+#: resources/l10n.php
 msgid "bi-monthly"
 msgstr "zweimonatlich"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php l10n.php
+#: resources/l10n.php
 msgid "monthly"
 msgstr "monatlich"
 
@@ -616,7 +640,7 @@ msgstr "ignorieren"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "show error message"
-msgstr ""
+msgstr "Fehlermeldung anzeigen"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
@@ -628,22 +652,27 @@ msgid "Join Date"
 msgstr "Eintrittsdatum"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php l10n.php
+#: resources/l10n.php
 msgid "Annual Membership Contribution"
 msgstr "Jährliche Mitgliedschaftszahlung"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php l10n.php
+#: resources/l10n.php
 msgid "Payment Interval"
 msgstr "Zahlungsintervall"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php l10n.php
+#: resources/l10n.php
 msgid "Recurring contribution/mandate"
 msgstr "Wiederkehrende Zuwendung / Mandat"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php l10n.php
+#: resources/l10n.php
 msgid "Donor's Bank Account"
 msgstr "Konto der Spender_in"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php l10n.php
+#: resources/l10n.php
 msgid "Defer Payment Start"
 msgstr "Zahlungsbeginn aufschieben"
 
@@ -662,6 +691,10 @@ msgstr "Einzugsintervall"
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
 msgid "Recurring Contribution ID"
 msgstr "ID der wiederkehrenden Zuwendung"
+
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
+msgid "directly process scheduled changes"
+msgstr "Vertragsänderungen direkt verarbeiten"
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Anual Amount"
@@ -739,11 +772,12 @@ msgstr "Zuwendung(en) vom Vertrag abkoppeln"
 
 #: contract.php
 msgid "CiviContract: Edit core membership"
-msgstr ""
+msgstr "Contract Extension: Bearbeiten über Kernfunktionen"
 
 #: contract.php
 msgid "Allow editing memberships using the core membership form"
 msgstr ""
+"Erlaubt das Bearbeiten von Mitgliedschaftern über die CiviCRM Kernfunktionen"
 
 #: js/contract_modify_tools.js templates/CRM/Contract/Form/Modify.tpl
 msgid "None"
@@ -751,151 +785,151 @@ msgstr "Keine"
 
 #: js/contract_modify_tools.js
 msgid "de.systopia.contract"
-msgstr ""
+msgstr "de.systopia.contract"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Contract Cancellation"
 msgstr "Vertrag Beenden"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Contract Updates"
 msgstr "Vertrag Anpassen"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Cancellation Information"
 msgstr "Kündigungsgrund"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "General Information"
 msgstr "Allgemeine Informationen"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Payment Information"
 msgstr "Zahlungsinformationen"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Channel"
 msgstr "Kanal"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Contract Cancel Reason"
 msgstr "Beendigungsgrund"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Order Type"
 msgstr "Bestellart"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Payment Intervals"
 msgstr "Zahlungsintervall"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Membership Type"
 msgstr "Mitgliedschaftart"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Increase"
 msgstr "Erhöhung"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Payment Contract"
 msgstr "Vertrag pausieren"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "GP Bank Account"
 msgstr "Organisationskonto"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Donor's Account Name"
 msgstr "Kontoname des Mitglieds"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Member's Bank Account"
 msgstr "Konto des Mitglieds"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Cycle Day"
 msgstr "Einzugstag"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Payment Method"
 msgstr "Zahlungsart"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Cancellation Date"
 msgstr "Kündigungsdatum"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Membership Channel"
 msgstr "Anwerbekanal"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Dialoger"
 msgstr "Anwerber_in "
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Reference Number"
 msgstr "Referenznummer"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Contract Number"
 msgstr "Vertragsnummer"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Organisation's Bank Account"
 msgstr "Organisationskonto"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Paused"
 msgstr "Pausiert"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "New"
 msgstr "Neu"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Grace"
 msgstr "Zahlungsfrist"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Current"
 msgstr "Laufend"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Pending"
 msgstr "Ausstehend"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Cancelled"
 msgstr "Beendet"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Deceased"
 msgstr "Verstorben"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Needs Review"
 msgstr "Prüfung erforderlich"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 #, fuzzy
 #| msgid "unknown"
 msgid "Unknown"
 msgstr "unbekannt"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "Welcome Gift"
 msgstr "Willkommensgeschenk"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "one-off"
 msgstr "einmalig"
 
-#: l10n.php
+#: l10n.php resources/l10n.php
 msgid "trimestral"
 msgstr "vierteljährig"
 
@@ -929,12 +963,16 @@ msgid ""
 "Set the financial type of all contributions to the financial type specified "
 "in the selected contract's type."
 msgstr ""
+"Setzt die Zuwendungsart aller Zuwendungen auf den in der Vertragsart "
+"angegebenen Typ."
 
 #: templates/CRM/Contract/Form/Task/AssignContributions.hlp
 msgid ""
 "If selected even already assigned contributions will be detached from their "
 "current contract, and re-assigned to the selected one."
 msgstr ""
+"Wenn aktiv, so werden sogar bereits zgeordnete Zuwendungen vom Vetrag "
+"abgekoppelt und neu zugeordnet."
 
 #: templates/CRM/Contract/Form/Task/AssignContributions.hlp
 msgid ""
@@ -947,10 +985,12 @@ msgid ""
 "This option is only available for non-SEPA contracts, and will only be "
 "executed for non-SEPA contributions."
 msgstr ""
+"Diese Einstellung bezieht sich nur auf nicht-SEPA Verträge, und wird auch "
+"ausschließlich für nicht-SEPA Zuwendungen angewendet."
 
 #: templates/CRM/Contract/Form/Task/AssignContributions.hlp
 msgid "Adjust the payment instrument of all assigned contributions."
-msgstr ""
+msgstr "Zahlungsinstrument aller zugewiesener Zuwendungen anpassen."
 
 #: templates/CRM/Contract/Form/Task/AssignContributions.tpl
 msgid "Help"
@@ -1002,9 +1042,6 @@ msgstr "Zahlte Vertrag"
 
 #~ msgid "modify"
 #~ msgstr "Ändern"
-
-#~ msgid "Join date cannot be in the future."
-#~ msgstr "Eintrittsdatum kann nicht in der Zukunft liegen."
 
 #~ msgid "Start date must be the same or later than Member since."
 #~ msgstr "Startdatum darf nicht vor Eintrittsdatum liegen."
