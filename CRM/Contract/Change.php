@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use Civi\Contract\Event\RenderChangeSubjectEvent as RenderChangeSubjectEvent;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -15,7 +16,7 @@ use CRM_Contract_ExtensionUtil as E;
  * This new 'Change' concept is the replacement for the CRM_Contract_ModificationActivity
  *  and the CRM_Contract_Handlers
  */
-abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRendererInterface {
+abstract class CRM_Contract_Change {
 
   /**
    * Data representing the data. Will mostly be the activity data
@@ -71,6 +72,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
       'membership_payment.from_ba'                           => 'contract_updates.ch_from_ba',
       'membership_payment.to_ba'                             => 'contract_updates.ch_to_ba',
       'membership_payment.cycle_day'                         => 'contract_updates.ch_cycle_day',
+      'membership_payment.from_name'                         => 'contract_updates.ch_from_name',
   ];
 
 
@@ -155,7 +157,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
    * Get the change ID
    */
   public function getID() {
-    return $this->data['id'];
+    return $this->data['id'] ?? null;
   }
 
   /**
@@ -245,6 +247,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
           $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($sepaMandate['contact_id'], $sepaMandate['iban'], $sepaMandate['bic']);
           $contract['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
+          $contract['membership_payment.from_name']= $sepaMandate['account_holder'];
 
         } elseif ($sepaMandateResult['count'] == 0) {
           // this should be a recurring contribution -> get from the latest contribution
@@ -256,6 +259,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
           // this is an error:
           $contract['membership_payment.from_ba'] = '';
           $contract['membership_payment.to_ba']   = '';
+          $contract['membership_payment.from_name']   = '';
 
         }
       } catch(Exception $ex) {
@@ -278,7 +282,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
     $id2class = self::getActivityTypeId2Class();
     $class2id = array_flip($id2class);
     if (!isset($class2id[get_class($this)])) {
-      throw Exception("Missing contract change activity type: " . get_class($this));
+      throw new CRM_Core_Exception("Missing contract change activity type: " . get_class($this));
     }
     $activity_type_id = $class2id[get_class($this)];
     return $activity_type_id;
@@ -316,23 +320,29 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
    * @return string subject line
    */
   public function getSubject($contract_after, $contract_before = NULL) {
-    $subject_renderer = CRM_Contract_Configuration::getSubjectRender();
-    if (!$subject_renderer) {
-      $subject_renderer = $this; // use default renderer
-    }
-    return $subject_renderer->renderChangeSubject($this, $contract_after, $contract_before);
+    // fir
+    return $this->renderChangeSubject($this, $contract_after, $contract_before);
   }
 
   /**
    * Calculate the activities subject
    *
-   * @param $change               CRM_Contract_Change the change object
-   * @param $contract_before      array  data of the contract before
-   * @param null $contract_after  array  data of the contract after
-   * @return                      string the subject line
+   * @param $change                CRM_Contract_Change the change object
+   * @param $contract_before       array  data of the contract before
+   * @param $contract_after        array  data of the contract after
+   * @return                       string the subject line
    */
   public function renderChangeSubject($change, $contract_after, $contract_before = NULL) {
-    return $change->renderDefaultSubject($contract_after, $contract_before);
+    // first, try to see if there is some customisation:
+    $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
+        $change->getID(),
+        $contract_before,
+        $contract_after);
+    if ($rendered_subject !== null) {
+      return $rendered_subject;
+    } else {
+      return $change->renderDefaultSubject($contract_after, $contract_before);
+    }
   }
 
 
@@ -463,7 +473,7 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
    * @param $field_name  string field this value is from
    * @return string      string labelled value
    */
-  protected function labelValue($value, $field_name) {
+  public function labelValue($value, $field_name) {
     switch ($field_name) {
       case 'membership_type_id':
       case 'contract_updates.ch_membership_type':
@@ -632,6 +642,16 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
   }
 
   /**
+   * Get the action name for the given class name
+   *
+   * @param $class_name string action class name
+   * @return string action name, e.g. 'cancel'
+   */
+  public static function getActionByClass($class_name) {
+    return CRM_Utils_Array::value($class_name, array_flip(self::$action2class));
+  }
+
+  /**
    * Get the list of activity type ID to class
    *
    * @return array activity_type_id => class name
@@ -754,5 +774,10 @@ abstract class CRM_Contract_Change implements  CRM_Contract_Change_SubjectRender
       }
     }
     return $data;
+  }
+
+  public function __toString()
+  {
+    return $this->getActionName();
   }
 }

@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 class CRM_Contract_Utils
 {
 
@@ -262,5 +264,4 @@ class CRM_Contract_Utils
   public static function formatExceptionForApi(Exception $e) {
     return $e->getMessage() . "\r\n" . $e->getTraceAsString();
   }
-
 }

@@ -13,6 +13,9 @@ use CRM_Contract_ExtensionUtil as E;
  */
 class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
 
+  const MEMBERSHIP_CANCEL_REASON = 'membership_cancellation.membership_cancel_reason';
+  const MEMBERSHIP_CANCEL_DATE   = 'membership_cancellation.membership_cancel_date';
+
   /**
    * Get a list of required fields for this type
    *
@@ -20,7 +23,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    */
   public function getRequiredFields() {
     return [
-        'membership_cancellation.membership_cancel_reason'
+        self::MEMBERSHIP_CANCEL_REASON
     ];
   }
 
@@ -29,11 +32,11 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    */
   public function populateData() {
     if ($this->isNew()) {
-      $this->setParameter('contract_cancellation.contact_history_cancel_reason', $this->getParameter('membership_cancellation.membership_cancel_reason'));
+      $this->setParameter('contract_cancellation.contact_history_cancel_reason', $this->getParameter(self::MEMBERSHIP_CANCEL_REASON));
       $this->setParameter('subject', $this->getSubject(NULL));
     } else {
       parent::populateData();
-      $this->setParameter('membership_cancellation.membership_cancel_reason', $this->getParameter('contract_cancellation.contact_history_cancel_reason'));
+      $this->setParameter(self::MEMBERSHIP_CANCEL_REASON, $this->getParameter('contract_cancellation.contact_history_cancel_reason'));
     }
   }
 
@@ -48,9 +51,10 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
 
     // cancel the contract by setting the end date
     $contract_update = [
-        'end_date'                => date('YmdHis'),
-        'membership_cancellation' => $this->data['membership_cancellation.membership_cancel_reason'],
-        'status_id'               => 'Cancelled',
+        'end_date'                     => date('YmdHis'),
+        self::MEMBERSHIP_CANCEL_REASON => $this->data[self::MEMBERSHIP_CANCEL_REASON],
+        self::MEMBERSHIP_CANCEL_DATE   => date('YmdHis'),
+        'status_id'                    => 'Cancelled',
     ];
 
     // perform the update
@@ -59,7 +63,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     // also: cancel the mandate/recurring contribution
     CRM_Contract_SepaLogic::terminateSepaMandate(
         $contract['membership_payment.membership_recurring_contribution'],
-        $this->data['membership_cancellation.membership_cancel_reason']);
+        $this->data[self::MEMBERSHIP_CANCEL_REASON]);
 
     // update change activity
     $contract_after = $this->getContract();

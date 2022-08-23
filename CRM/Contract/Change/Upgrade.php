@@ -91,6 +91,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     }
     $this->setParameter('contract_updates.ch_annual_diff', $contract_after['membership_payment.membership_annual'] - $contract_before['membership_payment.membership_annual']);
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
+    $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name']);
     $this->setStatus('Completed');
     $this->save();
   }

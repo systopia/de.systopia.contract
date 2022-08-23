@@ -5,6 +5,7 @@ use CRM_Contract_ExtensionUtil as E;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * FIXME - Add test description.
@@ -20,7 +21,7 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class CRM_Contract_ContractTestBase extends \PHPUnit_Framework_TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
+class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
 {
   use Api3TestTrait {
     callAPISuccess as public traitCallAPISuccess;
@@ -41,7 +42,7 @@ class CRM_Contract_ContractTestBase extends \PHPUnit_Framework_TestCase implemen
 
   public function setUp()
   {
-    \PHPUnit_Framework_TestCase::setUp();
+    parent::setUp();
 
     // check if there is a default creditor
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
@@ -271,6 +272,7 @@ class CRM_Contract_ContractTestBase extends \PHPUnit_Framework_TestCase implemen
         // custom stuff:
         'membership_payment.membership_recurring_contribution' => $params['membership_payment.membership_recurring_contribution'],
         'membership_general.membership_dialoger'               => $contact_id,
+        'membership_payment.from_name'                         => 'Johannes',
         // membership_general.membership_contract   // Contract number
         // membership_general.membership_reference  // Reference number
         // membership_general.membership_contract   // Contract number
@@ -396,7 +398,12 @@ class CRM_Contract_ContractTestBase extends \PHPUnit_Framework_TestCase implemen
 
     // load activities
     $result = $this->callAPISuccess('Activity', 'get', $query);
-    return $result['values'];
+    $activities = $result['values'];
+    foreach ($activities as &$activity) {
+      CRM_Contract_CustomData::labelCustomFields($activity);
+    }
+
+    return $activities;
   }
 
 

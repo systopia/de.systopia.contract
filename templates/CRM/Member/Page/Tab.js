@@ -11,6 +11,7 @@
 CRM.$(function($) {
 
   var contractStatuses = CRM.vars['de.systopia.contract'].contractStatuses;
+  var reviewLinkTitles = CRM.vars['de.systopia.contract'].reviewLinkTitles;
 
   // # Link to membership create should be replaced with contract create #
   $('a[href="/civicrm/contact/view/membership?reset=1&action=add&cid=' + CRM.vars['de.systopia.contract'].cid + '&context=membership"]')
@@ -27,7 +28,7 @@ CRM.$(function($) {
     var link = $(document).find('#crm-membership-review-link_' + membershipId);
     if (link.length == 0) {
       var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
-      link = " <a class='toggle-review' id='crm-membership-review-link_" + membershipId + "' href='" + queryURL + "'>" + getReviewLinkText(membershipId) + "</a>";
+      link = " <a class='toggle-review' id='crm-membership-review-link_" + membershipId + "' href='" + queryURL + "'>[" + getReviewLinkText(membershipId) + "]</a>";
       $(this).after("<tr class='crm-membership crm-membership-review odd odd-row' id='crm-membership-review_" + membershipId + "'><td colspan='" + $(this).find('td').length + "'></td></tr>");
       $(this).find('td.crm-membership-status').append(link);
     }
@@ -38,11 +39,11 @@ CRM.$(function($) {
 
   function getReviewLinkText(membershipId){
     if(contractStatuses[membershipId].needs_review > 0){
-      return 'needs review';
+      return reviewLinkTitles['needs review'];
     }else if(contractStatuses[membershipId].scheduled > 0) {
-      return 'scheduled modifications';
+      return reviewLinkTitles['scheduled modifications'];
     }
-    return 'review';
+    return reviewLinkTitles['scheduled review'];
   }
 
   function decorateRow(membershipId){
@@ -73,12 +74,12 @@ CRM.$(function($) {
     var reviewLink = $(document).find('#crm-membership-review-link_' + membershipId);
     if(reviewRow.is(":visible")){
       reviewRow.hide();
-      reviewLink.html(getReviewLinkText(membershipId));
+      reviewLink.html('[' + getReviewLinkText(membershipId) + ']');
     }else{
       var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
       reviewRow.find('td').load(queryURL, function(){
         reviewRow.show();
-        reviewLink.html('hide');
+        reviewLink.html('[' + reviewLinkTitles['hide'] + ']');
       });
     }
   }
@@ -133,4 +134,11 @@ CRM.$(function($) {
 
     CRM.vars['de.systopia.contract'].listenersLoaded = true;
   }
+});
+
+// minor adjustments
+cj(document).ready(function() {
+  // hide the 7th/8th column
+  cj('td:nth-child(6),th:nth-child(6)').hide();
+  cj('td:nth-child(7),th:nth-child(7)').hide();
 });
