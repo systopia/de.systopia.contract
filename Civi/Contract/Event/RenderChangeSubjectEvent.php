@@ -10,6 +10,8 @@
 namespace Civi\Contract\Event;
 
 use Civi;
+use CRM_Contract_ExtensionUtil as E;
+
 
 /**
  * Class RenderChangeSubjectEvent
@@ -198,6 +200,19 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
     $data = $this->getChangeActivityData();
     $class = \CRM_Contract_Change::getClassByActivityType($data['activity_type_id']);
     return \CRM_Contract_Change::getActionByClass($class);
+  }
+
+  /**
+   * @return string label of the membership type
+   */
+  public function getMembershipTypeName()
+  {
+    $type_id = $this->getAttribute('membership_type_id');
+    if (!empty($type_id)) {
+      return \CRM_Contract_Utils::getMembershipType($type_id, 'name');
+    } else {
+      return E::ts("(not found)");
+    }
   }
 
 }

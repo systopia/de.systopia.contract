@@ -141,6 +141,38 @@ class CRM_Contract_Utils
   }
 
   /**
+   * Get a (cached) list of all membership types
+   *
+   * @return array membership type data as delivered by the API
+   */
+  public static function getMembershipTypes()
+  {
+    static $membership_types = null;
+    if ($membership_types === null) {
+      $membership_types = \civicrm_api3('MembershipType', 'get', ['option.limit' => 0])['values'];
+    }
+    return $membership_types;
+  }
+
+  /**
+   * Get the (cached) membership type data, or a particular attribute
+   *
+   * @return array|string membership type data as delivered by the API
+   */
+  public static function getMembershipType($membership_type_id, $attribute = null)
+  {
+    $types = self::getMembershipTypes();
+    if (isset($types[$membership_type_id])) {
+      if ($attribute) {
+        return $types[$membership_type_id][$attribute] ?? null;
+      } else {
+        return $types[$membership_type_id] ?? null;
+      }
+    }
+  }
+
+
+  /**
    * Download contract file
    * @param $file
    *
