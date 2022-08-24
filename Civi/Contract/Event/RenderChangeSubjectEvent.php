@@ -11,7 +11,7 @@ namespace Civi\Contract\Event;
 
 use Civi;
 use CRM_Contract_ExtensionUtil as E;
-
+use CRM_Contract_CustomData as CRM_Contract_CustomData;
 
 /**
  * Class RenderChangeSubjectEvent
@@ -76,6 +76,12 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
     $this->change_data = null;
     $this->contract_data_before = $contract_data_before;
     $this->contract_data_after = $contract_data_after;
+    if ($this->contract_data_before) {
+      CRM_Contract_CustomData::labelCustomFields($this->contract_data_before);
+    }
+    if ($this->contract_data_after) {
+      CRM_Contract_CustomData::labelCustomFields($this->contract_data_after);
+    }
   }
 
 
@@ -101,10 +107,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
 
     $custom_subject = $event->getRenderedSubject();
-    if ($custom_subject) {
-      // todo: remove
-      Civi::log()->debug("Custom subject generated: {$custom_subject}");
-    }
+    //if ($custom_subject) Civi::log()->debug("Custom subject generated: {$custom_subject}");
     return $custom_subject;
   }
 
@@ -225,9 +228,14 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    */
   public function getActivityAction()
   {
-    $data = $this->getChangeData();
-    $class = \CRM_Contract_Change::getClassByActivityType($data['activity_type_id']);
-    return \CRM_Contract_Change::getActionByClass($class);
+    if (empty($this->getChangeID())) {
+      // this is probably new membership where no change exists yet
+      return 'sign';
+    } else {
+      $data = $this->getChangeData();
+      $class = \CRM_Contract_Change::getClassByActivityType($data['activity_type_id']);
+      return \CRM_Contract_Change::getActionByClass($class);
+    }
   }
 
   /**
@@ -261,7 +269,11 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    */
   public function getMembershipAnnualAmount()
   {
-    return (float) $this->getChangeAttribute('contract_updates.ch_annual');
+    $new_amount = (float) $this->getChangeAttribute('contract_updates.ch_annual');
+    if (empty($new_amount)) {
+      $new_amount = (float) $this->getContractAttribute('membership_payment.membership_annual');
+    }
+    return $new_amount;
   }
 
   /**
@@ -291,6 +303,9 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public function getMembershipPaymentFrequency()
   {
     $frequency = (int) $this->getChangeAttribute('contract_updates.ch_frequency');
+    if (empty($frequency)) {
+      $frequency = (int) $this->getContractAttribute('membership_payment.membership_frequency');
+    }
     return \CRM_Contract_Utils::lookupOptionValue('payment_frequency', $frequency);
   }
 

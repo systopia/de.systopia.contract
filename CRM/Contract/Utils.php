@@ -369,9 +369,8 @@ class CRM_Contract_Utils
    * @return mixed value
    */
   static public function lookupOptionValue($option_group_name, $value, $attribute = 'label') {
-    return self::lookupValue('OptionValue', $value, [
+    return self::lookupValue('OptionValue', $attribute, [
         'option_group_id' => $option_group_name,
-        'value'           => $value,
-        'return'          => $attribute]);
+        'value'           => $value]);
   }
 }
