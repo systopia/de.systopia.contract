@@ -44,9 +44,9 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   protected $contract_data_after;
 
   /**
-   * @var array the raw change/activity data
+   * @var array the data of the change object
    */
-  protected $change_activity_data;
+  protected $change_data;
 
   /**
    * @var string the raw contract data after
@@ -65,11 +65,15 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @param array $contract_data_after
    *   the state of the contract after the change
    *
+   * @param array|null $change_data
+   *   the state of the contract after the change
+   *
    */
   public function __construct($change_id, $contract_data_before, $contract_data_after)
   {
     $this->subject = null;
     $this->change_id = $change_id;
+    $this->change_data = null;
     $this->contract_data_before = $contract_data_before;
     $this->contract_data_after = $contract_data_after;
   }
@@ -126,6 +130,8 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
     return $this->subject;
   }
 
+
+
   /**
    * Get the contract data before this change
    *
@@ -170,24 +176,46 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return mixed|null
    *   the value
    */
-  public function getAttribute($attribute_name)
+  public function getContractAttribute($attribute_name)
   {
     return $this->contract_data_after[$attribute_name] ?? $this->contract_data_before[$attribute_name] ?? null;
   }
 
   /**
-   * Get the activity data
+   * Get the change activity data
    *
    * @return array activity data
    */
-  public function getChangeActivityData()
+  public function getChangeData()
   {
-    if (empty($this->change_activity_data) && !empty($this->getChangeID())) {
-      // todo: isn't that cached somewhere?
-      $this->change_activity_data = civicrm_api3('Activity','getsingle', ['id' => $this->getChangeID()]);
-      \CRM_Contract_CustomData::labelCustomFields($this->change_activity_data);
+    if ($this->change_data === null) {
+      $change_id = $this->getChangeID();
+      if (empty($change_id)) {
+        Civi::log()->debug("invalid change id '{$change_id}'");
+        $this->change_data = [];
+      } else {
+        $this->change_data = \civicrm_api3('Activity', 'getsingle', ['id' => $change_id]);
+        \CRM_Contract_CustomData::labelCustomFields($this->change_data);
+      }
     }
-    return $this->change_activity_data;
+    return $this->change_data;
+  }
+
+  /**
+   * Get a value from the data provided. It will first be taken from
+   *   the *after* data, but if it doesn't contain any information,
+   *   it'll use the *before* data for the lookup
+   *
+   * @param string $attribute_name
+   *   attribute name
+   *
+   * @return mixed|null
+   *   the value
+   */
+  public function getChangeAttribute($attribute_name)
+  {
+    $change_data = $this->getChangeData();
+    return $change_data[$attribute_name] ?? null;
   }
 
   /**
@@ -197,7 +225,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    */
   public function getActivityAction()
   {
-    $data = $this->getChangeActivityData();
+    $data = $this->getChangeData();
     $class = \CRM_Contract_Change::getClassByActivityType($data['activity_type_id']);
     return \CRM_Contract_Change::getActionByClass($class);
   }
@@ -207,12 +235,64 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    */
   public function getMembershipTypeName()
   {
-    $type_id = $this->getAttribute('membership_type_id');
+    $type_id = $this->getContractAttribute('membership_type_id');
     if (!empty($type_id)) {
-      return \CRM_Contract_Utils::getMembershipType($type_id, 'name');
+      return \CRM_Contract_Utils::lookupValue('MembershipType', 'name', ['id' => $type_id]);
     } else {
       return E::ts("(not found)");
     }
   }
+
+  /**
+   * @return string label of the cancel reason
+   */
+  public function getCancelReason()
+  {
+    $reason_id = $this->getChangeAttribute('contract_cancellation.contact_history_cancel_reason');
+    if (!empty($reason_id)) {
+      return \CRM_Contract_Utils::lookupOptionValue('contract_cancel_reason', $reason_id);
+    } else {
+      return E::ts("(not found)");
+    }
+  }
+
+  /**
+   * @return float annual amount
+   */
+  public function getMembershipAnnualAmount()
+  {
+    return (float) $this->getChangeAttribute('contract_updates.ch_annual');
+  }
+
+  /**
+   * @return float annual amount
+   */
+  public function getMembershipIncreaseAmount()
+  {
+    return (float) $this->getChangeAttribute('contract_updates.ch_annual_diff');
+  }
+
+  /**
+   * @return string rendered
+   */
+  public function getExecutionDate($date_format = 'Y-m-d')
+  {
+    $date = $this->getChangeAttribute('activity_date_time');
+    if ($date) {
+      return date('Y-m-d', strtotime($date));
+    } else {
+      return 'n/a';
+    }
+  }
+
+  /**
+   * @return string label of the frequency
+   */
+  public function getMembershipPaymentFrequency()
+  {
+    $frequency = (int) $this->getChangeAttribute('contract_updates.ch_frequency');
+    return \CRM_Contract_Utils::lookupOptionValue('payment_frequency', $frequency);
+  }
+
 
 }
