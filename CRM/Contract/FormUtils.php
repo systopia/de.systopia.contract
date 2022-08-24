@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 class CRM_Contract_FormUtils
 {
     public function __construct($form, $entity)
@@ -26,7 +28,7 @@ class CRM_Contract_FormUtils
         foreach($this->recurringContribution->getAll($contactId, true, $contractId) as $key => $rc){
           $recurringContributionOptions[$key] = $rc['label'];
         }
-        $this->form->add('select', $elementName, ts('Mandate / Recurring Contribution'), $recurringContributionOptions, $required, array('class' => 'crm-select2 huge'));
+        $this->form->add('select', $elementName, E::ts('Mandate / Recurring Contribution'), $recurringContributionOptions, $required, array('class' => 'crm-select2 huge'));
     }
 
     public function replaceIdWithLabel($name, $entity)
@@ -50,7 +52,7 @@ class CRM_Contract_FormUtils
                 $entityResult = civicrm_api3($entity, 'getsingle', array('id' => $entityId));
                 $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = $this->recurringContribution->writePaymentContractLabel($entityResult);
               } catch (Exception $e) {
-                $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = ts("NOT FOUND!");
+                $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = E::ts("NOT FOUND!");
               }
             }elseif($entity == 'BankAccountReference'){
               $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = CRM_Contract_BankingLogic::getIBANforBankAccount($entityId);
