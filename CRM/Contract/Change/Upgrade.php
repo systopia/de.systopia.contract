@@ -180,7 +180,8 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
    * @return array list of membership status names
    */
   public static function getStartStatusList() {
-    return ['Grace', 'Current'];
+    //return ['Grace', 'Current'];
+    return ['Grace', 'Current', 'Pending'];
   }
 
   /**
