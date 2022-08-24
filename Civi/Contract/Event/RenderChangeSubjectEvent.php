@@ -42,6 +42,11 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   protected $contract_data_after;
 
   /**
+   * @var array the raw change/activity data
+   */
+  protected $change_activity_data;
+
+  /**
    * @var string the raw contract data after
    */
   protected $subject;
@@ -142,6 +147,17 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   }
 
   /**
+   * Get the change/activity ID
+   *
+   * @return integer $subject
+   *    raw contract data after the change
+   */
+  public function getChangeID()
+  {
+    return $this->change_id;
+  }
+
+  /**
    * Get a value from the data provided. It will first be taken from
    *   the *after* data, but if it doesn't contain any information,
    *   it'll use the *before* data for the lookup
@@ -156,4 +172,32 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   {
     return $this->contract_data_after[$attribute_name] ?? $this->contract_data_before[$attribute_name] ?? null;
   }
+
+  /**
+   * Get the activity data
+   *
+   * @return array activity data
+   */
+  public function getChangeActivityData()
+  {
+    if (empty($this->change_activity_data) && !empty($this->getChangeID())) {
+      // todo: isn't that cached somewhere?
+      $this->change_activity_data = civicrm_api3('Activity','getsingle', ['id' => $this->getChangeID()]);
+      \CRM_Contract_CustomData::labelCustomFields($this->change_activity_data);
+    }
+    return $this->change_activity_data;
+  }
+
+  /**
+   * Get the action name of the change
+   *
+   * @return string
+   */
+  public function getActivityAction()
+  {
+    $data = $this->getChangeActivityData();
+    $class = \CRM_Contract_Change::getClassByActivityType($data['activity_type_id']);
+    return \CRM_Contract_Change::getActionByClass($class);
+  }
+
 }
