@@ -141,6 +141,38 @@ class CRM_Contract_Utils
   }
 
   /**
+   * Get a (cached) list of all membership types
+   *
+   * @return array membership type data as delivered by the API
+   */
+  public static function getMembershipTypes()
+  {
+    static $membership_types = null;
+    if ($membership_types === null) {
+      $membership_types = \civicrm_api3('MembershipType', 'get', ['option.limit' => 0])['values'];
+    }
+    return $membership_types;
+  }
+
+  /**
+   * Get the (cached) membership type data, or a particular attribute
+   *
+   * @return array|string membership type data as delivered by the API
+   */
+  public static function getMembershipType($membership_type_id, $attribute = null)
+  {
+    $types = self::getMembershipTypes();
+    if (isset($types[$membership_type_id])) {
+      if ($attribute) {
+        return $types[$membership_type_id][$attribute] ?? null;
+      } else {
+        return $types[$membership_type_id] ?? null;
+      }
+    }
+  }
+
+
+  /**
    * Download contract file
    * @param $file
    *
@@ -294,5 +326,51 @@ class CRM_Contract_Utils
         }
       }
     }
+  }
+
+  /**
+   * Cached query for API lookups
+   *
+   * @param $entity    string entity
+   * @param $query     array query options
+   * @param $attribute string attribute having the desired value
+   * @return mixed value
+   */
+  static public function lookupValue($entity, $attribute, $query) {
+    static $lookup_cache = [];
+
+    // create a key
+    $query['return'] = $attribute;
+    $cache_key = "$entity" . serialize($query);
+    if (!isset($lookup_cache[$cache_key])) {
+      try {
+        $value = civicrm_api3($entity, 'getvalue', $query);
+      } catch (Exception $ex) {
+        Civi::log()->debug("Error looking up {$entity} value, attribute '{$attribute}' with query " . json_encode($query));
+        $value = 'ERROR';
+      }
+      $lookup_cache[$cache_key] = $value;
+    }
+    return $lookup_cache[$cache_key];
+  }
+
+  /**
+   * Cached query for API lookups
+   *
+   * @param string $option_group_name
+   *   OptionGroup (internal) name
+   *
+   * @param string $value
+   *   the OptionValue value field content
+   *
+   * @param string $attribute
+   *     attribute having the desired value
+   *
+   * @return mixed value
+   */
+  static public function lookupOptionValue($option_group_name, $value, $attribute = 'label') {
+    return self::lookupValue('OptionValue', $attribute, [
+        'option_group_id' => $option_group_name,
+        'value'           => $value]);
   }
 }

@@ -320,7 +320,6 @@ abstract class CRM_Contract_Change {
    * @return string subject line
    */
   public function getSubject($contract_after, $contract_before = NULL) {
-    // fir
     return $this->renderChangeSubject($this, $contract_after, $contract_before);
   }
 
@@ -449,21 +448,7 @@ abstract class CRM_Contract_Change {
    * @return mixed value
    */
   protected function lookupValue($entity, $attribute, $query) {
-    static $lookup_cache = [];
-
-    // create a key
-    $query['return'] = $attribute;
-    $cache_key = "$entity" . serialize($query);
-    if (!isset($lookup_cache[$cache_key])) {
-      try {
-        $value = civicrm_api3($entity, 'getvalue', $query);
-      } catch (Exception $ex) {
-        CRM_Core_Error::debug_log_message("Error looking up value {$entity} attribute '{$attribute}' with " . json_encode($query));
-        $value = 'ERROR';
-      }
-      $lookup_cache[$cache_key] = $value;
-    }
-    return $lookup_cache[$cache_key];
+    return CRM_Contract_Utils::lookupValue($entity, $attribute, $query);
   }
 
   /**
