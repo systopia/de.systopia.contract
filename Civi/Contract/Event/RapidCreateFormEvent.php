@@ -80,7 +80,7 @@ class RapidCreateFormEvent extends ConfigurationEvent
     if (empty($rapid_create_url)) {
       \CRM_Core_Session::setStatus(
           E::ts("No form for the quick entry of contact and membership data, please use the 'add membership' form in the contact's membership tab. Please contact an expert should you need such a form."),
-          E::ts("'Rapid Create' form not available"),
+          E::ts("'Rapid Create' form not available")
       );
       $rapid_create_url = \CRM_Utils_System::url('civicrm/dashboard');
     }
