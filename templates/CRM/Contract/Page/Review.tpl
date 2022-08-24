@@ -52,4 +52,11 @@
     </tr>
   {/foreach}
 </table>
+
+<script>
+  // hide selected columns
+{foreach from=$hide_columns item=column_index}
+  cj("table.contract-history-table").find('td:nth-child({$column_index}),th:nth-child({$column_index})').hide();
+{/foreach}
+</script>
 {/crmScope}

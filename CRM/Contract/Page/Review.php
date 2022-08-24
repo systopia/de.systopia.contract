@@ -9,10 +9,14 @@
 +--------------------------------------------------------------*/
 
 use \Civi\Contract\Event\DisplayChangeTitle as DisplayChangeTitle;
+use \Civi\Contract\Event\AdjustContractReviewEvent as AdjustContractReviewEvent;
 
 class CRM_Contract_Page_Review extends CRM_Core_Page {
 
   public function run() {
+    // get the adjustments
+    $adjustments = AdjustContractReviewEvent::getContractReviewAdjustments();
+
     if(!$id = CRM_Utils_Request::retrieve('id', 'Positive')){
       Throw new Exception('Missing a valid contract ID');
     }
@@ -158,6 +162,9 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     foreach(civicrm_api3('CustomField', 'get', [ 'custom_group_id' => ['IN' => ['contract_cancellation', 'contract_updates']]])['values'] as $customField){
       $activityParams['return'][]='custom_'.$customField['id'];
     }
+
+    // hide some columns
+    $this->assign('hide_columns', $adjustments->getHiddenColumnIndices());
 
     parent::run();
   }
