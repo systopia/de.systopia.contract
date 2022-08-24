@@ -132,6 +132,16 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       //   HTML_QuickForm::setElementError ( 'payment_amount', 'Annual amount too small.');
       // }
 
+      // format IBAN and BIC
+      if (isset($this->_submitValues['iban'])) {
+        $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
+        $this->_submitValues['iban'] = $submitted['iban'];
+      }
+      if (isset($this->_submitValues['bic'])) {
+        $submitted['bic'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['bic']);
+        $this->_submitValues['bic'] = $submitted['bic'];
+      }
+
       // SEPA validation
       if (empty($submitted['iban'])) {
         HTML_QuickForm::setElementError ( 'iban', 'IBAN required');

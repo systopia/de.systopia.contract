@@ -270,6 +270,16 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
         }
       }
 
+      // format IBAN and BIC
+      if (isset($this->_submitValues['iban'])) {
+        $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
+        $this->_submitValues['iban'] = $submitted['iban'];
+      }
+      if (isset($this->_submitValues['bic'])) {
+        $submitted['bic'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['bic']);
+        $this->_submitValues['bic'] = $submitted['bic'];
+      }
+
       // SEPA validation
       if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
         HTML_QuickForm::setElementError ( 'iban', 'Please enter a valid IBAN');
