@@ -160,8 +160,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
 
     // add a generic switch to clean up form
     $payment_options = [
+      'modify'   => E::ts('modify contract'),
       'select'   => E::ts('select other'),
-      'modify'   => E::ts('modify contract')
     ];
 
     // update also has the option of no change to payment contract
@@ -220,6 +220,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
 
   function setDefaults($defaultValues = null, $filter = null){
     if(isset($this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')])){
+      $defaults['payment_option'] = 'modify';
       $defaults['recurring_contribution'] = $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')];
 
       $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
