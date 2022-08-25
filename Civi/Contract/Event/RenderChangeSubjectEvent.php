@@ -219,6 +219,10 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public function getCancelReason()
   {
     $reason_id = $this->getChangeAttribute('contract_cancellation.contact_history_cancel_reason');
+    if (empty($reason_id)) {
+      $reason_id = $this->getContractAttribute('membership_cancellation.membership_cancel_reason');
+    }
+
     if (!empty($reason_id)) {
       return \CRM_Contract_Utils::lookupOptionValue('contract_cancel_reason', $reason_id);
     } else {
