@@ -100,7 +100,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return string
    *   the subject line of the given change activity
    */
-  public static function renderCustomChangeSubject($change_action, $contract_data_after, $contract_data_before)
+  public static function renderCustomChangeSubject($change_action, $contract_data_before, $contract_data_after)
   {
     // create and run event
     $event = new RenderChangeSubjectEvent($change_action, $contract_data_before, $contract_data_after);
@@ -270,7 +270,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
       // no diff recorded, try to calculate
       $before = (float) $this->getContractDataBefore('membership_payment.membership_annual');
       $after = (float) $this->getContractDataAfter('membership_payment.membership_annual');
-      $value = $after - $before;
+      $value = $before - $after;
     }
     return (float) $value;
   }
