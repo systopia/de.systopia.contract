@@ -29,13 +29,14 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
    */
   public function populateData() {
     $contract = $this->getContract();
-    $this->setParameter('subject', $this->getSubject($contract));
 
     $resume_date = $this->getParameter('resume_date');
     if (!$resume_date) {
       $resume_date = $this->getParameter('activity_date_time', date('Y-m-d'));
       $this->setParameter('resume_date', date('Y-m-d', strtotime("{$resume_date} + 1 day")));
     }
+
+    $this->setParameter('subject', $this->getSubject($contract));
 
     if (!$this->isNew()) {
       parent::populateData();

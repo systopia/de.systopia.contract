@@ -334,7 +334,7 @@ abstract class CRM_Contract_Change {
   public function renderChangeSubject($change, $contract_after, $contract_before = NULL) {
     // first, try to see if there is some customisation:
     $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
-        $change->getID(),
+        $change->getActionName(),
         $contract_before,
         $contract_after);
     if ($rendered_subject !== null) {
@@ -398,7 +398,14 @@ abstract class CRM_Contract_Change {
    * @return mixed value in the activity data
    */
   public function getParameter($key, $default = NULL) {
-    return CRM_Utils_Array::value($key, $this->data, $default);
+    // check the data
+    if (isset($this->data[$key])) {
+      return $this->data[$key];
+    } elseif (isset($_REQUEST[$key])) {
+      return $_REQUEST[$key];
+    } else {
+      return $default;
+    }
   }
 
   /**
