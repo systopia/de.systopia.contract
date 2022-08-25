@@ -138,23 +138,37 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Get the contract data before this change
    *
-   * @return array|null $subject
+   * @param null|string $attribute
+   *   if attribute name is given, the attribute is returned
+   *
+   * @return mixed $subject
    *    raw contract data before the change
    */
-  public function getContractDataBefore()
+  public function getContractDataBefore($attribute = null)
   {
-    return $this->contract_data_before;
+    if ($attribute) {
+      return $this->contract_data_before[$attribute] ?? null;
+    } else {
+      return $this->contract_data_before;
+    }
   }
 
   /**
    * Get the contract data after this change
    *
-   * @return array|null $subject
+   * @param null|string $attribute
+   *   if attribute name is given, the attribute is returned
+   *
+   * @return mixed $subject
    *    raw contract data after the change
    */
-  public function getContractDataAfter()
+  public function getContractDataAfter($attribute = null)
   {
-    return $this->contract_data_after;
+    if ($attribute) {
+      return $this->contract_data_after[$attribute] ?? null;
+    } else {
+      return $this->contract_data_after;
+    }
   }
 
   /**
@@ -251,7 +265,14 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    */
   public function getMembershipIncreaseAmount()
   {
-    return (float) $this->getChangeAttribute('contract_updates.ch_annual_diff');
+    $value = $this->getChangeAttribute('contract_updates.ch_annual_diff');
+    if (!$value) {
+      // no diff recorded, try to calculate
+      $before = (float) $this->getContractDataBefore('membership_payment.membership_annual');
+      $after = (float) $this->getContractDataAfter('membership_payment.membership_annual');
+      $value = $after - $before;
+    }
+    return (float) $value;
   }
 
   /**
