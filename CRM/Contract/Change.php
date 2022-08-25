@@ -334,7 +334,7 @@ abstract class CRM_Contract_Change {
   public function renderChangeSubject($change, $contract_after, $contract_before = NULL) {
     // first, try to see if there is some customisation:
     $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
-        $change->getID(),
+        $change->getActionName(),
         $contract_before,
         $contract_after);
     if ($rendered_subject !== null) {

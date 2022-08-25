@@ -29,9 +29,9 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
-   * @var integer the id of the change record (activity)
+   * @var string the action name
    */
-  protected $change_id;
+  protected $change_action;
 
   /**
    * @var array the raw contract data before
@@ -56,8 +56,8 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Symfony event to allow customisation of a contract change event subject
    *
-   * @param integer $change_id
-   *   the id of the change record (activity)
+   * @param string $change_action
+   *   the internal name of the change action
    *
    * @param array $contract_data_before
    *   the state of the contract before the change
@@ -69,10 +69,10 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    *   the state of the contract after the change
    *
    */
-  public function __construct($change_id, $contract_data_before, $contract_data_after)
+  public function __construct($change_action, $contract_data_before, $contract_data_after)
   {
     $this->subject = null;
-    $this->change_id = $change_id;
+    $this->change_action = $change_action;
     $this->change_data = null;
     $this->contract_data_before = $contract_data_before;
     $this->contract_data_after = $contract_data_after;
@@ -88,8 +88,8 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * Issue a Symfony event to render a contract change's subject/title
    *
-   * @param integer|null $change_id
-   *   the id of the change record (activity)
+   * @param string $change_action
+   *   the internal name of the change action
    *
    * @param array|null $contract_data_before
    *   the state of the contract before the change
@@ -100,10 +100,10 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return string
    *   the subject line of the given change activity
    */
-  public static function renderCustomChangeSubject($change_id, $contract_data_after, $contract_data_before)
+  public static function renderCustomChangeSubject($change_action, $contract_data_after, $contract_data_before)
   {
     // create and run event
-    $event = new RenderChangeSubjectEvent($change_id, $contract_data_before, $contract_data_after);
+    $event = new RenderChangeSubjectEvent($change_action, $contract_data_before, $contract_data_after);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
 
     $custom_subject = $event->getRenderedSubject();
@@ -158,17 +158,6 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   }
 
   /**
-   * Get the change/activity ID
-   *
-   * @return integer $subject
-   *    raw contract data after the change
-   */
-  public function getChangeID()
-  {
-    return $this->change_id;
-  }
-
-  /**
    * Get a value from the data provided. It will first be taken from
    *   the *after* data, but if it doesn't contain any information,
    *   it'll use the *before* data for the lookup
@@ -185,26 +174,6 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   }
 
   /**
-   * Get the change activity data
-   *
-   * @return array activity data
-   */
-  public function getChangeData()
-  {
-    if ($this->change_data === null) {
-      $change_id = $this->getChangeID();
-      if (empty($change_id)) {
-        Civi::log()->debug("invalid change id '{$change_id}'");
-        $this->change_data = [];
-      } else {
-        $this->change_data = \civicrm_api3('Activity', 'getsingle', ['id' => $change_id]);
-        \CRM_Contract_CustomData::labelCustomFields($this->change_data);
-      }
-    }
-    return $this->change_data;
-  }
-
-  /**
    * Get a value from the data provided. It will first be taken from
    *   the *after* data, but if it doesn't contain any information,
    *   it'll use the *before* data for the lookup
@@ -217,8 +186,8 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    */
   public function getChangeAttribute($attribute_name)
   {
-    $change_data = $this->getChangeData();
-    return $change_data[$attribute_name] ?? null;
+    // this is all mixed up in the same pile
+    return $this->getContractAttribute($attribute_name);
   }
 
   /**
@@ -228,14 +197,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    */
   public function getActivityAction()
   {
-    if (empty($this->getChangeID())) {
-      // this is probably new membership where no change exists yet
-      return 'sign';
-    } else {
-      $data = $this->getChangeData();
-      $class = \CRM_Contract_Change::getClassByActivityType($data['activity_type_id']);
-      return \CRM_Contract_Change::getActionByClass($class);
-    }
+    return $this->change_action;
   }
 
   /**

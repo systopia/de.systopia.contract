@@ -29,7 +29,15 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
   public function testRenderSubjectCustomisation() {
     $contract = $this->createNewContract(['is_sepa' => 1]);
     $last_change = $this->getLastChangeActivity($contract['id']);
-    $this->assertEquals('TEST-TEST-TEST', $last_change['subject'], "The customisation hook failed.");
+    $this->assertEquals('TEST-sign', $last_change['subject'], "The customisation hook failed.");
+
+    // cancel contract
+    $this->modifyContract($contract['id'], 'cancel', 'tomorrow', [
+        'membership_cancellation.membership_cancel_reason' => 'Unknown'
+    ]);
+    $this->runContractEngine($contract['id'], '+2 days');
+    $last_change = $this->getLastChangeActivity($contract['id']);
+    $this->assertEquals('TEST-cancel', $last_change['subject'], "The customisation hook failed.");
   }
 
   /**
@@ -42,6 +50,6 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
    */
   public static function renderSubjectTest1(RenderChangeSubjectEvent $event)
   {
-    $event->setRenderedSubject("TEST-TEST-TEST");
+    $event->setRenderedSubject("TEST-" . $event->getActivityAction());
   }
 }
