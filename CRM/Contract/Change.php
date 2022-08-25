@@ -320,7 +320,7 @@ abstract class CRM_Contract_Change {
    * @return string subject line
    */
   public function getSubject($contract_after, $contract_before = NULL) {
-    return $this->renderChangeSubject($this, $contract_after, $contract_before);
+    return $this->renderChangeSubject($this, $contract_before, $contract_after);
   }
 
   /**
@@ -331,7 +331,7 @@ abstract class CRM_Contract_Change {
    * @param $contract_after        array  data of the contract after
    * @return                       string the subject line
    */
-  public function renderChangeSubject($change, $contract_after, $contract_before = NULL) {
+  public function renderChangeSubject($change, $contract_before, $contract_after) {
     // first, try to see if there is some customisation:
     $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
         $change->getActionName(),

@@ -185,8 +185,8 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   public function getContractAttribute($attribute_name)
   {
     return $this->contract_data_after[$attribute_name]
-        ?? $this->contract_data_before[$attribute_name]
         ?? $_REQUEST[$attribute_name]
+        ?? $this->contract_data_before[$attribute_name]
         ?? null;
   }
 
