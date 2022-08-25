@@ -77,6 +77,7 @@ CRM.$(function($) {
       reviewLink.html('[' + getReviewLinkText(membershipId) + ']');
     }else{
       var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
+      reviewRow.find('table.contract-history-table').parent().remove(); // this seems to still stick around...
       reviewRow.find('td').load(queryURL, function(){
         reviewRow.show();
         reviewLink.html('[' + reviewLinkTitles['hide'] + ']');
