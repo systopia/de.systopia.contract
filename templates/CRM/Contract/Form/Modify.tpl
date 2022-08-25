@@ -56,7 +56,7 @@
       <div class="content">{$form.bic.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-create">
+    <div class="crm-section payment-modify">
       <div class="label">{$form.account_holder.label}</div>
       <div class="content">{$form.account_holder.html}</div>
       <div class="clear"></div>
@@ -134,4 +134,10 @@
 {/if}
 
 {/if}
+{* trigger the select event once *}
+<script>{literal}
+  cj(document).ready(function() {
+    cj("select[name=payment_option]").change();
+  });
+</script>{/literal}
 {/crmScope}

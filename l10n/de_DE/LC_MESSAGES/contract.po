@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-23 16:45+0200\n"
+"POT-Creation-Date: 2022-08-25 17:44+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -139,7 +139,7 @@ msgstr "IBAN"
 msgid "BIC"
 msgstr "BIC"
 
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: CRM/Contract/Form/Create.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Members Bank Account"
@@ -208,6 +208,18 @@ msgid "Join date cannot be in the future."
 msgstr "Eintrittsdatum kann nicht in der Zukunft liegen."
 
 #: CRM/Contract/Form/Modify.php
+msgid ""
+"Some updates have already been scheduled for this contract. Please ensure "
+"that this new update will not conflict with existing updates"
+msgstr ""
+
+#: CRM/Contract/Form/Modify.php
+#, fuzzy
+#| msgid "Schedule date"
+msgid "Scheduled updates exist!"
+msgstr "Geplantes Ausführungsdatum"
+
+#: CRM/Contract/Form/Modify.php
 msgid "Unknown action '%1'."
 msgstr "Unbekannte Aktion '%1'."
 
@@ -224,16 +236,20 @@ msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
-msgid "select other"
-msgstr "bestehendes Mandat"
-
-#: CRM/Contract/Form/Modify.php
 msgid "modify contract"
 msgstr "Mandat anpassen"
 
 #: CRM/Contract/Form/Modify.php
+msgid "select other"
+msgstr "bestehendes Mandat"
+
+#: CRM/Contract/Form/Modify.php
 msgid "no change"
 msgstr "keine Änderung"
+
+#: CRM/Contract/Form/Modify.php
+msgid "Account Holder"
+msgstr "Kontoinhaber"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
@@ -746,6 +762,10 @@ msgstr ""
 #: Civi/Contract/Event/RapidCreateFormEvent.php
 msgid "'Rapid Create' form not available"
 msgstr "Kein Formular für die Schnellerfassung vorhanden."
+
+#: Civi/Contract/Event/RenderChangeSubjectEvent.php
+msgid "(not found)"
+msgstr ""
 
 #: contract.php
 msgid "needs review"

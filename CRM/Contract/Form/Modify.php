@@ -189,7 +189,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
     $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'));
     $this->add('text',   'bic', E::ts('BIC'));
-    $this->add('text',   'account_holder', E::ts('Members Bank Account'), array('class' => 'huge'));
+    $this->add('text',   'account_holder', E::ts('Account Holder'), array('class' => 'huge'));
     $this->add('text',   'payment_amount', E::ts('Installment Amount'), array('size' => 6));
     $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
   }

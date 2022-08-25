@@ -11,7 +11,7 @@ cj(document).ready(function () {
     cj("#payment_option").change(function () {
         updatePaymentSummaryText();
         showHidePaymentElements();
-    });
+    }).change();
 
     // run the following once
     showHidePaymentElements();
@@ -28,14 +28,17 @@ function showHidePaymentElements() {
     if (new_mode == "select") {
         cj("div.payment-select").show(300);
         cj("div.payment-modify").hide(300);
+        cj("div.payment-create").hide(300);
 
     } else if (new_mode == "modify") {
         cj("div.payment-select").hide(300);
         cj("div.payment-modify").show(300);
+        cj("div.payment-create").hide(300);
 
     } else {
         cj("div.payment-select").hide(300);
         cj("div.payment-modify").hide(300);
+        cj("div.payment-show").hide(300);
     }
 }
 
