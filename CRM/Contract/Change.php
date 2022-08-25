@@ -398,7 +398,14 @@ abstract class CRM_Contract_Change {
    * @return mixed value in the activity data
    */
   public function getParameter($key, $default = NULL) {
-    return CRM_Utils_Array::value($key, $this->data, $default);
+    // check the data
+    if (isset($this->data[$key])) {
+      return $this->data[$key];
+    } elseif (isset($_REQUEST[$key])) {
+      return $_REQUEST[$key];
+    } else {
+      return $default;
+    }
   }
 
   /**
