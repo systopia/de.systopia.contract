@@ -249,6 +249,15 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $params['note'] = $submitted['activity_details']; // Membership channel
     $params['medium_id'] = $submitted['activity_medium']; // Membership channel
 
+    // see
+    if (strtotime($params['join_date']) > strtotime('now')) {
+      if (strtotime($params['join_date']) > strtotime($params['start_date'])) {
+        // can't join after start date
+        $params['join_date'] = $params['start_date'];
+      }
+      $params['status_id'] = 'Pending';
+    }
+
     $membershipResult = civicrm_api3('Contract', 'create', $params);
 
     // update and redirect
