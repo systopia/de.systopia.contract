@@ -270,7 +270,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
       // no diff recorded, try to calculate
       $before = (float) $this->getContractDataBefore('membership_payment.membership_annual');
       $after = (float) $this->getContractDataAfter('membership_payment.membership_annual');
-      $value = $before - $after;
+      $value = $after - $before;
     }
     return (float) $value;
   }
