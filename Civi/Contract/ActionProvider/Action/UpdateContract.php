@@ -74,7 +74,7 @@ class UpdateContract extends AbstractAction {
 
         new Specification('iban',       'String',  E::ts('IBAN'), false),
         new Specification('bic',        'String',  E::ts('BIC'), false),
-        new Specification('contract_updates.ch_annual',     'Money',   E::ts('Anual Amount'), false),
+        new Specification('contract_updates.ch_annual',     'Money',   E::ts('Annual Amount'), false),
         new Specification('contract_updates.reference',  'String',  E::ts('Mandate Reference'), false),
 
         // recurring information
@@ -95,7 +95,7 @@ class UpdateContract extends AbstractAction {
         # Contract stuff
         new Specification('account_holder',       'String',  E::ts('Members Bank Account'), false),
         #new Specification('membership_payment.to_ba',       'String',  E::ts('IBAN'), true),
-        #new Specification('membership_payment.membership_annual',      'Money',  E::ts('Anual Amount'), false),
+        #new Specification('membership_payment.membership_annual',      'Money',  E::ts('Annual Amount'), false),
         #new Specification('membership_payment.membership_frequency',      'Integer',  E::ts('Frequency'), false),
         #new Specification('membership_payment.cycle_day',      'Integer',  E::ts('Cycle Day'), false),
         #new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),

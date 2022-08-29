@@ -617,7 +617,7 @@ msgid "Recurring Contribution ID"
 msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "Anual Amount"
+msgid "Annual Amount"
 msgstr ""
 
 #: Civi/Contract/ContainerSpecs.php

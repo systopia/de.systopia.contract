@@ -714,7 +714,7 @@ msgid "directly process scheduled changes"
 msgstr "Vertragsänderungen direkt verarbeiten"
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "Anual Amount"
+msgid "Annual Amount"
 msgstr "Jährlicher Betrag"
 
 #: Civi/Contract/ContainerSpecs.php
