@@ -243,9 +243,9 @@ class CRM_Contract_RecurringContribution {
 
     // FIXME: use SepaLogic::getPaymentFrequencies
     $shortHands = [
-      'Every 12 months' => 'annually',
-      'Every year'      => 'annually',
-      'Every month'     => 'monthly'
+      'Every 12 months' => E::ts('annually'),
+      'Every year'      => E::ts('annually'),
+      'Every month'     => E::ts('monthly'),
     ];
     if(array_key_exists($frequency, $shortHands)){
       return $shortHands[$frequency];
