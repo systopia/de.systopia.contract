@@ -7,54 +7,54 @@
       "_translate": ["label"],
       "name": "Contract_Signed",
       "label": "Sign Contract",
-      "filter": "1",
+      "filter": "0",
       "is_reserved": "1",
-      "is_active": "1"
+      "is_active": "0"
     },
     {
       "_lookup": ["name"],
       "_translate": ["label"],
       "name": "Contract_Paused",
       "label": "Pause Contract",
-      "filter": "1",
+      "filter": "0",
       "is_reserved": "1",
-      "is_active": "1"
+      "is_active": "0"
     },
     {
       "_lookup": ["name"],
       "_translate": ["label"],
       "name": "Contract_Resumed",
       "label": "Resume Contract",
-      "filter": "1",
+      "filter": "0",
       "is_reserved": "1",
-      "is_active": "1"
+      "is_active": "0"
     },
     {
       "_lookup": ["name"],
       "_translate": ["label"],
       "name": "Contract_Updated",
       "label": "Update Contract",
-      "filter": "1",
+      "filter": "0",
       "is_reserved": "1",
-      "is_active": "1"
+      "is_active": "0"
     },
     {
       "_lookup": ["name"],
       "_translate": ["label"],
       "name": "Contract_Cancelled",
       "label": "Cancel Contract",
-      "filter": "1",
+      "filter": "0",
       "is_reserved": "1",
-      "is_active": "1"
+      "is_active": "0"
     },
     {
       "_lookup": ["name"],
       "_translate": ["label"],
       "name": "Contract_Revived",
       "label": "Revive Contract",
-      "filter": "1",
+      "filter": "0",
       "is_reserved": "1",
-      "is_active": "1"
+      "is_active": "0"
     }
   ]
 }
