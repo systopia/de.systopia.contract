@@ -112,6 +112,11 @@ function contract_civicrm_pageRun( &$page ){
     // this is a contribution view
     CRM_Contract_BAO_ContractPaymentLink::injectLinks($page);
 
+  } elseif($page_name == 'CRM_Contact_Page_View_Summary'){
+    // this is the contact summary page
+    Civi::resources()->addVars('de.systopia.contract', ['ce_activity_types' => CRM_Contract_Change::getActivityTypeIds()]);
+    Civi::resources()->addScriptUrl(E::url('js/hide-ce-activity-types.js'));
+
   } elseif($page_name == 'CRM_Member_Page_Tab'){
     // thus is the membership summary tab
     $contractStatuses = array();
