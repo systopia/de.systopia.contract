@@ -54,9 +54,13 @@
 </table>
 
 <script>
-  // hide selected columns
-{foreach from=$hide_columns item=column_index}
+// hide selected columns
+function hide_unwanted_columns() {literal}{{/literal}
+  {foreach from=$hide_columns item=column_index}
   cj("table.contract-history-table").find('td:nth-child({$column_index}),th:nth-child({$column_index})').hide();
-{/foreach}
+  {/foreach}
+{literal}}{/literal}
+hide_unwanted_columns();
+cj(document).on('crmPopupFormSuccess', hide_unwanted_columns);
 </script>
 {/crmScope}

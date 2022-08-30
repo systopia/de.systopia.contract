@@ -5,7 +5,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
-// REGEX to identifiy the edit button
+// REGEX to identify the edit button
 const edit_button_sentinel = /civicrm\/contact\/view\/membership.*action=update/;
 
 /**
