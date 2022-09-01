@@ -143,7 +143,7 @@ msgstr "BIC"
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Members Bank Account"
-msgstr "Mitgliedskonto"
+msgstr "Kontoinhaber"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
@@ -424,7 +424,7 @@ msgstr "Zuwendung [%1] konnte nicht abgekoppelt werden: %2"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 #: CRM/Contract/Form/Task/DetachContributions.php
 msgid "%1 contribution(s) have been detached from the recurring contribution."
@@ -863,11 +863,11 @@ msgstr "Organisationskonto"
 
 #: resources/l10n.php
 msgid "Donor's Account Name"
-msgstr "Kontoname des Mitglieds"
+msgstr "Kontoinhaber"
 
 #: resources/l10n.php
 msgid "Member's Bank Account"
-msgstr "Konto des Mitglieds"
+msgstr "Kontoinhaber"
 
 #: resources/l10n.php
 msgid "Cycle Day"
