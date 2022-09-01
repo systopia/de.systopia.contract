@@ -867,7 +867,7 @@ msgstr "Kontoinhaber"
 
 #: resources/l10n.php
 msgid "Member's Bank Account"
-msgstr "Kontoinhaber"
+msgstr "Mitgliedskonto"
 
 #: resources/l10n.php
 msgid "Cycle Day"
