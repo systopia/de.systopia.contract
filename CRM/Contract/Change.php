@@ -247,7 +247,7 @@ abstract class CRM_Contract_Change {
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
           $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($sepaMandate['contact_id'], $sepaMandate['iban'], $sepaMandate['bic']);
           $contract['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
-          $contract['membership_payment.from_name']= $sepaMandate['account_holder'];
+          $contract['membership_payment.from_name']= $sepaMandate['account_holder'] ?? '';
 
         } elseif ($sepaMandateResult['count'] == 0) {
           // this should be a recurring contribution -> get from the latest contribution
