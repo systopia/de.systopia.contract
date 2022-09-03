@@ -112,7 +112,7 @@ class CRM_Contract_CustomData {
         $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update OptionValue: " . json_encode($optionValueSpec));
       } else {
         // update OptionValue
-        $this->updateEntity('OptionValue', $optionValueSpec, $optionValue, array('is_active'));
+        $this->updateEntity('OptionValue', $optionValueSpec, $optionValue);
       }
     }
   }
@@ -281,6 +281,11 @@ class CRM_Contract_CustomData {
 
       if (isset($current_data[$field]) && $value != $current_data[$field]) {
         $update_query[$field] = $value;
+      } elseif ($field == 'icon') {
+        // icon does not seem to be returned by the API for comparison
+        if (!isset($current_data[$field]) || $value != $current_data[$field]) {
+          $update_query[$field] = $value;
+        }
       }
     }
 

@@ -8,6 +8,7 @@
       "name": "Contract_Signed",
       "label": "Sign Contract",
       "filter": "0",
+      "icon": "fa-dot-circle-o",
       "is_reserved": "1",
       "is_active": "1"
     },
@@ -17,6 +18,7 @@
       "name": "Contract_Paused",
       "label": "Pause Contract",
       "filter": "0",
+      "icon": "fa-pause-circle-o",
       "is_reserved": "1",
       "is_active": "1"
     },
@@ -26,6 +28,7 @@
       "name": "Contract_Resumed",
       "label": "Resume Contract",
       "filter": "0",
+      "icon": "fa-play-circle-o",
       "is_reserved": "1",
       "is_active": "1"
     },
@@ -35,6 +38,7 @@
       "name": "Contract_Updated",
       "label": "Update Contract",
       "filter": "0",
+      "icon": "fa-arrow-circle-o-up",
       "is_reserved": "1",
       "is_active": "1"
     },
@@ -44,6 +48,7 @@
       "name": "Contract_Cancelled",
       "label": "Cancel Contract",
       "filter": "0",
+      "icon": "fa-stop-circle-o",
       "is_reserved": "1",
       "is_active": "1"
     },
@@ -53,6 +58,7 @@
       "name": "Contract_Revived",
       "label": "Revive Contract",
       "filter": "0",
+      "icon": "fa-play-circle-o",
       "is_reserved": "1",
       "is_active": "1"
     }
