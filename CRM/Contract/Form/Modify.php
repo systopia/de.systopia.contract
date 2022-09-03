@@ -10,6 +10,8 @@
 
 use CRM_Contract_ExtensionUtil as E;
 
+use \Civi\Contract\Event\ContractFormDefaultsEvent as ContractFormDefaultsEvent;
+
 class CRM_Contract_Form_Modify extends CRM_Core_Form{
 
   function preProcess(){
@@ -239,6 +241,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       list($defaults['activity_date'], $defaults['activity_date_time']) = CRM_Utils_Date::setDateDefaults(date('Y-m-d 00:00:00', strtotime('+1 day')), 'activityDateTime');
     }
 
+    // add customisation
+    ContractFormDefaultsEvent::adjustDefaults($defaults, $this->modify_action);
 
     parent::setDefaults($defaults);
   }

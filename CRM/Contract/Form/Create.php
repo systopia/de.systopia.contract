@@ -9,6 +9,7 @@
 +--------------------------------------------------------------*/
 
 use CRM_Contract_ExtensionUtil as E;
+use \Civi\Contract\Event\ContractFormDefaultsEvent as ContractFormDefaultsEvent;
 
 class CRM_Contract_Form_Create extends CRM_Core_Form {
 
@@ -179,6 +180,8 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $defaults['payment_frequency'] = '12'; // monthly
     $defaults['payment_option'] = 'create';
     $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
+
+    ContractFormDefaultsEvent::adjustDefaults($defaults, 'create');
 
     parent::setDefaults($defaults);
   }
