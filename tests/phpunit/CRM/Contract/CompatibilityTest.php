@@ -172,4 +172,28 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase
         'membership_cancellation.membership_cancel_reason' => 1,
     ]);
   }
+
+  /**
+   * Check if the payment links are generated correctly
+   *
+   * @see https://redmine.greenpeace.at/issues/1276#note-74
+   */
+  public function testGetPaymentLinks()
+  {
+    // create a new contract
+    $contract = $this->createNewContract([
+         'is_sepa'            => 1,
+         'amount'             => '12.00',
+         'frequency_unit'     => 'month',
+         'frequency_interval' => '1',
+         'cycle_day'          => 25,
+         'iban'               => 'DE89370400440532013000',
+         'bic'                => 'GENODEM1GLS',
+     ]);
+
+    // get the payment links
+    $contract = $this->callAPISuccess('ContractPaymentLink', 'getactive', [
+        'contract_id' => $contract['id']
+    ]);
+  }
 }
