@@ -80,7 +80,7 @@ class GetSepaRcur extends AbstractAction {
 
     // get contract
     $mandate_params = ['entity_table' => 'civicrm_contribution_recur'];
-    $mandate_params['id'] = $parameters->getParameter('recurring_contribution_id');
+    $mandate_params['entity_id'] = $parameters->getParameter('recurring_contribution_id');
 
     try {
       $mandate = \civicrm_api3('SepaMandate', 'getSingle', $mandate_params);
