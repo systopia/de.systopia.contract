@@ -19,9 +19,13 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
    * @return array list of required fields
    */
   public function getRequiredFields() {
-    return [
-        'resume_date'
-    ];
+    if ($this->isNew()) {
+      return [
+          'resume_date'
+      ];
+    } else {
+      return [];
+    }
   }
 
   /**
