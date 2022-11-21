@@ -35,7 +35,7 @@ class UpdateContract extends AbstractAction {
     return new SpecificationBag([
 
         new Specification('process_scheduled_modifications',         'Integer', E::ts('directly process scheduled changes'), false, 0, null, $this->yesNoOptions()),
-        new Specification('default_defer_payment_start',               'Boolean', E::ts('Defer Payment Start'), false, false),
+        new Specification('default_ch_defer_payment_start',               'Boolean', E::ts('Defer Payment Start'), false, false),
         #new Specification('default_action',       'Integer', E::ts('Modify Action (default)'), true, null, null, $this->getModifyActions(), false),
         #new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
         #new Specification('default_creditor_id',       'Integer', E::ts('Creditor (default)'), true, null, null, $this->getCreditors(), false),
@@ -59,7 +59,7 @@ class UpdateContract extends AbstractAction {
         new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
         new Specification('contract_id', 'Integer', E::ts('Contract ID'), true),
         new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
-        new Specification('defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), false),
+        new Specification('ch_defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), false),
 
 
         /*
@@ -131,14 +131,14 @@ class UpdateContract extends AbstractAction {
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
     $contract_data = ['action' => 'update'];
     // add basic fields to contract_data
-    foreach (['contact_id','iban','bic','date','membership_type_id','defer_payment_start','contract_updates.ch_annual','contract_updates.reference','contract_updates.ch_frequency','contract_updates.ch_cycle_day'] as $parameter_name) {
+    foreach (['contact_id','iban','bic','date','membership_type_id','ch_defer_payment_start','contract_updates.ch_annual','contract_updates.reference','contract_updates.ch_frequency','contract_updates.ch_cycle_day'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
       }
     }
     // add override fields to contract_data
-    foreach (['membership_type_id','contact_id','contract_id','defer_payment_start'] as $parameter_name) {
+    foreach (['membership_type_id','contact_id','contract_id','ch_defer_payment_start'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (empty($value)) {
         $value = $this->configuration->getParameter("default_{$parameter_name}");
