@@ -17,6 +17,7 @@ cj(document).ready(function () {
     showHidePaymentElements();
     cj('[name=recurring_contribution]').change(updatePaymentSummaryText);
     cj("div.payment-modify").change(updatePaymentSummaryText);
+    cj("div.defer_payment_start").change(updatePaymentSummaryText);
     cj("#activity_date").parent().parent().change(updatePaymentSummaryText);
 });
 
@@ -84,10 +85,18 @@ function updatePaymentSummaryText() { (function (cj, ts){
         // In case of an update (not revive), we need to respect the already paid period, see #771
         let next_collection = '';
         if (CRM.vars['de.systopia.contract'].action === 'update') {
-            next_collection = nextCollectionDate(cycle_day, start_date, CRM.vars['de.systopia.contract'].grace_end);
+            let defer_payment_start = parseInt(cj('[name=defer_payment_start]').val());
+            if (defer_payment_start > 0) {
+                // user has chosen to maintain cycle day
+                console.log("GRACE END" + CRM.vars['de.systopia.contract'].grace_end);
+                next_collection = nextCollectionDate(cycle_day, start_date, CRM.vars['de.systopia.contract'].grace_end);
+            } else {
+                next_collection = nextCollectionDate(cycle_day, start_date, null);
+            }
         } else {
             next_collection = nextCollectionDate(cycle_day, start_date, null);
         }
+        console.log(next_collection);
 
         // add placeholders for IBAN,BIC,AMOUNT
         cj("#iban").attr("placeholder", current_values.fields.iban);
