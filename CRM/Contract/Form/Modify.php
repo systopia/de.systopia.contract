@@ -374,5 +374,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     E::ts("Annual amount");
     E::ts("Installment amount");
     E::ts("Next debit");
+    E::ts("Start Collection");
+    E::ts("as soon as possible");
+    E::ts("respect previous cycle");
   }
 }
