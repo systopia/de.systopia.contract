@@ -194,6 +194,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     $this->add('text',   'account_holder', E::ts('Account Holder'), array('class' => 'huge'));
     $this->add('text',   'payment_amount', E::ts('Installment Amount'), array('size' => 6));
     $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
+    $this->add('select', 'defer_payment_start', E::ts('Start Collection'), [
+        0 => E::ts("as soon as possible"),
+        1 => E::ts("respect previous cycle")]);
   }
 
 
@@ -333,6 +336,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
           $params['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
           $params['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($this->membership['contact_id'], $submitted['iban'], $submitted['bic']);
           $params['membership_payment.from_name'] = $submitted['account_holder'];
+          $params['membership_payment.defer_payment_start'] = empty($submitted['defer_payment_start']) ? 0 : 1;
           break;
 
         default:
