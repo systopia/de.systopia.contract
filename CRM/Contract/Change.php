@@ -414,10 +414,17 @@ abstract class CRM_Contract_Change {
    */
   public function save() {
     // make sure all custom fields are transformed into the 'custom_[id]' notation
-    CRM_Contract_CustomData::resolveCustomFields($this->data);
+    $mitigation_ch_defer_payment_start_value = $this->data['membership_payment.defer_payment_start'] ?? 0;
 
     // store via API
+    CRM_Contract_CustomData::resolveCustomFields($this->data);
     $result = civicrm_api3('Activity', 'create', $this->data);
+
+    // mitigation: there seems to be cases where the boolean value will not be written to ch_defer_payment_start
+    CRM_Core_DAO::singleValueQuery(
+        "UPDATE civicrm_value_contract_updates SET ch_defer_payment_start = %1",
+        [1 => [$mitigation_ch_defer_payment_start_value, 'Int']]
+    );
 
     // make sure we store the activity ID (if this is the first time)
     if (empty($this->data['id'])) {
