@@ -227,6 +227,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
     if(isset($this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')])){
       $defaults['payment_option'] = 'modify';
       $defaults['recurring_contribution'] = $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')];
+      $defaults['defer_payment_start'] = 1;  // wait until the paid-for time has passed
 
       $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
       $defaults['payment_frequency'] = $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_frequency')] ?? 12;
@@ -336,7 +337,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
           $params['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
           $params['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($this->membership['contact_id'], $submitted['iban'], $submitted['bic']);
           $params['membership_payment.from_name'] = $submitted['account_holder'];
-          $params['membership_payment.defer_payment_start'] = empty($submitted['defer_payment_start']) ? 0 : 1;
+          $params['membership_payment.defer_payment_start'] = empty($submitted['defer_payment_start']) ? "0" : "1";
           break;
 
         default:
@@ -358,6 +359,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
       $params['resume_date'] = CRM_Utils_Date::processDate($submitted['resume_date'], false, false, 'Y-m-d');
 
     }
+
+    //CRM_Contract_CustomData::resolveCustomFields($params);
     civicrm_api3('Contract', 'modify', $params);
     civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
   }
