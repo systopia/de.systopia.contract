@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-08-25 17:44+0200\n"
+"POT-Creation-Date: 2022-11-21 15:13+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -212,12 +212,12 @@ msgid ""
 "Some updates have already been scheduled for this contract. Please ensure "
 "that this new update will not conflict with existing updates"
 msgstr ""
+"Es gibt bereits geplante Änderungen für diesen Vertrag. Bitte vergewissern "
+"Sie sich, dass hier keine Konflikte entstehen."
 
 #: CRM/Contract/Form/Modify.php
-#, fuzzy
-#| msgid "Schedule date"
 msgid "Scheduled updates exist!"
-msgstr "Geplantes Ausführungsdatum"
+msgstr "Weiter Anstehende Änderungen!"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Unknown action '%1'."
@@ -254,6 +254,20 @@ msgstr "Kontoinhaber"
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
 msgstr "Einzugsbetrag"
+
+#: CRM/Contract/Form/Modify.php
+msgid "Start Collection"
+msgstr "Einzugsstart"
+
+#: CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
+msgid "as soon as possible"
+msgstr "so bald wie möglich"
+
+#: CRM/Contract/Form/Modify.php
+msgid "respect previous cycle"
+msgstr "bestehenden Turnus beibehalten"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Cancellation reason"
@@ -479,6 +493,18 @@ msgstr "NICHT GEFUNDEN!"
 msgid "Payment method"
 msgstr "Zahlungsart"
 
+#: CRM/Contract/RecurringContribution.php
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+msgid "annually"
+msgstr "jährlich"
+
+#: CRM/Contract/RecurringContribution.php
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+msgid "monthly"
+msgstr "monatlich"
+
 #: CRM/Contract/SepaLogic.php
 msgid "The created mandate for membership [%1] has no BIC."
 msgstr "Das erstellte Mandat für die Mitgliedschaft  [%1] hat keine BIC."
@@ -604,8 +630,6 @@ msgid "Collection Day"
 msgstr "Einzugstag"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
-#, fuzzy
-#| msgid "Member since"
 msgid "Member Since"
 msgstr "Mitglied seit"
 
@@ -628,11 +652,6 @@ msgstr "Vertrag besteht bereits"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
-msgid "annually"
-msgstr "jährlich"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
 msgid "semi-annually"
 msgstr "halbjährlich"
 
@@ -645,16 +664,6 @@ msgstr "vierteljährlich"
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
 msgid "bi-monthly"
 msgstr "zweimonatlich"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
-msgid "monthly"
-msgstr "monatlich"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "as soon as possible"
-msgstr "so bald wie möglich"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "ignore"

@@ -11,7 +11,7 @@ use CRM_Contract_ExtensionUtil as E;
 /**
  * Interface to CiviSEPA functions
  *
- * @todo resolve hard dependecy to CiviSEPA module
+ * @todo resolve hard dependency to CiviSEPA module
  */
 class CRM_Contract_SepaLogic {
 
@@ -403,10 +403,10 @@ class CRM_Contract_SepaLogic {
       return $now;
     }
 
-    // load last successull collection for the recurring contribution
+    // load last successful collection for the recurring contribution
     $last_collection_search = civicrm_api3('Contribution', 'get', array(
       'contribution_recur_id'  => $contribution_recur_id,
-      'contribution_status_id' => array('IN' => array(1,5)), // status Completed or In Progres
+      'contribution_status_id' => array('IN' => array(1,5)), // status Completed or In Progress
       'options'                => array('sort'  => 'receive_date desc',
                                         'limit' => 1),
       'return'                 => 'id,receive_date',

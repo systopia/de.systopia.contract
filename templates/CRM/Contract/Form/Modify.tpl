@@ -71,6 +71,11 @@
       <div class="content">{$form.payment_frequency.html}</div>
       <div class="clear"></div>
     </div>
+    <div class="crm-section payment-modify">
+      <div class="label">{$form.defer_payment_start.label}</div>
+      <div class="content">{$form.defer_payment_start.html}</div>
+      <div class="clear"></div>
+    </div>
 
 
     <div class="crm-section">
