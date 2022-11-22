@@ -35,6 +35,7 @@ class UpdateContract extends AbstractAction {
     return new SpecificationBag([
 
         new Specification('process_scheduled_modifications',         'Integer', E::ts('directly process scheduled changes'), false, 0, null, $this->yesNoOptions()),
+        new Specification('default_defer_payment_start',               'Boolean', E::ts('Defer Payment Start'), false, false),
         #new Specification('default_action',       'Integer', E::ts('Modify Action (default)'), true, null, null, $this->getModifyActions(), false),
         #new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
         #new Specification('default_creditor_id',       'Integer', E::ts('Creditor (default)'), true, null, null, $this->getCreditors(), false),
@@ -58,6 +59,7 @@ class UpdateContract extends AbstractAction {
         new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
         new Specification('contract_id', 'Integer', E::ts('Contract ID'), true),
         new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
+        new Specification('defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), false),
 
 
         /*
@@ -147,6 +149,12 @@ class UpdateContract extends AbstractAction {
     $account_holder = $parameters->getParameter('account_holder');
     if(!empty($account_holder)){
         $contract_data['membership_payment.from_name'] = $account_holder;
+    }
+    // add defer_payment_start
+    $defer_payment_start = $parameters->getParameter('defer_payment_start');
+    $defer_payment_start = $parameters->getParameter('default_defer_payment_start');
+    if(!empty(defer_payment_start)){
+        $contract_data['membership_payment.defer_payment_start'] = $defer_payment_start;
     }
 
     try {
