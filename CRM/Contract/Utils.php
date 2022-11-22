@@ -25,22 +25,6 @@ class CRM_Contract_Utils
     return self::$_singleton;
   }
 
-  static $ContractToModificationActivityField = [
-      'id'                                                   => 'source_record_id',
-      'contact_id'                                           => 'target_contact_id',
-      'campaign_id'                                          => 'campaign_id',
-      'membership_type_id'                                   => 'contract_updates.ch_membership_type',
-      'membership_payment.membership_recurring_contribution' => 'contract_updates.ch_recurring_contribution',
-      'membership_payment.payment_instrument'                => 'contract_updates.ch_payment_instrument',
-      'membership_payment.membership_annual'                 => 'contract_updates.ch_annual',
-      'membership_payment.membership_frequency'              => 'contract_updates.ch_frequency',
-      'membership_payment.from_ba'                           => 'contract_updates.ch_from_ba',
-      'membership_payment.to_ba'                             => 'contract_updates.ch_to_ba',
-      'membership_payment.cycle_day'                         => 'contract_updates.ch_cycle_day',
-      'membership_payment.defer_payment_start'               => 'contract_updates.ch_defer_payment_start',
-      'membership_cancellation.membership_cancel_reason'     => 'contract_cancellation.contact_history_cancel_reason',
-  ];
-
   /**
    * Get the name (not the label) of the given membership status ID
    *
@@ -61,17 +45,6 @@ class CRM_Contract_Utils
     }
     return CRM_Utils_Array::value($status_id, $status_names);
   }
-
-  static function contractToActivityFieldId($contractField)
-  {
-    $translation   = self::$ContractToModificationActivityField;
-    $activityField = $translation[$contractField];
-    if (strpos($activityField, '.')) {
-      return self::getCustomFieldId($activityField);
-    }
-    return $activityField;
-  }
-
 
   static function getCustomFieldId($customField)
   {
