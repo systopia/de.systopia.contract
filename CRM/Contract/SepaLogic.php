@@ -394,23 +394,36 @@ class CRM_Contract_SepaLogic {
    *  of the give recurring contribution
    * If no such contribution is found, the current date is returned
    *
+   * @param integer $contribution_recur_id
+   *   ID of the related recurring contribution
+   *
+   * @param string $now
+   *   date to be considered now. Defaults to actual "now"
+   *
    * @return string date ('Y-m-d H:i:s')
+   *
    */
-  public static function getNextInstallmentDate($contribution_recur_id) {
-    $now = date('Y-m-d H:i:s');
+  public static function getNextInstallmentDate($contribution_recur_id, $now = null) {
+    if (!$now) {
+      $now = date('Y-m-d H:i:s');
+    }
 
     if (!$contribution_recur_id) {
       return $now;
     }
 
+    // load the statuses of a not-successful contributions
+    $ignored_contribution_statuses = [];
+    $ignored_contribution_statuses[] = (int) CRM_Core_PseudoConstant::getKey('CRM_Contribute_BAO_Contribution', 'contribution_status_id', 'Pending');
+    $ignored_contribution_statuses[] = (int) CRM_Core_PseudoConstant::getKey('CRM_Contribute_BAO_Contribution', 'contribution_status_id', 'Failed');
+
     // load last successful collection for the recurring contribution
-    $last_collection_search = civicrm_api3('Contribution', 'get', array(
-      'contribution_recur_id'  => $contribution_recur_id,
-      'contribution_status_id' => array('IN' => array(1,5)), // status Completed or In Progress
-      'options'                => array('sort'  => 'receive_date desc',
-                                        'limit' => 1),
-      'return'                 => 'id,receive_date',
-      ));
+    $last_collection_search = civicrm_api3('Contribution', 'get', [
+        'contribution_recur_id'  => $contribution_recur_id,
+        'contribution_status_id' => ['NOT IN' => $ignored_contribution_statuses],
+        'options'                => ['sort'  => 'receive_date desc', 'limit' => 1],
+        'return'                 => 'id,receive_date',
+    ]);
 
     if ($last_collection_search['count'] > 0) {
       $last_collection = reset($last_collection_search['values']);
@@ -442,16 +455,38 @@ class CRM_Contract_SepaLogic {
     }
 
     // check recurring contribution start date
-    $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', array(
-      'id'     => $contribution_recur_id,
-      'return' => 'start_date,contribution_status_id'));
+    $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', [
+        'id'     => $contribution_recur_id,
+        'return' => 'start_date,contribution_status_id,frequency_interval,frequency_unit,cycle_day'
+    ]);
     if (!empty($contribution_recur['start_date']) && !empty($contribution_recur['contribution_status_id'])) {
       $status_id = (int) $contribution_recur['contribution_status_id'];
       // only consider active recurring contributions (2=Pending, 5=in Progress)
       if ($status_id == 2 || $status_id == 5) {
         $start_date = date('Y-m-d H:i:s', strtotime($contribution_recur['start_date']));
         if ($start_date > $now) {
+          // if the start date is in the future, this should be the next collection date by default
           return $start_date;
+
+        } else {
+          // start date is in the past, but no contributions (that's processed above):
+          //  use the start_date to determine next collection date in the future
+          $next_collection_date = strtotime($start_date);
+
+          // first, adjust to next collection day
+          $safety_counter = 35;
+          $cycle_days = array_keys(self::getCycleDays());
+          while (!in_array(date('j', $next_collection_date), $cycle_days) && $safety_counter > 0) {
+            $next_collection_date = strtotime("+1 day", $next_collection_date);
+            $safety_counter -= 1;
+          }
+
+          // now add periods until in the future
+          $now_timestamp = strtotime($now);
+          while (date('Y-m-d', $next_collection_date) < date('Y-m-d', $now_timestamp)) {
+            $next_collection_date = strtotime("+{$contribution_recur['frequency_interval']} {$contribution_recur['frequency_unit']}", $next_collection_date);
+          }
+          return date('Y-m-d H:i:s', $next_collection_date);
         }
       }
     }
