@@ -51,21 +51,21 @@ class CRM_Contract_SepaLogic {
 
     // all relevant fields (activity field  -> membership field)
     $mandate_relevant_fields = [
-      'contract_updates.ch_annual'                 => 'membership_payment.membership_annual',
-      'contract_updates.ch_from_ba'                => 'membership_payment.from_ba',
-      'contract_updates.ch_from_name'                => 'membership_payment.from_name',
-      // 'contract_updates.ch_to_ba'                  => 'membership_payment.to_ba', // TODO: implement when multiple creditors are around
-      'contract_updates.ch_frequency'              => 'membership_payment.membership_frequency',
-      'contract_updates.ch_cycle_day'              => 'membership_payment.cycle_day',
-      'contract_updates.ch_recurring_contribution' => 'membership_payment.membership_recurring_contribution',
-      'contract_updates.ch_defer_payment_start'    => 'membership_payment.defer_payment_start',
+        'contract_updates.ch_annual'                 => 'membership_payment.membership_annual',
+        'contract_updates.ch_from_ba'                => 'membership_payment.from_ba',
+        'contract_updates.ch_from_name'                => 'membership_payment.from_name',
+        // 'contract_updates.ch_to_ba'                  => 'membership_payment.to_ba', // TODO: implement when multiple creditors are around
+        'contract_updates.ch_frequency'              => 'membership_payment.membership_frequency',
+        'contract_updates.ch_cycle_day'              => 'membership_payment.cycle_day',
+        'contract_updates.ch_recurring_contribution' => 'membership_payment.membership_recurring_contribution',
+        'contract_updates.ch_defer_payment_start'    => 'membership_payment.defer_payment_start',
     ];
 
     // calculate changes to see whether we have to act
     $mandate_relevant_changes = array();
     foreach ($mandate_relevant_fields as $desired_field_name => $current_field_name) {
       if (    isset($desired_state[$desired_field_name])
-           && $desired_state[$desired_field_name] != CRM_Utils_Array::value($current_field_name, $current_state)) {
+          && $desired_state[$desired_field_name] != CRM_Utils_Array::value($current_field_name, $current_state)) {
         $mandate_relevant_changes[] = $desired_field_name;
       }
     }
@@ -87,15 +87,15 @@ class CRM_Contract_SepaLogic {
 
       // get the right values (desired first, else from current)
       $from_ba       = CRM_Utils_Array::value('contract_updates.ch_from_ba', $desired_state,
-                        /* fallback: membership */ CRM_Utils_Array::value('membership_payment.from_ba', $current_state));
+          /* fallback: membership */ CRM_Utils_Array::value('membership_payment.from_ba', $current_state));
       $cycle_day     = (int) CRM_Utils_Array::value('contract_updates.ch_cycle_day', $desired_state,
-                        /* fallback: membership */ CRM_Utils_Array::value('membership_payment.cycle_day', $current_state));
+          /* fallback: membership */ CRM_Utils_Array::value('membership_payment.cycle_day', $current_state));
       $annual_amount = CRM_Utils_Array::value('contract_updates.ch_annual', $desired_state,
-                        /* fallback: membership */ CRM_Utils_Array::value('membership_payment.membership_annual', $current_state));
+          /* fallback: membership */ CRM_Utils_Array::value('membership_payment.membership_annual', $current_state));
       $frequency     = (int) CRM_Utils_Array::value('contract_updates.ch_frequency',
-                        /* fallback: membership */ $desired_state, CRM_Utils_Array::value('membership_payment.membership_frequency', $current_state));
+          /* fallback: membership */ $desired_state, CRM_Utils_Array::value('membership_payment.membership_frequency', $current_state));
       $account_holder       = CRM_Utils_Array::value('contract_updates.ch_from_name', $desired_state,
-                        /* fallback: membership */ CRM_Utils_Array::value('membership_payment.from_name', $current_state));
+          /* fallback: membership */ CRM_Utils_Array::value('membership_payment.from_name', $current_state));
 
       $recurring_contribution = null;
       $recurring_contribution_id = (int) CRM_Utils_Array::value('membership_payment.membership_recurring_contribution', $current_state);
@@ -104,7 +104,7 @@ class CRM_Contract_SepaLogic {
       }
 
       $campaign_id = CRM_Utils_Array::value('campaign_id', $activity,
-        /* fallback: r. contrib. */ CRM_Utils_Array::value('campaign_id', $recurring_contribution));
+          /* fallback: r. contrib. */ CRM_Utils_Array::value('campaign_id', $recurring_contribution));
 
 
       // fallback 2: take (still) missing from connected recurring contribution
@@ -168,24 +168,24 @@ class CRM_Contract_SepaLogic {
 
       // we need to create a new mandate
       $new_mandate_values =  array(
-        'type'               => 'RCUR',
-        'contact_id'         => $current_state['contact_id'],
-        'amount'             => $amount,
-        'currency'           => self::getCreditor()->currency,
-        'start_date'         => self::getMandateUpdateStartDate($current_state, $desired_state, $activity),
-        'creation_date'      => date('YmdHis'), // NOW
-        'date'               => date('YmdHis', strtotime($activity['activity_date_time'])),
-        'validation_date'    => date('YmdHis'), // NOW
-        'iban'               => $donor_account['iban'],
-        'bic'                => $donor_account['bic'],
-        // 'source'             => ??
-        'campaign_id'        => $campaign_id,
-        'financial_type_id'  => 2, // Membership Dues
-        'frequency_unit'     => 'month',
-        'cycle_day'          => $cycle_day,
-        'frequency_interval' => $frequency_interval,
-        'account_holder'     => $account_holder,
-        );
+          'type'               => 'RCUR',
+          'contact_id'         => $current_state['contact_id'],
+          'amount'             => $amount,
+          'currency'           => self::getCreditor()->currency,
+          'start_date'         => self::getMandateUpdateStartDate($current_state, $desired_state, $activity),
+          'creation_date'      => date('YmdHis'), // NOW
+          'date'               => date('YmdHis', strtotime($activity['activity_date_time'])),
+          'validation_date'    => date('YmdHis'), // NOW
+          'iban'               => $donor_account['iban'],
+          'bic'                => $donor_account['bic'],
+          // 'source'             => ??
+          'campaign_id'        => $campaign_id,
+          'financial_type_id'  => 2, // Membership Dues
+          'frequency_unit'     => 'month',
+          'cycle_day'          => $cycle_day,
+          'frequency_interval' => $frequency_interval,
+          'account_holder'     => $account_holder,
+      );
 
       // create and reload (to get all data)
       $new_mandate = self::createNewMandate($new_mandate_values);
@@ -233,9 +233,9 @@ class CRM_Contract_SepaLogic {
       if ($recurring_contribution_id) {
         // set (other) recurring contribution to 'COMPLETED' [1]
         civicrm_api3('ContributionRecur', 'create', array(
-          'id'                     => $recurring_contribution_id,
-          'end_date'               => date('YmdHis'),
-          'contribution_status_id' => 1));
+            'id'                     => $recurring_contribution_id,
+            'end_date'               => date('YmdHis'),
+            'contribution_status_id' => 1));
       }
     }
   }
@@ -251,19 +251,19 @@ class CRM_Contract_SepaLogic {
         // only for active mandates:
         // set status to ONHOLD
         civicrm_api3('SepaMandate', 'create', array(
-          'id'     => $mandate['id'],
-          'status' => 'ONHOLD'));
+            'id'     => $mandate['id'],
+            'status' => 'ONHOLD'));
 
         // delete any scheduled (pending) contributions
         $pending_contributions = civicrm_api3('Contribution', 'get', array(
-          'return'                 => 'id',
-          'contribution_recur_id'  => $mandate['entity_id'],
-          'contribution_status_id' => (int) CRM_Core_PseudoConstant::getKey(
-            'CRM_Contribute_BAO_Contribution',
-            'contribution_status_id',
-            'Pending'
-          ),
-          'receive_date'           => array('>=' => date('YmdHis'))));
+            'return'                 => 'id',
+            'contribution_recur_id'  => $mandate['entity_id'],
+            'contribution_status_id' => (int) CRM_Core_PseudoConstant::getKey(
+                'CRM_Contribute_BAO_Contribution',
+                'contribution_status_id',
+                'Pending'
+            ),
+            'receive_date'           => array('>=' => date('YmdHis'))));
         foreach ($pending_contributions['values'] as $pending_contribution) {
           civicrm_api3("Contribution", "delete", array('id' => $pending_contribution['id']));
         }
@@ -286,8 +286,8 @@ class CRM_Contract_SepaLogic {
       if ($mandate['status'] == 'ONHOLD') {
         $new_status = empty($mandate['first_contribution_id']) ? 'FRST' : 'RCUR';
         civicrm_api3('SepaMandate', 'create', array(
-          'id'     => $mandate['id'],
-          'status' => $new_status));
+            'id'     => $mandate['id'],
+            'status' => $new_status));
       } else {
         throw new Exception(" Mandate is not paused, cannot be activated");
       }
@@ -371,9 +371,9 @@ class CRM_Contract_SepaLogic {
   public static function getMandateUpdateStartDate($current_state, $desired_state, $activity) {
     $now = date('YmdHis');
     $update_activity_type  = CRM_Core_PseudoConstant::getKey(
-      'CRM_Activity_BAO_Activity',
-      'activity_type_id',
-      'Contract_Updated'
+        'CRM_Activity_BAO_Activity',
+        'activity_type_id',
+        'Contract_Updated'
     );
     $contribution_recur_id = CRM_Utils_Array::value('membership_payment.membership_recurring_contribution', $current_state);
 
@@ -394,31 +394,45 @@ class CRM_Contract_SepaLogic {
    *  of the give recurring contribution
    * If no such contribution is found, the current date is returned
    *
+   * @param integer $contribution_recur_id
+   *   ID of the related recurring contribution
+   *
+   * @param string $now
+   *   date to be considered now. Defaults to actual "now"
+   *
    * @return string date ('Y-m-d H:i:s')
+   *
    */
-  public static function getNextInstallmentDate($contribution_recur_id) {
-    $now = date('Y-m-d H:i:s');
+  public static function getNextInstallmentDate($contribution_recur_id, $now = null) {
+    if (!$now) {
+      $now = date('Y-m-d H:i:s');
+    }
 
     if (!$contribution_recur_id) {
       return $now;
     }
 
+    // load the statuses of a not-successful contributions
+    $ignored_contribution_statuses = [];
+    $ignored_contribution_statuses[] = (int) CRM_Core_PseudoConstant::getKey('CRM_Contribute_BAO_Contribution', 'contribution_status_id', 'Pending');
+    $ignored_contribution_statuses[] = (int) CRM_Core_PseudoConstant::getKey('CRM_Contribute_BAO_Contribution', 'contribution_status_id', 'Failed');
+
     // load last successful collection for the recurring contribution
-    $last_collection_search = civicrm_api3('Contribution', 'get', array(
-      'contribution_recur_id'  => $contribution_recur_id,
-      'contribution_status_id' => array('IN' => array(1,5)), // status Completed or In Progress
-      'options'                => array('sort'  => 'receive_date desc',
-                                        'limit' => 1),
-      'return'                 => 'id,receive_date',
-      ));
+    $last_collection_search = civicrm_api3('Contribution', 'get', [
+        'contribution_recur_id'  => $contribution_recur_id,
+        'contribution_status_id' => ['NOT IN' => $ignored_contribution_statuses],
+        'options'                => ['sort'  => 'receive_date desc', 'limit' => 1],
+        'return'                 => 'id,receive_date',
+    ]);
 
     if ($last_collection_search['count'] > 0) {
       $last_collection = reset($last_collection_search['values']);
 
       // load recurring contribution
-      $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', array(
-        'id'     => $contribution_recur_id,
-        'return' => 'frequency_unit,frequency_interval'));
+      $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', [
+          'id'     => $contribution_recur_id,
+          'return' => 'frequency_unit,frequency_interval'
+      ]);
 
       // GP-1094: go back to last cycle day
       $cycle_days = array_keys(self::getCycleDays());
@@ -442,16 +456,38 @@ class CRM_Contract_SepaLogic {
     }
 
     // check recurring contribution start date
-    $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', array(
-      'id'     => $contribution_recur_id,
-      'return' => 'start_date,contribution_status_id'));
+    $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', [
+        'id'     => $contribution_recur_id,
+        'return' => 'start_date,contribution_status_id,frequency_interval,frequency_unit,cycle_day'
+    ]);
     if (!empty($contribution_recur['start_date']) && !empty($contribution_recur['contribution_status_id'])) {
       $status_id = (int) $contribution_recur['contribution_status_id'];
       // only consider active recurring contributions (2=Pending, 5=in Progress)
       if ($status_id == 2 || $status_id == 5) {
         $start_date = date('Y-m-d H:i:s', strtotime($contribution_recur['start_date']));
         if ($start_date > $now) {
+          // if the start date is in the future, this should be the next collection date by default
           return $start_date;
+
+        } else {
+          // start date is in the past, but no contributions (that's processed above):
+          //  use the start_date to determine next collection date in the future
+          $next_collection_date = strtotime($start_date);
+
+          // first, adjust to next collection day
+          $safety_counter = 35;
+          $cycle_days = array_keys(self::getCycleDays());
+          while (!in_array(date('j', $next_collection_date), $cycle_days) && $safety_counter > 0) {
+            $next_collection_date = strtotime("+1 day", $next_collection_date);
+            $safety_counter -= 1;
+          }
+
+          // now add periods until in the future
+          $now_timestamp = strtotime($now);
+          while (date('Y-m-d', $next_collection_date) < date('Y-m-d', $now_timestamp)) {
+            $next_collection_date = strtotime("+{$contribution_recur['frequency_interval']} {$contribution_recur['frequency_unit']}", $next_collection_date);
+          }
+          return date('Y-m-d H:i:s', $next_collection_date);
         }
       }
     }
@@ -472,9 +508,9 @@ class CRM_Contract_SepaLogic {
 
     // load mandate
     $mandate = civicrm_api3('SepaMandate', 'get', array(
-      'entity_id'    => $recurring_contribution_id,
-      'entity_table' => 'civicrm_contribution_recur',
-      'type'         => 'RCUR'));
+        'entity_id'    => $recurring_contribution_id,
+        'entity_table' => 'civicrm_contribution_recur',
+        'type'         => 'RCUR'));
 
     if ($mandate['count'] == 1 && $mandate['id']) {
       return reset($mandate['values']);
@@ -491,9 +527,9 @@ class CRM_Contract_SepaLogic {
   public static function getPaymentFrequencies() {
     // this is a hand-picked list of options
     $optionValues = civicrm_api3('OptionValue', 'get', array(
-      'value'           => array('IN' => array(1, 2, 4, 12)),
-      'return'          => 'label,value',
-      'option_group_id' => 'payment_frequency',
+        'value'           => array('IN' => array(1, 2, 4, 12)),
+        'return'          => 'label,value',
+        'option_group_id' => 'payment_frequency',
     ));
 
     $options = array();
@@ -662,7 +698,7 @@ class CRM_Contract_SepaLogic {
     return $formatted_iban;
   }
 
-    /**
+  /**
    * formats a value to the CiviCRM failsafe format: 0.00 (e.g. 999999.90)
    * even if there are ',' in there, which are used in some countries
    * (e.g. Germany, Austria,) as a decimal point.
@@ -701,7 +737,7 @@ class CRM_Contract_SepaLogic {
   public static function addJsSepaTools() {
     // calculate creditor parameters
     $creditor_parameters = civicrm_api3('SepaCreditor', 'get', array(
-      'options.limit' => 0));
+        'options.limit' => 0));
     if (empty($creditor_parameters['values'])) {
       CRM_Core_Session::setStatus(
           E::ts("Please configure at least one CiviSEPA creditor!"),

@@ -193,7 +193,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    * @param $params  array specs
    * @param $is_sepa bool  if true, a SEPA mandate will be generated
    */
-  public function createPayment($params, $is_sepa) {
+  public function createPaymentContract($params, $is_sepa) {
     // fill common parameters
     if (empty($params['contact_id'])) {
       $contact = $this->createContactWithRandomEmail();
@@ -255,7 +255,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
 
     // first: make sure we have a contract payment
     if (empty($params['membership_payment.membership_recurring_contribution'])) {
-      $payment = $this->createPayment($params, !empty($params['is_sepa']));
+      $payment = $this->createPaymentContract($params, !empty($params['is_sepa']));
       $params['membership_payment.membership_recurring_contribution'] = $payment['id'];
     }
 
