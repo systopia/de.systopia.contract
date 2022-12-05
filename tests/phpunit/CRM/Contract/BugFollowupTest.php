@@ -90,7 +90,6 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $this->assertTrue(strtotime($next_installment) < strtotime("+7 month"), "The next installment for this yearly contract should be in 6 months, since it started 6 months ago.");
 
 
-//    22398 6,- im Quartal nächster Einzug zum 15.02.23 -> 6,- im Halbjahr ab 15.12.22 x nächster Einzug am 15.02.23*
 
     // test 3: new sepa mandate in the future
     $payment = $this->createPaymentContract([
