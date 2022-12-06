@@ -160,6 +160,20 @@ class UpdateContract extends AbstractAction {
         $contract_data['membership_payment.defer_payment_start'] = $config_defer_payment_start;
     }
 
+    // explicitly add cycle_day if not given, just to make sure it doesn't change by default
+    if(empty($contract_data['contract_updates.ch_cycle_day']) && !empty($contract_data['contract_id'])){
+      try {
+        $cycle_day_field = \CRM_Contract_CustomData::getCustomFieldKey('membership_payment', 'membership_recurring_contribution');
+        $current_cycle_day = \civicrm_api3('Contract', 'getvalue', [
+            'id' => $contract_data['contract_id'],
+            'return' => $cycle_day_field
+        ]);
+        $contract_data['contract_updates.ch_cycle_day'] = $current_cycle_day;
+      } catch (\CiviCRM_API3_Exception $ex) {
+        \Civi::log()->debug("Couldn't extract current cycle day from contract [{$contract_data['contract_id']}].");
+      }
+    }
+
     try {
       // update bank account if new iban is set
       if ((!empty($parameters->getParameter('iban'))) or (!empty($parameters->getParameter('bic')))){
