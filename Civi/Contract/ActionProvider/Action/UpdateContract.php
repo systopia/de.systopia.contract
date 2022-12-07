@@ -152,7 +152,7 @@ class UpdateContract extends AbstractAction {
     // explicitly add cycle_day if not given, just to make sure it doesn't change by default
     if(empty($contract_data['contract_updates.ch_cycle_day']) && !empty($contract_data['contract_id'])){
       try {
-        $cycle_day_field = \CRM_Contract_CustomData::getCustomFieldKey('membership_payment', 'membership_recurring_contribution');
+        $cycle_day_field = \CRM_Contract_CustomData::getCustomFieldKey('membership_payment', 'cycle_day');
         $current_cycle_day = \civicrm_api3('Contract', 'getvalue', [
             'id' => $contract_data['contract_id'],
             'return' => $cycle_day_field
