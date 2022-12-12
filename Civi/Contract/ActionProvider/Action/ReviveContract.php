@@ -33,7 +33,7 @@ class ReviveContract extends AbstractAction {
   public function getConfigurationSpecification() {
     return new SpecificationBag([
         new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
-
+        new Specification('default_defer_payment_start',               'Boolean', E::ts('Defer Payment Start'), false, false),
     ]);
   }
 
@@ -49,7 +49,7 @@ class ReviveContract extends AbstractAction {
         new Specification('contract_id', 'Integer', E::ts('Contract ID'), true),
         new Specification('date',            'Date', E::ts('Date'),  true, date('Y-m-d H:i:s')),
         new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
-
+        new Specification('defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), false),
     ]);
   }
 
@@ -93,6 +93,13 @@ class ReviveContract extends AbstractAction {
         $value = $this->configuration->getParameter("default_{$parameter_name}");
       }
       $contract_data[$parameter_name] = $value;
+    }
+
+    // add defer_payment_start
+    $defer_payment_start = $parameters->getParameter('defer_payment_start');
+    $defer_payment_start = $parameters->getParameter('default_defer_payment_start');
+    if(!empty(defer_payment_start)){
+        $contract_data['membership_payment.defer_payment_start'] = $defer_payment_start;
     }
 
 
