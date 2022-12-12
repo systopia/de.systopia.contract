@@ -35,7 +35,7 @@ class UpdateContract extends AbstractAction {
     return new SpecificationBag([
 
         new Specification('process_scheduled_modifications',         'Integer', E::ts('directly process scheduled changes'), false, 0, null, $this->yesNoOptions()),
-        new Specification('default_defer_payment_start',               'Boolean', E::ts('Defer Payment Start'), false, false),
+        new Specification('config_defer_payment_start',               'Boolean', E::ts('Defer Payment Start'), false, false),
         #new Specification('default_action',       'Integer', E::ts('Modify Action (default)'), true, null, null, $this->getModifyActions(), false),
         #new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
         #new Specification('default_creditor_id',       'Integer', E::ts('Creditor (default)'), true, null, null, $this->getCreditors(), false),
@@ -152,9 +152,12 @@ class UpdateContract extends AbstractAction {
     }
     // add defer_payment_start
     $defer_payment_start = $parameters->getParameter('defer_payment_start');
-    $defer_payment_start = $parameters->getParameter('default_defer_payment_start');
-    if(!empty(defer_payment_start)){
+    if(!empty($defer_payment_start)){
         $contract_data['membership_payment.defer_payment_start'] = $defer_payment_start;
+    }
+    $config_defer_payment_start = $this->configuration->getParameter("config_defer_payment_start");
+    if(!empty($config_defer_payment_start)){
+        $contract_data['membership_payment.defer_payment_start'] = $config_defer_payment_start;
     }
 
     // explicitly add cycle_day if not given, just to make sure it doesn't change by default
