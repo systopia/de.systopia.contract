@@ -88,7 +88,7 @@ function updatePaymentSummaryText() { (function (cj, ts){
             let defer_payment_start = parseInt(cj('[name=defer_payment_start]').val());
             if (defer_payment_start > 0) {
                 // user has chosen to maintain cycle day
-                console.log("GRACE END" + CRM.vars['de.systopia.contract'].grace_end);
+                //console.log("GRACE END" + CRM.vars['de.systopia.contract'].grace_end);
                 next_collection = nextCollectionDate(cycle_day, start_date, CRM.vars['de.systopia.contract'].grace_end);
             } else {
                 next_collection = nextCollectionDate(cycle_day, start_date, null);
@@ -96,7 +96,7 @@ function updatePaymentSummaryText() { (function (cj, ts){
         } else {
             next_collection = nextCollectionDate(cycle_day, start_date, null);
         }
-        console.log(next_collection);
+        //console.log(next_collection);
 
         // add placeholders for IBAN,BIC,AMOUNT
         cj("#iban").attr("placeholder", current_values.fields.iban);

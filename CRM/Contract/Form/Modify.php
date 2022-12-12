@@ -224,16 +224,25 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form{
   }
 
   function setDefaults($defaultValues = null, $filter = null){
-    if(isset($this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')])){
+    $recurring_contribution_id_field = CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution');
+    if (isset($this->membership[$recurring_contribution_id_field])){
       $defaults['payment_option'] = 'modify';
-      $defaults['recurring_contribution'] = $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution')];
+      $defaults['recurring_contribution'] = $this->membership[$recurring_contribution_id_field];
       $defaults['defer_payment_start'] = 1;  // wait until the paid-for time has passed
 
-      $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
+      // set cycle day
+      if (empty($defaults['recurring_contribution'])) {
+        // no previous contract given
+        $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
+      } else {
+        // take cycle day from previous contract
+        $defaults['cycle_day'] = \civicrm_api3('ContributionRecur', 'getvalue', [
+            'id' => (int) $defaults['recurring_contribution'],
+            'return' => 'cycle_day'
+        ]);
+      }
       $defaults['payment_frequency'] = $this->membership[CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_frequency')] ?? 12;
       $defaults['activity_medium'] = '7'; // Back Office
-
-      // TODO: add more default values?
     }
 
     $defaults['membership_type_id'] = $this->membership['membership_type_id'];
