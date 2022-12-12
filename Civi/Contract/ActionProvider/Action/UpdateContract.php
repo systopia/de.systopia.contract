@@ -155,7 +155,7 @@ class UpdateContract extends AbstractAction {
     if(!empty($defer_payment_start)){
         $contract_data['membership_payment.defer_payment_start'] = $defer_payment_start;
     }
-    $config_defer_payment_start = $parameters->getParameter('config_defer_payment_start');
+    $config_defer_payment_start = $this->configuration->getParameter("config_defer_payment_start");
     if(!empty($config_defer_payment_start)){
         $contract_data['membership_payment.defer_payment_start'] = $config_defer_payment_start;
     }
