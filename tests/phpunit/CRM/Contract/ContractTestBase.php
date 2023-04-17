@@ -41,7 +41,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
         ->apply();
   }
 
-  public function setUp()
+  public function setUp() : void
   {
     parent::setUp();
 
@@ -62,7 +62,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     $this->assertNotEmpty($default_creditor_id, "There is no default SEPA creditor set");
   }
 
-  public function tearDown()
+  public function tearDown() : void
   {
     parent::tearDown();
   }

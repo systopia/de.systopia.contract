@@ -16,7 +16,7 @@ include_once 'ContractTestBase.php';
 class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase
 {
 
-  public function setUp()
+  public function setUp() : void
   {
     parent::setUp();
     $this->setActivityFlavour('GP');
@@ -50,7 +50,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase
     $this->runContractEngine($contract['id'], '+2 days');
     $change_activity = $this->getLastChangeActivity($contract['id']);
     $this->assertNotEmpty($change_activity, "There should be a change activity after the upgrade");
-    $this->assertContains("cycle day 25 to 3", $change_activity['subject'], "Activity subject should contain the changed cycle day");
+    $this->assertStringContains("cycle day 25 to 3", $change_activity['subject'], "Activity subject should contain the changed cycle day");
     $this->assertContains("amt. 144.00 to 168.00", $change_activity['subject'], "Activity subject should contain the changed amount");
     $this->assertNotContains("DE89370400440532013000", $change_activity['subject'], "Activity subject should NOT contain the unchanged IBAN");
     $this->assertNotContains("freq. 12 to 12", $change_activity['subject'], "Activity subject should NOT contain the unchanged frequency");

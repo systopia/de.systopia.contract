@@ -23,7 +23,7 @@ include_once 'ContractTestBase.php';
  */
 class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
-  public function setUp() {
+  public function setUp() : void {
     parent::setUp();
   }
 
