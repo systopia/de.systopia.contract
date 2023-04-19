@@ -141,7 +141,7 @@ class CRM_Contract_CustomData {
               'option_group_id' => 'activity_type',
               'name' => $activity_type,
               'return' => 'value'
-            ])['result'];
+            ]);
           }
           if ($activity_type) {
             $extends_list[] = $activity_type;

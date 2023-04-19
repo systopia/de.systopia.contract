@@ -24,6 +24,15 @@ class CRM_Contract_Upgrader extends CRM_Contract_Upgrader_Base {
   }
 
   public function enable() {
+    // create sub-type 'Dialoger'
+    $dialoger_exists = civicrm_api3('ContactType', 'getcount', ['name' => 'Dialoger']);
+    if (!$dialoger_exists) {
+      civicrm_api3('ContactType', 'create', [
+        'name'      => 'Dialoger',
+        'parent_id' => 'Individual',
+      ]);
+    }
+
     require_once 'CRM/Contract/CustomData.php';
     $customData = new CRM_Contract_CustomData('de.systopia.contract');
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
@@ -39,15 +48,6 @@ class CRM_Contract_Upgrader extends CRM_Contract_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     $customData->syncEntities(E::path('resources/entities_membership_status.json'));
-
-    // create sub-type 'Dialoger'
-    $dialoger_exists = civicrm_api3('ContactType', 'getcount', ['name' => 'Dialoger']);
-    if (!$dialoger_exists) {
-      civicrm_api3('ContactType', 'create', [
-          'name'      => 'Dialoger',
-          'parent_id' => 'Individual',
-      ]);
-    }
   }
 
   public function postInstall() {
