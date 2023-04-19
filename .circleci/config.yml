@@ -39,8 +39,6 @@ commands:
           cd $EXT_DIR
           git clone https://github.com/Project60/org.project60.sepa
           git clone https://github.com/Project60/org.project60.banking banking-src
-          mv banking-src/extension org.project60.banking
-          rm -rf banking-src
           chown buildkit:buildkit org.project60.sepa org.project60.banking -R
           su - buildkit -c "cd /buildkit/build/<< parameters.build_name >>/web && cv en org.project60.sepa org.project60.banking"
   install_extension:
