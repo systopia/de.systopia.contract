@@ -15,7 +15,7 @@
 +--------------------------------------------------------*/
 
 class CRM_Contract_CustomData {
-  const CUSTOM_DATA_HELPER_VERSION   = 0.8-dev;
+  const CUSTOM_DATA_HELPER_VERSION   = '0.8-dev';
   const CUSTOM_DATA_HELPER_LOG_LEVEL = 0;
   const CUSTOM_DATA_HELPER_LOG_DEBUG = 1;
   const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
@@ -137,7 +137,7 @@ class CRM_Contract_CustomData {
         $extends_list = array();
         foreach ($data['extends_entity_column_value'] as $activity_type) {
           if (!is_numeric($activity_type)) {
-            $activity_type = civicrm_api3('OptionValue', 'getvalue', [
+            $activity_type = civicrm_api3('OptionValue', 'getsingle', [
               'option_group_id' => 'activity_type',
               'name' => $activity_type,
               'return' => 'value'
@@ -783,5 +783,21 @@ class CRM_Contract_CustomData {
     } else {
       return NULL;
     }
+  }
+
+  /**
+   * Get CustomField entity (cached)
+   */
+  public static function getCustomFieldsForGroups($custom_group_names) {
+    self::cacheCustomGroups($custom_group_names);
+    $fields = [];
+    foreach ($custom_group_names as $custom_group_name) {
+      foreach (self::$custom_group_cache[$custom_group_name] as $field_id => $field) {
+        if (is_numeric($field_id)) {
+          $fields[] = $field;
+        }
+      }
+    }
+    return $fields;
   }
 }

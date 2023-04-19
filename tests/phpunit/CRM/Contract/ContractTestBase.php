@@ -46,7 +46,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     parent::setUp();
 
     // make sure the date check is in compatibility mode
-    Civi::settings()->set('date_adjustment', 'always');
+    Civi::settings()->set('date_adjustment', null); // default behaviour
 
     // check if there is a default creditor
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');

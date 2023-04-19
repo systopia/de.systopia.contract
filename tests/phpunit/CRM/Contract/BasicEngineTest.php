@@ -265,4 +265,50 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
     );
   }
 
+  /**
+   * Test the automatic date adjustments based on the 'date_adjustment' setting
+   *
+   * @see https://github.com/systopia/de.systopia.contract/issues/76
+   *
+   * @return void
+   */
+  public function testAdjustModificationDate()
+  {
+    // create a new contract
+    $contract = $this->createNewContract([
+         'is_sepa'            => 1,
+         'amount'             => '12.00',
+         'frequency_unit'     => 'month',
+         'frequency_interval' => '1',
+         'cycle_day'          => 25,
+         'iban'               => 'DE89370400440532013000',
+         'bic'                => 'GENODEM1GLS',
+       ]);
+
+    // try to modify yesterday, with the default behaviour
+    Civi::settings()->set('date_adjustment', null); // default behaviour
+    $this->callAPIFailure('Contract', 'modify', [
+      'id' => $contract['id'],
+      'modify_action' => 'update',
+      'date' => date('Y-m-d H:i:s', strtotime('yesterday')),
+      'medium_id' => 1
+    ]);
+
+    // now try again with a setting
+    Civi::settings()->set('date_adjustment', '2 day'); // default behaviour
+    $this->callAPISuccess('Contract', 'modify', [
+      'id' => $contract['id'],
+      'modify_action' => 'update',
+      'date' => date('Y-m-d H:i:s', strtotime('yesterday')),
+      'medium_id' => 1
+    ]);
+
+    Civi::settings()->set('date_adjustment', '1 day'); // default behaviour
+    $this->callAPIFailure('Contract', 'modify', [
+      'id' => $contract['id'],
+      'modify_action' => 'update',
+      'date' => date('Y-m-d H:i:s', strtotime('yesterday')),
+      'medium_id' => 1
+    ]);
+  }
 }

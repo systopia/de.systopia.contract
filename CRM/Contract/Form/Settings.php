@@ -82,5 +82,6 @@ class CRM_Contract_Form_Settings extends CRM_Core_Form{
           }
       }
     }
+    return $datetime;
   }
 }
