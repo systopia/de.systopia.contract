@@ -1,0 +1,16 @@
+{*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2023 SYSTOPIA                                  |
+| Author:  B. Endres (endres -at- systopia.de)                 |
+| http://www.systopia.de/                                      |
++-------------------------------------------------------------*}
+
+{crmScope extensionKey='de.systopia.contract'}
+
+{htxt id='id-date-adjustment'}
+  <p>{ts}The contract engine currently expects the API's <code>date</code> parameter (which is actually a datetime value) to be from the same day as the execution taking place.{/ts}</p>
+  <p>{ts}This was originally done, to make sure the created contract doesn't differ too much from the order, should it take a long time. Unfortunately this causes a break when, for example, some data is submitted shortly before a date change.{/ts}</p>
+  <p>{ts}To mitigate this, you can use this option to adjust the incoming time to "now" when it's within the select time range.{/ts}</p>
+{/htxt}
+
+{/crmScope}
