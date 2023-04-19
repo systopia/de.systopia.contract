@@ -71,6 +71,56 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
   }
 
   /**
+   * Test if the needle string is contained in the haystack
+   *
+   * @param string $needle
+   *   the string to be looked for in the haystack
+   *
+   * @param string $haystack
+   *   the string to find the needle in
+   *
+   * @param string $error
+   *   error message
+   *
+   * @return void
+   */
+  protected function assertStringContainsOtherString($needle, $haystack, $error = null)
+  {
+    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== false);
+    if (!$contains) {
+      if (empty($error)) {
+        $error = "String '{$needle}' not contained in '{$haystack}'.";
+      }
+      $this->fail($error);
+    }
+  }
+
+  /**
+   * Test if the needle string is NOT contained in the haystack
+   *
+   * @param string $needle
+   *   the string to be looked for in the haystack
+   *
+   * @param string $haystack
+   *   the string to find the needle in
+   *
+   * @param string $error
+   *   error message
+   *
+   * @return void
+   */
+  protected function assertStringNotContainsOtherString($needle, $haystack, $error = null)
+  {
+    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== false);
+    if ($contains) {
+      if (empty($error)) {
+        $error = "String '{$needle}' not contained in '{$haystack}'.";
+      }
+      $this->fail($error);
+    }
+  }
+
+  /**
    * Run the contract engine, and make sure it works
    *
    * @param $contract_id
@@ -100,7 +150,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     $this->assertNotEmpty($result['failed'], "Contract Engine should report failure(s)");
     if (!is_null($expectedError)) {
       $errorDetails = implode("\n", $result['error_details']);
-      $this->assertContains(
+      $this->assertStringContainsOtherString(
         $expectedError,
         $errorDetails,
         '$expectedError should be included in error_details'
