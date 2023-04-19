@@ -137,11 +137,11 @@ class CRM_Contract_CustomData {
         $extends_list = array();
         foreach ($data['extends_entity_column_value'] as $activity_type) {
           if (!is_numeric($activity_type)) {
-            $activity_type = civicrm_api3('OptionValue', 'getsingle', [
+            $activity_type = civicrm_api3('OptionValue', 'getvalue', [
               'option_group_id' => 'activity_type',
               'name' => $activity_type,
               'return' => 'value'
-            ]);
+            ])['result'];
           }
           if ($activity_type) {
             $extends_list[] = $activity_type;
