@@ -307,7 +307,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
     $this->callAPIFailure('Contract', 'modify', [
       'id' => $contract['id'],
       'modify_action' => 'update',
-      'date' => date('Y-m-d H:i:s', strtotime('yesterday')),
+      'date' => date('Y-m-d H:i:s', strtotime('today - 25 hours')),
       'medium_id' => 1
     ]);
   }

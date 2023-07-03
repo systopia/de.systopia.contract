@@ -51,37 +51,41 @@ class CRM_Contract_Form_Settings extends CRM_Core_Form{
   /**
    * Set the given execution time to "today"
    *
-   * @param string $datetime
-   * @return string adjusted datetime
+   * @param string $requested_execution_time
+   * @return string adjusted execution time
    */
-  public static function adjustRequestedExecutionTime($datetime)
+  public static function adjustRequestedExecutionTime($requested_execution_time)
   {
     // first check, if the date is before midnight today:
-    if ($datetime < strtotime('today')) {
+    $today = strtotime('today');
+    $requested_execution_time_term = date('Y-m-d H:i:s', $requested_execution_time);
+    if ($requested_execution_time < $today) {
       // this would cause an error, so let's see if it's in the configured range to adjust
-      $date_offset_cutoff = Civi::settings()->get('date_adjustment');
+      $grace_term = Civi::settings()->get('date_adjustment');
 
       // cases for the different settings options
-      switch ($date_offset_cutoff) {
-        case 'always':
-          return strtotime('today');
-
+      switch ($grace_term) {
         case null:
         case '':
           // do nothing
-          return $datetime;
+          return $requested_execution_time;
+
+        case 'always':
+          return max($requested_execution_time, $today);
 
         default:
-          // the date_offset_cutoff should be a relative time term
-          if ($datetime >= strtotime("now - {$date_offset_cutoff}")) {
-            // this is within the specified range: adjust and return
-            return strtotime('today');
+          // the grace term should now be a relative time term like '1 day'
+          $adjusted_execution_time_term = date('Y-m-d H:i:s', $requested_execution_time) . " + {$grace_term}";
+          $adjusted_execution_time = strtotime($adjusted_execution_time_term);
+          if ($adjusted_execution_time >= $today) {
+            // with the grace period added, this is due now, so run it:
+            return $today;
           } else {
             // do nothing
-            return $datetime;
+            return $requested_execution_time;
           }
       }
     }
-    return $datetime;
+    return $requested_execution_time;
   }
 }
