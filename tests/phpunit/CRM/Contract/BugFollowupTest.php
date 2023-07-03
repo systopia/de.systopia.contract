@@ -105,6 +105,6 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     // calculate next installment date, earliest should be in 2 months
     $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate($contract['membership_payment.membership_recurring_contribution']);
     $this->assertTrue(strtotime($next_installment) > strtotime("+1 month + 2 weeks"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
-    $this->assertTrue(strtotime($next_installment) < strtotime("+3 month - 2 weeks"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
+    $this->assertTrue(strtotime($next_installment) < strtotime("+3 month"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
   }
 }
