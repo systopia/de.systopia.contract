@@ -15,7 +15,7 @@
 +--------------------------------------------------------*/
 
 class CRM_Contract_CustomData {
-  const CUSTOM_DATA_HELPER_VERSION   = 0.7;
+  const CUSTOM_DATA_HELPER_VERSION   = '0.8-dev';
   const CUSTOM_DATA_HELPER_LOG_LEVEL = 0;
   const CUSTOM_DATA_HELPER_LOG_DEBUG = 1;
   const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
@@ -112,7 +112,7 @@ class CRM_Contract_CustomData {
         $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update OptionValue: " . json_encode($optionValueSpec));
       } else {
         // update OptionValue
-        $this->updateEntity('OptionValue', $optionValueSpec, $optionValue);
+        $this->updateEntity('OptionValue', $optionValueSpec, $optionValue, array('is_active'));
       }
     }
   }
@@ -137,7 +137,11 @@ class CRM_Contract_CustomData {
         $extends_list = array();
         foreach ($data['extends_entity_column_value'] as $activity_type) {
           if (!is_numeric($activity_type)) {
-            $activity_type = CRM_Core_OptionGroup::getValue('activity_type', $activity_type, 'name');
+            $activity_type = civicrm_api3('OptionValue', 'getvalue', [
+              'option_group_id' => 'activity_type',
+              'name' => $activity_type,
+              'return' => 'value'
+            ]);
           }
           if ($activity_type) {
             $extends_list[] = $activity_type;
@@ -281,11 +285,6 @@ class CRM_Contract_CustomData {
 
       if (isset($current_data[$field]) && $value != $current_data[$field]) {
         $update_query[$field] = $value;
-      } elseif ($field == 'icon') {
-        // icon does not seem to be returned by the API for comparison
-        if (!isset($current_data[$field]) || $value != $current_data[$field]) {
-          $update_query[$field] = $value;
-        }
       }
     }
 
@@ -329,9 +328,6 @@ class CRM_Contract_CustomData {
       $value = $data[$translate_key];
       if (is_string($value)) {
         $data[$translate_key] = ts($value, array('domain' => $this->ts_domain));
-        if ($data[$translate_key] == $value) {
-            Civi::log()->debug("CustomDataHelper: string not translated: " . $value);
-        }
       }
     }
   }
@@ -566,6 +562,9 @@ class CRM_Contract_CustomData {
 
   /**
    * Get a mapping: custom_group_id => custom_group_name
+   *
+   * @return array
+   *   mapping custom_group_id => custom_group_name
    */
   public static function getGroup2Name() {
     if (self::$custom_group2name === NULL) {
@@ -625,8 +624,11 @@ class CRM_Contract_CustomData {
    *
    * @todo make it more efficient?
    *
-   * @param array $params      the parameter array as used by the API
-   * @param array $group_names list of group names to process. Default is: all
+   * @param array $params
+   *   the parameter array as used by the API
+   *
+   * @param array $group_names
+   *   list of group names to process. Default is: all
    */
   public static function unREST(&$params, $group_names = NULL) {
     if ($group_names == NULL || !is_array($group_names)) {
@@ -707,9 +709,14 @@ class CRM_Contract_CustomData {
   /**
    * Get the current field value from CiviCRM's pre-hook structure
    *
-   * @param $params pre-hook data
-   * @param $field_id custom field ID
-   * @return mixed the current value
+   * @param $params array
+   *   pre-hook data
+   *
+   * @param $field_id string
+   *   custom field ID
+   *
+   * @return mixed
+   *   the current value
    */
   public static function getPreHookCustomDataValue($params, $field_id) {
     if ($field_id) {
@@ -728,9 +735,14 @@ class CRM_Contract_CustomData {
   /**
    * Set a field value in CiviCRM's pre-hook structure right in the pre hook data
    *
-   * @param $params pre-hook data
-   * @param $field_id custom field ID
-   * @param $value the new value
+   * @param $params array
+   *    pre-hook data
+   *
+   * @param $field_id string
+   *    custom field ID
+   *
+   * @param $value mixed
+   *    the new value
    */
   public static function setPreHookCustomDataValue(&$params, $field_id, $value) {
     if ($field_id) {
