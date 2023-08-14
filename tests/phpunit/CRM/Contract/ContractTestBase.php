@@ -41,9 +41,12 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
         ->apply();
   }
 
-  public function setUp()
+  public function setUp() : void
   {
     parent::setUp();
+
+    // make sure the date check is in compatibility mode
+    Civi::settings()->set('date_adjustment', null); // default behaviour
 
     // check if there is a default creditor
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
@@ -62,9 +65,59 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     $this->assertNotEmpty($default_creditor_id, "There is no default SEPA creditor set");
   }
 
-  public function tearDown()
+  public function tearDown() : void
   {
     parent::tearDown();
+  }
+
+  /**
+   * Test if the needle string is contained in the haystack
+   *
+   * @param string $needle
+   *   the string to be looked for in the haystack
+   *
+   * @param string $haystack
+   *   the string to find the needle in
+   *
+   * @param string $error
+   *   error message
+   *
+   * @return void
+   */
+  protected function assertStringContainsOtherString($needle, $haystack, $error = null)
+  {
+    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== false);
+    if (!$contains) {
+      if (empty($error)) {
+        $error = "String '{$needle}' not contained in '{$haystack}'.";
+      }
+      $this->fail($error);
+    }
+  }
+
+  /**
+   * Test if the needle string is NOT contained in the haystack
+   *
+   * @param string $needle
+   *   the string to be looked for in the haystack
+   *
+   * @param string $haystack
+   *   the string to find the needle in
+   *
+   * @param string $error
+   *   error message
+   *
+   * @return void
+   */
+  protected function assertStringNotContainsOtherString($needle, $haystack, $error = null)
+  {
+    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== false);
+    if ($contains) {
+      if (empty($error)) {
+        $error = "String '{$needle}' not contained in '{$haystack}'.";
+      }
+      $this->fail($error);
+    }
   }
 
   /**
@@ -97,7 +150,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     $this->assertNotEmpty($result['failed'], "Contract Engine should report failure(s)");
     if (!is_null($expectedError)) {
       $errorDetails = implode("\n", $result['error_details']);
-      $this->assertContains(
+      $this->assertStringContainsOtherString(
         $expectedError,
         $errorDetails,
         '$expectedError should be included in error_details'

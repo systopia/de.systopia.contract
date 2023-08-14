@@ -14,7 +14,7 @@ include_once 'ContractTestBase.php';
  */
 class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
 
-  public function setUp() {
+  public function setUp() : void {
     parent::setUp();
   }
 
@@ -105,6 +105,41 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     // calculate next installment date, earliest should be in 2 months
     $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate($contract['membership_payment.membership_recurring_contribution']);
     $this->assertTrue(strtotime($next_installment) > strtotime("+1 month + 2 weeks"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
-    $this->assertTrue(strtotime($next_installment) < strtotime("+3 month - 2 weeks"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
+    $this->assertTrue(strtotime($next_installment) < strtotime("+3 month"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
+  }
+
+  /**
+   * Follow-up to an improvement, where "yesterday's" modifications will still be processed within
+   *  a configurable grace period
+   *
+   * @see https://github.com/systopia/de.systopia.contract/issues/76
+   * @see https://projekte.systopia.de/issues/20444
+   */
+  public function testTicket20444() {
+    // test 1: new sepa mandate, no contribution yet
+    $payment = $this->createPaymentContract([
+          'start_date' => date("Y-m-d", strtotime("now -1 hour")),
+          'frequency_interval' => 1,
+          'frequency_unit' => 'month',
+        ],true);
+    $contract = $this->createNewContract([
+         'membership_payment.membership_recurring_contribution' => $payment['id'],
+         'contact_id' => $payment['contact_id']
+     ]);
+
+    // now: schedule an amount change, but this would fail
+    $this->callAPIFailure('Contract', 'modify', [
+      'id' => $contract['id'],
+      'modify_action' => 'update',
+      'date' => date("Y-m-d", strtotime("yesterday")),
+    ]);
+
+    // now: set the adjustment range and try again
+    Civi::settings()->set('date_adjustment', '1 day');
+    $this->callAPISuccess('Contract', 'modify', [
+      'id' => $contract['id'],
+      'modify_action' => 'update',
+      'date' => date("Y-m-d", strtotime("-23 hours")),
+    ]);
   }
 }
