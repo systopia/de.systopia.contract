@@ -32,8 +32,12 @@
   <item>
     <path>civicrm/admin/contract</path>
     <page_callback>CRM_Contract_Form_Settings</page_callback>
-    <title>Contract Settings</title>
+    <title>Contract Engine Settings</title>
+    <desc>General options for the Contract Engine</desc>
     <access_arguments>administer CiviCRM</access_arguments>
+    <adminGroup>CiviMember</adminGroup>
+    <component>CiviMember</component>
+    <weight>300</weight>
   </item>
   <item>
     <path>civicrm/contract/download</path>

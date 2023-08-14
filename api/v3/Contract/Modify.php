@@ -61,8 +61,9 @@ function civicrm_api3_Contract_modify($params) {
 
   // check the requested execution time
   $requested_execution_time = strtotime($params['date']);
+  $requested_execution_time = CRM_Contract_Form_Settings::adjustRequestedExecutionTime($requested_execution_time);
   if ($requested_execution_time < strtotime('today')) {
-    throw new Exception("Parameter 'date' must either be in the future, or absent if you want to execute the modification immediately.");
+    throw new Exception("Parameter 'date' ('{$params['date']}') rejected because it's too far in the past, see the 'date_adjustment' setting.");
   }
 
   // modify data to match internal structure
