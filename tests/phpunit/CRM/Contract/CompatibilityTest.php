@@ -50,10 +50,16 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase
     $this->runContractEngine($contract['id'], '+2 days');
     $change_activity = $this->getLastChangeActivity($contract['id']);
     $this->assertNotEmpty($change_activity, "There should be a change activity after the upgrade");
-    $this->assertStringContainsOtherString("cycle day 25 to 3", $change_activity['subject'], "Activity subject should contain the changed cycle day");
-    $this->assertStringContainsOtherString("amt. 144.00 to 168.00", $change_activity['subject'], "Activity subject should contain the changed amount");
-    $this->assertStringNotContainsOtherString("DE89370400440532013000", $change_activity['subject'], "Activity subject should NOT contain the unchanged IBAN");
-    $this->assertStringNotContainsOtherString("freq. 12 to 12", $change_activity['subject'], "Activity subject should NOT contain the unchanged frequency");
+
+    if ($this->isExtensionActive('tazcontract')) {
+      $this->assertStringContainsOtherString("Anpassung", $change_activity['subject'], "Activity subject should contain 'Anpassung'");
+      $this->assertStringContainsOtherString("erhöht", $change_activity['subject'], "Activity subject should contain 'erhöht'");
+    } else {
+      $this->assertStringContainsOtherString("cycle day 25 to 3", $change_activity['subject'], "Activity subject should contain the changed cycle day");
+      $this->assertStringContainsOtherString("amt. 144.00 to 168.00", $change_activity['subject'], "Activity subject should contain the changed amount");
+      $this->assertStringNotContainsOtherString("DE89370400440532013000", $change_activity['subject'], "Activity subject should NOT contain the unchanged IBAN");
+      $this->assertStringNotContainsOtherString("freq. 12 to 12", $change_activity['subject'], "Activity subject should NOT contain the unchanged frequency");
+    }
   }
 
   /**
