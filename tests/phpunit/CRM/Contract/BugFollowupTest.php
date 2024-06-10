@@ -142,4 +142,42 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
       'date' => date("Y-m-d", strtotime("-23 hours")),
     ]);
   }
+
+  /**
+   * Follow-up to an error, where there is a reduction from "1.800,00 EUR" to "480,00 EUR",
+   *  but the activity records an _increase_ of "478,20 EUR", due to an issue with the decimal pointer
+   *
+   * @see https://projekte.systopia.de/issues/23397
+   */
+  public function testTicket23397() {
+    // test 1: new sepa mandate, no contribution yet
+    $payment = $this->createPaymentContract([
+          'start_date' => date("Y-m-d", strtotime("now -2 day")),
+          'amount' => "1800.00",
+          'frequency_unit' => 'month',
+          'frequency_interval' => 12,
+        ],true);
+    $contract = $this->createNewContract([
+         'membership_payment.membership_recurring_contribution' => $payment['id'],
+         'contact_id' => $payment['contact_id']
+       ]);
+    $initial_change_activity = $this->getLastChangeActivity($contract['id']);
+
+    // modify contract and check again
+    $this->modifyContract($contract['id'], 'update', 'now', [
+      'membership_payment.membership_annual' => '480.00',
+    ]);
+    $upgrade_change_type = CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Upgrade');
+    $change_activity = $this->getLastChangeActivity($contract['id'], [$upgrade_change_type]);
+
+    // reload contract
+    $updated_contract = $this->getContract($contract['id']);
+    $this->assertNotEmpty($change_activity, "There should be a change activity.");
+    $this->assertNotEmpty($change_activity['subject'], "There should be a change activity subject.");
+    if ($this->isExtensionActive('tazcontract')) {
+      $this->assertStringContainsOtherString("1,320.00", $change_activity['subject']);
+    } else {
+      $this->assertStringContainsOtherString("amt. to 480.00", $change_activity['subject']);
+    }
+  }
 }

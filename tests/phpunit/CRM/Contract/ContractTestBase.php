@@ -37,7 +37,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
         ->installMe(__DIR__)
         ->install('org.project60.sepa')
         ->install('org.project60.banking')
-        //->install('tazcontract')
+        //->install('tazcontract') // if changed, don't forget to 'DELETE FROM civitest_revs;' before running again
         ->apply();
   }
 
@@ -541,5 +541,16 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    */
   public function setActivityFlavour($type) {
     // TODO: this needs to be implemented when other flavours are available
+  }
+
+  /**
+   * Check if the given extension is installed
+   *
+   * @return bool
+   *   is the extension installed
+   */
+  public function isExtensionActive($extension_key) : bool
+  {
+    return function_exists("_{$extension_key}_civix_civicrm_enable");
   }
 }
