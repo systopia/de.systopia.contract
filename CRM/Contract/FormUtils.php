@@ -78,12 +78,22 @@ class CRM_Contract_FormUtils
       $details = $this->form->get_template_vars('viewCustomData');
       $customGroupTableId = key($details[$result['custom_group_id']]);
       $recContributionId = $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'];
-      $recContribution = civicrm_api3('ContributionRecur', 'getsingle', array('id' => $recContributionId));
-      $customGroupTableId = key($details[$result['custom_group_id']]);
-      $result = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_annual'));
-      $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = CRM_Utils_Money::format($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'], $recContribution['currency'] ?? 'EUR');
-      $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_data_type'] = 'String';
-      $this->form->assign('viewCustomData', $details);
+      try {
+        $recContribution = civicrm_api3('ContributionRecur', 'getsingle', array('id' => $recContributionId));
+        $customGroupTableId = key($details[$result['custom_group_id']]);
+        $result = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_annual'));
+        $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = CRM_Utils_Money::format($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'], $recContribution['currency'] ?? 'EUR');
+        $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_data_type'] = 'String';
+        $this->form->assign('viewCustomData', $details);
+      } catch (Exception $exception) {
+        $error_message = E::ts("Referenced RecurringContribution [%1] couldn't be loaded/rendered.", [1 => $recContributionId]);
+        Civi::log()->warning($error_message);
+        CRM_Core_Session::setStatus(
+          $error_message,
+          E::ts('Data Error'),
+          'warning'
+        );
+      }
     }
 
     public function showMembershipTypeLabel()
