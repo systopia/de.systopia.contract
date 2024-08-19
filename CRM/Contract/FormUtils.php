@@ -74,16 +74,18 @@ class CRM_Contract_FormUtils
      * @throws \CiviCRM_API3_Exception
      */
     public function setPaymentAmountCurrency() {
-      $result = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_recurring_contribution'));
+      $rcur_field = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_recurring_contribution'));
       $details = $this->form->get_template_vars('viewCustomData');
-      $customGroupTableId = key($details[$result['custom_group_id']]);
-      $recContributionId = $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'];
+      $customGroupTableId = key($details[$rcur_field['custom_group_id']]);
+      $recContributionId = $details[$rcur_field['custom_group_id']][$customGroupTableId]['fields'][$rcur_field['id']]['field_value'];
       try {
         $recContribution = civicrm_api3('ContributionRecur', 'getsingle', array('id' => $recContributionId));
-        $customGroupTableId = key($details[$result['custom_group_id']]);
-        $result = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_annual'));
-        $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = CRM_Utils_Money::format($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'], $recContribution['currency'] ?? 'EUR');
-        $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_data_type'] = 'String';
+        $customGroupTableId = key($details[$rcur_field['custom_group_id']]);
+        $annual_amount_field = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_annual'));
+        $annual_amount_value = $details[$annual_amount_field['custom_group_id']][$customGroupTableId]['fields'][$annual_amount_field['id']]['field_value'] ?? '';
+        if (is_numeric($annual_amount_value)) $annual_amount_value = CRM_Utils_Money::format($annual_amount_value, $recContribution['currency'] ?? 'EUR');
+        $details[$annual_amount_field['custom_group_id']][$customGroupTableId]['fields'][$annual_amount_field['id']]['field_value'] = $annual_amount_value;
+        $details[$annual_amount_field['custom_group_id']][$customGroupTableId]['fields'][$annual_amount_field['id']]['field_data_type'] = 'String';
         $this->form->assign('viewCustomData', $details);
       } catch (Exception $exception) {
         $error_message = E::ts("Referenced RecurringContribution [%1] couldn't be loaded/rendered.", [1 => $recContributionId]);
