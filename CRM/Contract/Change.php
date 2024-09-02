@@ -29,8 +29,25 @@ abstract class CRM_Contract_Change {
   protected $contract = NULL;
 
   /**
+   * Register definitions
+   *
+   * @param \Civi\ContractChangeActionSurvey $survey
+   * @return void
+   */
+  protected static function registerDefaultContactActions($survey) {
+    $survey->registerChangeAction('sign', 'Contract_Signed', 'CRM_Contract_Change_Sign');
+    $survey->registerChangeAction('cancel', 'Contract_Cancelled', 'CRM_Contract_Change_Cancel');
+    $survey->registerChangeAction('update', 'Contract_Updated', 'CRM_Contract_Change_Upgrade');
+    $survey->registerChangeAction('resume', 'Contract_Resumed', 'CRM_Contract_Change_Resume');
+    $survey->registerChangeAction('revive', 'Contract_Revived', 'CRM_Contract_Change_Revive');
+    $survey->registerChangeAction('pause', 'Contract_Paused', 'CRM_Contract_Change_Pause');
+  }
+
+  /**
    * List of known changes,
    *  activity_type_name => change class
+   *
+   * @deprecated
    */
   protected static $type2class = [
     'Contract_Signed'    => 'CRM_Contract_Change_Sign',
@@ -44,6 +61,7 @@ abstract class CRM_Contract_Change {
   /**
    * List of known actions,
    *  activity_type_name => change class
+   * @deprecated
    */
   protected static $action2class = [
       'sign'    => 'CRM_Contract_Change_Sign',
