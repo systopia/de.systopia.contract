@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class ContainerSpecs implements CompilerPassInterface {
 
   /**
-   * Register Contract Actions
+   * Register Contract Actions (ActionProvider)
    */
   public function process(ContainerBuilder $container) {
     // register action provider actions
@@ -55,9 +55,5 @@ class ContainerSpecs implements CompilerPassInterface {
         \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
       ]]);
     }
-
-    // register Contract Actions
-
-
   }
 }

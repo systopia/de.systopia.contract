@@ -9,11 +9,11 @@
 <div class="crm-block crm-form-block">
   <!-- <h3>
   {if $historyAction eq 'cancel'}
-    Please choose a reason for cancelling this contract and click on '{$historyAction|ucfirst}' below.
+    {ts}Please choose a reason for cancelling this contract and click on 'Cancel' below.{/ts}
   {elseif $isUpdate}
-    Please make the required changes to the contract and click on '{$historyAction|ucfirst}' below.
+    {ts}Please make the required changes to the contract and click on 'Update' below.{/ts}
   {else}
-    Please confirm that you want to {$historyAction} this contract by clicking on '{$historyAction|ucfirst}' below.
+    Please confirm that you want to {$historyAction} this contract by clicking on '{$historyAction}' below.
   {/if}
 </h3> -->
   {* add some more info to the form *}

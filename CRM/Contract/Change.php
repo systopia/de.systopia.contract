@@ -7,7 +7,6 @@
 +--------------------------------------------------------------*/
 
 use Civi\Contract\Event\RenderChangeSubjectEvent as RenderChangeSubjectEvent;
-use CRM_Contract_ExtensionUtil as E;
 
 /**
  * Base class for contract changes. These are tracked changes to
@@ -17,6 +16,8 @@ use CRM_Contract_ExtensionUtil as E;
  *  and the CRM_Contract_Handlers
  */
 abstract class CRM_Contract_Change {
+
+  const CONTRACT_CHANGE_SURVEY = 'de.systopia.contract.action.survey';
 
   /**
    * Data representing the data. Will mostly be the activity data
@@ -29,18 +30,34 @@ abstract class CRM_Contract_Change {
   protected $contract = NULL;
 
   /**
-   * Register definitions
+   * Get a list of all available contract actions, each with the following parameters
+   * 'name', 'class' 'display_name' => $action_label,
+   * 'params' => $action_params,
+   * 'activity_type_id' =
    *
-   * @param \Civi\ContractChangeActionSurvey $survey
+   * @return array
+   */
+  public static function getContractChangeActions()
+  {
+    return \Civi\Contract\Event\ContractChangeActionSurvey::getChangeActions();
+  }
+
+  /**
+   * Run a survey to register all ContractChangeAction definitions
+   *
+   * The result ist cached.
+   *
+   * @param \Civi\Contract\Event\ContractChangeActionSurvey $survey
+   *
    * @return void
    */
-  protected static function registerDefaultContactActions($survey) {
-    $survey->registerChangeAction('sign', 'Contract_Signed', 'CRM_Contract_Change_Sign');
+  protected static function registerDefaultContractActions($survey) {
+    $survey->registerChangeAction('sign',   'Contract_Signed',    'CRM_Contract_Change_Sign');
     $survey->registerChangeAction('cancel', 'Contract_Cancelled', 'CRM_Contract_Change_Cancel');
-    $survey->registerChangeAction('update', 'Contract_Updated', 'CRM_Contract_Change_Upgrade');
-    $survey->registerChangeAction('resume', 'Contract_Resumed', 'CRM_Contract_Change_Resume');
-    $survey->registerChangeAction('revive', 'Contract_Revived', 'CRM_Contract_Change_Revive');
-    $survey->registerChangeAction('pause', 'Contract_Paused', 'CRM_Contract_Change_Pause');
+    $survey->registerChangeAction('update', 'Contract_Updated',   'CRM_Contract_Change_Upgrade');
+    $survey->registerChangeAction('resume', 'Contract_Resumed',   'CRM_Contract_Change_Resume');
+    $survey->registerChangeAction('revive', 'Contract_Revived',   'CRM_Contract_Change_Revive');
+    $survey->registerChangeAction('pause',  'Contract_Paused',    'CRM_Contract_Change_Pause');
   }
 
   /**
@@ -75,6 +92,7 @@ abstract class CRM_Contract_Change {
   /**
    * List of activity_type_id => change class
    * Will be be populated on demand
+   * @deprecated
    */
   protected static $_type_id2class = NULL;
 
@@ -634,13 +652,15 @@ abstract class CRM_Contract_Change {
    */
   public static function getClassByActivityType($activity_type_id) {
     // check name -> class mapping first
-    if (isset(self::$type2class[$activity_type_id])) {
-      return self::$type2class[$activity_type_id];
+    $type2class = \Civi\Contract\Event\ContractChangeActionSurvey::getType2Class();
+    if (isset($type2class[$activity_type_id])) {
+      return $type2class[$activity_type_id];
     }
 
     // check action -> class mapping second
-    if (isset(self::$action2class[$activity_type_id])) {
-      return self::$action2class[$activity_type_id];
+    $action2class = \Civi\Contract\Event\ContractChangeActionSurvey::getAction2Class();
+    if (isset($action2class[$activity_type_id])) {
+      return $action2class[$activity_type_id];
     }
 
     // then try ID -> class
@@ -677,6 +697,8 @@ abstract class CRM_Contract_Change {
    * Get the list of activity type ID to class
    *
    * @return array activity_type_id => class name
+   *
+   * @deprecated
    */
   public static function getActivityTypeId2Class() {
     if (self::$_type_id2class === NULL) {
