@@ -663,10 +663,12 @@ abstract class CRM_Contract_Change {
    * Get the class for the given activity type
    *
    * @param $action string action name, e.g. 'cancel'
+   *
    * @return string class name
    */
   public static function getClassByAction($action) {
-    return CRM_Utils_Array::value(strtolower($action), self::$action2class);
+    $key2class = \Civi\Contract\Event\ContractChangeActionSurvey::getKey2Class();
+    return $key2class[strtolower($action)] ?? null;
   }
 
   /**

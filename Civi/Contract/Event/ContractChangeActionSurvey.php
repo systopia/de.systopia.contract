@@ -82,7 +82,7 @@ class ContractChangeActionSurvey extends Event
             ];
           }
         }
-        if (empty($all_activity_types[$activity_type['name']])) {
+        if (empty($all_activity_types[$action_name])) {
             throw new Exception("Contract change type '{$activity_type['name']}' has no corresponding activity type");
         }
         $activity_type_id = $all_activity_types[$activity_type['name']]['value'] ?? null;
@@ -95,6 +95,7 @@ class ContractChangeActionSurvey extends Event
           'display_name' => $action_label,
           'params' => $action_params,
           'activity_type_id' => $activity_type_id,
+          'action' => $action_key,
       ];
     }
 
@@ -148,6 +149,20 @@ class ContractChangeActionSurvey extends Event
     }
 
     /**
+     * Get the key/verb (e.g. 'sign') to class mapping, e.g. 'sign' => 'CRM_Contract_Change_Sign'
+     *
+     * @return array
+     */
+    public static function getKey2Class()
+    {
+        $key2class = [];
+        foreach (self::getChangeActions() as $action) {
+            $key2class[$action['action']] = $action['class'];
+        }
+        return $key2class;
+    }
+
+    /**
      * Get the change activity type ID to class mapping, e.g. 'Contract_Signed' => 18
      *
      * @return array
@@ -155,7 +170,8 @@ class ContractChangeActionSurvey extends Event
     public static function getAction2Class()
     {
         $action2class = [];
-        foreach (self::getChangeActions() as $action_name => $action) {
+        $all_actions = self::getChangeActions();
+        foreach ($all_actions as $action_name => $action) {
             $action2class[$action_name] = $action['class'];
         }
         return $action2class;
