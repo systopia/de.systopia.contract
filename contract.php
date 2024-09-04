@@ -14,6 +14,7 @@ use CRM_Contract_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use \Civi\Contract\Event\RapidCreateFormEvent as RapidCreateFormEvent;
 use \Civi\Contract\Event\ContractCreateFormEvent as ContractCreateFormEvent;
+use \Civi\Contract\Event\ContractChangeActionSurvey as ContractChangeActionSurvey;
 
 /**
  * Implements hook_civicrm_container()
@@ -33,6 +34,10 @@ function contract_civicrm_container(ContainerBuilder $container) {
  */
 function contract_civicrm_config(&$config) {
   _contract_civix_civicrm_config($config);
+
+  Civi::dispatcher()->addListener(
+    ContractChangeActionSurvey::EVENT_NAME,
+    ['CRM_Contract_Change', 'registerDefaultContractActions']);
 }
 
 /**

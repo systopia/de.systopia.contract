@@ -11,6 +11,7 @@ namespace Civi\Contract\Event;
 
 use Civi\Core\Event\GenericHookEvent as Event;
 use Civi\Funding\ActivityTypeIds;
+use League\Csv\Exception;
 
 /**
  * Class ContractChangeActionSurvey
@@ -28,18 +29,24 @@ class ContractChangeActionSurvey extends Event
     /**
      * Register a new importer module with the system
      *
+     * @param string $action_key
+     *   the unique module shorthand key. If it is already registered, the previous registration will be overwritten
+     *
      * @param string $action_name
-     *   the unique module key. If it is already registered, the previous registration will be overwritten
+     *   the action's name, e.g. Contract_Change
      *
      * @param string $action_class
-     *   the module's implementation class. A subclass of CRM_Contract_Change
+     *   the module's implementation class name. A subclass of CRM_Contract_Change
      *
      * @param string $action_label
-     *   the module's label
+     *   the module's implementation class label.
+     *
+     * @param ?int $activity_type_id
+     *   the activity_type ID that's linked to this action
      *
      * @return void
      */
-    public function registerChangeAction($action_name, $action_class, $action_label, $activity_type_id = null, $action_params = [])
+    public function registerChangeAction($action_key, $action_name, $action_class, $action_label, $activity_type_id = null, $action_params = [])
     {
       // make sure the class really is a ContractAction
       if (!is_subclass_of($action_class, 'CRM_Contract_Change')) {
@@ -47,7 +54,7 @@ class ContractChangeActionSurvey extends Event
       }
 
       // make sure the class obeys the naming convention
-      if (!str_starts_with('CRM_Contract_', $action_class)) {
+      if (!str_starts_with($action_class, 'CRM_Contract_')) {
         throw new \Exception("Name of class {$action_class} does not start with 'CRM_Contract_' (convention).");
       }
 
@@ -57,10 +64,10 @@ class ContractChangeActionSurvey extends Event
 
       // look up corresponding activity type ID if not provided
       if (empty($activity_type_id)) {
-        static $activity_types = null;
-        if ($activity_types === null) {
+        static $all_activity_types = null;
+        if ($all_activity_types === null) {
           // todo: cache?
-          $activity_types = [];
+          $all_activity_types = [];
           $activity_type_query = \Civi\Api4\OptionValue::get(TRUE)
             ->addSelect('option_group_id:name', 'value', 'label', 'name')
             ->addWhere('option_group_id:name', '=', 'activity_type')
@@ -68,13 +75,17 @@ class ContractChangeActionSurvey extends Event
             ->addWhere('is_active', '=', TRUE)
             ->execute();
           foreach ($activity_type_query as $activity_type) {
-            $activity_types[$activity_type['value']] = [
+            $all_activity_types[$activity_type['name']] = [
               'name' => $activity_type['name'],
               'value' => $activity_type['value'],
               'label' => $activity_type['label'],
             ];
           }
         }
+        if (empty($all_activity_types[$activity_type['name']])) {
+            throw new Exception("Contract change type '{$activity_type['name']}' has no corresponding activity type");
+        }
+        $activity_type_id = $all_activity_types[$activity_type['name']]['value'] ?? null;
       }
 
       // register
@@ -129,7 +140,9 @@ class ContractChangeActionSurvey extends Event
         $type2class = [];
         foreach (self::getChangeActions() as $action_name => $action) {
             $type2class[$action_name] = $action['class'];
-            $type2class[$action['activity_type_id']] = $action['class'];
+            if (!empty($action['activity_type_id'])) {
+                $type2class[$action['activity_type_id']] = $action['class'];
+            }
         }
         return $type2class;
     }

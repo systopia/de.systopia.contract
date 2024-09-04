@@ -7,6 +7,7 @@
 +--------------------------------------------------------------*/
 
 use Civi\Contract\Event\RenderChangeSubjectEvent as RenderChangeSubjectEvent;
+use CRM_Contract_ExtensionUtil as E;
 
 /**
  * Base class for contract changes. These are tracked changes to
@@ -51,29 +52,14 @@ abstract class CRM_Contract_Change {
    *
    * @return void
    */
-  protected static function registerDefaultContractActions($survey) {
-    $survey->registerChangeAction('sign',   'Contract_Signed',    'CRM_Contract_Change_Sign');
-    $survey->registerChangeAction('cancel', 'Contract_Cancelled', 'CRM_Contract_Change_Cancel');
-    $survey->registerChangeAction('update', 'Contract_Updated',   'CRM_Contract_Change_Upgrade');
-    $survey->registerChangeAction('resume', 'Contract_Resumed',   'CRM_Contract_Change_Resume');
-    $survey->registerChangeAction('revive', 'Contract_Revived',   'CRM_Contract_Change_Revive');
-    $survey->registerChangeAction('pause',  'Contract_Paused',    'CRM_Contract_Change_Pause');
+  public static function registerDefaultContractActions($survey) {
+    $survey->registerChangeAction('sign',   'Contract_Signed',    'CRM_Contract_Change_Sign', E::ts("Contract Signed"));
+    $survey->registerChangeAction('cancel', 'Contract_Cancelled', 'CRM_Contract_Change_Cancel', E::ts("Contract Cancelled"));
+    $survey->registerChangeAction('update', 'Contract_Updated',   'CRM_Contract_Change_Upgrade', E::ts("Contract Upgraded"));
+    $survey->registerChangeAction('resume', 'Contract_Resumed',   'CRM_Contract_Change_Resume', E::ts("Contract Resumed"));
+    $survey->registerChangeAction('revive', 'Contract_Revived',   'CRM_Contract_Change_Revive', E::ts("Contract Revived"));
+    $survey->registerChangeAction('pause',  'Contract_Paused',    'CRM_Contract_Change_Pause', E::ts("Contract Paused"));
   }
-
-  /**
-   * List of known changes,
-   *  activity_type_name => change class
-   *
-   * @deprecated
-   */
-  protected static $type2class = [
-    'Contract_Signed'    => 'CRM_Contract_Change_Sign',
-    'Contract_Cancelled' => 'CRM_Contract_Change_Cancel',
-    'Contract_Updated'   => 'CRM_Contract_Change_Upgrade',
-    'Contract_Resumed'   => 'CRM_Contract_Change_Resume',
-    'Contract_Revived'   => 'CRM_Contract_Change_Revive',
-    'Contract_Paused'    => 'CRM_Contract_Change_Pause',
-  ];
 
   /**
    * List of known actions,
@@ -697,30 +683,15 @@ abstract class CRM_Contract_Change {
    * Get the list of activity type ID to class
    *
    * @return array activity_type_id => class name
-   *
-   * @deprecated
    */
   public static function getActivityTypeId2Class() {
-    if (self::$_type_id2class === NULL) {
-      // populate on demand:
-      self::$_type_id2class = [];
-      $query = civicrm_api3('OptionValue', 'get', [
-          'option_group_id' => 'activity_type',
-          'name'            => ['IN' => array_keys(self::$type2class)],
-          'return'          => 'value,name',
-          'option.limit'    => 0,
-          'sequential'      => 1]);
-      foreach ($query['values'] as $entry) {
-        if (isset(self::$type2class[$entry['name']])) {
-          self::$_type_id2class[$entry['value']] = self::$type2class[$entry['name']];
-        }
-      }
-    }
-    return self::$_type_id2class;
+    return \Civi\Contract\Event\ContractChangeActionSurvey::getType2Class();
   }
 
   /**
    * Get the list of valid activity type IDs representing changes
+   *
+   * @return
    */
   public static function getActivityTypeIds() {
     $id2class = self::getActivityTypeId2Class();
