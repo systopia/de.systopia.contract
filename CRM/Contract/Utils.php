@@ -91,8 +91,12 @@ class CRM_Contract_Utils
   {
     if (!self::$customFieldCache) {
       $customGroupNames = ['membership_general', 'membership_payment', 'membership_cancellation', 'contract_cancellation', 'contract_updates'];
-      $customGroups     = civicrm_api3('CustomGroup', 'get', ['name' => ['IN' => $customGroupNames], 'return' => 'name', 'options' => ['limit' => 1000]])['values'];
-      $customFields     = civicrm_api3('CustomField', 'get', ['custom_group_id' => ['IN' => $customGroupNames], 'options' => ['limit' => 1000]]);
+      $custom_group_ids = [];
+      $customGroups     = civicrm_api3('CustomGroup', 'get', ['name' => ['IN' => $customGroupNames], 'return' => 'name', 'options' => ['limit' => 0]])['values'];
+      foreach ($customGroups as $customGroup) {
+        $custom_group_ids[] = $customGroup['id'];
+      }
+      $customFields = civicrm_api3('CustomField', 'get', ['custom_group_id' => ['IN' => $custom_group_ids], 'options' => ['limit' => 0]]);
       foreach ($customFields['values'] as $c) {
         self::$customFieldCache["{$customGroups[$c['custom_group_id']]['name']}.{$c['name']}"] = "custom_{$c['id']}";
       }

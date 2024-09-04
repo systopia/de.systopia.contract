@@ -10,7 +10,7 @@
 namespace Civi\Contract\Event;
 
 use Civi;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use \CRM_Contract_Change as CRM_Contract_Change;
 
 /**

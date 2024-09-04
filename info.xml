@@ -18,7 +18,7 @@
   <version>2.0-dev</version>
   <develStage>dev</develStage>
   <compatibility>
-    <ver>5.0</ver>
+    <ver>5.57</ver>
   </compatibility>
   <requires>
     <ext>org.project60.sepa</ext>
@@ -27,13 +27,16 @@
   <comments>Concept by B. Endres and M. Haefner, Greenpeace CEE. First implementation by Michael McAndrew, michaelmcandrew@thirdsectordesign.org</comments>
   <classloader>
     <psr4 prefix="Civi\" path="Civi"/>
+    <psr0 prefix="CRM_" path="."/>
   </classloader>
   <civix>
     <namespace>CRM/Contract</namespace>
-    <format>22.05.2</format>
+    <format>23.02.1</format>
   </civix>
   <mixins>
     <mixin>menu-xml@1.0.0</mixin>
     <mixin>setting-php@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.1</mixin>
   </mixins>
+  <upgrader>CRM_Contract_Upgrader</upgrader>
 </extension>

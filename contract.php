@@ -45,48 +45,12 @@ function contract_civicrm_install() {
 }
 
 /**
- * Implements hook_civicrm_postInstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postInstall
- */
-function contract_civicrm_postInstall() {
-  _contract_civix_civicrm_postInstall();
-}
-
-/**
- * Implements hook_civicrm_uninstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
- */
-function contract_civicrm_uninstall() {
-  _contract_civix_civicrm_uninstall();
-}
-
-/**
  * Implements hook_civicrm_enable().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
 function contract_civicrm_enable() {
   _contract_civix_civicrm_enable();
-}
-
-/**
- * Implements hook_civicrm_disable().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
- */
-function contract_civicrm_disable() {
-  _contract_civix_civicrm_disable();
-}
-
-/**
- * Implements hook_civicrm_upgrade().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
- */
-function contract_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _contract_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -374,11 +338,9 @@ function contract_civicrm_searchTasks($objectType, &$tasks) {
  * @param $permissions
  */
 function contract_civicrm_permission(&$permissions) {
-  $permissions += [
-    'edit core membership CiviContract' => [
-      E::ts('CiviContract: Edit core membership'),
-      E::ts('Allow editing memberships using the core membership form'),
-    ]
+  $permissions['edit core membership CiviContract'] = [
+    'label'       => E::ts('CiviContract: Edit core membership'),
+    'description' => E::ts('Allow editing memberships using the core membership form')
   ];
 }
 
