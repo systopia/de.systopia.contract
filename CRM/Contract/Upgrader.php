@@ -131,4 +131,11 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     return TRUE;
   }
+
+  public function upgrade_2000() {
+    $this->ctx->log->info('Adjust filters for contract actions');
+    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
+    return TRUE;
+  }
 }
