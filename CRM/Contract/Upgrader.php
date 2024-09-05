@@ -138,4 +138,11 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
+
+  public function upgrade_2001() {
+    $this->ctx->log->info('Add AWO contact types');
+    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
+    return TRUE;
+  }
 }
