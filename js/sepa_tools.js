@@ -6,7 +6,7 @@
 +--------------------------------------------------------------*/
 
 // this value will be replaced upon injection
-var sepa_creditor_parameters = SEPA_CREDITOR_PARAMETERS;
+let sepa_creditor_parameters = SEPA_CREDITOR_PARAMETERS; // this string will be replaced
 
 /**
  * formats a value to the CiviCRM failsafe format: 0.00 (e.g. 999999.90)
@@ -20,7 +20,7 @@ var sepa_creditor_parameters = SEPA_CREDITOR_PARAMETERS;
   }
 
   // find out if there's a problem with ','
-  var stripped_value = raw_value.replace(' ', '');
+  let stripped_value = raw_value.replace(' ', '');
   if (stripped_value.includes(',')) {
     // if there are at least three digits after the ','
     //  it's a thousands separator
@@ -51,9 +51,9 @@ function nextCollectionDate(cycle_day, start_date, grace_end, creditor_id='defau
   // earliest contribution date is: max(now+notice, start_date, grace_end)
 
   // first: calculate the earliest possible collection date
-  var notice = parseInt(sepa_creditor_parameters[creditor_id]['notice']);
-  var grace  = parseInt(sepa_creditor_parameters[creditor_id]['grace']);
-  var earliest_date = new Date();
+  let notice = parseInt(sepa_creditor_parameters[creditor_id]['notice']);
+  let grace  = parseInt(sepa_creditor_parameters[creditor_id]['grace']);
+  let earliest_date = new Date();
   // see https://stackoverflow.com/questions/6963311/add-days-to-a-date-object
   earliest_date = new Date(earliest_date.setTime(earliest_date.getTime() + (notice-grace) * 86400000));
 
@@ -74,7 +74,7 @@ function nextCollectionDate(cycle_day, start_date, grace_end, creditor_id='defau
   }
 
   // now move to the next cycle day
-  var safety_check = 65; // max two months
+  let safety_check = 65; // max two months
   while (earliest_date.getDate() != cycle_day && safety_check > 0) {
     // advance one day
     earliest_date = new Date(earliest_date.setTime(earliest_date.getTime() + 86400000));
@@ -85,12 +85,12 @@ function nextCollectionDate(cycle_day, start_date, grace_end, creditor_id='defau
   }
 
   // format to YYYY-MM-DD. Don't use toISOString() (timezone mess-up)
-  var month = earliest_date.getMonth() + 1;
+  let month = earliest_date.getMonth() + 1;
   month = month.toString();
   if (month.length == 1) {
     month = '0' +  month;
   }
-  var day = earliest_date.getDate().toString();
+  let day = earliest_date.getDate().toString();
   if (day.length == 1) {
     day = '0' + day;
   }

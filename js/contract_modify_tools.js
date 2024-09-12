@@ -26,15 +26,20 @@ cj(document).ready(function () {
  */
 function showHidePaymentElements() {
     let new_mode = cj("#payment_option").val();
-    if (new_mode == "select") {
+    if (new_mode === "select") {
         cj("div.payment-select").show(300);
         cj("div.payment-modify").hide(300);
         cj("div.payment-create").hide(300);
 
-    } else if (new_mode == "modify") {
+    } else if (new_mode === "modify") {
         cj("div.payment-select").hide(300);
         cj("div.payment-modify").show(300);
         cj("div.payment-create").hide(300);
+
+    } else if (new_mode === "create") {
+      cj("div.payment-select").hide(300);
+      cj("div.payment-modify").hide(300);
+      cj("div.payment-create").show(300);
 
     } else {
         cj("div.payment-select").hide(300);
@@ -48,7 +53,6 @@ function showHidePaymentElements() {
  */
 function updatePaymentSummaryText() { (function (cj, ts){
     let mode = cj("#payment_option").val();
-
     if (mode === "select") {
         // display the selected recurring contribution
         let recurring_contributions = CRM.vars['de.systopia.contract'].recurring_contributions;
