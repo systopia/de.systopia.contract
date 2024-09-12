@@ -217,7 +217,7 @@ msgstr ""
 
 #: CRM/Contract/Form/Modify.php
 msgid "Scheduled updates exist!"
-msgstr "Weiter Anstehende Änderungen!"
+msgstr "Weitere Anstehende Änderungen!"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Unknown action '%1'."
