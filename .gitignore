@@ -1,2 +1,6 @@
 DEV-NOTES.md
 *.phpunit.result.cache
+
+vendor/
+
+composer.lock
