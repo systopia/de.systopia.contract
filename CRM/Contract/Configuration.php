@@ -6,12 +6,18 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 /**
  * Configuration options for Contract extension
  *
  * @todo create settings page
  */
 class CRM_Contract_Configuration {
+
+
+  /** @var array $eligible_campaigns */
+  protected static $eligible_campaigns = null;
 
   /**
    * Disable monitoring relevant entities, so we don't accidentally
@@ -88,14 +94,14 @@ class CRM_Contract_Configuration {
    */
   public static function _getCampaignList() {
     if (self::$eligible_campaigns === NULL) {
-      self::$eligible_campaigns = array(
-        '' => ts('- none -'));
-      $campaign_query = civicrm_api3('Campaign', 'get', array(
+      self::$eligible_campaigns = [
+        '' => ts('- none -')];
+      $campaign_query = civicrm_api3('Campaign', 'get', [
         'sequential'   => 1,
         'is_active'    => 1,
         'option.limit' => 0,
         'return'       => 'id,title'
-        ));
+      ]);
       foreach ($campaign_query['values'] as $campaign) {
         self::$eligible_campaigns[$campaign['id']] = $campaign['title'];
       }
@@ -111,7 +117,7 @@ class CRM_Contract_Configuration {
   public static function getUniqueReferenceExceptions() {
     // TODO: these are GP values,
     //   create a setting to make more flexible
-    return array(
+    return [
       "Einzug durch TAS",
       "Vertrag durch TAS",
       "Allgemeine Daueraufträge",
@@ -127,6 +133,44 @@ class CRM_Contract_Configuration {
       "Internet",
       "Onlinespende",
       "Online-Spenden",
-    );
+    ];
+  }
+
+  /**
+   * Get the list of payment instruments supported by the contract extension
+   * @return array list of [payment_instrument_name => label] tuples
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\NotImplementedException
+   */
+  public static function getSupportedPaymentTypes()
+  {
+    static $eligible_payment_options = null;
+    if ($eligible_payment_options === null) {
+      $generally_supported_payment_types = [
+        // todo: setting?
+        'RCUR' => E::ts("SEPA Lastschrift"),
+        'Cash' => E::ts("Barzahlung"),
+        'EFT' => E::ts("Überweisung"),
+      ];
+
+      // make sure they're there and enabled
+      $eligible_payment_options_query = civicrm_api4('OptionValue', 'get', [
+        'select' => ['label', 'value', 'name'],
+        'where' => [
+          ['option_group_id:name', '=', 'payment_instrument'],
+          ['name', 'IN', array_keys($generally_supported_payment_types)],
+          ['is_active', '=', true]
+        ],
+      ])->getArrayCopy();
+      $eligible_payment_options = [];
+      foreach ($eligible_payment_options_query as $option) {
+        if ($option['name'] == 'RCUR') {
+          $option['label'] = E::ts("SEPA Lastschrift");
+        }
+        $eligible_payment_options[$option['name']] = $option['label'];
+      }
+    }
+    return $eligible_payment_options;
   }
 }

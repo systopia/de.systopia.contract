@@ -10,7 +10,7 @@
     <div class="help">{ts}Configuration Options for the Contract Extension{/ts}</div>
 
     <div class="crm-section payment-modify">
-      <div class="label">{$form.contract_modification_reviewers.label}</div>
+      <div class="label">{$form.contract_modification_reviewers.label} {help id="id-date-reviewers" title=$form.contract_modification_reviewers.label}</div>
       <div class="content">{$form.contract_modification_reviewers.html}</div>
       <div class="clear"></div>
     </div>
@@ -21,8 +21,14 @@
       <div class="clear"></div>
     </div>
 
+    <div class="crm-section payment-modify">
+      <div class="label">{$form.contract_payment_types.label}&nbsp;{help id="id-contract-payment-types" title=$form.contract_payment_types.label}</div>
+      <div class="content">{$form.contract_payment_types.html}</div>
+      <div class="clear"></div>
+    </div>
+
     <div class="crm-submit-buttons">
-      {include file="CRM/common/formButtons.tpl" location="bottom"}
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
 
 </div>
