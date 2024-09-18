@@ -63,7 +63,7 @@ class CRM_Contract_Form_Settings extends CRM_Core_Form{
     $submitted = $this->exportValues();
     Civi::settings()->set('contract_modification_reviewers', $submitted['contract_modification_reviewers']);
     Civi::settings()->set('date_adjustment', $submitted['date_adjustment']);
-    Civi::settings()->set('contract_payment_types', array_keys($submitted['contract_payment_types']));
+    Civi::settings()->set('contract_payment_types', $submitted['contract_payment_types']);
     CRM_Core_Session::setStatus( E::ts('Contract settings updated.'), E::ts("Success"), 'success');
   }
 

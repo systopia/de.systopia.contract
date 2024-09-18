@@ -87,28 +87,6 @@ class CRM_Contract_Configuration {
     return \Civi\Contract\Event\EligibleContractCampaigns::getAllEligibleCampaigns($all_campaigns);
   }
 
-  /**
-   * get the list of campaigns eligible for creating
-   * new contracts
-   * @todo configure
-   */
-  public static function _getCampaignList() {
-    if (self::$eligible_campaigns === NULL) {
-      self::$eligible_campaigns = [
-        '' => ts('- none -')];
-      $campaign_query = civicrm_api3('Campaign', 'get', [
-        'sequential'   => 1,
-        'is_active'    => 1,
-        'option.limit' => 0,
-        'return'       => 'id,title'
-      ]);
-      foreach ($campaign_query['values'] as $campaign) {
-        self::$eligible_campaigns[$campaign['id']] = $campaign['title'];
-      }
-    }
-    return self::$eligible_campaigns;
-  }
-
 
   /**
    * Get a list of contract references that are excempt

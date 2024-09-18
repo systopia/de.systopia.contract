@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 3.5\n"
 
 #: CRM/Contract/BAO/ContractPaymentLink.php
 msgid "unknown"
@@ -117,7 +117,7 @@ msgstr "neues SEPA-Mandat"
 
 #: CRM/Contract/Form/Create.php
 msgid "select existing contract"
-msgstr "bestehendes Mandat wählen"
+msgstr "bestehenden Zahlungsvertrag wählen"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
@@ -212,8 +212,9 @@ msgid ""
 "Some updates have already been scheduled for this contract. Please ensure "
 "that this new update will not conflict with existing updates"
 msgstr ""
-"Es gibt bereits geplante Änderungen für diesen Vertrag. Bitte vergewissern "
-"Sie sich, dass hier keine Konflikte entstehen."
+"Für diesen Vertrag sind bereits einige Aktualisierungen vorgesehen. Bitte "
+"stellen Sie sicher, dass diese neue Aktualisierung nicht mit bestehenden "
+"Aktualisierungen kollidiert"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Scheduled updates exist!"
@@ -394,7 +395,7 @@ msgstr "Datumsbereich der wiederkehrenden Zuwendung [%1] angepasst."
 
 #: CRM/Contract/Form/Task/AssignContributions.php
 msgid "%1 contribution(s) were adjusted as requested."
-msgstr "%1 Zuwendung(en) wurden angepasst wie angefordert. "
+msgstr "%1 Zuwendung(en) wurden angepasst."
 
 #: CRM/Contract/Form/Task/AssignContributions.php
 msgid "[%4] '%1' since %2 (%3) - %5"
@@ -770,11 +771,11 @@ msgstr ""
 
 #: Civi/Contract/Event/RapidCreateFormEvent.php
 msgid "'Rapid Create' form not available"
-msgstr "Kein Formular für die Schnellerfassung vorhanden."
+msgstr "Da Formular für die vorhanden"
 
 #: Civi/Contract/Event/RenderChangeSubjectEvent.php
 msgid "(not found)"
-msgstr ""
+msgstr "(nicht gefunden)"
 
 #: contract.php
 msgid "needs review"
@@ -947,10 +948,8 @@ msgid "Failed"
 msgstr "Fehlgeschlagen"
 
 #: resources/l10n.php
-#, fuzzy
-#| msgid "unknown"
 msgid "Unknown"
-msgstr "unbekannt"
+msgstr "Unbekannt"
 
 #: resources/l10n.php
 msgid "Welcome Gift"

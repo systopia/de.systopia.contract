@@ -42,23 +42,56 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid'))));
     CRM_Contract_SepaLogic::addJsSepaTools();
 
-    // Payment dates
-    $this->add('select', 'payment_option', E::ts('Payment'), array('create' => E::ts('create new mandate'), 'select' => E::ts('select existing contract')));
+    // Payment date
+    $this->add('select', 'payment_option', E::ts('Payment'), $this->getPaymentOptions());
     $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
     $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'));
     $this->add('text',   'bic', E::ts('BIC'));
-    $this->add('text',   'account_holder', E::ts('Members Bank Account'), array('class' => 'huge'));
-    $this->add('text',   'payment_amount', E::ts('Installment amount'), array('size' => 6));
+    $this->add('text',   'account_holder', E::ts('Members Bank Account'), ['class' => 'huge']);
+    $this->add('text',   'payment_amount', E::ts('Installment amount'), ['size' => 6]);
     $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
     $this->assign('bic_lookup_accessible', CRM_Contract_SepaLogic::isLittleBicExtensionAccessible());
 
     // Contract dates
-    $this->addDate('join_date', E::ts('Member since'), TRUE, array('formatType' => 'activityDate'));
-    $this->addDate('start_date', E::ts('Membership start date'), TRUE, array('formatType' => 'activityDate'));
-    $this->addDate('end_date', E::ts('End date'), FALSE, array('formatType' => 'activityDate'));
+    $this->add(
+      'datepicker',
+      'join_date',
+      E::ts('Member since'),
+      [
+        'minDate' => date('Y-m-d', strtotime("-200 years")),
+        'maxDate' => date('Y-m-d', strtotime("+1 year")),
+        'time' => false
+      ],
+      ['formatType' => 'activityDate']
+    );
+    $this->add(
+      'datepicker',
+      'start_date',
+      E::ts('Membership start date'),
+      [
+        'minDate' => date('Y-m-d', strtotime("-1 year")),
+        'maxDate' => date('Y-m-d', strtotime("+1 year")),
+        'time' => false
+      ],
+      ['formatType' => 'activityDate']
+    );
+    $this->add(
+      'datepicker',
+      'end_date',
+      E::ts('End date'),
+      [
+        'minDate' => date('Y-m-d', strtotime("-1 year")),
+        'maxDate' => date('Y-m-d', strtotime("+100 year")),
+        'time' => false
+      ],
+      ['formatType' => 'activityDate']
+    );
+
+    $this->add('datepicker', 'start_date', E::ts('Membership start date'), TRUE, ['formatType' => 'activityDate']);
+    $this->add('datepicker', 'end_date', E::ts('End date'), FALSE, ['formatType' => 'activityDate']);
 
     // campaign selector
-    $this->add('select', 'campaign_id', E::ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), FALSE, array('class' => 'crm-select2'));
+    $this->add('select', 'campaign_id', E::ts('Campaign'), CRM_Contract_Configuration::getCampaignList(), FALSE, ['class' => 'crm-select2']);
     // $this->addEntityRef('campaign_id', E::ts('Campaign'), [
     //   'entity' => 'campaign',
     //   'placeholder' => E::ts('- none -')
@@ -259,4 +292,21 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->ajaxResponse['updateTabs']['#tab_member'] = 1;
     $this->controller->_destination = CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->get('cid')}");
   }
+
+  /**
+   * Get the list of eligible payment options
+   *
+   * @return array
+   */
+  public function getPaymentOptions()
+  {
+    $payment_options = [];
+    $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes();
+    foreach ($payment_types as $payment_key => $payment_type) {
+      $payment_options[$payment_key] = E::ts("new %1 contract", [1=>$payment_type]);
+    }
+    $payment_options['select'] = E::ts('select existing contract');
+    return $payment_options;
+  }
+
 }

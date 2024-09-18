@@ -64,18 +64,7 @@ function updatePaymentSummaryText() { (function (cj, ts){
         } else {
             cj('.recurring-contribution-summary-text').html(ts('None'));
         }
-    } else if (mode === "create") {
 
-      let creditor = CRM.vars['de.systopia.contract'].creditor;
-      let debitor_name = cj('[name=debitor_name]').val();
-      let cycle_day = cj('[name=cycle_day]').val();
-      let iban = cj('[name=iban]').val();
-      let installment = parseMoney(cj('[name=payment_amount]').val());
-      let frequency = cj('[name=payment_frequency]').val();
-      let frequency_label = CRM.vars['de.systopia.contract'].frequencies[frequency];
-      //let next_collection = CRM.vars['de.systopia.contract'].next_collections[cycle_day];
-      let start_date = cj('[name=activity_date]').val();
-      let annual = 0.0;
 
     } else if (mode === "nochange") {
         let recurring_contributions = CRM.vars['de.systopia.contract'].recurring_contributions;
@@ -125,7 +114,7 @@ function updatePaymentSummaryText() { (function (cj, ts){
         if (!iban.length) {
             iban = current_values.fields.iban;
         }
-        if (installment == '0.00') {
+        if (!installment) {
             installment = parseMoney(current_values.fields.amount);
         }
 
