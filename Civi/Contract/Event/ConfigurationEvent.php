@@ -8,7 +8,7 @@
 
 namespace Civi\Contract\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use \Civi\Core\Event\GenericHookEvent;
 
 /**
  * Class ConfigurationEvent

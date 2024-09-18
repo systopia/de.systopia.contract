@@ -10,7 +10,7 @@
 namespace Civi\Contract\Event;
 
 use Civi;
-use Symfony\Contracts\EventDispatcher\Event;
+use \Civi\Core\Event\GenericHookEvent;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
