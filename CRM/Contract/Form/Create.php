@@ -45,7 +45,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     // Payment date
     $this->add('select', 'payment_option', E::ts('Payment'), $this->getPaymentOptions());
     $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
-    $this->add('text',   'iban', E::ts('IBAN'), array('class' => 'huge'));
+    $this->add('text',   'iban', E::ts('IBAN'), ['class' => 'huge']);
     $this->add('text',   'bic', E::ts('BIC'));
     $this->add('text',   'account_holder', E::ts('Members Bank Account'), ['class' => 'huge']);
     $this->add('text',   'payment_amount', E::ts('Installment amount'), ['size' => 6]);
@@ -98,16 +98,17 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     // ]);
 
     // Membership type (membership)
+    $MembershipTypeOptions = $mediumOptions = [];
     foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
     }
-    $this->add('select', 'membership_type_id', E::ts('Membership type'), array('' => '- none -') + $MembershipTypeOptions, true, array('class' => 'crm-select2'));
+    $this->add('select', 'membership_type_id', E::ts('Membership type'), ['' => '- none -'] + $MembershipTypeOptions, true, ['class' => 'crm-select2']);
 
     // Source media (activity)
     foreach(civicrm_api3('Activity', 'getoptions', ['field' => "activity_medium_id", 'options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $key => $value){
       $mediumOptions[$key] = $value;
     }
-    $this->add('select', 'activity_medium', E::ts('Source media'), array('' => '- none -') + $mediumOptions, false, array('class' => 'crm-select2'));
+    $this->add('select', 'activity_medium', E::ts('Source media'), ['' => '- none -'] + $mediumOptions, false, ['class' => 'crm-select2']);
 
     // Reference number text
     $this->add('text', 'membership_reference', E::ts('Reference number'));
@@ -116,7 +117,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add('text', 'membership_contract', E::ts('Contract number'));
 
     // DD-Fundraiser
-    $this->addEntityRef('membership_dialoger', E::ts('DD-Fundraiser'), array('api' => array('params' => array('contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger'))));
+    $this->addEntityRef('membership_dialoger', E::ts('DD-Fundraiser'), ['api' => ['params' => ['contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger']]]);
 
     // Membership channel
     foreach(civicrm_api3('OptionValue', 'get', [
@@ -125,7 +126,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'options'         => ['limit' => 0, 'sort' => 'weight']])['values'] as $optionValue){
       $membershipChannelOptions[$optionValue['value']] = $optionValue['label'];
     }
-    $this->add('select', 'membership_channel', E::ts('Membership channel'), array('' => '- none -') + $membershipChannelOptions, false, array('class' => 'crm-select2'));
+    $this->add('select', 'membership_channel', E::ts('Membership channel'), ['' => '- none -'] + $membershipChannelOptions, false, array('class' => 'crm-select2'));
 
     // Notes
     if (version_compare(CRM_Utils_System::version(), '4.7', '<')) {
@@ -306,6 +307,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       $payment_options[$payment_key] = E::ts("new %1 contract", [1=>$payment_type]);
     }
     $payment_options['select'] = E::ts('select existing contract');
+    $payment_options['nochange'] = E::ts('no change');
     return $payment_options;
   }
 
