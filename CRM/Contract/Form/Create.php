@@ -32,14 +32,14 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
     $formUtils->addPaymentContractSelect2('recurring_contribution', $this->get('cid'), false, null);
-    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', array(
+    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', [
       'cid'                     => $this->get('cid'),
       'debitor_name'            => $this->contact['display_name'],
       'creditor'                => CRM_Contract_SepaLogic::getCreditor(),
       // 'next_collections'        => CRM_Contract_SepaLogic::getNextCollections(),
       'frequencies'             => CRM_Contract_SepaLogic::getPaymentFrequencies(),
       'grace_end'               => NULL,
-      'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid'))));
+      'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid'))]);
     CRM_Contract_SepaLogic::addJsSepaTools();
 
     // Payment date
@@ -304,10 +304,10 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $payment_options = [];
     $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes();
     foreach ($payment_types as $payment_key => $payment_type) {
-      $payment_options[$payment_key] = E::ts("new %1 contract", [1=>$payment_type]);
+      $payment_options[$payment_key] = E::ts("new contract: %1", [1=>$payment_type]);
     }
     $payment_options['select'] = E::ts('select existing contract');
-    $payment_options['nochange'] = E::ts('no change');
+    // not for creation: $payment_options['nochange'] = E::ts('no change');
     return $payment_options;
   }
 
