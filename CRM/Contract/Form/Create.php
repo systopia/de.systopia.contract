@@ -223,6 +223,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   function postProcess() {
     $submitted = $this->exportValues();
 
+    # CREATE NEW SEPA MANDATE
     if ($submitted['payment_option'] == 'create') {
         // calculate some stuff
         if ($submitted['cycle_day'] < 1 || $submitted['cycle_day'] > 30) {
@@ -257,6 +258,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
             ));
         $params['membership_payment.membership_recurring_contribution'] = $new_mandate['entity_id'];
         $params['membership_general.membership_dialoger'] = $submitted['membership_dialoger']; // DD fundraiser
+
     } else {
         $params['membership_payment.membership_recurring_contribution'] = $submitted['recurring_contribution']; // Recurring contribution
     }

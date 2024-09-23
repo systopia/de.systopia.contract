@@ -254,7 +254,7 @@ msgstr "Kontoinhaber"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
-msgstr "Einzugsbetrag"
+msgstr "Rate"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Start Collection"

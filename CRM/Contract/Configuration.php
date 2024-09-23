@@ -121,10 +121,11 @@ class CRM_Contract_Configuration {
    * @throws CRM_Core_Exception
    * @throws \Civi\API\Exception\NotImplementedException
    */
-  public static function getSupportedPaymentTypes()
+  public static function getSupportedPaymentTypes($return_ids = false)
   {
-    static $eligible_payment_options = null;
-    if ($eligible_payment_options === null) {
+    static $eligible_payment_option_labels = null;
+    static $eligible_payment_option_ids = null;
+    if ($eligible_payment_option_labels === null) {
       $generally_supported_payment_types = [
         // todo: setting?
         'RCUR' => E::ts("SEPA Lastschrift"),
@@ -134,21 +135,40 @@ class CRM_Contract_Configuration {
 
       // make sure they're there and enabled
       $eligible_payment_options_query = civicrm_api4('OptionValue', 'get', [
-        'select' => ['label', 'value', 'name'],
+        'select' => ['label', 'name', 'value'],
         'where' => [
           ['option_group_id:name', '=', 'payment_instrument'],
           ['name', 'IN', array_keys($generally_supported_payment_types)],
           ['is_active', '=', true]
         ],
       ])->getArrayCopy();
-      $eligible_payment_options = [];
+      $eligible_payment_option_labels = [];
+        $eligible_payment_option_ids = [];
       foreach ($eligible_payment_options_query as $option) {
         if ($option['name'] == 'RCUR') {
           $option['label'] = E::ts("SEPA Lastschrift");
         }
-        $eligible_payment_options[$option['name']] = $option['label'];
+        $eligible_payment_option_labels[$option['name']] = $option['label'];
+          $eligible_payment_option_ids[$option['name']] = $option['value'];
       }
     }
-    return $eligible_payment_options;
+    if ($return_ids) {
+        return $eligible_payment_option_ids;
+    } else {
+        return $eligible_payment_option_labels;
+    }
+  }
+
+    /**
+     * Retrieve the payment instrument ID for the given payment mode
+     *
+     * @param string $name
+     *   the name as returned by getSupportedPaymentTypes()
+     *
+     * @return ?int
+     */
+  public static function getPaymentInstrumentIdByName($name) {
+    $payment_instrument_id_by_name = self::getSupportedPaymentTypes(true);
+    return $payment_instrument_id_by_name[$name] ?? null;
   }
 }

@@ -129,9 +129,9 @@ function renderContractPreview(debitor_name, iban, creditor, frequency_label, an
  * Update/render the payment summary (preview)
  */
 function updatePaymentSummaryText() { (function (cj, ts){
-  console.log("updatePaymentSummaryText");
     let mode = cj("#payment_option").val();
-    console.log(mode);
+    console.log("updatePaymentSummaryText: " + mode);
+
     // SELECT EXISTING CONTRACT
     if (mode === "select") {
         // display the selected recurring contribution
@@ -225,7 +225,6 @@ function updatePaymentSummaryText() { (function (cj, ts){
             .show();
     }
     }(CRM.$, CRM.ts('de.systopia.contract')));
-
 
 }
 
