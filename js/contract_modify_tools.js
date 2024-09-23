@@ -47,6 +47,7 @@ function showHidePaymentElements() {
       cj("div.payment-create").show(300);
 
     } else { // new contract
+        cj("div.payment-create").show(300);
         cj("div.payment-select").hide(300);
         cj("div.payment-modify").hide(300);
         cj("div.payment-show").hide(300);
@@ -90,12 +91,16 @@ function renderContractPreview(debitor_name, iban, creditor, frequency_label, an
     //  "</table>";
 
     // this won't get small enough:
+    let iban_account_line = '';
+    if (typeof(iban) === 'string' && iban.length > 0) {
+        iban_account_line =  ts("Member account", []) + ": " + iban + "<br/>";
+    }
+
     return "<div>" +
-            ts("Member name", []) + ": \t" + debitor_name + "<br/>" +
-            ts("Member account", []) + ": " + iban + "<br/>" +
+            ts("Paid by", []) + ": \t" + debitor_name + "<br/>" +
+            iban_account_line +
             ts("Creditor name", []) + ": " + creditor.name + "<br/>" +
             ts("Creditor account", []) + ": " + creditor.iban + "<br/>" +
-            ts("Payment method", []) + ": " + creditor.iban + "<br/>" +
             ts("Frequency", []) + ": " + frequency_label + "<br/>" +
             ts("Payment method", []) + ": " + mode + "<br/>" +
             ts("Annual amount", []) + ": " + annual + "<br/>" +
