@@ -46,10 +46,17 @@ function showHidePaymentElements() {
       cj("div.payment-modify").hide(300);
       cj("div.payment-create").show(300);
 
-    } else {
+    } else { // new contract
         cj("div.payment-select").hide(300);
         cj("div.payment-modify").hide(300);
         cj("div.payment-show").hide(300);
+        if (new_mode === "Cash") {
+            cj("#iban").parent().parent().hide(300);
+            cj("#bic").parent().parent().hide(300);
+        } else {
+            cj("#iban").parent().parent().show(300);
+            cj("#bic").parent().parent().show(300);
+        }
     }
 }
 
