@@ -254,7 +254,7 @@ msgstr "Kontoinhaber"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
-msgstr "Rate"
+msgstr "Einzugsbetrag"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Start Collection"
@@ -897,7 +897,7 @@ msgstr "Anwerbekanal"
 
 #: resources/l10n.php
 msgid "Dialoger"
-msgstr "Anwerber_in "
+msgstr "Anwerber:in"
 
 #: resources/l10n.php
 msgid "Reference Number"
@@ -1048,7 +1048,7 @@ msgstr "Kündigungsgrund"
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Added by"
-msgstr "erfasst von"
+msgstr "Erfasst von"
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Status"
@@ -1056,7 +1056,7 @@ msgstr "Status"
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Edit"
-msgstr "bearbeiten"
+msgstr "Bearbeiten"
 
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Pays for Contract"
@@ -1065,6 +1065,10 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
+
+#: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
+msgid "new contract: %1"
+msgstr "Neuer %1 Vertrag"
 
 #~ msgid "modify"
 #~ msgstr "Ändern"
