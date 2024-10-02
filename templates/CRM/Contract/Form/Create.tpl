@@ -1,15 +1,60 @@
 {*-------------------------------------------------------------+
 | SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2017-2024 SYSTOPIA                             |
+| Copyright (C) 2024 SYSTOPIA                                  |
 | Author: B. Endres (endres -at- systopia.de)                  |
-|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
-|         P. Figel (pfigel -at- greenpeace.org)                |
 | http://www.systopia.de/                                      |
 +-------------------------------------------------------------*}
 
 {crmScope extensionKey='de.systopia.contract'}
-<div class="crm-block crm-form-block">
-  <hr/>
+
+  <h3>{ts}Zugang{/ts}</h3>
+  <div class="crm-section">
+    <div class="label">{$form.membership_dialoger.label}</div>
+    <div class="content">{$form.membership_dialoger.html}</div>
+    <div class="clear"></div>
+  </div>
+
+
+  <h3>{ts}Mitgliedschaftsdaten{/ts}</h3>
+
+  <div class="crm-section">
+    <div class="label">{$form.membership_type_id.label}</div>
+    <div class="content">{$form.membership_type_id.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.membership_association.label}</div>
+    <div class="content">{$form.membership_association.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.membership_contract.label}</div>
+    <div class="content">{$form.membership_contract.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.join_date.label}</div>
+    <div class="content">{$form.join_date.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{ts}Startdatum{/ts}</div>
+    <div class="content">{$form.start_date.html}</div>
+    <div class="clear"></div>
+  </div>
+
+  <div class="crm-section">
+    <div class="label">{$form.end_date.label}</div>
+    <div class="content">{$form.end_date.html}</div>
+    <div class="clear"></div>
+  </div>
+
+
+  <h3>{ts}Zahlungsvertrag{/ts}</h3>
 
   <div class="crm-section">
     <div class="label">{ts}Payment Preview{/ts}</div>
@@ -62,74 +107,28 @@
     <div class="clear"></div>
   </div>
 
-  <hr />
-  <div class="crm-section">
-    <div class="label">{$form.join_date.label}</div>
-    <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=join_date}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.start_date.label}</div>
-    <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=start_date}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.end_date.label}</div>
-    <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=end_date}</div>
-    <div class="clear"></div>
-  </div>
-  <hr />
-  <div class="crm-section">
-    <div class="label">{$form.campaign_id.label}</div>
-    <div class="content">{$form.campaign_id.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.membership_type_id.label}</div>
-    <div class="content">{$form.membership_type_id.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.activity_medium.label}</div>
-    <div class="content">{$form.activity_medium.html}</div>
-    <div class="clear"></div>
-  </div>
-  <hr />
-  <div class="crm-section">
-    <div class="label">{$form.membership_reference.label}</div>
-    <div class="content">{$form.membership_reference.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.membership_contract.label}</div>
-    <div class="content">{$form.membership_contract.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.membership_dialoger.label}</div>
-    <div class="content">{$form.membership_dialoger.html}</div>
-    <div class="clear"></div>
-  </div>
-  <div class="crm-section">
-    <div class="label">{$form.membership_channel.label}</div>
-    <div class="content">{$form.membership_channel.html}</div>
-    <div class="clear"></div>
-  </div>
-  <hr />
-  <div class="crm-section">
+  <h3 class="id-notes" onClick="cj('div.membership-create-notes').show();">Notiz hinzufügen (KLICK)</h3>
+
+  <div class="crm-section membership-create-notes" style="display:none;" >
     <div class="label">{$form.activity_details.label}</div>
     <div class="content">{$form.activity_details.html}</div>
     <div class="clear"></div>
   </div>
+  <hr />
 
   <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
-</div>
+
 
 
 {if $bic_lookup_accessible}
   {include file="CRM/Contract/Form/bic_lookup.tpl" location="bottom"}
 {/if}
 
+  <script>
+    // hide the notes until clicked
+    cj("h3.id-notes").show();
+
+  </script>
 {/crmScope}
