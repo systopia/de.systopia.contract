@@ -54,8 +54,8 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add('select', 'payment_option', E::ts('Payment'), $this->getPaymentOptions(), true, ['class' => 'crm-select2']);
     $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays(), true, ['class' => 'crm-select2']);
     $this->add('text',   'iban', E::ts('IBAN'), ['class' => 'huge']);
-    $this->add('text',   'bic', E::ts('BIC'));
-    $this->add('text',   'account_holder', E::ts('Members Bank Account'), ['class' => 'huge', 'placeholder' => E::ts('if differs')]);
+    $this->add('text',   'bic', E::ts('BIC'), ['class' => 'normal', 'placeholder' => 'NOTPROVIDED'], false);
+    $this->add('text',   'account_holder', E::ts('Members Bank Account'), ['class' => 'huge', 'placeholder' => $this->contact['display_name']]);
     $this->add('text',   'payment_amount', E::ts('Installment amount'), ['size' => 6]);
     $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies(), true, ['class' => 'crm-select2']);
     $this->assign('bic_lookup_accessible', CRM_Contract_SepaLogic::isLittleBicExtensionAccessible());
@@ -94,7 +94,8 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'text',
       'membership_contract',
       E::ts('Membership Number'),
-      ['size' => 32, 'style' => 'text-align:left;', 'placeholder' => 'automatisch generieren']
+      ['size' => 32, 'style' => 'text-align:left;'],
+      true
     );
 
     // DD-Fundraiser
@@ -173,7 +174,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         $this->setElementError( 'payment_amount', "Please enter an amount");
       }
 
-       $amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount'] / $submitted['payment_frequency']);
+       $amount = CRM_Contract_SepaLogic::formatMoney((float) ($submitted['payment_amount'] / $submitted['payment_frequency']));
        if ($amount < 0.01) {
          $this->setElementError ( 'payment_amount', 'Annual amount too small.');
        }
@@ -194,7 +195,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       }
 
       if (empty($submitted['bic'])) {
-        $this->setElementError ( 'bic', 'Die BIC wird benötigt');
+        $submitted['bic'] = 'NOTPROVIDED';
       }
 
       if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
@@ -220,14 +221,14 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $submitted = $this->exportValues();
 
     // a payment contract (recurring contribution) should be created - calculate some generic stuff
-    if ($submitted['cycle_day'] < 1 || $submitted['cycle_day'] > 30) {
+    if (empty($submitted['cycle_day']) || $submitted['cycle_day'] < 1 || $submitted['cycle_day'] > 30) {
       // invalid cycle day
       $submitted['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
     }
 
     // calculate amount
     // $annual_amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_frequency'] * CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']));
-    $frequency_interval = 12 / $submitted['payment_frequency'];
+    $frequency_interval = (int) (12 / $submitted['payment_frequency']);
     $amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']);
     $payment_contract = [];
 
