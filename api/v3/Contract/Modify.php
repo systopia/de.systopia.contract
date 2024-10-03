@@ -56,6 +56,7 @@ function civicrm_api3_Contract_modify($params) {
   foreach (array_keys($params) as $key) {
     $new_key = preg_replace('#^membership_payment_#', 'membership_payment.', $key);
     $new_key = preg_replace('#^membership_cancellation_#', 'membership_cancellation.', $new_key);
+    $new_key = preg_replace('#^membership_payment_#', 'membership_payment.', $new_key);
     $params[$new_key] = $params[$key];
   }
 
