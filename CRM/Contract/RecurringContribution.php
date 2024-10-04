@@ -171,7 +171,7 @@ class CRM_Contract_RecurringContribution {
     // render text
 
     // override some values for SEPA mandates
-    if (in_array($cr['payment_instrument_id'], $this->getSepaPaymentInstruments())) {
+    if (isset($cr['payment_instrument_id']) && in_array($cr['payment_instrument_id'], $this->getSepaPaymentInstruments())) {
       // this is a SEPA DD mandate
       $mandate = $this->getSepaByRecurringContributionId($cr['id'], $sepaMandates);
       $result['fields']['payment_instrument'] = "SEPA Direct Debit";
@@ -292,12 +292,11 @@ class CRM_Contract_RecurringContribution {
   protected function getPaymentInstruments() {
     if (!isset($this->paymentInstruments)) {
       // load payment instruments
-      $paymentInstrumentOptions = civicrm_api3('OptionValue', 'get', array(
-        'option_group_id' => "payment_instrument")
+      $paymentInstrumentOptions = civicrm_api3('OptionValue', 'get', [
+        'option_group_id' => "payment_instrument", 'option.limit' => 0]
         )['values'];
       $this->paymentInstruments = array();
       foreach($paymentInstrumentOptions as $paymentInstrumentOption){
-        // $this->paymentInstruments[$paymentInstrumentOption['value']] = $paymentInstrumentOption['name'];
         $this->paymentInstruments[$paymentInstrumentOption['value']] = $paymentInstrumentOption['label'];
       }
     }
