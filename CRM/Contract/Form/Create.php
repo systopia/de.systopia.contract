@@ -238,6 +238,11 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       $submitted['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
     }
 
+    // add the -technically correct- placeholder BIC
+    if (empty($submitted['bic'])) {
+      $submitted['bic'] = 'NOTPROVIDED';
+    }
+
     // calculate amount
     // $annual_amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_frequency'] * CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']));
     $frequency_interval = (int) (12 / $submitted['payment_frequency']);
