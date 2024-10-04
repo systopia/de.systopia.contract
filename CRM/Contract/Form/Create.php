@@ -56,7 +56,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add('text',   'iban', E::ts('IBAN'), ['class' => 'huge']);
     $this->add('text',   'bic', E::ts('BIC'), ['class' => 'normal', 'placeholder' => 'NOTPROVIDED'], false);
     $this->add('text',   'account_holder', E::ts('Members Bank Account'), ['class' => 'huge', 'placeholder' => $this->contact['display_name']]);
-    $this->add('text',   'payment_amount', E::ts('Installment amount'), ['size' => 6]);
+    $this->add('text',   'payment_amount', E::ts('Installment amount'), ['size' => 6, 'placeholder' => E::ts("Installment")]);
     $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies(), true, ['class' => 'crm-select2']);
     $this->assign('bic_lookup_accessible', CRM_Contract_SepaLogic::isLittleBicExtensionAccessible());
 
@@ -68,7 +68,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     // Membership type (membership)
     $MembershipTypeOptions = [];
-    foreach(civicrm_api3('MembershipType', 'get', ['options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
+    foreach(civicrm_api3('MembershipType', 'get', ['is_active' => 1, 'options' => ['limit' => 0, 'sort' => 'weight']])['values'] as $MembershipType){
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
     }
     $this->add(
@@ -95,7 +95,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'membership_contract',
       E::ts('Membership Number'),
       ['size' => 32, 'style' => 'text-align:left;'],
-      true
+      false
     );
 
     // DD-Fundraiser
@@ -165,13 +165,25 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   function validate() {
     $submitted = $this->exportValues();
 
+    // check if the reference is not in use
+    if (!empty($submitted['membership_contract'])) {
+      $contract_number_error = CRM_Contract_Validation_ContractNumber::verifyContractNumber($submitted['membership_contract']);
+      if ($contract_number_error) {
+        $this->setElementError('membership_contract', $contract_number_error);
+      }
+    }
+
+    // check if an amount is necessary
+    if (!in_array($submitted['payment_option'], ['existing', 'nochange'])) {
+      if (empty($submitted['payment_amount'])) {
+        $this->setElementError('payment_amount', "Please enter an amount");
+      }
+    }
+
     // check if all values for 'create new mandate' are there
     if ($submitted['payment_option'] == 'create') {
       if(empty($submitted['payment_frequency'])) {
         $this->setElementError ( 'payment_frequency', "Please enter a frequency");
-      }
-      if(empty($submitted['payment_amount'])) {
-        $this->setElementError( 'payment_amount', "Please enter an amount");
       }
 
        $amount = CRM_Contract_SepaLogic::formatMoney((float) ($submitted['payment_amount'] / $submitted['payment_frequency']));
@@ -234,7 +246,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     // SWITCH: contract creation/selection differs on the slected option
     switch ($submitted['payment_option']) {
-      case 'RCUR':   // CREATE NEW SEPA MANDATE
+      case '':   // CREATE NEW SEPA MANDATE
         $payment_contract = CRM_Contract_SepaLogic::createNewMandate([
           'type'               => 'RCUR',
           'contact_id'         => $this->get('cid'),
@@ -286,15 +298,12 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           'frequency_interval'    => $frequency_interval,
           'checkPermissions'      => TRUE,
         ];
+        CRM_Contract_CustomData::resolveCustomFields($payment_contract_params);
         $new_recurring_contribution = civicrm_api3('ContributionRecur', 'create', $payment_contract_params);
         $payment_contract['id'] = $new_recurring_contribution['id'];
         break;
 
     }
-//    } else {
-//        $params['membership_payment.membership_recurring_contribution'] = $submitted['recurring_contribution']; // Recurring contribution
-//    }
-
 
     // NOW CREATE THE CONTRACT (MEMBERSHIP)
 
@@ -321,6 +330,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $params['note'] = $submitted['activity_details'];
     $params['medium_id'] = $submitted['activity_medium'];
 
+    CRM_Contract_CustomData::resolveCustomFields($params);
     $membershipResult = civicrm_api3('Contract', 'create', $params);
 
     // update and redirect
