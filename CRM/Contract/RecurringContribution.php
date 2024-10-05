@@ -174,17 +174,17 @@ class CRM_Contract_RecurringContribution {
     // render text
 
     // override some values for SEPA mandates
-    if (isset($cr['payment_instrument_id']) && in_array($cr['payment_instrument_id'], $this->getSepaPaymentInstruments())) {
+    $sepa_payment_instruments = $this->getSepaPaymentInstruments();
+    if (isset($cr['payment_instrument_id']) && in_array($cr['payment_instrument_id'], $sepa_payment_instruments)) {
       // this is a SEPA DD mandate
       $mandate = $this->getSepaByRecurringContributionId($cr['id'], $sepaMandates);
+      $sepa_creditor_id = $mandate['creditor_id'] ?? null;
       $result['fields']['payment_instrument'] = "SEPA Direct Debit";
-      $result['fields']['iban'] = $mandate['iban'];
-      $result['fields']['bic'] = $mandate['bic'];
-      $result['fields']['org_iban'] = $sepaCreditors[$mandate['creditor_id']]['iban'];
-      $result['fields']['creditor_name'] = $sepaCreditors[$mandate['creditor_id']]['name'];
-      // $result['fields']['org_iban'] = $sepa;
-      // $result['fields']['org_iban'] = $cr['id'];
-      $result['fields']['next_debit'] = substr($cr['next_sched_contribution_date'], 0, 10);
+      $result['fields']['iban'] = $mandate['iban'] ?? '';
+      $result['fields']['bic'] = $mandate['bic'] ?? '';
+      $result['fields']['org_iban'] = $sepa_creditor_id ? ($sepaCreditors[$sepa_creditor_id]['iban']) : '';
+      $result['fields']['creditor_name'] = $sepa_creditor_id ? ($sepaCreditors[$sepa_creditor_id]['name']) : '';
+      $result['fields']['next_debit'] = substr($cr['next_sched_contribution_date'] ?? '', 0, 10);
       $result['label'] = "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandate['reference']})";
 
       $result['text_summary'] = "
