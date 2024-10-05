@@ -151,6 +151,9 @@ class CRM_Contract_RecurringContribution {
 
   /**
    * Render the given recurring contribution
+   *
+   * @param $cr array
+   *   recurring contribution data
    */
   protected function renderRecurringContribution($cr, $contact, $sepaMandates, $sepaCreditors) {
     $result = array();
@@ -161,7 +164,7 @@ class CRM_Contract_RecurringContribution {
     // render fields
     $result['fields'] = [
       'display_name' => $contact['display_name'],
-      'payment_instrument' => $paymentInstruments[$cr['payment_instrument_id']],
+      'payment_instrument' => $paymentInstruments[$cr['payment_instrument_id'] ?? null] ?? E::ts('Error'),
       'frequency' => $this->writeFrequency($cr),
       'amount' => CRM_Contract_SepaLogic::formatMoney($cr['amount']),
       'annual_amount' => CRM_Contract_SepaLogic::formatMoney($this->calcAnnualAmount($cr)),

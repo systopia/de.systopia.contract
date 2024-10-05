@@ -174,7 +174,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     }
 
     // check if an amount is necessary
-    if (!in_array($submitted['payment_option'], ['existing', 'nochange'])) {
+    if (!in_array($submitted['payment_option'], ['existing', 'nochange', 'select'])) {
       if (empty($submitted['payment_amount'])) {
         $this->setElementError('payment_amount', "Please enter an amount");
       }
@@ -219,10 +219,16 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
         $this->setElementError ( 'bic', 'Please enter a valid BIC.');
       }
+    }
 
-//      if (!empty($submitted['join_date']) && CRM_Utils_Date::processDate(date('Ymd')) < CRM_Utils_Date::processDate($submitted['join_date'])) {
-//        $this->setElementError('join_date', ts('Join date cannot be in the future.'));
-//      }
+    // check times
+    if (!empty($submitted['join_date'])) {
+      if (CRM_Utils_Date::processDate(date('Ymd')) < CRM_Utils_Date::processDate($submitted['join_date'])) {
+        $this->setElementError('join_date', ts('Join date cannot be in the future.'));
+      }
+      if (CRM_Utils_Date::processDate($submitted['start_date']) < CRM_Utils_Date::processDate($submitted['join_date'])) {
+        $this->setElementError('join_date', ts('Join date cannot after the start date.'));
+      }
     }
 
     return parent::validate();
@@ -295,7 +301,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 //                    'bic'             => $submitted['bic'],
           'account_holder'      => $submitted['account_holder'],
           // 'source'             => ??
-          'campaign_id'           => $submitted['campaign_id'],
+          'campaign_id'           => $submitted['campaign_id'] ?? '',
           'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName($submitted['payment_option']),
           'financial_type_id'     => 2,  // Membership Dues
           'frequency_unit'        => 'month',
@@ -320,20 +326,20 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     if($submitted['end_date']){
       $params['end_date'] = CRM_Utils_Date::processDate($submitted['end_date'], null, null, 'Y-m-d H:i:s');
     }
-    $params['campaign_id'] = $submitted['campaign_id'];
+    $params['campaign_id'] = $submitted['campaign_id'] ?? '';
 
     // 'Custom' fields
-    $params['membership_general.membership_reference']       = $submitted['membership_reference']; // Reference number
+    $params['membership_general.membership_reference']       = $submitted['membership_reference'] ?? ''; // Reference number
     $params['membership_general.membership_contract']        = $submitted['membership_contract'];  // Contract number
     $params['membership_general.membership_dialoger']        = $submitted['membership_dialoger'];  // DD fundraiser
-    $params['membership_general.membership_channel']         = $submitted['membership_channel'];   // Membership Channel
+    $params['membership_general.membership_channel']         = $submitted['membership_channel'] ?? '';   // Membership Channel
     $params['membership_general.membership_notes']           = $submitted['activity_details'];      // Membership Channel
 
     // add payment contract
     $params['membership_payment.membership_recurring_contribution'] = $payment_contract['id'] ?? null; // Recurring contribution
     $params['membership_payment.from_name'] = $submitted['account_holder'];
     $params['note'] = $submitted['activity_details'];
-    $params['medium_id'] = $submitted['activity_medium'];
+    $params['medium_id'] = $submitted['activity_medium'] ?? '';
 
     CRM_Contract_CustomData::resolveCustomFields($params);
     $membershipResult = civicrm_api3('Contract', 'create', $params);

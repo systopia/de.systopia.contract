@@ -726,7 +726,7 @@ class CRM_Contract_SepaLogic {
     }
 
     // finally format properly
-    $clean_value = number_format($stripped_value, 2, '.', '');
+    $clean_value = number_format((float) $stripped_value, 2, '.', '');
     return $clean_value;
   }
 

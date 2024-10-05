@@ -23,11 +23,11 @@
     <div class="clear"></div>
   </div>
 
-  <div class="crm-section">
-    <div class="label">{$form.membership_association.label}</div>
-    <div class="content">{$form.membership_association.html}</div>
-    <div class="clear"></div>
-  </div>
+{*  <div class="crm-section">*}
+{*    <div class="label">{$form.membership_association.label}</div>*}
+{*    <div class="content">{$form.membership_association.html}</div>*}
+{*    <div class="clear"></div>*}
+{*  </div>*}
 
   <div class="crm-section">
     <div class="label">{$form.membership_contract.label}</div>
