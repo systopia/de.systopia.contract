@@ -16,7 +16,7 @@
     Please confirm that you want to {$historyAction} this contract by clicking on '{$historyAction}' below.
   {/if}
 </h3> -->
-  {if $form.current_contract_amount}
+  {if isset($form.current_contract_amount)}
     {* add some more info to the form *}
     {$form.current_contract_amount.html}
   {/if}
@@ -91,21 +91,21 @@
       <div class="clear"></div>
     </div>
   {/if}
-  {if $form.cancel_date.html}
+  {if isset($form.cancel_date.html)}
     <div class="crm-section">
       <div class="label">{$form.cancel_date.label}</div>
       <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=cancel_date}</div>
       <div class="clear"></div>
     </div>
   {/if}
-  {if $form.resume_date.html}
+  {if isset($form.resume_date.html)}
     <div class="crm-section">
       <div class="label">{$form.resume_date.label}</div>
       <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=resume_date}</div>
       <div class="clear"></div>
     </div>
   {/if}
-  {if $form.cancel_reason.html}
+  {if isset($form.cancel_reason.html)}
     <div class="crm-section">
       <div class="label">{$form.cancel_reason.label}</div>
       <div class="content">{$form.cancel_reason.html}</div>

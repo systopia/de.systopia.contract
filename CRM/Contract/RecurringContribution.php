@@ -109,7 +109,7 @@ class CRM_Contract_RecurringContribution {
     // load attached mandates
     if (!empty($contributionRecurs)) {
       $sepaMandates = civicrm_api3('SepaMandate', 'get', [
-        'contact_id'   => $cid,
+//        'contact_id'   => $cid,
         'type'         => 'RCUR',
         'entity_table' => 'civicrm_contribution_recur',
         'entity_id'    => ['IN' => array_keys($contributionRecurs)],
@@ -170,6 +170,9 @@ class CRM_Contract_RecurringContribution {
         'annual_amount' => CRM_Contract_SepaLogic::formatMoney($this->calcAnnualAmount($cr)),
       ];
       $mandate = $this->getSepaByRecurringContributionId($cr['id'], $sepaMandates);
+      if (empty($mandate)) {
+        Civi::log()->debug("Data inconsistency: recurring contribution [{$cr['id']}] has a SEPA payment instrument, but no recurring contribution");
+      }
       $sepa_creditor_id = $mandate['creditor_id'] ?? null;
       $result['fields']['iban'] = $mandate['iban'] ?? '';
       $result['fields']['bic'] = $mandate['bic'] ?? '';
@@ -207,15 +210,6 @@ class CRM_Contract_RecurringContribution {
         E::ts("Annual amount") . ": {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />".
         E::ts("Installment amount") . ": {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />";
       $result['label'] = "{$result['fields']['payment_instrument']}, {$result['fields']['amount']} {$result['fields']['frequency']}";
-    }
-
-    // override some values for SEPA mandates
-    $sepa_payment_instruments = $this->getSepaPaymentInstruments();
-    if (isset($cr['payment_instrument_id']) && in_array($cr['payment_instrument_id'], $sepa_payment_instruments)) {
-      // this is a SEPA DD mandate
-
-
-    } else {
     }
 
     return $result;
@@ -346,14 +340,26 @@ class CRM_Contract_RecurringContribution {
   /**
    * Get the CiviSEPA mandate id connected to the given recurring contribution,
    * from the given list.
-   * @author Michael
+   *
+   * @param int $rcur_id
+   *   recurring contribution ID
+   *
+   * @param array $sepa_mandates
+   *   list of eligible sepa mandates that have already been loaded
+   *
+   * @return ?array
+   *    SEPA mandate data
+   *
+   *
+   *@author Michael
+   *
    */
-  private function getSepaByRecurringContributionId($id, $sepas){
-    foreach($sepas as $sepa){
-      if($sepa['entity_id'] == $id && $sepa['entity_table'] == 'civicrm_contribution_recur'){
-        return $sepa;
+  private function getSepaByRecurringContributionId(int $rcur_id, array $sepa_mandates){
+    foreach($sepa_mandates as $sepa_mandate) {
+      if ($sepa_mandate['entity_id'] == $rcur_id && $sepa_mandate['entity_table'] == 'civicrm_contribution_recur') {
+        return $sepa_mandate;
       }
     }
+    return null;
   }
-
 }
