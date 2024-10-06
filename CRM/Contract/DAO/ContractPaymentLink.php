@@ -146,7 +146,7 @@ class CRM_Contract_DAO_ContractPaymentLink extends CRM_Core_DAO
   static function &fields()
   {
     if (!(self::$_fields)) {
-      self::$_fields = array(
+      self::$_fields = [
           'id' => [
               'name' => 'id',
               'type' => CRM_Utils_Type::T_INT,
@@ -217,7 +217,7 @@ class CRM_Contract_DAO_ContractPaymentLink extends CRM_Core_DAO
               'bao' => 'CRM_Contract_DAO_ContractPaymentLink',
               'localizable' => 0,
           ],
-      );
+      ];
     }
     return self::$_fields;
   }
@@ -233,7 +233,7 @@ class CRM_Contract_DAO_ContractPaymentLink extends CRM_Core_DAO
   static function &fieldKeys()
   {
     if (!(self::$_fieldKeys)) {
-      self::$_fieldKeys = array(
+      self::$_fieldKeys = [
           'id' => 'id',
           'contract_id' => 'contract_id',
           'contribution_recur_id' => 'contribution_recur_id',
@@ -241,7 +241,7 @@ class CRM_Contract_DAO_ContractPaymentLink extends CRM_Core_DAO
           'creation_date' => 'creation_date',
           'start_date' => 'start_date',
           'end_date' => 'end_date'
-      );
+      ];
     }
     return self::$_fieldKeys;
   }
@@ -276,7 +276,7 @@ class CRM_Contract_DAO_ContractPaymentLink extends CRM_Core_DAO
   static function &import($prefix = false)
   {
     if (!(self::$_import)) {
-      self::$_import = array();
+      self::$_import = [];
       $fields = self::fields();
       foreach($fields as $name => $field) {
         if (CRM_Utils_Array::value('import', $field)) {
@@ -300,7 +300,7 @@ class CRM_Contract_DAO_ContractPaymentLink extends CRM_Core_DAO
   static function &export($prefix = false)
   {
     if (!(self::$_export)) {
-      self::$_export = array();
+      self::$_export = [];
       $fields = self::fields();
       foreach($fields as $name => $field) {
         if (CRM_Utils_Array::value('export', $field)) {

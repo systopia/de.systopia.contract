@@ -66,7 +66,7 @@ class CRM_Contract_Validation_ContractNumber {
       $is_used = civicrm_api3('Membership', 'getcount', $query);
       if ($is_used) {
         // this means the reference is already used
-        return E::ts("Reference '%1' is already in use!", array(1 => $reference));
+        return E::ts("Reference '%1' is already in use!", [1 => $reference]);
       } else {
         return NULL;
       }

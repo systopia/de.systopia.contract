@@ -17,48 +17,48 @@ use CRM_Contract_ExtensionUtil as E;
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
 function _civicrm_api3_contract_payment_link_create_spec(&$spec) {
-  $spec['id'] = array(
+  $spec['id'] = [
       'name'         => 'id',
       'api.required' => 0,
       'type'         => CRM_Utils_Type::T_INT,
       'title'        => 'ContractPaymentLink ID',
       'description'  => 'ID of existing ContractPaymentLink entity',
-  );
-  $spec['contract_id'] = array(
+  ];
+  $spec['contract_id'] = [
       'name'         => 'contract_id',
       'api.required' => 1,
       'type'         => CRM_Utils_Type::T_INT,
       'title'        => 'Contract ID',
       'description'  => 'Contract this link relates to',
-  );
-  $spec['contribution_recur_id'] = array(
+  ];
+  $spec['contribution_recur_id'] = [
       'name'         => 'contribution_recur_id',
       'api.required' => 1,
       'type'         => CRM_Utils_Type::T_INT,
       'title'        => 'ContributionRecur ID',
       'description'  => 'Linked payment ID',
-  );
-  $spec['is_active'] = array(
+  ];
+  $spec['is_active'] = [
       'name'         => 'is_active',
       'api.default'  => 1,
       'type'         => CRM_Utils_Type::T_BOOLEAN,
       'title'        => 'Is Active?',
       'description'  => 'Is the link currently active?',
-  );
-  $spec['start_date'] = array(
+  ];
+  $spec['start_date'] = [
       'name'         => 'start_date',
       'api.required' => 0,
       'type'         => CRM_Utils_Type::T_DATE,
       'title'        => '(Start) Date',
       'description'  => 'When did this link relationship happen or start?',
-  );
-  $spec['end_date'] = array(
+  ];
+  $spec['end_date'] = [
       'name'         => 'end_date',
       'api.required' => 0,
       'type'         => CRM_Utils_Type::T_DATE,
       'title'        => 'End Date',
       'description'  => 'When did this link relationship end?',
-  );
+  ];
 }
 
 /**
@@ -103,27 +103,27 @@ function civicrm_api3_contract_payment_link_get($params) {
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
  */
 function _civicrm_api3_contract_payment_link_getactive_spec(&$spec) {
-  $spec['contract_id'] = array(
+  $spec['contract_id'] = [
       'name'         => 'contract_id',
       'api.required' => 0,
       'type'         => CRM_Utils_Type::T_INT,
       'title'        => 'Contract ID',
       'description'  => 'Contract/Membership this link relates to',
-  );
-  $spec['contribution_recur_id'] = array(
+  ];
+  $spec['contribution_recur_id'] = [
       'name'         => 'contribution_recur_id',
       'api.required' => 0,
       'type'         => CRM_Utils_Type::T_INT,
       'title'        => 'Payment ID',
       'description'  => 'ContributionRcur this link relates to',
-  );
-  $spec['date'] = array(
+  ];
+  $spec['date'] = [
       'name'         => 'date',
       'api.required' => 0,
       'type'         => CRM_Utils_Type::T_DATE,
       'title'        => 'Date',
       'description'  => 'What point in time are we looking at? Default: now',
-  );
+  ];
 }
 
 

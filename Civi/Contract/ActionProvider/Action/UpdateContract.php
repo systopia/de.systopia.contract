@@ -185,7 +185,7 @@ class UpdateContract extends AbstractAction {
       $output->setParameter('contract_id', $contract['id']);
 
       if ($this->configuration->getParameter('process_scheduled_modifications') == 1){
-        $process_scheduled_modifications = \civicrm_api3('Contract', 'process_scheduled_modifications', array('contract_id' => $contract['contract_id']));
+        $process_scheduled_modifications = \civicrm_api3('Contract', 'process_scheduled_modifications', ['contract_id' => $contract['contract_id']]);
       }
     } catch (\Exception $ex) {
       $output->setParameter('contract_id', '');

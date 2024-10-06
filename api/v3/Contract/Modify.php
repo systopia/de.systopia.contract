@@ -11,32 +11,32 @@
  * Schedule a Contract modification
  */
 function _civicrm_api3_Contract_modify_spec(&$params){
-  $params['modify_action'] = array(
+  $params['modify_action'] = [
     'name'         => 'modify_action',
     'title'        => 'Action',
     'api.required' => 1,
     'api.aliases'  => ['action'],
     'description'  => 'Action to be executed (same as "action")',
-    );
-  $params['id'] = array(
+  ];
+  $params['id'] = [
     'name'         => 'id',
     'title'        => 'Contract ID',
     'api.aliases'  => ['contract_id'],
     'api.required' => 1,
     'description'  => 'Contract (Membership) ID of the contract to be modified',
-    );
-  $params['medium_id'] = array(
+  ];
+  $params['medium_id'] = [
       'name'         => 'medium_id',
       'title'        => 'Medium ID',
       'api.required' => 1,
       'description'  => 'How was the modification received',
-  );
-  $params['date'] = array(
+  ];
+  $params['date'] = [
       'name'         => 'date',
       'title'        => 'Date',
       'api.default'  => 'now',
       'description'  => 'Scheduled execution date (not in the past, and in format Y-m-d H:i:s)',
-  );
+  ];
 }
 
 

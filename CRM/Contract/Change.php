@@ -240,10 +240,10 @@ abstract class CRM_Contract_Change {
         $contract['membership_payment.payment_instrument']   = $contributionRecur['payment_instrument_id'];
 
         // if this is a sepa payment, get the 'to' and 'from' bank account
-        $sepaMandateResult = civicrm_api3('SepaMandate', 'get', array(
+        $sepaMandateResult = civicrm_api3('SepaMandate', 'get', [
             'entity_table' => "civicrm_contribution_recur",
             'entity_id'    => $contributionRecur['id']
-        ));
+        ]);
         if($sepaMandateResult['count'] == 1) {
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
           $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($sepaMandate['contact_id'], $sepaMandate['iban'], $sepaMandate['bic']);

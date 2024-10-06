@@ -41,7 +41,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
   /** @var $lock Civi\Core\Lock\LockInterface */
   $lock = Civi\Core\Container::singleton()->get('lockManager')->acquire("worker.member.contract_engine");
   if (!$lock->isAcquired()) {
-    return civicrm_api3_create_success(array('message' => "Another instance of the Contract.process_scheduled_modifications process is running. Skipped."));
+    return civicrm_api3_create_success(['message' => "Another instance of the Contract.process_scheduled_modifications process is running. Skipped."]);
   }
 
   // make sure that the time machine only works with a single contract, see GP-936
