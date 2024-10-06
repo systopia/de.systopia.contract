@@ -238,11 +238,11 @@ msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
 msgid "modify contract"
-msgstr "Mandat anpassen"
+msgstr "Zahlungsvertrag anpassen"
 
 #: CRM/Contract/Form/Modify.php
 msgid "select other"
-msgstr "bestehendes Mandat"
+msgstr "bestehender Zahlungsvertrag"
 
 #: CRM/Contract/Form/Modify.php
 msgid "no change"
@@ -482,7 +482,7 @@ msgstr "nicht ändern"
 
 #: CRM/Contract/FormUtils.php
 msgid "Mandate / Recurring Contribution"
-msgstr "Mandat / Wiederkehrende Zuwendung"
+msgstr "Zahlungsvertrag"
 
 #: CRM/Contract/FormUtils.php
 msgid "NOT FOUND!"
@@ -528,7 +528,7 @@ msgstr ""
 
 #: CRM/Contract/Validation/ContractNumber.php
 msgid "Reference '%1' is already in use!"
-msgstr "Referent '%1' wird schon benutzt!"
+msgstr "Vertragsreferenz '%1' wird bereits verwendet!"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php

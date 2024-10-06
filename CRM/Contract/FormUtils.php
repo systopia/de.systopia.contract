@@ -28,13 +28,13 @@ class CRM_Contract_FormUtils
         foreach($this->recurringContribution->getAll($contactId, true, $contractId) as $key => $rc){
           $recurringContributionOptions[$key] = $rc['label'];
         }
-        $this->form->add('select', $elementName, E::ts('Mandate / Recurring Contribution'), $recurringContributionOptions, $required, array('class' => 'crm-select2 huge'));
+        $this->form->add('select', $elementName, E::ts('Mandate / Recurring Contribution'), $recurringContributionOptions, $required, ['class' => 'crm-select2 huge']);
     }
 
     public function replaceIdWithLabel($name, $entity)
     {
         list($groupName, $fieldName) = explode('.', $name);
-        $result = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => $groupName, 'name' => $fieldName));
+        $result = civicrm_api3('CustomField', 'getsingle', ['custom_group_id' => $groupName, 'name' => $fieldName]);
 
         $id = CRM_Contract_Utils::getCustomFieldId($name);
 
@@ -49,7 +49,7 @@ class CRM_Contract_FormUtils
             $entityId = $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'];
             if($entity == 'ContributionRecur'){
               try {
-                $entityResult = civicrm_api3($entity, 'getsingle', array('id' => $entityId));
+                $entityResult = civicrm_api3($entity, 'getsingle', ['id' => $entityId]);
                 $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = $this->recurringContribution->writePaymentContractLabel($entityResult);
               } catch (Exception $e) {
                 $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] = E::ts("NOT FOUND!");
@@ -74,14 +74,14 @@ class CRM_Contract_FormUtils
      * @throws \CiviCRM_API3_Exception
      */
     public function setPaymentAmountCurrency() {
-      $rcur_field = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_recurring_contribution'));
+      $rcur_field = civicrm_api3('CustomField', 'getsingle', ['custom_group_id' => 'membership_payment', 'name' => 'membership_recurring_contribution']);
       $details = $this->form->get_template_vars('viewCustomData');
       $customGroupTableId = key($details[$rcur_field['custom_group_id']]);
       $recContributionId = $details[$rcur_field['custom_group_id']][$customGroupTableId]['fields'][$rcur_field['id']]['field_value'];
       try {
-        $recContribution = civicrm_api3('ContributionRecur', 'getsingle', array('id' => $recContributionId));
+        $recContribution = civicrm_api3('ContributionRecur', 'getsingle', ['id' => $recContributionId]);
         $customGroupTableId = key($details[$rcur_field['custom_group_id']]);
-        $annual_amount_field = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'membership_payment', 'name' => 'membership_annual'));
+        $annual_amount_field = civicrm_api3('CustomField', 'getsingle', ['custom_group_id' => 'membership_payment', 'name' => 'membership_annual']);
         $annual_amount_value = $details[$annual_amount_field['custom_group_id']][$customGroupTableId]['fields'][$annual_amount_field['id']]['field_value'] ?? '';
         if (is_numeric($annual_amount_value)) $annual_amount_value = CRM_Utils_Money::format($annual_amount_value, $recContribution['currency'] ?? 'EUR');
         $details[$annual_amount_field['custom_group_id']][$customGroupTableId]['fields'][$annual_amount_field['id']]['field_value'] = $annual_amount_value;
@@ -100,7 +100,7 @@ class CRM_Contract_FormUtils
 
     public function showMembershipTypeLabel()
     {
-        $result = civicrm_api3('CustomField', 'getsingle', array('custom_group_id' => 'contract_updates', 'name' => 'ch_membership_type'));
+        $result = civicrm_api3('CustomField', 'getsingle', ['custom_group_id' => 'contract_updates', 'name' => 'ch_membership_type']);
         // Get the custom data that was sent to the template
         $details = $this->form->get_template_vars('viewCustomData');
 
@@ -131,14 +131,14 @@ class CRM_Contract_FormUtils
 
     public function getMembershpEditDisallowedCoreFields()
     {
-        return array('status_id', 'is_override');
+        return ['status_id', 'is_override'];
     }
 
     public function removeMembershipEditDisallowedCustomFields()
     {
         // $customGroupsToRemove = array('membership_cancellation');
-        $customGroupsToRemove = array();
-        $customFieldsToRemove['membership_payment'] = array();
+        $customGroupsToRemove = [];
+        $customFieldsToRemove['membership_payment'] = [];
 
         foreach ($this->form->_groupTree as $groupKey => $group) {
             if (in_array($group['name'], $customGroupsToRemove)) {
@@ -158,8 +158,8 @@ class CRM_Contract_FormUtils
      * @param $membershipId
      */
     public function addMembershipContractFileDownloadLink($membershipId) {
-      $membershipContractCustomField = civicrm_api3('CustomField', 'getsingle', array('name' => "membership_contract", 'return' => "id"));
-      $membership = civicrm_api3('Membership','getsingle', array('id' => $membershipId));
+      $membershipContractCustomField = civicrm_api3('CustomField', 'getsingle', ['name' => "membership_contract", 'return' => "id"]);
+      $membership = civicrm_api3('Membership','getsingle', ['id' => $membershipId]);
       if (!empty($membership['custom_'.$membershipContractCustomField['id']])) {
         $membershipContract = $membership['custom_'.$membershipContractCustomField['id']];
         $contractFile = CRM_Contract_Utils::contractFileExists($membershipContract);
@@ -167,10 +167,10 @@ class CRM_Contract_FormUtils
           $script = file_get_contents(CRM_Core_Resources::singleton()->getUrl('de.systopia.contract', 'templates/CRM/Member/Form/MembershipView.js'));
           $url = CRM_Utils_System::url('civicrm/contract/download', "contract=".urlencode($membershipContract));
           $script = str_replace('CONTRACT_FILE_DOWNLOAD', $url, $script);
-          CRM_Core_Region::instance('page-footer')->add(array(
+          CRM_Core_Region::instance('page-footer')->add([
             'script' => $script,
             'name'   => 'contract-download@de.systopia.contract',
-          ));
+          ]);
         }
       }
     }

@@ -27,7 +27,7 @@ class CRM_Contract_SepaLogic {
     $new_mandate = civicrm_api3('SepaMandate', 'createfull', $params);
 
     // reload to get all values
-    $new_mandate = civicrm_api3('SepaMandate', 'getsingle', array('id' => $new_mandate['id']));
+    $new_mandate = civicrm_api3('SepaMandate', 'getsingle', ['id' => $new_mandate['id']]);
 
     // create user message
     $mandate_url = CRM_Utils_System::url('civicrm/sepa/xmandate', "mid={$new_mandate['id']}");
@@ -62,7 +62,7 @@ class CRM_Contract_SepaLogic {
     ];
 
     // calculate changes to see whether we have to act
-    $mandate_relevant_changes = array();
+    $mandate_relevant_changes = [];
     foreach ($mandate_relevant_fields as $desired_field_name => $current_field_name) {
       if (    isset($desired_state[$desired_field_name])
           && $desired_state[$desired_field_name] != CRM_Utils_Array::value($current_field_name, $current_state)) {
@@ -150,7 +150,7 @@ class CRM_Contract_SepaLogic {
       // get bank account
       $donor_account = CRM_Contract_BankingLogic::getBankAccount($from_ba);
       if (empty($donor_account['bic']) && self::isLittleBicExtensionAccessible()) {
-        $bic_search = civicrm_api3('Bic', 'findbyiban', array('iban' => $donor_account['iban']));
+        $bic_search = civicrm_api3('Bic', 'findbyiban', ['iban' => $donor_account['iban']]);
         if (!empty($bic_search['bic'])) {
           $donor_account['bic'] = $bic_search['bic'];
         }
@@ -167,7 +167,7 @@ class CRM_Contract_SepaLogic {
 
 
       // we need to create a new mandate
-      $new_mandate_values =  array(
+      $new_mandate_values =  [
           'type'               => 'RCUR',
           'contact_id'         => $current_state['contact_id'],
           'amount'             => $amount,
@@ -185,7 +185,7 @@ class CRM_Contract_SepaLogic {
           'cycle_day'          => $cycle_day,
           'frequency_interval' => $frequency_interval,
           'account_holder'     => $account_holder,
-      );
+      ];
 
       // create and reload (to get all data)
       $new_mandate = self::createNewMandate($new_mandate_values);
@@ -194,10 +194,10 @@ class CRM_Contract_SepaLogic {
       // try to create replacement link
       if (!empty($current_state['membership_payment.membership_recurring_contribution'])) {
         // see if the old one was a mandate
-        $old_mandate = civicrm_api3('SepaMandate', 'get', array(
+        $old_mandate = civicrm_api3('SepaMandate', 'get', [
             'entity_table' => 'civicrm_contribution_recur',
             'entity_id'    => $current_state['membership_payment.membership_recurring_contribution'],
-            'return'       => 'id'));
+            'return'       => 'id']);
         if (!empty($old_mandate['id'])) {
           self::addSepaMandateReplacedLink($new_mandate['id'], $old_mandate['id']);
         }
@@ -232,10 +232,10 @@ class CRM_Contract_SepaLogic {
     } else {
       if ($recurring_contribution_id) {
         // set (other) recurring contribution to 'COMPLETED' [1]
-        civicrm_api3('ContributionRecur', 'create', array(
+        civicrm_api3('ContributionRecur', 'create', [
             'id'                     => $recurring_contribution_id,
             'end_date'               => date('YmdHis'),
-            'contribution_status_id' => 1));
+            'contribution_status_id' => 1]);
       }
     }
   }
@@ -250,12 +250,12 @@ class CRM_Contract_SepaLogic {
       if ($mandate['status'] == 'RCUR' || $mandate['status'] == 'FRST') {
         // only for active mandates:
         // set status to ONHOLD
-        civicrm_api3('SepaMandate', 'create', array(
+        civicrm_api3('SepaMandate', 'create', [
             'id'     => $mandate['id'],
-            'status' => 'ONHOLD'));
+            'status' => 'ONHOLD']);
 
         // delete any scheduled (pending) contributions
-        $pending_contributions = civicrm_api3('Contribution', 'get', array(
+        $pending_contributions = civicrm_api3('Contribution', 'get', [
             'return'                 => 'id',
             'contribution_recur_id'  => $mandate['entity_id'],
             'contribution_status_id' => (int) CRM_Core_PseudoConstant::getKey(
@@ -263,9 +263,9 @@ class CRM_Contract_SepaLogic {
                 'contribution_status_id',
                 'Pending'
             ),
-            'receive_date'           => array('>=' => date('YmdHis'))));
+            'receive_date'           => ['>=' => date('YmdHis')]]);
         foreach ($pending_contributions['values'] as $pending_contribution) {
-          civicrm_api3("Contribution", "delete", array('id' => $pending_contribution['id']));
+          civicrm_api3("Contribution", "delete", ['id' => $pending_contribution['id']]);
         }
       } else {
         throw new Exception("Mandate is not active, cannot be paused");
@@ -285,9 +285,9 @@ class CRM_Contract_SepaLogic {
     if ($mandate) {
       if ($mandate['status'] == 'ONHOLD') {
         $new_status = empty($mandate['first_contribution_id']) ? 'FRST' : 'RCUR';
-        civicrm_api3('SepaMandate', 'create', array(
+        civicrm_api3('SepaMandate', 'create', [
             'id'     => $mandate['id'],
-            'status' => $new_status));
+            'status' => $new_status]);
       } else {
         throw new Exception(" Mandate is not paused, cannot be activated");
       }
@@ -507,10 +507,10 @@ class CRM_Contract_SepaLogic {
     }
 
     // load mandate
-    $mandate = civicrm_api3('SepaMandate', 'get', array(
+    $mandate = civicrm_api3('SepaMandate', 'get', [
         'entity_id'    => $recurring_contribution_id,
         'entity_table' => 'civicrm_contribution_recur',
-        'type'         => 'RCUR'));
+        'type'         => 'RCUR']);
 
     if ($mandate['count'] == 1 && $mandate['id']) {
       return reset($mandate['values']);
@@ -526,13 +526,13 @@ class CRM_Contract_SepaLogic {
    */
   public static function getPaymentFrequencies() {
     // this is a hand-picked list of options
-    $optionValues = civicrm_api3('OptionValue', 'get', array(
-        'value'           => array('IN' => array(1, 2, 4, 12)),
+    $optionValues = civicrm_api3('OptionValue', 'get', [
+        'value'           => ['IN' => [1, 2, 4, 12]],
         'return'          => 'label,value',
         'option_group_id' => 'payment_frequency',
-    ));
+    ]);
 
-    $options = array();
+    $options = [];
     foreach ($optionValues['values'] as $value) {
       $options[$value['value']] = $value['label'];
     }
@@ -547,7 +547,7 @@ class CRM_Contract_SepaLogic {
   public static function getNextCollections($now_string = 'NOW') {
     $cycle_days   = self::getCycleDays();
     $nextCycleDay = self::nextCycleDay();
-    $nextCollections = array();
+    $nextCollections = [];
 
     // jump to nearest cycle day
     $now = strtotime($now_string);
@@ -643,7 +643,7 @@ class CRM_Contract_SepaLogic {
 
     if (self::$organisation_ibans === NULL) {
       // load organisation's IBANs
-      self::$organisation_ibans = array();
+      self::$organisation_ibans = [];
       $query = CRM_Core_DAO::executeQuery("SELECT reference
   FROM civicrm_bank_account_reference
   LEFT JOIN civicrm_bank_account ON civicrm_bank_account_reference.ba_id = civicrm_bank_account.id
@@ -736,8 +736,8 @@ class CRM_Contract_SepaLogic {
    */
   public static function addJsSepaTools() {
     // calculate creditor parameters
-    $creditor_parameters = civicrm_api3('SepaCreditor', 'get', array(
-        'options.limit' => 0));
+    $creditor_parameters = civicrm_api3('SepaCreditor', 'get', [
+        'options.limit' => 0]);
     if (empty($creditor_parameters['values'])) {
       CRM_Core_Session::setStatus(
           E::ts("Please configure at least one CiviSEPA creditor!"),
@@ -760,6 +760,6 @@ class CRM_Contract_SepaLogic {
     // prep script and inject
     $script = file_get_contents(__DIR__ . '/../../js/sepa_tools.js');
     $script = str_replace('SEPA_CREDITOR_PARAMETERS', json_encode($creditor_parameters), $script);
-    CRM_Core_Region::instance('page-header')->add(array('script' => $script));
+    CRM_Core_Region::instance('page-header')->add(['script' => $script]);
   }
 }
