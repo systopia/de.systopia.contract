@@ -57,7 +57,7 @@
   <h3>{ts}Zahlungsvertrag{/ts}</h3>
 
   <div class="crm-section">
-    <div class="label">{ts}Payment Preview{/ts}</div>
+    <div class="label">{ts}Contract Preview{/ts}</div>
     <div class="content recurring-contribution-summary-text">{ts}None{/ts}</div>
     <div class="clear"></div>
   </div>

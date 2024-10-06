@@ -46,6 +46,11 @@ function showHidePaymentElements() {
       cj("div.payment-modify").hide(300);
       cj("div.payment-create").show(300);
 
+    } else if (new_mode === "nochange") {
+      cj("div.payment-select").hide(300);
+      cj("div.payment-modify").hide(300);
+      cj("div.payment-create").hide(300);
+
     } else { // new contract
         cj("div.payment-create").show(300);
         cj("div.payment-select").hide(300);

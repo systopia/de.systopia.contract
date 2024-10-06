@@ -95,7 +95,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
     // Add the date that this update should take effect (leave blank for now)
     $this->add('datepicker', 'activity_date', E::ts('Schedule date'), [], true,
-      ['time' => false, 'placeholder' => E::ts("right now")]);
+      ['time' => false, 'placeholder' => E::ts("ASAP")]);
 
     // Add the interaction medium
     $mediumOptions = [];
@@ -177,9 +177,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
     // update also has the option of no change to payment contract
     if ($this->modify_action == 'update') {
-      $payment_options =  ['nochange' => E::ts('no change')] + $payment_options;
+      $payment_options['nochange'] = E::ts('no change');
     }
-    $this->add('select', 'payment_option', E::ts('Payment'), $payment_options);
+    $this->add('select', 'payment_option', E::ts('Payment'), $payment_options, true, ['class' => 'crm-select2']);
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
     $formUtils->addPaymentContractSelect2('recurring_contribution', $this->membership['contact_id'], false, $this->get('id'));
@@ -197,15 +197,15 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     //   'placeholder' => E::ts('- none -'),
     // ]);
 
-    $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays());
+    $this->add('select', 'cycle_day', E::ts('Cycle day'), CRM_Contract_SepaLogic::getCycleDays(), false, ['class' => 'crm-select2']);
     $this->add('text',   'iban', E::ts('IBAN'), ['class' => 'huge']);
     $this->add('text',   'bic', E::ts('BIC'));
     $this->add('text',   'account_holder', E::ts('Account Holder'), ['class' => 'huge']);
     $this->add('text',   'payment_amount', E::ts('Installment Amount'), ['size' => 6]);
-    $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies());
+    $this->add('select', 'payment_frequency', E::ts('Payment Frequency'), CRM_Contract_SepaLogic::getPaymentFrequencies(), false, ['class' => 'crm-select2']);
     $this->add('select', 'defer_payment_start', E::ts('Start Collection'), [
-        0 => E::ts("as soon as possible"),
-        1 => E::ts("respect previous cycle")]);
+        0 => E::ts("as soon as possible"), 1 => E::ts("respect previous cycle")],
+      false, ['class' => 'crm-select2']);
   }
 
 
@@ -234,7 +234,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
   function setDefaults($defaultValues = null, $filter = null){
     $recurring_contribution_id_field = CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution');
     if (isset($this->membership[$recurring_contribution_id_field])){
-      $defaults['payment_option'] = 'modify';
+      $defaults['payment_option'] = 'nochange';
       $defaults['recurring_contribution'] = $this->membership[$recurring_contribution_id_field];
       $defaults['defer_payment_start'] = 1;  // wait until the paid-for time has passed
 
@@ -377,7 +377,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
     }
 
-    //CRM_Contract_CustomData::resolveCustomFields($params);
+    CRM_Contract_CustomData::resolveCustomFields($params);
     civicrm_api3('Contract', 'modify', $params);
     civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
   }
