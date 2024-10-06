@@ -16,8 +16,10 @@
     Please confirm that you want to {$historyAction} this contract by clicking on '{$historyAction}' below.
   {/if}
 </h3> -->
-  {* add some more info to the form *}
-  {$form.current_contract_amount.html}
+  {if $form.current_contract_amount}
+    {* add some more info to the form *}
+    {$form.current_contract_amount.html}
+  {/if}
 
   {if $modificationActivity eq 'update' OR $modificationActivity eq 'revive' }
 
@@ -113,7 +115,7 @@
   <hr />
   <div class="crm-section">
     <div class="label">{$form.activity_date.label} {help id="scheduling" file="CRM/Contract/Form/Scheduling.hlp"}</div>
-    <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=activity_date}</div>
+    <div class="content">{$form.activity_date.html}</div>
     <div class="clear"></div>
   </div>
 
