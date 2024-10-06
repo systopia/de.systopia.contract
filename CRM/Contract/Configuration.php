@@ -171,4 +171,25 @@ class CRM_Contract_Configuration {
     $payment_instrument_id_by_name = self::getSupportedPaymentTypes(true);
     return $payment_instrument_id_by_name[$name] ?? null;
   }
+
+  /**
+   * Get the list of eligible payment options
+   *
+   * @return array
+   */
+  public static function getPaymentOptions($allow_new_contracts = true, $allow_no_change = true) {
+    $payment_options['select'] = E::ts('select existing contract');
+
+    if ($allow_new_contracts) {
+      $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes();
+      foreach ($payment_types as $payment_key => $payment_type) {
+        $payment_options[$payment_key] = E::ts("new contract: %1", [1=>$payment_type]);
+      }
+    }
+
+    if ($allow_no_change) {
+      $payment_options['nochange'] = E::ts('no change');
+    }
+    return $payment_options;
+  }
 }

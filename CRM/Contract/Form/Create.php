@@ -356,13 +356,6 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
    * @return array
    */
   public function getPaymentOptions() {
-    $payment_options = [];
-    $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes();
-    foreach ($payment_types as $payment_key => $payment_type) {
-      $payment_options[$payment_key] = E::ts("new contract: %1", [1=>$payment_type]);
-    }
-    $payment_options['select'] = E::ts('select existing contract');
-    // not for creation: $payment_options['nochange'] = E::ts('no change');
-    return $payment_options;
+    return CRM_Contract_Configuration::getPaymentOptions(true, false);
   }
 }

@@ -175,10 +175,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       'select'   => E::ts('select other'),
     ];
 
-    // update also has the option of no change to payment contract
-    if ($this->modify_action == 'update') {
-      $payment_options['nochange'] = E::ts('no change');
-    }
+    // add 'new contract' options
+    $payment_options = CRM_Contract_Configuration::getPaymentOptions(true, true);
+
     $this->add('select', 'payment_option', E::ts('Payment'), $payment_options, true, ['class' => 'crm-select2']);
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
@@ -357,8 +356,16 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
           $params['membership_payment.defer_payment_start'] = empty($submitted['defer_payment_start']) ? "0" : "1";
           break;
 
-        default:
         case 'nochange': // no changes to payment mode
+          break;
+
+        case 'create': // new SEPA mandate
+          // TODO
+          break;
+
+        default: // create a new one
+          // new contract, see Create.php 291ff
+          // TODO
           break;
       }
 
