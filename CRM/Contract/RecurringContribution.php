@@ -326,13 +326,13 @@ class CRM_Contract_RecurringContribution {
   /**
    * Check if the given payment instrument is a SEPA one
    *
-   * @param int $payment_instrument_id
+   * @param ?int $payment_instrument_id
    *    a payment instrument ID to test
    *
    * @return bool
    *    is it SEPA?
    */
-  public function isSepaPaymentInstrument(int $payment_instrument_id)
+  public function isSepaPaymentInstrument(?int $payment_instrument_id)
   {
     return in_array($payment_instrument_id, $this->getSepaPaymentInstruments());
   }

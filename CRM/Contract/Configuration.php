@@ -175,7 +175,10 @@ class CRM_Contract_Configuration {
   /**
    * Get the list of eligible payment options
    *
-   * @return array
+   * @return array possibly having the following values
+   *   'select'   => a recurring_contribution_id is presented as the new contract
+   *   'nochange' => no changes to the payment contract requested
+   *   <other>    => the new payment instrument, e.g. RCUR or Cash
    */
   public static function getPaymentOptions($allow_new_contracts = true, $allow_no_change = true) {
     $payment_options['select'] = E::ts('select existing contract');

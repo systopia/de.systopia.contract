@@ -94,8 +94,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     // Add fields that are present on all contact history forms
 
     // Add the date that this update should take effect (leave blank for now)
-    $this->add('datepicker', 'activity_date', E::ts('Schedule date'), [], true,
-      ['time' => false, 'placeholder' => E::ts("ASAP")]);
+    $this->add('datepicker', 'activity_date', E::ts('Schedule date'), [], false,
+      ['time' => false, 'placeholder' => E::ts("now")]);
 
     // Add the interaction medium
     $mediumOptions = [];
@@ -270,6 +270,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
   function validate(){
     $submitted = $this->exportValues();
+    if (empty($submitted['activity_date'])) $submitted['activity_date'] = date('Y-m-d');
     $activityDate = CRM_Utils_Date::processDate($submitted['activity_date'], $submitted['activity_date_time']);
     $midnightThisMorning = date('Ymd000000');
     if($activityDate < $midnightThisMorning){
@@ -336,17 +337,28 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     }
 
     // If this is an update or a revival
-    if(in_array($this->modify_action, ['update', 'revive'])){
+    if (in_array($this->modify_action, ['update', 'revive'])) {
+
+      // now add the payment
       switch ($submitted['payment_option']) {
         case 'select': // select a new recurring contribution
-          $params['membership_payment.membership_recurring_contribution'] = (int) $submitted['recurring_contribution'];
+          $params['membership_payment.membership_recurring_contribution'] = (int)$submitted['recurring_contribution'];
           break;
 
-        case 'modify': // manually modify the existing
-          if (trim($submitted['payment_amount']) == '') {
-            // empty means, use the last one:
-            $submitted['payment_amount'] = $submitted['current_contract_amount'];
+        case 'nochange':
+          // anything to do here?
+          break;
+
+        default:
+          // a new payment option is picked
+          $new_payment_option = $submitted['payment_option'];
+          $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes(true);
+          $payment_instrument_id = $payment_types[$new_payment_option] ?? '';
+          if ($payment_instrument_id) {
+            $params['membership_payment.payment_instrument'] = $payment_instrument_id;
           }
+
+          // compile other change data
           $params['membership_payment.membership_annual'] = CRM_Contract_SepaLogic::formatMoney($submitted['payment_frequency'] * CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']));
           $params['membership_payment.membership_frequency'] = $submitted['payment_frequency'];
           $params['membership_payment.cycle_day'] = $submitted['cycle_day'];
@@ -354,18 +366,6 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
           $params['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($this->membership['contact_id'], $submitted['iban'], $submitted['bic']);
           $params['membership_payment.from_name'] = $submitted['account_holder'];
           $params['membership_payment.defer_payment_start'] = empty($submitted['defer_payment_start']) ? "0" : "1";
-          break;
-
-        case 'nochange': // no changes to payment mode
-          break;
-
-        case 'create': // new SEPA mandate
-          // TODO
-          break;
-
-        default: // create a new one
-          // new contract, see Create.php 291ff
-          // TODO
           break;
       }
 
@@ -381,7 +381,6 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     // If this is a pause
     }elseif($this->modify_action == 'pause'){
       $params['resume_date'] = CRM_Utils_Date::processDate($submitted['resume_date'], false, false, 'Y-m-d');
-
     }
 
     CRM_Contract_CustomData::resolveCustomFields($params);
