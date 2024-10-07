@@ -32,14 +32,14 @@ cj(document).ready(function () {
 function showHidePaymentElements() {
     let new_mode = cj("#payment_option").val();
     if (new_mode === "select") {
-        cj("div.payment-select").show(300);
         cj("div.payment-modify").hide(300);
         cj("div.payment-create").hide(300);
+        cj("div.payment-select").show(300);
 
     } else if (new_mode === "modify") {
         cj("div.payment-select").hide(300);
-        cj("div.payment-modify").show(300);
         cj("div.payment-create").hide(300);
+        cj("div.payment-modify").show(300);
 
     } else if (new_mode === "create") {
       cj("div.payment-select").hide(300);
@@ -52,10 +52,10 @@ function showHidePaymentElements() {
       cj("div.payment-create").hide(300);
 
     } else { // new contract
-        cj("div.payment-create").show(300);
         cj("div.payment-select").hide(300);
-        cj("div.payment-modify").hide(300);
+        cj("div.payment-modify").show(300);
         cj("div.payment-show").hide(300);
+        cj("div.payment-create").show(300);
         if (new_mode === "Cash") {
             cj("#iban").parent().parent().hide(300);
             cj("#bic").parent().parent().hide(300);
