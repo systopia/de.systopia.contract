@@ -168,8 +168,8 @@ class GetContract extends AbstractAction {
       $output->setParameter('frequency_unit', $recurring_contribution['frequency_unit']);
       $output->setParameter('frequency_interval', $recurring_contribution['frequency_interval']);
 
-      $bankaccount_reference = \civicrm_api3('BankingAccountReference', 'getSingle', ['ba_id' => $contract[U::getCustomFieldId('membership_payment.from_ba')], 'reference_type_id' => U::lookupOptionValue('civicrm_banking.reference_types', 'iban', 'id'), 'return' => ["reference"]]);
-      $output->setParameter('iban', $bankaccount_reference['reference']);
+      $bankaccount_reference = \civicrm_api3('BankingAccountReference', 'getSingle', ['ba_id' => $contract[U::getCustomFieldId('membership_payment.from_ba')], 'reference_type_id' => U::lookupOptionValue('civicrm_banking.reference_types', 'iban', 'id'), 'return' => ["reference"], "options" => ["sort" =>"id desc","limit" =>1]]);
+      $output->setParameter('iban',$bankaccount_reference['values'][$bankaccount_reference['id']]['reference'] ?? '');
       #$output->setParameter('membership_type_id', $contract['membership_type_id']);
       #$output->setParameter('status_id', $contract['status_id']);
       #$output->setParameter('is_test', $contract['is_test']);
