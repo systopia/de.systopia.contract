@@ -79,7 +79,8 @@ class GetContract extends AbstractAction {
       new Specification('currency',        'Date', E::ts('Currency'), false, null, null, null, false),
       new Specification('frequency_unit',        'Date', E::ts('Frequency Unit'), false, null, null, null, false),
       new Specification('frequency_interval',        'Date', E::ts('Frequency Interval'), false, null, null, null, false),
-      new Specification('iban',        'Date', E::ts('IBAN'), false, null, null, null, false),
+      new Specification('iban',        'String', E::ts('IBAN'), false, null, null, null, false),
+
 
     ];
 
