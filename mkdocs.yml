@@ -2,7 +2,7 @@ site_name: Contracts
 repo_url: https://github.com/systopia/de.systopia.contract
 theme: material
 
-pages:
+nav:
 - Home: index.md
 - 'Contract types': contract-types.md
 - 'Contract modifications': contract-modifications.md
