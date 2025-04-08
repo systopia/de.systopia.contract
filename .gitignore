@@ -1,6 +1,10 @@
-DEV-NOTES.md
-*.phpunit.result.cache
-
-vendor/
-
-composer.lock
+/.phpcs.cache
+/.phpunit.result.cache
+/.phpstan/
+/ci/composer.lock
+/ci/vendor/
+/composer.lock
+/phpstan.neon
+/tools/*/vendor/
+/tools/*/composer.lock
+/vendor/
