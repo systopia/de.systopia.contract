@@ -63,25 +63,25 @@ class UpdateContract extends AbstractAction {
 
 
         /*
-       'contract_updates.ch_annual'                 => 'membership_payment.membership_annual',
-      'contract_updates.ch_from_ba'                => 'membership_payment.from_ba',
-      // 'contract_updates.ch_to_ba'                  => 'membership_payment.to_ba', // TODO: implement when multiple creditors are around
-      'contract_updates.ch_frequency'              => 'membership_payment.membership_frequency',
-      'contract_updates.ch_cycle_day'              => 'membership_payment.cycle_day',
-      'contract_updates.ch_recurring_contribution' => 'membership_payment.membership_recurring_contribution',
-      'contract_updates.ch_defer_payment_start'    => 'membership_payment.defer_payment_start',
+       'contract_updates_ch_annual'                 => 'membership_payment_membership_annual',
+      'contract_updates_ch_from_ba'                => 'membership_payment_from_ba',
+      // 'contract_updates_ch_to_ba'                  => 'membership_payment_to_ba', // TODO: implement when multiple creditors are around
+      'contract_updates_ch_frequency'              => 'membership_payment_membership_frequency',
+      'contract_updates_ch_cycle_day'              => 'membership_payment_cycle_day',
+      'contract_updates_ch_recurring_contribution' => 'membership_payment_membership_recurring_contribution',
+      'contract_updates_ch_defer_payment_start'    => 'membership_payment_defer_payment_start',
 
       campaign_id
         */
 
         new Specification('iban',       'String',  E::ts('IBAN'), false),
         new Specification('bic',        'String',  E::ts('BIC'), false),
-        new Specification('contract_updates.ch_annual',     'Money',   E::ts('Annual Amount'), false),
-        new Specification('contract_updates.reference',  'String',  E::ts('Mandate Reference'), false),
+        new Specification('contract_updates_ch_annual',     'Money',   E::ts('Annual Amount'), false),
+        new Specification('contract_updates_reference',  'String',  E::ts('Mandate Reference'), false),
 
         // recurring information
-        new Specification('contract_updates.ch_frequency',  'Integer', E::ts('Frequency'),      false, 12, null, $this->getFrequencies()),
-        new Specification('contract_updates.ch_cycle_day',  'Integer', E::ts('Collection Day'), false, 1,  null, $this->getCollectionDays()),
+        new Specification('contract_updates_ch_frequency',  'Integer', E::ts('Frequency'),      false, 12, null, $this->getFrequencies()),
+        new Specification('contract_updates_ch_cycle_day',  'Integer', E::ts('Collection Day'), false, 1,  null, $this->getCollectionDays()),
 
         new Specification('date',            'Date', E::ts('Date'),  false, date('Y-m-d H:i:s')),
         // basic overrides
@@ -96,10 +96,10 @@ class UpdateContract extends AbstractAction {
 
         # Contract stuff
         new Specification('account_holder',       'String',  E::ts('Members Bank Account'), false),
-        #new Specification('membership_payment.to_ba',       'String',  E::ts('IBAN'), true),
-        #new Specification('membership_payment.membership_annual',      'Money',  E::ts('Annual Amount'), false),
-        #new Specification('membership_payment.membership_frequency',      'Integer',  E::ts('Frequency'), false),
-        #new Specification('membership_payment.cycle_day',      'Integer',  E::ts('Cycle Day'), false),
+        #new Specification('membership_payment_to_ba',       'String',  E::ts('IBAN'), true),
+        #new Specification('membership_payment_membership_annual',      'Money',  E::ts('Annual Amount'), false),
+        #new Specification('membership_payment_membership_frequency',      'Integer',  E::ts('Frequency'), false),
+        #new Specification('membership_payment_cycle_day',      'Integer',  E::ts('Cycle Day'), false),
         #new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
     ]);
   }
@@ -131,7 +131,7 @@ class UpdateContract extends AbstractAction {
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
     $contract_data = ['action' => 'update'];
     // add basic fields to contract_data
-    foreach (['contact_id','iban','bic','date','membership_type_id','contract_updates.ch_annual','contract_updates.reference','contract_updates.ch_frequency','contract_updates.ch_cycle_day'] as $parameter_name) {
+    foreach (['contact_id','iban','bic','date','membership_type_id','contract_updates_ch_annual','contract_updates_reference','contract_updates_ch_frequency','contract_updates_ch_cycle_day'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
@@ -148,27 +148,27 @@ class UpdateContract extends AbstractAction {
     // add account holder
     $account_holder = $parameters->getParameter('account_holder');
     if(!empty($account_holder)){
-        $contract_data['membership_payment.from_name'] = $account_holder;
+        $contract_data['membership_payment_from_name'] = $account_holder;
     }
     // add defer_payment_start
     $defer_payment_start = $parameters->getParameter('defer_payment_start');
     if(!empty($defer_payment_start)){
-        $contract_data['membership_payment.defer_payment_start'] = $defer_payment_start;
+        $contract_data['membership_payment_defer_payment_start'] = $defer_payment_start;
     }
     $config_defer_payment_start = $this->configuration->getParameter("config_defer_payment_start");
     if(!empty($config_defer_payment_start)){
-        $contract_data['membership_payment.defer_payment_start'] = $config_defer_payment_start;
+        $contract_data['membership_payment_defer_payment_start'] = $config_defer_payment_start;
     }
 
     // explicitly add cycle_day if not given, just to make sure it doesn't change by default
-    if(empty($contract_data['contract_updates.ch_cycle_day']) && !empty($contract_data['contract_id'])){
+    if(empty($contract_data['contract_updates_ch_cycle_day']) && !empty($contract_data['contract_id'])){
       try {
         $cycle_day_field = \CRM_Contract_CustomData::getCustomFieldKey('membership_payment', 'cycle_day');
         $current_cycle_day = \civicrm_api3('Contract', 'getvalue', [
             'id' => $contract_data['contract_id'],
             'return' => $cycle_day_field
         ]);
-        $contract_data['contract_updates.ch_cycle_day'] = $current_cycle_day;
+        $contract_data['contract_updates_ch_cycle_day'] = $current_cycle_day;
       } catch (\CiviCRM_API3_Exception $ex) {
         \Civi::log()->debug("Couldn't extract current cycle day from contract [{$contract_data['contract_id']}].");
       }
@@ -177,7 +177,7 @@ class UpdateContract extends AbstractAction {
     try {
       // update bank account if new iban is set
       if ((!empty($parameters->getParameter('iban'))) or (!empty($parameters->getParameter('bic')))){
-        $contract_data['membership_payment.from_ba'] = B::getOrCreateBankAccount($parameters->getParameter('contact_id'), $parameters->getParameter('iban'), $parameters->getParameter('bic'));
+        $contract_data['membership_payment_from_ba'] = B::getOrCreateBankAccount($parameters->getParameter('contact_id'), $parameters->getParameter('iban'), $parameters->getParameter('bic'));
       }
 
       // update contract
