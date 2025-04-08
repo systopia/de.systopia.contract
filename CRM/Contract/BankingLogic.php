@@ -23,8 +23,8 @@ class CRM_Contract_BankingLogic {
   public static function getBankAccount($account_id) {
     if (empty($account_id)) return NULL;
 
-    $data = array();
-    $account = civicrm_api3('BankingAccount', 'getsingle', array('id' => $account_id));
+    $data = [];
+    $account = civicrm_api3('BankingAccount', 'getsingle', ['id' => $account_id]);
     $data['contact_id'] = $account['contact_id'];
     $data['id'] = $account['id'];
     if (!empty($account['data_parsed'])) {
@@ -39,9 +39,9 @@ class CRM_Contract_BankingLogic {
     }
 
     // load IBAN reference
-    $reference = civicrm_api3('BankingAccountReference', 'getsingle', array(
+    $reference = civicrm_api3('BankingAccountReference', 'getsingle', [
       'ba_id'             => $account_id,
-      'reference_type_id' => self::getIbanReferenceTypeID()));
+      'reference_type_id' => self::getIbanReferenceTypeID()]);
     $data['iban'] = $reference['reference'];
 
     return $data;
@@ -62,21 +62,21 @@ class CRM_Contract_BankingLogic {
 
     try {
       // find existing references
-      $existing_references = civicrm_api3('BankingAccountReference', 'get', array(
+      $existing_references = civicrm_api3('BankingAccountReference', 'get', [
         'reference'         => $iban,
         'reference_type_id' => self::getIbanReferenceTypeID(),
-        'option.limit'      => 0));
+        'option.limit'      => 0]);
 
       // get the accounts for this
-      $bank_account_ids = array();
+      $bank_account_ids = [];
       foreach ($existing_references['values'] as $account_reference) {
         $bank_account_ids[] = $account_reference['ba_id'];
       }
       if (!empty($bank_account_ids)) {
-        $contact_bank_accounts = civicrm_api3('BankingAccount', 'get', array(
-          'id'           => array('IN' => $bank_account_ids),
+        $contact_bank_accounts = civicrm_api3('BankingAccount', 'get', [
+          'id'           => ['IN' => $bank_account_ids],
           'contact_id'   => $contact_id,
-          'option.limit' => 1));
+          'option.limit' => 1]);
         if ($contact_bank_accounts['count']) {
           // bank account already exists with the contact
           $account = reset($contact_bank_accounts['values']);
@@ -86,16 +86,16 @@ class CRM_Contract_BankingLogic {
 
       // if we get here, that means that there is no such bank account
       //  => create one
-      $data = array('BIC' => $bic, 'country' => substr($iban, 0, 2));
-      $bank_account = civicrm_api3('BankingAccount', 'create', array(
+      $data = ['BIC' => $bic, 'country' => substr($iban, 0, 2)];
+      $bank_account = civicrm_api3('BankingAccount', 'create', [
         'contact_id'  => $contact_id,
         'description' => "Bulk Importer",
-        'data_parsed' => json_encode($data)));
+        'data_parsed' => json_encode($data)]);
 
-      $bank_account_reference = civicrm_api3('BankingAccountReference', 'create', array(
+      $bank_account_reference = civicrm_api3('BankingAccountReference', 'create', [
         'reference'         => $iban,
         'reference_type_id' =>self::getIbanReferenceTypeID(),
-        'ba_id'             => $bank_account['id']));
+        'ba_id'             => $bank_account['id']]);
       return $bank_account['id'];
     } catch (Exception $e) {
       error_log("Couldn't add bank account '{$iban}' [{$contact_id}]");
@@ -117,10 +117,10 @@ class CRM_Contract_BankingLogic {
    * return the IBAN for the given bank account id if there is one
    */
   public static function getIBANforBankAccount($bank_account_id) {
-    $iban_references = civicrm_api3('BankingAccountReference', 'get', array(
+    $iban_references = civicrm_api3('BankingAccountReference', 'get', [
       'ba_id'             => $bank_account_id,
       'reference_type_id' => self::getIbanReferenceTypeID(),
-      'return'            => 'reference'));
+      'return'            => 'reference']);
     if ($iban_references['count'] > 0) {
       $reference = reset($iban_references['values']);
       return $reference['reference'];
@@ -134,11 +134,11 @@ class CRM_Contract_BankingLogic {
    */
   public static function getIbanReferenceTypeID() {
     if (self::$_ibanReferenceType === NULL) {
-      $reference_type_value = civicrm_api3('OptionValue', 'getsingle', array(
+      $reference_type_value = civicrm_api3('OptionValue', 'getsingle', [
         'value'           => 'IBAN',
         'return'          => 'id',
         'option_group_id' => 'civicrm_banking.reference_types',
-        'is_active'       => 1));
+        'is_active'       => 1]);
       self::$_ibanReferenceType = $reference_type_value['id'];
     }
     return self::$_ibanReferenceType;
@@ -159,12 +159,12 @@ class CRM_Contract_BankingLogic {
         $most_recent_contribution = CRM_Core_DAO::executeQuery("
           SELECT from_ba, to_ba
           FROM civicrm_contribution c
-            LEFT JOIN civicrm_value_contribution_information i ON i.entity_id = c.id 
+            LEFT JOIN civicrm_value_contribution_information i ON i.entity_id = c.id
           WHERE c.contribution_recur_id = {$contribution_recur_id}
           ORDER BY receive_date DESC
           LIMIT 1;");
         if ($most_recent_contribution->fetch()) {
-          return array($most_recent_contribution->from_ba, $most_recent_contribution->to_ba);
+          return [$most_recent_contribution->from_ba, $most_recent_contribution->to_ba];
         }
       } catch (Exception $ex) {
         // the civicrm_value_contribution_information probably doesn't exist
@@ -172,6 +172,6 @@ class CRM_Contract_BankingLogic {
     }
 
     // fallback: empty
-    return array('', '');
+    return ['', ''];
   }
 }

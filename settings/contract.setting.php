@@ -38,8 +38,8 @@
 
 use CRM_Contract_ExtensionUtil as E;
 
-return array(
-  'contract_modification_reviewers' => array(
+return [
+  'contract_modification_reviewers' => [
     'group_name' => 'Contract preferences',
     'group' => 'Contract preferences',
     'name' => 'contract_modification_reviewers',
@@ -51,5 +51,5 @@ return array(
     'is_contact' => 0,
     'description' => E::ts('Contacts that will be notified of updates that need review.'),
     'help_text' => NULL,
-  ),
-);
+  ],
+];

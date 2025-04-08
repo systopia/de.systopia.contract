@@ -21,9 +21,9 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     CRM_Utils_System::setTitle(ts('Detach Contributions from Membership'));
 
     // compile an info text
-    $infotext = E::ts("%1 of the %2 contributions are currently attached to a membership, and <strong>will be detached.</strong>", array(
+    $infotext = E::ts("%1 of the %2 contributions are currently attached to a membership, and <strong>will be detached.</strong>", [
       1 => $this->getAssignedCount(),
-      2 => count($this->_contributionIds)));
+      2 => count($this->_contributionIds)]);
     $this->assign('infotext', $infotext);
 
 
@@ -37,7 +37,7 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
         'change_financial_type',
         E::ts('Update Financial Type'),
         $this->getFinancialTypesList(),
-        array('class' => 'crm-select2'));
+        ['class' => 'crm-select2']);
 
     $this->addCheckbox(
         'change_recur_financial_type',

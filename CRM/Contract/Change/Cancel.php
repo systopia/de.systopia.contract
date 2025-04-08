@@ -85,13 +85,13 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     // check for OTHER CANCELLATION REQUEST for the same day
     //  @see https://redmine.greenpeace.at/issues/1190
     $requested_day = date('Y-m-d', strtotime($this->data['activity_date_time']));
-    $scheduled_activities = civicrm_api3('Activity', 'get', array(
+    $scheduled_activities = civicrm_api3('Activity', 'get', [
         'source_record_id' => $this->getContractID(),
         'activity_type_id' => $this->getActvityTypeID(),
         'status_id'        => 'Scheduled',
         'option.limit'     => 0,
         'sequential'       => 1,
-        'return'           => 'id,activity_date_time'));
+        'return'           => 'id,activity_date_time']);
     foreach ($scheduled_activities['values'] as $scheduled_activity) {
       $scheduled_for_day = date('Y-m-d', strtotime($scheduled_activity['activity_date_time']));
       if ($scheduled_for_day == $requested_day) {
@@ -105,16 +105,16 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     //  @see https://redmine.greenpeace.at/issues/1190
     $contract = $this->getContract();
 
-    $contract_cancelled_status = civicrm_api3('MembershipStatus', 'get', array(
+    $contract_cancelled_status = civicrm_api3('MembershipStatus', 'get', [
         'name'   => 'Cancelled',
-        'return' => 'id'));
+        'return' => 'id']);
     if ($contract['status_id'] == $contract_cancelled_status['id']) {
       // contract is cancelled
-      $pending_activity_count = civicrm_api3('Activity', 'getcount', array(
+      $pending_activity_count = civicrm_api3('Activity', 'getcount', [
           'source_record_id' => $this->getContractID(),
           'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
           'status_id'        => ['IN' => ['Scheduled', 'Needs Review']],
-      ));
+      ]);
       if ($pending_activity_count == 0) {
         throw new Exception("Scheduling an (additional) cancellation request in not desired in this context.");
       }

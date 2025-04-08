@@ -4,11 +4,14 @@ use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Form_Settings extends CRM_Core_Form{
   function buildQuickForm(){
+
+    // contract reviewers
     $this->addEntityRef(
       'contract_modification_reviewers',
       E::ts('Contract modification reviewers'),
       ['multiple' => 'multiple']);
 
+    // incoming timestamp adjustment
     $this->add(
       'select',
       'date_adjustment',
@@ -22,12 +25,26 @@ class CRM_Contract_Form_Settings extends CRM_Core_Form{
         '1 day' => E::ts("up to 1 day"),
         '2 day' => E::ts("up to 2 days"),
         'always' => E::ts("always"),
-      ]
+      ],
+      false,
+      ['class' => 'crm-select2']
     );
 
+    // filter and list eligible payment types like Cash, EFT, RCUR
+    $eligible_payment_options = CRM_Contract_Configuration::getSupportedPaymentTypes();
+    $this->add(
+      'select',
+      'contract_payment_types',
+      E::ts('PaymentTypes used'),
+      $eligible_payment_options,
+      true,
+      ['multiple' => 'multiple', 'class' => 'crm-select2'],
+    );
+
+
     $this->addButtons([
-      array('type' => 'cancel', 'name' => E::ts('Back')),
-      array('type' => 'submit', 'name' => E::ts('Save'))
+      ['type' => 'cancel', 'name' => E::ts('Back')],
+      ['type' => 'submit', 'name' => E::ts('Save')]
     ]);
     $this->setDefaults();
   }
@@ -36,6 +53,7 @@ class CRM_Contract_Form_Settings extends CRM_Core_Form{
     parent::setDefaults([
       'contract_modification_reviewers' => Civi::settings()->get('contract_modification_reviewers'),
       'date_adjustment' => Civi::settings()->get('date_adjustment'),
+      'contract_payment_types' => Civi::settings()->get('contract_payment_types'),
     ]);
   }
 
@@ -45,6 +63,7 @@ class CRM_Contract_Form_Settings extends CRM_Core_Form{
     $submitted = $this->exportValues();
     Civi::settings()->set('contract_modification_reviewers', $submitted['contract_modification_reviewers']);
     Civi::settings()->set('date_adjustment', $submitted['date_adjustment']);
+    Civi::settings()->set('contract_payment_types', $submitted['contract_payment_types']);
     CRM_Core_Session::setStatus( E::ts('Contract settings updated.'), E::ts("Success"), 'success');
   }
 

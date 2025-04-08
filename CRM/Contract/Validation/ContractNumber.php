@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 /**
  * Contract validation functions
  */
@@ -34,18 +36,18 @@ class CRM_Contract_Validation_ContractNumber {
 
     // Validate requested reference:
     // prepare query
-    $query = array(
+    $query = [
       'membership_general.membership_contract' => $reference,
       'return'                                 => 'id',
       'option.limit'                           => 1
-    );
+    ];
     CRM_Contract_CustomData::resolveCustomFields($query);
 
     if (empty($contract_id)) {
       // NEW CONTRACT is to be created:
       $usage = civicrm_api3('Membership', 'get', $query);
       if ($usage['count'] > 0) {
-        return ts("Reference '%1' is already in use!", array(1 => $reference));
+        return E::ts("Reference '%1' is already in use!", [1 => $reference]);
       } else {
         return NULL;
       }
@@ -60,11 +62,11 @@ class CRM_Contract_Validation_ContractNumber {
       }
 
       // see if the reference is used elsewhere
-      $query['id'] = array('<>' => $contract_id);
+      $query['id'] = ['<>' => $contract_id];
       $is_used = civicrm_api3('Membership', 'getcount', $query);
       if ($is_used) {
         // this means the reference is already used
-        return ts("Reference '%1' is already in use!", array(1 => $reference));
+        return E::ts("Reference '%1' is already in use!", [1 => $reference]);
       } else {
         return NULL;
       }

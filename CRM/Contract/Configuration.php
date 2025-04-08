@@ -6,12 +6,18 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+use CRM_Contract_ExtensionUtil as E;
+
 /**
  * Configuration options for Contract extension
  *
  * @todo create settings page
  */
 class CRM_Contract_Configuration {
+
+
+  /** @var array $eligible_campaigns */
+  protected static $eligible_campaigns = null;
 
   /**
    * Disable monitoring relevant entities, so we don't accidentally
@@ -81,28 +87,6 @@ class CRM_Contract_Configuration {
     return \Civi\Contract\Event\EligibleContractCampaigns::getAllEligibleCampaigns($all_campaigns);
   }
 
-  /**
-   * get the list of campaigns eligible for creating
-   * new contracts
-   * @todo configure
-   */
-  public static function _getCampaignList() {
-    if (self::$eligible_campaigns === NULL) {
-      self::$eligible_campaigns = array(
-        '' => ts('- none -'));
-      $campaign_query = civicrm_api3('Campaign', 'get', array(
-        'sequential'   => 1,
-        'is_active'    => 1,
-        'option.limit' => 0,
-        'return'       => 'id,title'
-        ));
-      foreach ($campaign_query['values'] as $campaign) {
-        self::$eligible_campaigns[$campaign['id']] = $campaign['title'];
-      }
-    }
-    return self::$eligible_campaigns;
-  }
-
 
   /**
    * Get a list of contract references that are excempt
@@ -111,7 +95,7 @@ class CRM_Contract_Configuration {
   public static function getUniqueReferenceExceptions() {
     // TODO: these are GP values,
     //   create a setting to make more flexible
-    return array(
+    return [
       "Einzug durch TAS",
       "Vertrag durch TAS",
       "Allgemeine Daueraufträge",
@@ -127,6 +111,88 @@ class CRM_Contract_Configuration {
       "Internet",
       "Onlinespende",
       "Online-Spenden",
-    );
+    ];
+  }
+
+  /**
+   * Get the list of payment instruments supported by the contract extension
+   * @return array list of [payment_instrument_name => label] tuples
+   *
+   * @throws CRM_Core_Exception
+   * @throws \Civi\API\Exception\NotImplementedException
+   */
+  public static function getSupportedPaymentTypes($return_ids = false)
+  {
+    static $eligible_payment_option_labels = null;
+    static $eligible_payment_option_ids = null;
+    if ($eligible_payment_option_labels === null) {
+      $generally_supported_payment_types = [
+        // todo: setting?
+        'RCUR' => E::ts("SEPA Lastschrift"),
+        'Cash' => E::ts("Barzahlung"),
+        'EFT' => E::ts("Überweisung"),
+      ];
+
+      // make sure they're there and enabled
+      $eligible_payment_options_query = civicrm_api4('OptionValue', 'get', [
+        'select' => ['label', 'name', 'value'],
+        'where' => [
+          ['option_group_id:name', '=', 'payment_instrument'],
+          ['name', 'IN', array_keys($generally_supported_payment_types)],
+          ['is_active', '=', true]
+        ],
+      ])->getArrayCopy();
+      $eligible_payment_option_labels = [];
+        $eligible_payment_option_ids = [];
+      foreach ($eligible_payment_options_query as $option) {
+        if ($option['name'] == 'RCUR') {
+          $option['label'] = E::ts("SEPA Lastschrift");
+        }
+        $eligible_payment_option_labels[$option['name']] = $option['label'];
+          $eligible_payment_option_ids[$option['name']] = $option['value'];
+      }
+    }
+    if ($return_ids) {
+        return $eligible_payment_option_ids;
+    } else {
+        return $eligible_payment_option_labels;
+    }
+  }
+
+    /**
+     * Retrieve the payment instrument ID for the given payment mode
+     *
+     * @param string $name
+     *   the name as returned by getSupportedPaymentTypes()
+     *
+     * @return ?int
+     */
+  public static function getPaymentInstrumentIdByName($name) {
+    $payment_instrument_id_by_name = self::getSupportedPaymentTypes(true);
+    return $payment_instrument_id_by_name[$name] ?? null;
+  }
+
+  /**
+   * Get the list of eligible payment options
+   *
+   * @return array possibly having the following values
+   *   'select'   => a recurring_contribution_id is presented as the new contract
+   *   'nochange' => no changes to the payment contract requested
+   *   <other>    => the new payment instrument, e.g. RCUR or Cash
+   */
+  public static function getPaymentOptions($allow_new_contracts = true, $allow_no_change = true) {
+    $payment_options['select'] = E::ts('select existing contract');
+
+    if ($allow_new_contracts) {
+      $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes();
+      foreach ($payment_types as $payment_key => $payment_type) {
+        $payment_options[$payment_key] = E::ts("new contract: %1", [1=>$payment_type]);
+      }
+    }
+
+    if ($allow_no_change) {
+      $payment_options['nochange'] = E::ts('no change');
+    }
+    return $payment_options;
   }
 }

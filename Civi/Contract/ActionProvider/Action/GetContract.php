@@ -47,6 +47,7 @@ class GetContract extends AbstractAction {
         // required fields
         new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
         new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
+        new Specification('contract_id', 'Integer', E::ts('Contract ID'), false),
 
     ]);
   }
@@ -79,6 +80,8 @@ class GetContract extends AbstractAction {
       new Specification('currency',        'Date', E::ts('Currency'), false, null, null, null, false),
       new Specification('frequency_unit',        'Date', E::ts('Frequency Unit'), false, null, null, null, false),
       new Specification('frequency_interval',        'Date', E::ts('Frequency Interval'), false, null, null, null, false),
+      new Specification('iban',        'String', E::ts('IBAN'), false, null, null, null, false),
+
 
     ];
 
@@ -115,7 +118,7 @@ class GetContract extends AbstractAction {
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
     $contract_data = ['active_only' => 1];
     // add basic fields to contract_data
-    foreach (['contact_id','membership_type_id'] as $parameter_name) {
+    foreach (['contact_id','contract_id','membership_type_id'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
@@ -166,6 +169,8 @@ class GetContract extends AbstractAction {
       $output->setParameter('frequency_unit', $recurring_contribution['frequency_unit']);
       $output->setParameter('frequency_interval', $recurring_contribution['frequency_interval']);
 
+      $bankaccount_reference = \civicrm_api3('BankingAccountReference', 'getSingle', ['ba_id' => $contract[U::getCustomFieldId('membership_payment.from_ba')], 'reference_type_id' => U::lookupOptionValue('civicrm_banking.reference_types', 'iban', 'id'), 'return' => ["reference"], "options" => ["sort" =>"id desc","limit" =>1]]);
+      $output->setParameter('iban',$bankaccount_reference['reference'] ?? '');
       #$output->setParameter('membership_type_id', $contract['membership_type_id']);
       #$output->setParameter('status_id', $contract['status_id']);
       #$output->setParameter('is_test', $contract['is_test']);

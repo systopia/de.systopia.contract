@@ -12,12 +12,12 @@
  * Get the number of scheduled modifications for a contract
  */
 function _civicrm_api3_Contract_get_open_modification_counts_spec(&$params) {
-  $params['id'] = array(
+  $params['id'] = [
     'name'         => 'id',
     'title'        => 'Contract ID',
     'api.required' => 1,
     'description'  => 'Contract (Membership) ID of the contract to be modified',
-    );
+  ];
 }
 
 /**

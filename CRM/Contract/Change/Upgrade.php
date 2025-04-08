@@ -65,6 +65,10 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       $this->setParameter('contract_updates.ch_membership_type', $contract_before['membership_type_id']);
     }
 
+    // check payemnt instrument for the new contract
+    $membership_type_update = $this->getParameter('contract_updates.ch_membership_type');
+
+
     // adjust mandate/payment mode?
     $new_payment_contract = CRM_Contract_SepaLogic::updateSepaMandate(
         $this->getContractID(),

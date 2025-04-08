@@ -16,7 +16,7 @@ require_once 'CRM/Core/Form.php';
  */
 class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Task {
 
-  protected static $sepa_pi_names = array('OOFF', 'RCUR', 'FRST');
+  protected static $sepa_pi_names = ['OOFF', 'RCUR', 'FRST'];
 
   protected $_eligibleContracts = NULL;
 
@@ -24,7 +24,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
    * Compile task form
    */
   function buildQuickForm() {
-    CRM_Utils_System::setTitle(E::ts('Assign %1 Contributions to:', array(1 => count($this->_contributionIds))));
+    CRM_Utils_System::setTitle(E::ts('Assign %1 Contributions to:', [1 => count($this->_contributionIds)]));
 
     // get all contracts
     $contracts = $this->getEligibleContracts();
@@ -35,7 +35,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
         'contract_id',
         E::ts('Contract'),
         $this->getContractList($contracts),
-        array('class' => 'crm-select2 huge'));
+        ['class' => 'crm-select2 huge']);
 
     // option: adjust financial type?
     $this->addCheckbox(
@@ -54,13 +54,13 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
     $this->addElement('select',
         'assign_mode',
         E::ts('Assign to Recurring'),
-        array(
+        [
             'no'     => E::ts("no"),
             'yes'    => E::ts("yes"),
             'adjust' => E::ts("adjust start and end date"),
             'in'     => E::ts("only if within start/end date"),
-        ),
-        array('class' => 'crm-select2'));
+        ],
+        ['class' => 'crm-select2']);
 
     CRM_Core_Form::addDefaultButtons(E::ts("Assign"));
   }
@@ -71,7 +71,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
   function postProcess() {
     $values = $this->exportValues();
     $contribution_id_list = implode(',', $this->_contributionIds);
-    $excluded_contribution_ids = array();
+    $excluded_contribution_ids = [];
 
     $contracts = $this->getEligibleContracts();
     $contract = $contracts[$values['contract_id']];
@@ -98,39 +98,39 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
     $excluded_contribution_id_list = implode(',', $excluded_contribution_ids);
     $NOT_IN_EXCLUDED = empty($excluded_contribution_id_list) ? 'TRUE' : "id NOT IN ({$excluded_contribution_id_list})";
     CRM_Core_DAO::executeQuery("INSERT IGNORE INTO civicrm_membership_payment (contribution_id,membership_id)
-                                      SELECT 
+                                      SELECT
                                         id              AS contribution_id,
                                         {$contract_id}  AS membership_id
                                       FROM civicrm_contribution
                                       WHERE id IN ({$contribution_id_list})
                                         AND {$NOT_IN_EXCLUDED};");
-    CRM_Core_Session::setStatus(E::ts("Assigned %1 contribution(s) to contract [%2]", array(
+    CRM_Core_Session::setStatus(E::ts("Assigned %1 contribution(s) to contract [%2]", [
         1 => count($this->_contributionIds) - count($excluded_contribution_ids),
-        2 => $contract_id)), E::ts("Success"), 'info');
+        2 => $contract_id]), E::ts("Success"), 'info');
 
 
     // load required contribution information
-    $contribution_query = civicrm_api3('Contribution', 'get', array(
+    $contribution_query = civicrm_api3('Contribution', 'get', [
         'id'           => ['IN' => $this->_contributionIds],
         'options'      => ['limit' => 0],
         'sequential'   => 0,
-        'return'       => 'receive_date,payment_instrument_id,id'));
+        'return'       => 'receive_date,payment_instrument_id,id']);
     $contributions = $contribution_query['values'];
 
     // load recurring contribution, too
-    $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', array(
+    $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', [
         'id'     => $contract['contribution_recur_id'],
-        'return' => 'start_date,end_date'));
+        'return' => 'start_date,end_date']);
     $contribution_recur['start_date'] = empty($contribution_recur['start_date']) ? NULL : date('YmdHis', strtotime($contribution_recur['start_date']));
     $contribution_recur['end_date']   = empty($contribution_recur['end_date'])   ? NULL : date('YmdHis', strtotime($contribution_recur['end_date']));
 
     // load SEPA payment instruments
-    $sepa_pi_query = civicrm_api3('OptionValue', 'get', array(
+    $sepa_pi_query = civicrm_api3('OptionValue', 'get', [
         'option_group_id' => 'payment_instrument',
         'return'          => 'value,name',
         'name'            => ['IN' => self::$sepa_pi_names],
-        'options'         => ['limit' => 0]));
-    $sepa_pis = array();
+        'options'         => ['limit' => 0]]);
+    $sepa_pis = [];
     foreach ($sepa_pi_query['values'] as $value) {
       $sepa_pis[] = $value['value'];
     }
@@ -146,7 +146,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
 
       // let's go...
       $contribution = $contributions[$contribution_id];
-      $contribution_update = array();
+      $contribution_update = [];
       // update financial type - if requested
       if (!empty($values['adjust_financial_type'])) {
         $contribution_update['financial_type_id'] = $contract['financial_type_id'];
@@ -205,7 +205,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
 
     // recurring contribution adjustment
     if (empty($contract['sepa_mandate_id']) && $values['assign_mode'] == 'adjust') {
-      $contribution_recur_update = array();
+      $contribution_recur_update = [];
       if ($min_date != NULL && $contribution_recur['start_date'] != NULL && $min_date < $contribution_recur['start_date']) {
         $contribution_recur_update['start_date'] = $min_date;
       }
@@ -215,7 +215,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
       if (!empty($contribution_recur_update)) {
         $contribution_recur_update['id'] = $contract['contribution_recur_id'];
         civicrm_api3('ContributionRecur', 'create', $contribution_recur_update);
-        CRM_Core_Session::setStatus(E::ts("Adjusted date range of recurring contribution [%1]", array(1 => $contract['contribution_recur_id'])), E::ts("Success"), 'info');
+        CRM_Core_Session::setStatus(E::ts("Adjusted date range of recurring contribution [%1]", [1 => $contract['contribution_recur_id']]), E::ts("Success"), 'info');
       }
     }
 
@@ -245,7 +245,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
 
     // done:
     if ($update_count > 0) {
-      CRM_Core_Session::setStatus(E::ts("%1 contribution(s) were adjusted as requested.", array(1 => $update_count)), E::ts("Success"), 'info');
+      CRM_Core_Session::setStatus(E::ts("%1 contribution(s) were adjusted as requested.", [1 => $update_count]), E::ts("Success"), 'info');
     }
   }
 
@@ -257,12 +257,12 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
   protected function getEligibleContracts() {
     if ($this->_eligibleContracts === NULL) {
       // get pi group id
-      $payment_instruments_group_id = civicrm_api3('OptionGroup', 'getvalue', array(
+      $payment_instruments_group_id = civicrm_api3('OptionGroup', 'getvalue', [
           'return' => 'id',
-          'name'   => 'payment_instrument'));
+          'name'   => 'payment_instrument']);
       if (empty($payment_instruments_group_id)) $payment_instruments_group_id = 10; // fallback
 
-      $this->_eligibleContracts = array();
+      $this->_eligibleContracts = [];
       $contribution_id_list = implode(',', $this->_contributionIds);
       $search = CRM_Core_DAO::executeQuery("
       SELECT
@@ -282,18 +282,18 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
       FROM civicrm_contribution c
       LEFT JOIN civicrm_membership m               ON m.contact_id = c.contact_id
       LEFT JOIN civicrm_value_membership_payment p ON p.entity_id = m.id
-      LEFT JOIN civicrm_contribution_recur r       ON r.id = p.membership_recurring_contribution 
+      LEFT JOIN civicrm_contribution_recur r       ON r.id = p.membership_recurring_contribution
       LEFT JOIN civicrm_option_value pi            ON pi.value = r.payment_instrument_id AND pi.option_group_id = {$payment_instruments_group_id}
       LEFT JOIN civicrm_membership_type t          ON t.id = m.membership_type_id
       LEFT JOIN civicrm_financial_type f           ON f.id = t.financial_type_id
-      LEFT JOIN civicrm_sdd_mandate s              ON s.entity_id = p.membership_recurring_contribution 
+      LEFT JOIN civicrm_sdd_mandate s              ON s.entity_id = p.membership_recurring_contribution
                                                     AND s.entity_table = 'civicrm_contribution_recur'
       WHERE c.id IN ({$contribution_id_list})
         AND p.membership_recurring_contribution IS NOT NULL
       GROUP BY m.id
       ORDER BY m.status_id ASC, m.start_date DESC;");
       while ($search->fetch()) {
-        $this->_eligibleContracts[$search->contract_id] = array(
+        $this->_eligibleContracts[$search->contract_id] = [
             'id'                    => $search->contract_id,
             'start_date'            => $search->start_date,
             'status_id'             => $search->status_id,
@@ -306,7 +306,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
             'to_ba'                 => $search->to_ba,
             'contact_id'            => $search->contact_id,
             'financial_type_id'     => $search->financial_type_id,
-        );
+        ];
       }
     }
 
@@ -317,26 +317,26 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
    * Get a list of all eligible contracts
    */
   protected function getContractList($contracts) {
-    $contract_list = array();
+    $contract_list = [];
 
     // load membership types
-    $membership_types = civicrm_api3('MembershipType', 'get', array(
+    $membership_types = civicrm_api3('MembershipType', 'get', [
         'option.limit' => 0,
         'sequential'   => 0,
-        'return'       => 'name'));
-    $membership_status = civicrm_api3('MembershipStatus', 'get', array(
+        'return'       => 'name']);
+    $membership_status = civicrm_api3('MembershipStatus', 'get', [
         'option.limit' => 0,
         'sequential'   => 0,
-        'return'       => 'label'));
+        'return'       => 'label']);
 
     foreach ($contracts as $contract) {
-      $contract_list[$contract['id']] = E::ts("[%4] '%1' since %2 (%3) - %5", array(
+      $contract_list[$contract['id']] = E::ts("[%4] '%1' since %2 (%3) - %5", [
           1 => $membership_types['values'][$contract['membership_type_id']]['name'],
           2 => substr($contract['start_date'], 0, 4),
           3 => $membership_status['values'][$contract['status_id']]['label'],
           4 => $contract['id'],
           5 => $contract['contribution_recur_pi']
-          ));
+      ]);
     }
 
     return $contract_list;
@@ -346,19 +346,19 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
    * Get a list of all eligible contracts
    */
   protected function getEligiblePaymentInstruments() {
-    $eligible_pis = array();
-    $all_pis = civicrm_api3('OptionValue', 'get', array(
+    $eligible_pis = [];
+    $all_pis = civicrm_api3('OptionValue', 'get', [
         'option_group_id' => 'payment_instrument',
         'is_active'       => 1,
         'return'          => 'value,name,label',
-        'option.limit'    => 0));
+        'option.limit'    => 0]);
     foreach ($all_pis['values'] as $pi) {
       if (!in_array($pi['name'], self::$sepa_pi_names)) {
         $eligible_pis[$pi['value']] = $pi['label'];
       }
     }
 
-    return array('' => E::ts('no')) + $eligible_pis;
+    return ['' => E::ts('no')] + $eligible_pis;
   }
 
 }
