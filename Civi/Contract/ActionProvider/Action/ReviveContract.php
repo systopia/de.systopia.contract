@@ -16,10 +16,10 @@
 
 namespace Civi\Contract\ActionProvider\Action;
 
-use \Civi\ActionProvider\Action\AbstractAction;
-use \Civi\ActionProvider\Parameter\ParameterBagInterface;
-use \Civi\ActionProvider\Parameter\Specification;
-use \Civi\ActionProvider\Parameter\SpecificationBag;
+use Civi\ActionProvider\Action\AbstractAction;
+use Civi\ActionProvider\Parameter\ParameterBagInterface;
+use Civi\ActionProvider\Parameter\Specification;
+use Civi\ActionProvider\Parameter\SpecificationBag;
 
 use CRM_Contract_ExtensionUtil as E;
 
@@ -28,28 +28,28 @@ class ReviveContract extends AbstractAction {
   /**
    * Returns the specification of the configuration options for the actual action.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
-        new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
-        new Specification('config_defer_payment_start',               'Boolean', E::ts('Defer Payment Start'), false, false),
+      new Specification('default_membership_type_id', 'Integer', E::ts('Membership Type ID (default)'), TRUE, NULL, NULL, $this->getMembershipTypes(), FALSE),
+      new Specification('config_defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), FALSE, FALSE),
     ]);
   }
 
   /**
    * Returns the specification of the parameters of the actual action.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getParameterSpecification() {
     return new SpecificationBag([
         // required fields
-        new Specification('contact_id', 'Integer', E::ts('Contact ID'), false),
-        new Specification('contract_id', 'Integer', E::ts('Contract ID'), true),
-        new Specification('date',            'Date', E::ts('Date'),  true, date('Y-m-d H:i:s')),
-        new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
-        new Specification('defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), false),
+      new Specification('contact_id', 'Integer', E::ts('Contact ID'), FALSE),
+      new Specification('contract_id', 'Integer', E::ts('Contract ID'), TRUE),
+      new Specification('date', 'Date', E::ts('Date'), TRUE, date('Y-m-d H:i:s')),
+      new Specification('membership_type_id', 'Integer', E::ts('Membership Type ID'), FALSE),
+      new Specification('defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), FALSE),
     ]);
   }
 
@@ -58,29 +58,29 @@ class ReviveContract extends AbstractAction {
    *
    * This function could be overridden by child classes.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getOutputSpecification() {
     return new SpecificationBag([
-      new Specification('contract_id',        'Integer', E::ts('Contract ID'), false, null, null, null, false),
-      new Specification('error',             'String',  E::ts('Error Message (if creation failed)'), false, null, null, null, false),
+      new Specification('contract_id', 'Integer', E::ts('Contract ID'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('error', 'String', E::ts('Error Message (if creation failed)'), FALSE, NULL, NULL, NULL, FALSE),
     ]);
   }
 
   /**
    * Run the action
    *
-   * @param ParameterBagInterface $parameters
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
    *   The parameters to this action.
-   * @param ParameterBagInterface $output
-   * 	 The parameters this action can send back
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
+   *      The parameters this action can send back
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
     $contract_data = ['action' => 'revive'];
 
     // add basic fields to contract_data
-    foreach (['contact_id','contract_id','membership_type_id','date'] as $parameter_name) {
+    foreach (['contact_id', 'contract_id', 'membership_type_id', 'date'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
@@ -97,20 +97,20 @@ class ReviveContract extends AbstractAction {
 
     // add defer_payment_start
     $defer_payment_start = $parameters->getParameter('defer_payment_start');
-    if(!empty($defer_payment_start)){
-        $contract_data['membership_payment.defer_payment_start'] = $defer_payment_start;
+    if (!empty($defer_payment_start)) {
+      $contract_data['membership_payment.defer_payment_start'] = $defer_payment_start;
     }
-    $config_defer_payment_start = $this->configuration->getParameter("config_defer_payment_start");
-    if(!empty($config_defer_payment_start)){
-        $contract_data['membership_payment.defer_payment_start'] = $config_defer_payment_start;
+    $config_defer_payment_start = $this->configuration->getParameter('config_defer_payment_start');
+    if (!empty($config_defer_payment_start)) {
+      $contract_data['membership_payment.defer_payment_start'] = $config_defer_payment_start;
     }
-
 
     // create mandate
     try {
       $contract = \civicrm_api3('Contract', 'modify', $contract_data);
       $output->setParameter('contract_id', $contract['id']);
-    } catch (\Exception $ex) {
+    }
+    catch (\Exception $ex) {
       $output->setParameter('contract_id', '');
       $output->setParameter('error', $ex->getMessage());
     }

@@ -11,7 +11,7 @@ namespace Civi\Contract\Event;
 
 use Civi;
 use CRM_Contract_Change as CRM_Contract_Change;
-use \civicrm_api3 as civicrm_api3;
+use civicrm_api3 as civicrm_api3;
 
 /**
  * Class DisplayChangeTitle
@@ -24,8 +24,7 @@ use \civicrm_api3 as civicrm_api3;
  *
  * @package Civi\Contract\Event
  */
-class DisplayChangeTitle extends ConfigurationEvent
-{
+class DisplayChangeTitle extends ConfigurationEvent {
   public const EVENT_NAME = 'de.contract.renderchangedisplay';
 
   /**
@@ -47,21 +46,21 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @var array
    */
-  protected $change_activity_data = null;
+  protected $change_activity_data = NULL;
 
   /**
    * The change's display title
    *
    * @var string
    */
-  protected $change_activity_display_title = null;
+  protected $change_activity_display_title = NULL;
 
   /**
    * The change's hover title
    *
    * @var string
    */
-  protected $change_activity_display_hover_title = null;
+  protected $change_activity_display_hover_title = NULL;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
@@ -72,12 +71,11 @@ class DisplayChangeTitle extends ConfigurationEvent
    * @param integer $change_activity_id
    *   the change activity
    */
-  public function __construct($change_activity_type_id, $change_activity_id)
-  {
+  public function __construct($change_activity_type_id, $change_activity_id) {
     $this->change_activity_id = $change_activity_id;
     $this->change_activity_type_id = $change_activity_type_id;
-    $this->change_activity_display_title = null;
-    $this->change_activity_display_hover_title = null;
+    $this->change_activity_display_title = NULL;
+    $this->change_activity_display_hover_title = NULL;
   }
 
   /**
@@ -91,8 +89,7 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return DisplayChangeTitle;
    */
-  public static function renderDisplayChangeTitleAndHoverText($change_activity_type_id, $change_activity_id)
-  {
+  public static function renderDisplayChangeTitleAndHoverText($change_activity_type_id, $change_activity_id) {
     $event = new DisplayChangeTitle($change_activity_type_id, $change_activity_id);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event;
@@ -103,11 +100,11 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return string
    */
-  public function getDisplayTitle()
-  {
-    if ($this->change_activity_display_title !== null) {
+  public function getDisplayTitle() {
+    if ($this->change_activity_display_title !== NULL) {
       return $this->change_activity_display_title;
-    } else {
+    }
+    else {
       // default is: "id {change action}"
       $activity_class = CRM_Contract_Change::getClassByActivityType($this->change_activity_type_id);
       $activity_name = CRM_Contract_Change::getActionByClass($activity_class);
@@ -121,8 +118,7 @@ class DisplayChangeTitle extends ConfigurationEvent
    * @param $title
    *   the display title to be displayed for this activity
    */
-  public function setDisplayTitle($title)
-  {
+  public function setDisplayTitle($title) {
     $this->change_activity_display_title = $title;
   }
 
@@ -131,11 +127,11 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return string
    */
-  public function getDisplayHover()
-  {
-    if ($this->change_activity_display_hover_title !== null) {
+  public function getDisplayHover() {
+    if ($this->change_activity_display_hover_title !== NULL) {
       return $this->change_activity_display_hover_title;
-    } else {
+    }
+    else {
       // default is display title
       return $this->getDisplayTitle();
     }
@@ -147,8 +143,7 @@ class DisplayChangeTitle extends ConfigurationEvent
    * @param $title
    *   the display hover title to be displayed for this activity
    */
-  public function setDisplayHoverTitle($title)
-  {
+  public function setDisplayHoverTitle($title) {
     $this->change_activity_display_hover_title = $title;
   }
 
@@ -157,11 +152,10 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return array activity data
    */
-  public function getChangeActivityData()
-  {
+  public function getChangeActivityData() {
     if (empty($this->change_activity_data) && !empty($this->getActivityID())) {
       // todo: isn't that cached somewhere?
-      $this->change_activity_data = civicrm_api3('Activity','getsingle', ['id' => $this->getActivityID()]);
+      $this->change_activity_data = civicrm_api3('Activity', 'getsingle', ['id' => $this->getActivityID()]);
       \CRM_Contract_CustomData::labelCustomFields($this->change_activity_data);
     }
     return $this->change_activity_data;
@@ -172,10 +166,10 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return boolean is scheduled
    */
-  public function isActionScheduled()
-  {
+  public function isActionScheduled() {
     $data = $this->getChangeActivityData();
-    return ($data['status_id'] != 2); // Completed
+    // Completed
+    return ($data['status_id'] != 2);
   }
 
   /**
@@ -183,8 +177,7 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return int
    */
-  public function getActivityID()
-  {
+  public function getActivityID() {
     return $this->change_activity_id;
   }
 
@@ -193,8 +186,7 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return int
    */
-  public function getActivityTypeID()
-  {
+  public function getActivityTypeID() {
     return $this->change_activity_type_id;
   }
 
@@ -203,8 +195,7 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return string
    */
-  public function getActivityClass()
-  {
+  public function getActivityClass() {
     return CRM_Contract_Change::getClassByActivityType($this->change_activity_type_id);
   }
 
@@ -213,9 +204,9 @@ class DisplayChangeTitle extends ConfigurationEvent
    *
    * @return string
    */
-  public function getActivityAction()
-  {
+  public function getActivityAction() {
     $class = $this->getActivityClass();
     return CRM_Contract_Change::getActionByClass($class);
   }
+
 }

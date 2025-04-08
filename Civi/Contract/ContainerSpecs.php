@@ -32,29 +32,38 @@ class ContainerSpecs implements CompilerPassInterface {
     }
     $typeFactoryDefinition = $container->getDefinition('action_provider');
     $typeFactoryDefinition->addMethodCall('addAction', ['CreateContract', 'Civi\Contract\ActionProvider\Action\CreateContract', E::ts('Contract: Create'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
     $typeFactoryDefinition->addMethodCall('addAction', ['GetContract', 'Civi\Contract\ActionProvider\Action\GetContract', E::ts('Contract: Get'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
     $typeFactoryDefinition->addMethodCall('addAction', ['GetSepaRcur', 'Civi\Contract\ActionProvider\Action\GetSepaRcur', E::ts('Contract: Get Sepa'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
     $typeFactoryDefinition->addMethodCall('addAction', ['PauseContract', 'Civi\Contract\ActionProvider\Action\PauseContract', E::ts('Contract: Pause'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
     $typeFactoryDefinition->addMethodCall('addAction', ['ResumeContract', 'Civi\Contract\ActionProvider\Action\ResumeContract', E::ts('Contract: Resume'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
     $typeFactoryDefinition->addMethodCall('addAction', ['CancelContract', 'Civi\Contract\ActionProvider\Action\CancelContract', E::ts('Contract: Cancel'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
     $typeFactoryDefinition->addMethodCall('addAction', ['ReviveContract', 'Civi\Contract\ActionProvider\Action\ReviveContract', E::ts('Contract: Revive'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
     $typeFactoryDefinition->addMethodCall('addAction', ['UpdateContract', 'Civi\Contract\ActionProvider\Action\UpdateContract', E::ts('Contract: Update'), [
-        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
-    ]]);
+      \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+    ],
+    ]);
 
   }
+
 }

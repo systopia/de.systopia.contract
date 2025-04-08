@@ -23,7 +23,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    */
   public function getRequiredFields() {
     return [
-        self::MEMBERSHIP_CANCEL_REASON
+      self::MEMBERSHIP_CANCEL_REASON,
     ];
   }
 
@@ -34,12 +34,12 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     if ($this->isNew()) {
       $this->setParameter('contract_cancellation.contact_history_cancel_reason', $this->getParameter(self::MEMBERSHIP_CANCEL_REASON));
       $this->setParameter('subject', $this->getSubject(NULL));
-    } else {
+    }
+    else {
       parent::populateData();
       $this->setParameter(self::MEMBERSHIP_CANCEL_REASON, $this->getParameter('contract_cancellation.contact_history_cancel_reason'));
     }
   }
-
 
   /**
    * Apply the given change to the contract
@@ -51,10 +51,10 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
 
     // cancel the contract by setting the end date
     $contract_update = [
-        'end_date'                     => date('YmdHis'),
-        self::MEMBERSHIP_CANCEL_REASON => $this->data[self::MEMBERSHIP_CANCEL_REASON],
-        self::MEMBERSHIP_CANCEL_DATE   => date('YmdHis'),
-        'status_id'                    => 'Cancelled',
+      'end_date'                     => date('YmdHis'),
+      self::MEMBERSHIP_CANCEL_REASON => $this->data[self::MEMBERSHIP_CANCEL_REASON],
+      self::MEMBERSHIP_CANCEL_DATE   => date('YmdHis'),
+      'status_id'                    => 'Cancelled',
     ];
 
     // perform the update
@@ -86,17 +86,18 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     //  @see https://redmine.greenpeace.at/issues/1190
     $requested_day = date('Y-m-d', strtotime($this->data['activity_date_time']));
     $scheduled_activities = civicrm_api3('Activity', 'get', [
-        'source_record_id' => $this->getContractID(),
-        'activity_type_id' => $this->getActvityTypeID(),
-        'status_id'        => 'Scheduled',
-        'option.limit'     => 0,
-        'sequential'       => 1,
-        'return'           => 'id,activity_date_time']);
+      'source_record_id' => $this->getContractID(),
+      'activity_type_id' => $this->getActvityTypeID(),
+      'status_id'        => 'Scheduled',
+      'option.limit'     => 0,
+      'sequential'       => 1,
+      'return'           => 'id,activity_date_time',
+    ]);
     foreach ($scheduled_activities['values'] as $scheduled_activity) {
       $scheduled_for_day = date('Y-m-d', strtotime($scheduled_activity['activity_date_time']));
       if ($scheduled_for_day == $requested_day) {
         // there's already a scheduled 'cancel' activity for the same day
-        throw new Exception("Scheduling an (additional) cancellation request in not desired in this context.");
+        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
 
@@ -106,17 +107,18 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     $contract = $this->getContract();
 
     $contract_cancelled_status = civicrm_api3('MembershipStatus', 'get', [
-        'name'   => 'Cancelled',
-        'return' => 'id']);
+      'name'   => 'Cancelled',
+      'return' => 'id',
+    ]);
     if ($contract['status_id'] == $contract_cancelled_status['id']) {
       // contract is cancelled
       $pending_activity_count = civicrm_api3('Activity', 'getcount', [
-          'source_record_id' => $this->getContractID(),
-          'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
-          'status_id'        => ['IN' => ['Scheduled', 'Needs Review']],
+        'source_record_id' => $this->getContractID(),
+        'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
+        'status_id'        => ['IN' => ['Scheduled', 'Needs Review']],
       ]);
       if ($pending_activity_count == 0) {
-        throw new Exception("Scheduling an (additional) cancellation request in not desired in this context.");
+        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
   }
@@ -131,7 +133,8 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   public function renderDefaultSubject($contract_after, $contract_before = NULL) {
     if ($this->isNew()) {
       return 'Cancel Contract';
-    } else {
+    }
+    else {
       $contract_id = $this->getContractID();
       $subject = "id{$contract_id}:";
       if (!empty($this->data['contract_cancellation.contact_history_cancel_reason'])) {
@@ -159,7 +162,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    * @return string title
    */
   public static function getChangeTitle() {
-    return E::ts("Cancel Contract");
+    return E::ts('Cancel Contract');
   }
 
   /**
@@ -172,12 +175,13 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
     if (in_array($current_status_name, self::getStartStatusList())) {
       $links[] = [
-          'name'  => E::ts("Cancel"),
-          'title' => self::getChangeTitle(),
-          'url'   => "civicrm/contract/modify",
-          'bit'   => CRM_Core_Action::UPDATE,
-          'qs'    => "modify_action=cancel&id=%%id%%",
+        'name'  => E::ts('Cancel'),
+        'title' => self::getChangeTitle(),
+        'url'   => 'civicrm/contract/modify',
+        'bit'   => CRM_Core_Action::UPDATE,
+        'qs'    => 'modify_action=cancel&id=%%id%%',
       ];
     }
   }
+
 }

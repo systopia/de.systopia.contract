@@ -34,4 +34,5 @@ class CRM_Contract_Handler_MembershipForm {
       }
     }
   }
+
 }

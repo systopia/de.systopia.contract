@@ -1,9 +1,6 @@
 <?php
 
 use CRM_Contract_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 
 include_once 'ContractTestBase.php';
 
@@ -31,13 +28,13 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
    * Test a simple create
    */
   public function testSimpleCreate() {
-    foreach ([0,1] as $is_sepa) {
+    foreach ([0, 1] as $is_sepa) {
       // create a new contract
       $contract = $this->createNewContract([
-          'is_sepa'            => $is_sepa,
-          'amount'             => '10.00',
-          'frequency_unit'     => 'month',
-          'frequency_interval' => '1',
+        'is_sepa'            => $is_sepa,
+        'amount'             => '10.00',
+        'frequency_unit'     => 'month',
+        'frequency_interval' => '1',
       ]);
 
       // annual amount
@@ -58,7 +55,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // schedule and update for tomorrow
       $this->modifyContract($contract['id'], 'cancel', 'tomorrow', [
-          'membership_cancellation.membership_cancel_reason' => 'Unknown'
+        'membership_cancellation.membership_cancel_reason' => 'Unknown',
       ]);
 
       // run engine see if anything changed
@@ -71,7 +68,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+2 days');
       $contract_changed2 = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract, $contract_changed2, "This should have changed");
+      $this->assertNotEquals($contract, $contract_changed2, 'This should have changed');
 
       // make sure status is cancelled
       $this->assertEquals($this->getMembershipStatusID('Cancelled'), $contract_changed2['status_id'], "The contract wasn't cancelled");
@@ -88,8 +85,9 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // schedule and update for tomorrow
       $this->modifyContract($contract['id'], 'update', 'tomorrow', [
-          'membership_payment.membership_annual'             => '240.00',
-          'membership_cancellation.membership_cancel_reason' => $this->getRandomOptionValue('contract_cancel_reason')]);
+        'membership_payment.membership_annual'             => '240.00',
+        'membership_cancellation.membership_cancel_reason' => $this->getRandomOptionValue('contract_cancel_reason'),
+      ]);
 
       // run engine see if anything changed
       $this->runContractEngine($contract['id']);
@@ -101,11 +99,11 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+2 days');
       $contract_changed2 = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract, $contract_changed2, "This should have changed");
+      $this->assertNotEquals($contract, $contract_changed2, 'This should have changed');
 
       // make sure status is current
       $this->assertEquals($this->getMembershipStatusID('Current'), $contract_changed2['status_id'], "The contract isn't active");
-      $this->assertEquals(240.00, $contract_changed2['membership_payment.membership_annual'], "The contract has the wrong amount");
+      $this->assertEquals(240.00, $contract_changed2['membership_payment.membership_annual'], 'The contract has the wrong amount');
     }
   }
 
@@ -120,7 +118,6 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       // schedule and update for tomorrow
       $this->modifyContract($contract['id'], 'pause', 'tomorrow');
       $changes = $this->callAPISuccess('Activity', 'get', ['source_record_id' => $contract['id']]);
-
 
       // run engine see if anything changed
       $this->runContractEngine($contract['id']);
@@ -146,29 +143,30 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // schedule and update for tomorrow
       $this->modifyContract($contract['id'], 'cancel', 'tomorrow', [
-          'membership_cancellation.membership_cancel_reason' => 'Unknown'
+        'membership_cancellation.membership_cancel_reason' => 'Unknown',
       ]);
 
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+1 days');
       $contract_cancelled = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract, $contract_cancelled, "This should have changed");
+      $this->assertNotEquals($contract, $contract_cancelled, 'This should have changed');
 
       // make sure status is cancelled
       $this->assertEquals($this->getMembershipStatusID('Cancelled'), $contract_cancelled['status_id'], "The contract wasn't cancelled");
 
       // now: revive contract
       $this->modifyContract($contract['id'], 'revive', '+2 days', [
-          'membership_payment.membership_annual'             => '240.00',
-          'membership_cancellation.membership_cancel_reason' => $this->getRandomOptionValue('contract_cancel_reason')]);
+        'membership_payment.membership_annual'             => '240.00',
+        'membership_cancellation.membership_cancel_reason' => $this->getRandomOptionValue('contract_cancel_reason'),
+      ]);
 
       $this->runContractEngine($contract['id'], '+2 days');
       $contract_revived = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract_cancelled, $contract_revived, "This should have changed");
+      $this->assertNotEquals($contract_cancelled, $contract_revived, 'This should have changed');
 
       // make sure status is cancelled
       $this->assertEquals($this->getMembershipStatusID('Current'), $contract_revived['status_id'], "The contract wasn't revived");
-      $this->assertEquals(240.00, $contract_revived['membership_payment.membership_annual'], "The contract has the wrong amount");
+      $this->assertEquals(240.00, $contract_revived['membership_payment.membership_annual'], 'The contract has the wrong amount');
     }
   }
 
@@ -188,7 +186,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
     $result = $this->callEngineFailure(
       $contract['id'],
       '+1 days',
-      "Expected one BankingAccount"
+      'Expected one BankingAccount'
     );
     $activityId = $result['failed'][0];
     // contract update activity should be status failed and details should contain error
@@ -214,7 +212,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
     // schedule cancel
     $this->modifyContract($contract['id'], 'cancel', '+1 days', [
-      'membership_cancellation.membership_cancel_reason' => 'Unknown'
+      'membership_cancellation.membership_cancel_reason' => 'Unknown',
     ]);
     // also schedule an update a week from now
     $this->modifyContract($contract['id'], 'update', '+7 days', [
@@ -234,7 +232,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
     // cancel contract again (while it's already cancelled)
     $this->modifyContract($contract['id'], 'cancel', '+1 days', [
-      'membership_cancellation.membership_cancel_reason' => 'Unknown'
+      'membership_cancellation.membership_cancel_reason' => 'Unknown',
     ]);
     // resolve "Needs Review"
     CRM_Core_DAO::executeQuery("UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;");
@@ -272,43 +270,46 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
    *
    * @return void
    */
-  public function testAdjustModificationDate()
-  {
+  public function testAdjustModificationDate() {
     // create a new contract
     $contract = $this->createNewContract([
-         'is_sepa'            => 1,
-         'amount'             => '12.00',
-         'frequency_unit'     => 'month',
-         'frequency_interval' => '1',
-         'cycle_day'          => 25,
-         'iban'               => 'DE89370400440532013000',
-         'bic'                => 'GENODEM1GLS',
-       ]);
+      'is_sepa'            => 1,
+      'amount'             => '12.00',
+      'frequency_unit'     => 'month',
+      'frequency_interval' => '1',
+      'cycle_day'          => 25,
+      'iban'               => 'DE89370400440532013000',
+      'bic'                => 'GENODEM1GLS',
+    ]);
 
     // try to modify yesterday, with the default behaviour
-    Civi::settings()->set('date_adjustment', null); // default behaviour
+    // default behaviour
+    Civi::settings()->set('date_adjustment', NULL);
     $this->callAPIFailure('Contract', 'modify', [
       'id' => $contract['id'],
       'modify_action' => 'update',
       'date' => date('Y-m-d H:i:s', strtotime('yesterday')),
-      'medium_id' => 1
+      'medium_id' => 1,
     ]);
 
     // now try again with a setting
-    Civi::settings()->set('date_adjustment', '2 day'); // default behaviour
+    // default behaviour
+    Civi::settings()->set('date_adjustment', '2 day');
     $this->callAPISuccess('Contract', 'modify', [
       'id' => $contract['id'],
       'modify_action' => 'update',
       'date' => date('Y-m-d H:i:s', strtotime('yesterday')),
-      'medium_id' => 1
+      'medium_id' => 1,
     ]);
 
-    Civi::settings()->set('date_adjustment', '1 day'); // default behaviour
+    // default behaviour
+    Civi::settings()->set('date_adjustment', '1 day');
     $this->callAPIFailure('Contract', 'modify', [
       'id' => $contract['id'],
       'modify_action' => 'update',
       'date' => date('Y-m-d H:i:s', strtotime('today - 25 hours')),
-      'medium_id' => 1
+      'medium_id' => 1,
     ]);
   }
+
 }

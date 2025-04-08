@@ -10,7 +10,6 @@
 namespace Civi\Contract\Event;
 
 use Civi;
-use CRM_Utils_System;
 
 /**
  * Class AdjustContractReviewEvent
@@ -19,15 +18,14 @@ use CRM_Utils_System;
  *
  * @package Civi\Contract\Event
  */
-class AdjustContractReviewEvent extends ConfigurationEvent
-{
+class AdjustContractReviewEvent extends ConfigurationEvent {
   public const EVENT_NAME = 'de.contract.contractreview.adjust';
 
-  /** @var array list of column indices to hide in the view */
+  /**
+   * @var array list of column indices to hide in the view */
   protected $hide_columns;
 
-  protected function __construct()
-  {
+  protected function __construct() {
     $this->hide_columns = [];
   }
 
@@ -36,8 +34,7 @@ class AdjustContractReviewEvent extends ConfigurationEvent
    *
    * @return AdjustContractReviewEvent
    */
-  public static function getContractReviewAdjustments()
-  {
+  public static function getContractReviewAdjustments() {
     $event = new AdjustContractReviewEvent();
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event;
@@ -48,8 +45,7 @@ class AdjustContractReviewEvent extends ConfigurationEvent
    *
    * @return array
    */
-  public function getHiddenColumnIndices()
-  {
+  public function getHiddenColumnIndices() {
     return $this->hide_columns;
   }
 
@@ -59,8 +55,8 @@ class AdjustContractReviewEvent extends ConfigurationEvent
    * @param array $columns_to_hide
    *  list of integers
    */
-  public function setHiddenColumnIndices($columns_to_hide)
-  {
+  public function setHiddenColumnIndices($columns_to_hide) {
     $this->hide_columns = $columns_to_hide;
   }
+
 }

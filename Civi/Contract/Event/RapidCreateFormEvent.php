@@ -10,7 +10,6 @@
 namespace Civi\Contract\Event;
 
 use Civi;
-use Symfony\Contracts\EventDispatcher\Event;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -21,23 +20,20 @@ use CRM_Contract_ExtensionUtil as E;
  *
  * @package Civi\Contract\Event
  */
-class RapidCreateFormEvent extends ConfigurationEvent
-{
+class RapidCreateFormEvent extends ConfigurationEvent {
   public const EVENT_NAME = 'de.contract.rapidcreateform';
 
   /**
    * Symfony event to allow providing a custom change event
    */
-  public function __construct()
-  {
-    $this->url = null;
+  public function __construct() {
+    $this->url = NULL;
   }
 
   /**
    * @var string URL to a rapid create from - if one exists
    */
-  protected $url = null;
-
+  protected $url = NULL;
 
   /**
    * Set/override the url for the rapid create form
@@ -46,10 +42,9 @@ class RapidCreateFormEvent extends ConfigurationEvent
    *    the new url to the form
    *
    * @return string|null
-   *    the previously set url
+   *   the previously set url
    */
-  public function setRapidCreateFormUrl($url)
-  {
+  public function setRapidCreateFormUrl($url) {
     $old_url = $this->url;
     $this->url = $url;
     return $old_url;
@@ -60,8 +55,7 @@ class RapidCreateFormEvent extends ConfigurationEvent
    *
    * @return string
    */
-  public function getRapidCreateFormUrl(): ?string
-  {
+  public function getRapidCreateFormUrl(): ?string {
     return $this->url;
   }
 
@@ -70,8 +64,7 @@ class RapidCreateFormEvent extends ConfigurationEvent
    *
    * @return string|null
    */
-  public static function getUrl()
-  {
+  public static function getUrl() {
     $event = new RapidCreateFormEvent();
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     $rapid_create_url = $event->getRapidCreateFormUrl();
@@ -87,4 +80,5 @@ class RapidCreateFormEvent extends ConfigurationEvent
 
     return $rapid_create_url;
   }
+
 }

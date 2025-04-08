@@ -16,20 +16,19 @@
 
 namespace Civi\Contract\ActionProvider\Action;
 
-use \Civi\ActionProvider\Action\AbstractAction;
-use \Civi\ActionProvider\Parameter\ParameterBagInterface;
-use \Civi\ActionProvider\Parameter\Specification;
-use \Civi\ActionProvider\Parameter\SpecificationBag;
+use Civi\ActionProvider\Action\AbstractAction;
+use Civi\ActionProvider\Parameter\ParameterBagInterface;
+use Civi\ActionProvider\Parameter\Specification;
+use Civi\ActionProvider\Parameter\SpecificationBag;
 
 use CRM_Contract_ExtensionUtil as E;
-use CRM_Contract_Utils as U;
 
 class GetSepaRcur extends AbstractAction {
 
   /**
    * Returns the specification of the configuration options for the actual action.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([]);
@@ -38,13 +37,13 @@ class GetSepaRcur extends AbstractAction {
   /**
    * Returns the specification of the parameters of the actual action.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getParameterSpecification() {
     return new SpecificationBag([
         // required fields
         #new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
-        new Specification('recurring_contribution_id',       'Integer', E::ts('Recurring Contribution ID'), true),
+      new Specification('recurring_contribution_id', 'Integer', E::ts('Recurring Contribution ID'), TRUE),
     ]);
   }
 
@@ -53,27 +52,26 @@ class GetSepaRcur extends AbstractAction {
    *
    * This function could be overridden by child classes.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getOutputSpecification() {
     $specifications = [
-      new Specification('reference',        'String', E::ts('Mandate Reference'), false, null, null, null, false),
-      new Specification('iban',        'Date', E::ts('IBAN'), false, null, null, null, false),
-      new Specification('bic',        'Date', E::ts('BIC'), false, null, null, null, false),
-      new Specification('error',             'String',  E::ts('Error Message (if failed)'), false, null, null, null, false),
+      new Specification('reference', 'String', E::ts('Mandate Reference'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('iban', 'Date', E::ts('IBAN'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('bic', 'Date', E::ts('BIC'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('error', 'String', E::ts('Error Message (if failed)'), FALSE, NULL, NULL, NULL, FALSE),
     ];
 
     return new SpecificationBag($specifications);
   }
 
-
   /**
    * Run the action
    *
-   * @param ParameterBagInterface $parameters
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
    *   The parameters to this action.
-   * @param ParameterBagInterface $output
-   * 	 The parameters this action can send back
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
+   *      The parameters this action can send back
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
@@ -87,12 +85,14 @@ class GetSepaRcur extends AbstractAction {
 
       $output->setParameter('iban', $mandate['iban']);
       $output->setParameter('bic', $mandate['bic']);
-      $output->setParameter('error', "");
+      $output->setParameter('error', '');
 
-    } catch (\Exception $ex) {
+    }
+    catch (\Exception $ex) {
       $output->setParameter('iban', '');
       $output->setParameter('bic', '');
       $output->setParameter('error', $ex->getMessage());
     }
   }
+
 }

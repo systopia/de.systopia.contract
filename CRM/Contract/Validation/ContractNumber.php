@@ -39,7 +39,7 @@ class CRM_Contract_Validation_ContractNumber {
     $query = [
       'membership_general.membership_contract' => $reference,
       'return'                                 => 'id',
-      'option.limit'                           => 1
+      'option.limit'                           => 1,
     ];
     CRM_Contract_CustomData::resolveCustomFields($query);
 
@@ -48,11 +48,13 @@ class CRM_Contract_Validation_ContractNumber {
       $usage = civicrm_api3('Membership', 'get', $query);
       if ($usage['count'] > 0) {
         return E::ts("Reference '%1' is already in use!", [1 => $reference]);
-      } else {
+      }
+      else {
         return NULL;
       }
 
-    } else {
+    }
+    else {
       // // EXISTING CONTRACT is being updated
       $query['id'] = $contract_id;
       $unchanged = civicrm_api3('Membership', 'getcount', $query);
@@ -67,9 +69,11 @@ class CRM_Contract_Validation_ContractNumber {
       if ($is_used) {
         // this means the reference is already used
         return E::ts("Reference '%1' is already in use!", [1 => $reference]);
-      } else {
+      }
+      else {
         return NULL;
       }
     }
   }
+
 }
