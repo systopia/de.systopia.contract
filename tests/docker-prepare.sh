@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eu -o pipefail
 
+CIVISEPA_VERSION=1.11.0
+
 EXT_DIR=$(dirname "$(dirname "$(realpath "$0")")")
 EXT_NAME=$(basename "$EXT_DIR")
 
@@ -42,6 +44,8 @@ else
   # For headless tests these files need to exist.
   touch /var/www/html/sites/all/modules/civicrm/sql/test_data.mysql
   touch /var/www/html/sites/all/modules/civicrm/sql/test_data_second_domain.mysql
+
+  cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/$CIVISEPA_VERSION/org.project60.sepa-$CIVISEPA_VERSION.zip"
 
   cv ext:enable "$EXT_NAME"
 fi
