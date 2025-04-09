@@ -21,9 +21,10 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
   public function getRequiredFields() {
     if ($this->isNew()) {
       return [
-          'resume_date'
+        'resume_date',
       ];
-    } else {
+    }
+    else {
       return [];
     }
   }
@@ -103,7 +104,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
     $pause_date  = date('Y-m-d', strtotime($this->getParameter('activity_date_time')));
     $resume_date = date('Y-m-d', strtotime($this->getParameter('resume_date')));
     if ($pause_date >= $resume_date) {
-      throw new Exception(E::ts("Resume date cannot be before or on the same day as the pause."));
+      throw new Exception(E::ts('Resume date cannot be before or on the same day as the pause.'));
     }
   }
 
@@ -130,7 +131,8 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
     $contract_id = $this->getContractID();
     if ($this->isNew()) {
       return "id{$contract_id}: resume scheduled " . date('d/m/Y', strtotime($this->getParameter('resume_date')));
-    } else {
+    }
+    else {
       $subject = "id{$contract_id}:";
       if (!empty($this->data['contract_cancellation.contact_history_cancel_reason'])) {
         // FIXME: replicating weird behaviour by old engine
@@ -156,7 +158,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
    * @return string title
    */
   public static function getChangeTitle() {
-    return E::ts("Pause Contract");
+    return E::ts('Pause Contract');
   }
 
   /**
@@ -169,12 +171,13 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
   public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
     if (in_array($current_status_name, self::getStartStatusList())) {
       $links[] = [
-          'name'  => E::ts("Pause"),
-          'title' => self::getChangeTitle(),
-          'url'   => "civicrm/contract/modify",
-          'bit'   => CRM_Core_Action::UPDATE,
-          'qs'    => "modify_action=pause&id=%%id%%",
+        'name'  => E::ts('Pause'),
+        'title' => self::getChangeTitle(),
+        'url'   => 'civicrm/contract/modify',
+        'bit'   => CRM_Core_Action::UPDATE,
+        'qs'    => 'modify_action=pause&id=%%id%%',
       ];
     }
   }
+
 }

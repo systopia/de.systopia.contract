@@ -10,8 +10,6 @@
 namespace Civi\Contract\Event;
 
 use Civi;
-use Symfony\Contracts\EventDispatcher\Event;
-use \CRM_Contract_Change as CRM_Contract_Change;
 
 /**
  * Class SuppressedSystemActivityTypes
@@ -20,8 +18,7 @@ use \CRM_Contract_Change as CRM_Contract_Change;
  *
  * @package Civi\Contract\Event
  */
-class SuppressedSystemActivityTypes extends ConfigurationEvent
-{
+class SuppressedSystemActivityTypes extends ConfigurationEvent {
   public const EVENT_NAME = 'de.contract.suppress_system_activity_types';
 
   /**
@@ -36,8 +33,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
    * @param array $suppressed_activity_types
    *   list of suggested activity types to be suppressed
    */
-  public function __construct($suppressed_activity_types)
-  {
+  public function __construct($suppressed_activity_types) {
     $this->activity_types = $suppressed_activity_types;
   }
 
@@ -50,8 +46,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
    * @return array
    *   list of activity types to be suppressed
    */
-  public static function getSuppressedChangeActivityTypes($suppressed_activity_types = [])
-  {
+  public static function getSuppressedChangeActivityTypes($suppressed_activity_types = []) {
     $event = new SuppressedSystemActivityTypes($suppressed_activity_types);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->activity_types;
@@ -63,8 +58,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
    * @param array $activity_types
    *    the proposed subject for the change
    */
-  public function setSuppressedActivityTypes($activity_types)
-  {
+  public function setSuppressedActivityTypes($activity_types) {
     $this->activity_types = $activity_types;
   }
 
@@ -74,8 +68,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
    * return array $activity_types
    *    the proposed activity_types to be suppressed
    */
-  public function getSuppressedActivityTypes()
-  {
+  public function getSuppressedActivityTypes() {
     return $this->activity_types;
   }
 
@@ -85,8 +78,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
    * @param string $activity_type_name
    *   activity type name
    */
-  public function addSuppressedActivityType($activity_type_name)
-  {
+  public function addSuppressedActivityType($activity_type_name) {
     if (!in_array($activity_type_name, $this->activity_types)) {
       $this->activity_types[] = $activity_type_name;
     }
@@ -98,8 +90,7 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
    * @param string $activity_type_name
    *   activity type name
    */
-  public function removeSuppressedActivityType($activity_type_name)
-  {
+  public function removeSuppressedActivityType($activity_type_name) {
     $new_list = [];
     foreach ($this->activity_types as $activity_type) {
       if ($activity_type != $activity_type_name) {
@@ -108,4 +99,5 @@ class SuppressedSystemActivityTypes extends ConfigurationEvent
     }
     $this->activity_types = $new_list;
   }
+
 }

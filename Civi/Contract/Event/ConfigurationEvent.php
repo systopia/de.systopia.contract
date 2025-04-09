@@ -17,6 +17,5 @@ use Symfony\Contracts\EventDispatcher\Event;
  *
  * Abstract event class to provide some basic functions
  */
-abstract class ConfigurationEvent extends Event
-{
+abstract class ConfigurationEvent extends Event {
 }

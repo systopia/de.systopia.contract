@@ -45,4 +45,5 @@ class CRM_Contract_Handler_MembershipAPI implements API_Wrapper {
     // TODO: anything to amend in the output
     return $result;
   }
+
 }

@@ -24,9 +24,9 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    */
   public static function createPaymentLink($contract_id, $contribution_recur_id, $is_active = TRUE, $start_date = 'now', $end_date = NULL) {
     $params = [
-        'contract_id'           => $contract_id,
-        'contribution_recur_id' => $contribution_recur_id,
-        '$is_active'            => $is_active ? 1 : 0,
+      'contract_id'           => $contract_id,
+      'contribution_recur_id' => $contribution_recur_id,
+      '$is_active'            => $is_active ? 1 : 0,
     ];
 
     // set dates
@@ -62,7 +62,7 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
 
     // process date
     $now = date('YmdHis', strtotime($date));
-    $WHERE_CLAUSES[] = "is_active >= 1";
+    $WHERE_CLAUSES[] = 'is_active >= 1';
     $WHERE_CLAUSES[] = "start_date IS NULL OR start_date <= '{$now}'";
     $WHERE_CLAUSES[] = "end_date   IS NULL OR end_date   >  '{$now}'";
 
@@ -112,21 +112,21 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
   /**
    * Create/edit a ContractPaymentLink entry
    *
-   * @param array  $params (reference ) an assoc array of name/value pairs
+   * @param array $params
    * @return object CRM_Contract_BAO_ContractPaymentLink object on success, null otherwise
    * @access public
    * @static
    * @throws Exception if mandatory parameters not set
    */
-  static function add(&$params) {
+  public static function add(&$params) {
     $hook = empty($params['id']) ? 'create' : 'edit';
     if ($hook == 'create') {
       // check mandatory fields
       if (empty($params['contract_id'])) {
-        throw new Exception("Field contract_id is mandatory.");
+        throw new Exception('Field contract_id is mandatory.');
       }
       if (empty($params['contribution_recur_id'])) {
-        throw new Exception("Field contribution_recur_id is mandatory.");
+        throw new Exception('Field contribution_recur_id is mandatory.');
       }
 
       // set create date
@@ -149,14 +149,15 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    * @param $page
    */
   public static function injectLinks(&$page) {
-    $contribution_recur = $page->getTemplate()->get_template_vars("recur");
+    $contribution_recur = $page->getTemplate()->get_template_vars('recur');
     if (!empty($contribution_recur['id'])) {
       // gather some data
       $contribution_recur_id = (int) $contribution_recur['id'];
       $all_links = civicrm_api3('ContractPaymentLink', 'get', [
-          'contribution_recur_id' => $contribution_recur_id,
-          'sequential'            => 1,
-          'option.limit'          => 0])['values'];
+        'contribution_recur_id' => $contribution_recur_id,
+        'sequential'            => 1,
+        'option.limit'          => 0,
+      ])['values'];
 
       // render all links
       $active_links = [];
@@ -165,17 +166,18 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
         $rendered_link = self::renderLink($link);
         if ($rendered_link['active']) {
           $active_links[] = $rendered_link;
-        } else {
+        }
+        else {
           $inactive_links[] = $rendered_link;
         }
       }
 
       if (!empty($active_links) || !empty($inactive_links)) {
-        $page->assign('contract_payment_links_active',   $active_links);
+        $page->assign('contract_payment_links_active', $active_links);
         $page->assign('contract_payment_links_inactive', $inactive_links);
 
         CRM_Core_Region::instance('page-body')->add([
-            'template' => 'CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl'
+          'template' => 'CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl',
         ]);
       }
     }
@@ -191,50 +193,60 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
     try {
       // load contract
       $contract = civicrm_api3('Membership', 'getsingle', [
-          'id'     => $link_data['contract_id'],
-          'return' => 'contact_id,membership_type_id,id']);
+        'id'     => $link_data['contract_id'],
+        'return' => 'contact_id,membership_type_id,id',
+      ]);
 
       // load membership type
       $membership_type = civicrm_api3('MembershipType', 'getvalue', [
-          'return' => 'name',
-          'id'     => $contract['membership_type_id']]);
+        'return' => 'name',
+        'id'     => $contract['membership_type_id'],
+      ]);
 
       // render date
       if (empty($link_data['start_date'])) {
-        $start_date = E::ts("unknown");
-      } else {
+        $start_date = E::ts('unknown');
+      }
+      else {
         $start_date = date('Y-m-d', strtotime($link_data['start_date']));
       }
       if (empty($link_data['end_date'])) {
-        $end_date = E::ts("unknown");
-      } else {
+        $end_date = E::ts('unknown');
+      }
+      else {
         $end_date = date('Y-m-d', strtotime($link_data['end_date']));
       }
 
       // check if active
       $now = strtotime('now');
-      $active =    (!empty($link_data['is_active']))
+      $active = (!empty($link_data['is_active']))
                 && (empty($link_data['start_date']) || strtotime($link_data['start_date']) <= $now)
-                && (empty($link_data['end_date'])   || strtotime($link_data['end_date'])   > $now);
+                && (empty($link_data['end_date'])   || strtotime($link_data['end_date']) > $now);
 
       if ($active) {
         return [
-            'text'   => E::ts("%2 [%1] since %3", [1 => $contract['id'], 2 => $membership_type, 3 => $start_date]),
-            'link'   => CRM_Utils_System::url('civicrm/contact/view/membership', "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"),
-            'active' => $active];
-      } else {
+          'text'   => E::ts('%2 [%1] since %3', [1 => $contract['id'], 2 => $membership_type, 3 => $start_date]),
+          'link'   => CRM_Utils_System::url('civicrm/contact/view/membership', "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"),
+          'active' => $active,
+        ];
+      }
+      else {
         return [
-            'text'   => E::ts("%2 [%1] from %3 to %4", [1 => $contract['id'], 2 => $membership_type, 3 => $start_date, 4 => $end_date]),
-            'link'   => CRM_Utils_System::url('civicrm/contact/view/membership', "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"),
-            'active' => $active];
+          'text'   => E::ts('%2 [%1] from %3 to %4', [1 => $contract['id'], 2 => $membership_type, 3 => $start_date, 4 => $end_date]),
+          'link'   => CRM_Utils_System::url('civicrm/contact/view/membership', "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"),
+          'active' => $active,
+        ];
       }
 
-    } catch (Exception $ex) {
+    }
+    catch (Exception $ex) {
       return [
-          'text'   => 'RENDER ERROR',
-          'link'   => $ex->getMessage(),
-          'active' => 1];
+        'text'   => 'RENDER ERROR',
+        'link'   => $ex->getMessage(),
+        'active' => 1,
+      ];
     }
 
   }
+
 }

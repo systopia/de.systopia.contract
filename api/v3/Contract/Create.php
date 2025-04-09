@@ -8,7 +8,6 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
-
 /**
  * A wrapper around Membership.create with appropriate fields passed.
  * You cannot schedule Contract.create for the future.
@@ -22,11 +21,11 @@ function _civicrm_api3_Contract_create_spec(&$params) {
  * A wrapper around Membership.create with appropriate fields passed.
  * You cannot schedule Contract.create for the future.
  */
-function civicrm_api3_Contract_create($params){
+function civicrm_api3_Contract_create($params) {
   // Any parameters with a period in will be converted to the custom_N format
   // Other fields will be passed directly to the membership.create API
-  foreach ($params as $key => $value){
-    if(strpos($key, '.')){
+  foreach ($params as $key => $value) {
+    if (strpos($key, '.')) {
       unset($params[$key]);
       $params[CRM_Contract_Utils::getCustomFieldId($key)] = $value;
     }
@@ -46,7 +45,7 @@ function civicrm_api3_Contract_create($params){
   $params['activity_type_id'] = 'sign';
   $change = CRM_Contract_Change::getChangeForData($params);
   $change->setParameter('source_contact_id', CRM_Contract_Configuration::getUserID());
-  $change->setParameter('source_record_id',  $membership['id']);
+  $change->setParameter('source_record_id', $membership['id']);
   $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
   $change->setStatus('Completed');
   $change->populateData();
@@ -62,4 +61,3 @@ function civicrm_api3_Contract_create($params){
 
   return $membership;
 }
-

@@ -10,8 +10,6 @@
 namespace Civi\Contract\Event;
 
 use Civi;
-use Symfony\Contracts\EventDispatcher\Event;
-use \CRM_Contract_Change as CRM_Contract_Change;
 
 /**
  * Class EligibleContractCampaigns
@@ -20,8 +18,7 @@ use \CRM_Contract_Change as CRM_Contract_Change;
  *
  * @package Civi\Contract\Event
  */
-class EligibleContractCampaigns extends ConfigurationEvent
-{
+class EligibleContractCampaigns extends ConfigurationEvent {
   public const EVENT_NAME = 'de.contract.eligible_campaigns';
 
   /**
@@ -36,8 +33,7 @@ class EligibleContractCampaigns extends ConfigurationEvent
    * @param array $campaigns
    *   list of suggested activity types to be suppressed
    */
-  public function __construct($campaigns = [])
-  {
+  public function __construct($campaigns = []) {
     $this->campaigns = $campaigns;
   }
 
@@ -50,8 +46,7 @@ class EligibleContractCampaigns extends ConfigurationEvent
    * @return array
    *   list of eligible campaigns
    */
-  public static function getAllEligibleCampaigns($eligible_campaigns = [])
-  {
+  public static function getAllEligibleCampaigns($eligible_campaigns = []) {
     $event = new EligibleContractCampaigns($eligible_campaigns);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->campaigns;
@@ -63,8 +58,7 @@ class EligibleContractCampaigns extends ConfigurationEvent
    * @param array $campaigns
    *    list of eligible campaigns [id => title]
    */
-  public function setEligibleCampaigns($campaigns)
-  {
+  public function setEligibleCampaigns($campaigns) {
     $this->campaigns = $campaigns;
   }
 
@@ -74,8 +68,7 @@ class EligibleContractCampaigns extends ConfigurationEvent
    * return array
    *    the list of eligible campaigns [id => title]
    */
-  public function getEligibleCampaigns()
-  {
+  public function getEligibleCampaigns() {
     return $this->campaigns;
   }
 
@@ -88,8 +81,7 @@ class EligibleContractCampaigns extends ConfigurationEvent
    * @param string $campaign_title
    *   title of the campaign
    */
-  public function addEligibleCampaign($campaign_id, $campaign_title)
-  {
+  public function addEligibleCampaign($campaign_id, $campaign_title) {
     $this->campaigns[$campaign_id] = $campaign_title;
   }
 
@@ -99,8 +91,8 @@ class EligibleContractCampaigns extends ConfigurationEvent
    * @param int $campaign_id
    *   ID of the campaign to remove
    */
-  public function removeEligibleCampaign($campaign_id)
-  {
+  public function removeEligibleCampaign($campaign_id) {
     unset($this->campaigns[$campaign_id]);
   }
+
 }

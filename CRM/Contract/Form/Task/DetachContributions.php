@@ -7,6 +7,7 @@
 +--------------------------------------------------------------*/
 
 use CRM_Contract_ExtensionUtil as E;
+
 require_once 'CRM/Core/Form.php';
 
 
@@ -17,21 +18,21 @@ require_once 'CRM/Core/Form.php';
  */
 class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Task {
 
-  function buildQuickForm() {
+  public function buildQuickForm() {
     CRM_Utils_System::setTitle(ts('Detach Contributions from Membership'));
 
     // compile an info text
-    $infotext = E::ts("%1 of the %2 contributions are currently attached to a membership, and <strong>will be detached.</strong>", [
+    $infotext = E::ts('%1 of the %2 contributions are currently attached to a membership, and <strong>will be detached.</strong>', [
       1 => $this->getAssignedCount(),
-      2 => count($this->_contributionIds)]);
+      2 => count($this->_contributionIds),
+    ]);
     $this->assign('infotext', $infotext);
-
 
     // additional options
     $this->addCheckbox(
         'detach_recur',
         E::ts('Detach from %1 recurring contributions', [1 => $this->getRecurringCount()]),
-        ['' => true]);
+        ['' => TRUE]);
 
     $this->addElement('select',
         'change_financial_type',
@@ -42,13 +43,13 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     $this->addCheckbox(
         'change_recur_financial_type',
         E::ts('Update recurring contributions\' financial type, too.'),
-        ['' => true]);
+        ['' => TRUE]);
 
     // call the (overwritten) Form's method, so the continue button is on the right...
     CRM_Core_Form::addDefaultButtons(ts('Detach'));
   }
 
-  function postProcess() {
+  public function postProcess() {
     // get the count
     $count = $this->getAssignedCount();
 
@@ -58,7 +59,7 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
       CRM_Core_DAO::executeQuery("DELETE FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
     }
 
-    CRM_Core_Session::setStatus(E::ts("All contribution(s) have been detached from their memberships."), E::ts('Success'), 'info');
+    CRM_Core_Session::setStatus(E::ts('All contribution(s) have been detached from their memberships.'), E::ts('Success'), 'info');
 
     // detach the recurring contributions
     $values = $this->exportValues();
@@ -69,18 +70,20 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
       foreach ($nonsepa_contribution_ids as $contribution_id) {
         try {
           civicrm_api3('Contribution', 'create', [
-              'id'                    => $contribution_id,
-              'contribution_recur_id' => '']);
+            'id'                    => $contribution_id,
+            'contribution_recur_id' => '',
+          ]);
           $dcounter += 1;
-        } catch (Exception $ex) {
+        }
+        catch (Exception $ex) {
           CRM_Core_Session::setStatus(E::ts("Contribution [%1] couldn't be detached: %2", [1 => $contribution_id, 2 => $ex->getMessage()]), E::ts('Error'), 'error');
         }
       }
       // inform the user:
-      CRM_Core_Session::setStatus(E::ts("%1 contribution(s) have been detached from the recurring contribution.", [1 => $dcounter]), E::ts('Success'), 'info');
-      $sepa_contribution_count  = count($this->_contributionIds) - count($nonsepa_contribution_ids);
+      CRM_Core_Session::setStatus(E::ts('%1 contribution(s) have been detached from the recurring contribution.', [1 => $dcounter]), E::ts('Success'), 'info');
+      $sepa_contribution_count = count($this->_contributionIds) - count($nonsepa_contribution_ids);
       if ($sepa_contribution_count) {
-        CRM_Core_Session::setStatus(E::ts("%1 contribution(s) have <strong>not</strong> been detached from the recurring contribution, because they belong to a CiviSEPA mandate.", [1 => $sepa_contribution_count]), E::ts('Cannot Detach'), 'info');
+        CRM_Core_Session::setStatus(E::ts('%1 contribution(s) have <strong>not</strong> been detached from the recurring contribution, because they belong to a CiviSEPA mandate.', [1 => $sepa_contribution_count]), E::ts('Cannot Detach'), 'info');
       }
     }
 
@@ -92,15 +95,17 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
       foreach ($this->_contributionIds as $contribution_id) {
         try {
           civicrm_api3('Contribution', 'create', [
-              'id'                => $contribution_id,
-              'financial_type_id' => $values['change_financial_type']]);
+            'id'                => $contribution_id,
+            'financial_type_id' => $values['change_financial_type'],
+          ]);
           $ccounter += 1;
-        } catch (Exception $ex) {
+        }
+        catch (Exception $ex) {
           CRM_Core_Session::setStatus(E::ts("Financial type for contribution [%1] couldn't be changed: %2", [1 => $contribution_id, 2 => $ex->getMessage()]), E::ts('Error'), 'error');
         }
       }
       // inform the user:
-      CRM_Core_Session::setStatus(E::ts("Financial type for %1 contribution(s) has been updated.", [1 => $ccounter]), E::ts('Success'), 'info');
+      CRM_Core_Session::setStatus(E::ts('Financial type for %1 contribution(s) has been updated.', [1 => $ccounter]), E::ts('Success'), 'info');
 
       // update all recurring contributions
       if (!empty($values['change_recur_financial_type'])) {
@@ -108,20 +113,20 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
         foreach ($recur_ids as $recur_id) {
           try {
             civicrm_api3('ContributionRecur', 'create', [
-                'id'                => $recur_id,
-                'financial_type_id' => $values['change_financial_type']]);
+              'id'                => $recur_id,
+              'financial_type_id' => $values['change_financial_type'],
+            ]);
             $rcounter += 1;
-          } catch (Exception $ex) {
+          }
+          catch (Exception $ex) {
             CRM_Core_Session::setStatus(E::ts("Financial type for recurring contribution [%1] couldn't be changed: %2", [1 => $recur_id, 2 => $ex->getMessage()]), E::ts('Error'), 'error');
           }
         }
         // inform the user:
-        CRM_Core_Session::setStatus(E::ts("Financial type for %1 recurring contribution(s) has been updated.", [1 => $rcounter]), E::ts('Success'), 'info');
+        CRM_Core_Session::setStatus(E::ts('Financial type for %1 recurring contribution(s) has been updated.', [1 => $rcounter]), E::ts('Success'), 'info');
       }
     }
   }
-
-
 
   /**
    * get the number of assigned contributions
@@ -130,7 +135,8 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     $id_list = implode(',', $this->_contributionIds);
     if (empty($id_list)) {
       return 0;
-    } else {
+    }
+    else {
       return CRM_Core_DAO::singleValueQuery("SELECT COUNT(id) FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
     }
   }
@@ -142,7 +148,8 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     $id_list = implode(',', $this->_contributionIds);
     if (empty($id_list)) {
       return 0;
-    } else {
+    }
+    else {
       return CRM_Core_DAO::singleValueQuery("SELECT COUNT(DISTINCT(contribution_recur_id)) FROM civicrm_contribution WHERE id IN ({$id_list})");
     }
   }
@@ -168,12 +175,13 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
    * Get a list of financial types
    */
   protected function getFinancialTypesList() {
-    $list =  ['' => E::ts("don't change")];
+    $list = ['' => E::ts("don't change")];
     $financial_types = civicrm_api3('FinancialType', 'get', [
-        'is_active'    => 1,
-        'option.limit' => 0,
-        'sequential'   => 1,
-        'return'       => 'id,name']);
+      'is_active'    => 1,
+      'option.limit' => 0,
+      'sequential'   => 1,
+      'return'       => 'id,name',
+    ]);
     foreach ($financial_types['values'] as $financial_type) {
       $list[$financial_type['id']] = $financial_type['name'];
     }
@@ -201,4 +209,5 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     }
     return $nonsepa_ids;
   }
+
 }

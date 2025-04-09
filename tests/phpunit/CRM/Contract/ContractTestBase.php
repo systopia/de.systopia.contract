@@ -5,7 +5,7 @@ use CRM_Contract_ExtensionUtil as E;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * FIXME - Add test description.
@@ -21,52 +21,49 @@ use \PHPUnit\Framework\TestCase;
  *
  * @group headless
  */
-class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
-{
+class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
   use Api3TestTrait {
     callAPISuccess as public traitCallAPISuccess;
   }
 
   protected static $counter = 0;
 
-  public function setUpHeadless()
-  {
+  public function setUpHeadless() {
     // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
     // See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
     return \Civi\Test::headless()
-        ->installMe(__DIR__)
-        ->install('org.project60.sepa')
-        ->install('org.project60.banking')
+      ->installMe(__DIR__)
+      ->install('org.project60.sepa')
+      ->install('org.project60.banking')
         //->install('tazcontract') // if changed, don't forget to 'DELETE FROM civitest_revs;' before running again
-        ->apply();
+      ->apply();
   }
 
-  public function setUp() : void
-  {
+  public function setUp() : void {
     parent::setUp();
 
     // make sure the date check is in compatibility mode
-    Civi::settings()->set('date_adjustment', null); // default behaviour
+    // default behaviour
+    Civi::settings()->set('date_adjustment', NULL);
 
     // check if there is a default creditor
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
     if (empty($default_creditor_id)) {
       // create if there isn't
       $creditor = $this->callAPISuccess('SepaCreditor', 'create', [
-          'creditor_type'  => 'SEPA',
-          'currency'       => 'EUR',
-          'mandate_active' => 1
+        'creditor_type'  => 'SEPA',
+        'currency'       => 'EUR',
+        'mandate_active' => 1,
       ]);
       CRM_Sepa_Logic_Settings::setSetting($creditor['id'], 'batching_default_creditor');
     }
 
     // check again
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
-    $this->assertNotEmpty($default_creditor_id, "There is no default SEPA creditor set");
+    $this->assertNotEmpty($default_creditor_id, 'There is no default SEPA creditor set');
   }
 
-  public function tearDown() : void
-  {
+  public function tearDown() : void {
     parent::tearDown();
   }
 
@@ -84,9 +81,8 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    *
    * @return void
    */
-  protected function assertStringContainsOtherString($needle, $haystack, $error = null)
-  {
-    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== false);
+  protected function assertStringContainsOtherString($needle, $haystack, $error = NULL) {
+    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== FALSE);
     if (!$contains) {
       if (empty($error)) {
         $error = "String '{$needle}' not contained in '{$haystack}'.";
@@ -109,9 +105,8 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    *
    * @return void
    */
-  protected function assertStringNotContainsOtherString($needle, $haystack, $error = null)
-  {
-    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== false);
+  protected function assertStringNotContainsOtherString($needle, $haystack, $error = NULL) {
+    $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== FALSE);
     if ($contains) {
       if (empty($error)) {
         $error = "String '{$needle}' not contained in '{$haystack}'.";
@@ -125,13 +120,13 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    *
    * @param $contract_id
    */
-  public function runContractEngine($contract_id, $now = 'now')
-  {
-    $this->assertNotEmpty($contract_id, "You can only run the contract engine on a specific contract ID.");
+  public function runContractEngine($contract_id, $now = 'now') {
+    $this->assertNotEmpty($contract_id, 'You can only run the contract engine on a specific contract ID.');
     $result = $this->callAPISuccess('Contract', 'process_scheduled_modifications', [
-        'now' => $now,
-        'id'  => $contract_id]);
-    $this->assertTrue(empty($result['values']['failed']), "Contract Engine reports failure");
+      'now' => $now,
+      'id'  => $contract_id,
+    ]);
+    $this->assertTrue(empty($result['values']['failed']), 'Contract Engine reports failure');
     return $result;
   }
 
@@ -145,9 +140,9 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
   public function callEngineFailure($contract_id, $now = 'now', $expectedError = NULL) {
     $result = $this->callAPISuccess('Contract', 'process_scheduled_modifications', [
       'now' => $now,
-      'id'  => $contract_id
+      'id'  => $contract_id,
     ])['values'];
-    $this->assertNotEmpty($result['failed'], "Contract Engine should report failure(s)");
+    $this->assertNotEmpty($result['failed'], 'Contract Engine should report failure(s)');
     if (!is_null($expectedError)) {
       $errorDetails = implode("\n", $result['error_details']);
       $this->assertStringContainsOtherString(
@@ -159,15 +154,13 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     return $result;
   }
 
-
   /**
    * Create a new contact with a random email address. Good for simple
    *  tests via the 'CRM_Xcm_Matcher_EmailOnlyMatcher'
    *
    * @param array $contact_data
    */
-  public function createContactWithRandomEmail($contact_data = [])
-  {
+  public function createContactWithRandomEmail($contact_data = []) {
     if (empty($contact_data['contact_type'])) {
       $contact_data['contact_type'] = 'Individual';
     }
@@ -194,8 +187,8 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    */
   public function getRandomPaymentInstrumentID() {
     $pis = $this->callAPISuccess('OptionValue', 'get', [
-        'is_active'       => 1,
-        'option_group_id' => 'payment_instrument'
+      'is_active'       => 1,
+      'option_group_id' => 'payment_instrument',
     ]);
     $this->assertNotEmpty($pis['count'], 'No PaymentInstruments configured');
     $instrument = $pis['values'][array_rand($pis['values'])];
@@ -207,23 +200,23 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    *
    * @return integer membership type ID
    */
-  public function getRandomMembershipTypeID()
-  {
+  public function getRandomMembershipTypeID() {
     $types = $this->callAPISuccess('MembershipType', 'get', ['is_active' => 1]);
     if ($types['count'] > 0) {
       $type = $types['values'][array_rand($types['values'])];
       return $type['id'];
-    } else {
+    }
+    else {
       // create a new one
       $contact  = $this->createContactWithRandomEmail();
       $new_type = $this->callAPISuccess('MembershipType', 'create', [
-          'member_of_contact_id' => $contact['id'],
-          'financial_type_id'    => "1",
-          'duration_unit'        => "year",
-          'duration_interval'    => "1",
-          'period_type'          => "rolling",
-          'name'                 => "Test Fallback",
-          'is_active'            => "1",
+        'member_of_contact_id' => $contact['id'],
+        'financial_type_id'    => '1',
+        'duration_unit'        => 'year',
+        'duration_interval'    => '1',
+        'period_type'          => 'rolling',
+        'name'                 => 'Test Fallback',
+        'is_active'            => '1',
       ]);
       return $new_type['id'];
     }
@@ -284,7 +277,8 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       $mandate = $this->callAPISuccess('SepaMandate', 'getsingle', ['id' => $mandate['id']]);
       return $this->callAPISuccess('ContributionRecur', 'getsingle', ['id' => $mandate['entity_id']]);
 
-    } else {
+    }
+    else {
       // Standing Order (recurring contribution)
       if (empty($params['payment_instrument_id'])) {
         $params['payment_instrument_id'] = $this->getRandomPaymentInstrumentID();
@@ -312,21 +306,20 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       $params['membership_payment.membership_recurring_contribution'] = $payment['id'];
     }
 
-
     //membership_payment.membership_recurring_contribution
     $contract = $this->callAPISuccess('Contract', 'create', [
-        'contact_id'         => $contact_id,
-        'membership_type_id' => (!empty($params['membership_type_id'])) ? $params['membership_type_id'] : $this->getRandomMembershipTypeID(),
-        'join_date'          => (!empty($params['join_date'])) ? $params['join_date'] : date('YmdHis'),
-        'start_date'         => (!empty($params['start_date'])) ? $params['start_date'] : date('YmdHis'),
-        'end_date'           => (!empty($params['end_date'])) ? $params['end_date'] : NULL,
-        'campaign_id'        => (!empty($params['campaign_id'])) ? $params['campaign_id'] : NULL,
-        'note'               => (!empty($params['note'])) ? $params['note'] : 'Test',
-        'medium_id'          => (!empty($params['medium_id'])) ? $params['medium_id'] : '1',
+      'contact_id'         => $contact_id,
+      'membership_type_id' => (!empty($params['membership_type_id'])) ? $params['membership_type_id'] : $this->getRandomMembershipTypeID(),
+      'join_date'          => (!empty($params['join_date'])) ? $params['join_date'] : date('YmdHis'),
+      'start_date'         => (!empty($params['start_date'])) ? $params['start_date'] : date('YmdHis'),
+      'end_date'           => (!empty($params['end_date'])) ? $params['end_date'] : NULL,
+      'campaign_id'        => (!empty($params['campaign_id'])) ? $params['campaign_id'] : NULL,
+      'note'               => (!empty($params['note'])) ? $params['note'] : 'Test',
+      'medium_id'          => (!empty($params['medium_id'])) ? $params['medium_id'] : '1',
         // custom stuff:
-        'membership_payment.membership_recurring_contribution' => $params['membership_payment.membership_recurring_contribution'],
-        'membership_general.membership_dialoger'               => $contact_id,
-        'membership_payment.from_name'                         => 'Johannes',
+      'membership_payment.membership_recurring_contribution' => $params['membership_payment.membership_recurring_contribution'],
+      'membership_general.membership_dialoger'               => $contact_id,
+      'membership_payment.from_name'                         => 'Johannes',
         // membership_general.membership_contract   // Contract number
         // membership_general.membership_reference  // Reference number
         // membership_general.membership_contract   // Contract number
@@ -363,13 +356,15 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    */
   public function getRandomOptionValue($option_group_id, $label = TRUE) {
     $all_option_values = $this->callAPISuccess('OptionValue', 'get', [
-        'option.limit'    => 0,
-        'return'          => 'value,label',
-        'option_group_id' => $option_group_id]);
+      'option.limit'    => 0,
+      'return'          => 'value,label',
+      'option_group_id' => $option_group_id,
+    ]);
     $value = $all_option_values['values'][array_rand($all_option_values['values'])];
     if ($label) {
       return $value['label'];
-    } else {
+    }
+    else {
       return $value['value'];
     }
   }
@@ -385,10 +380,11 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
   public function getBankAccountID($contact_id, $iban = 'DE89370400440532013000', $bic = 'GENODEM1GLS') {
     try {
       $ba_id = CRM_Contract_BankingLogic::getOrCreateBankAccount($contact_id, $iban, $bic);
-      $this->assertNotEmpty($ba_id, "Failed to create bank account");
+      $this->assertNotEmpty($ba_id, 'Failed to create bank account');
       return $ba_id;
-    } catch (Exception $ex) {
-      $this->fail("Error while createing bank account: " . $ex->getMessage());
+    }
+    catch (Exception $ex) {
+      $this->fail('Error while createing bank account: ' . $ex->getMessage());
     }
   }
 
@@ -424,7 +420,8 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    */
   public function getLastChangeActivity($contract_id, $types = NULL, $status = []) {
     $activities = $this->getChangeActivities($contract_id, $types, $status);
-    return reset($activities); // the first one should be the last one
+    // the first one should be the last one
+    return reset($activities);
   }
 
   /**
@@ -438,10 +435,10 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
   public function getChangeActivities($contract_id, $types = NULL, $status = []) {
     // compile query
     $query = [
-        'source_record_id' => $contract_id,
-        'sequential'       => 1,
-        'option.limit'     => 0,
-        'option.sort'      => 'activity_date_time desc',
+      'source_record_id' => $contract_id,
+      'sequential'       => 1,
+      'option.limit'     => 0,
+      'option.sort'      => 'activity_date_time desc',
     ];
     if (!empty($types)) {
       $query['activity_type_id'] = ['IN' => $types];
@@ -460,7 +457,6 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     return $activities;
   }
 
-
   /**
    * Compare two arrays by asserting all attributes are equal
    *
@@ -476,7 +472,9 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     }
 
     foreach ($attribute_list as $attribute) {
-      if (in_array($attribute, $exception_list)) continue;
+      if (in_array($attribute, $exception_list)) {
+        continue;
+      }
       $expected_value = CRM_Utils_Array::value($attribute, $expected_data);
       $current_value  = CRM_Utils_Array::value($attribute, $current_data);
       //$this->assertEquals($expected_value, $current_value, "Attribute '{$attribute}' differs. Expected: '{$expected_value}', got '{$current_value}'.");
@@ -505,7 +503,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     if ($membership_status2id === NULL) {
       $membership_status2id = [];
       $query = civicrm_api3('MembershipStatus', 'get', [
-         'option.limit' => 0,
+        'option.limit' => 0,
       ]);
       foreach ($query['values'] as $membership_status) {
         $membership_status2id[$membership_status['name']] = $membership_status['id'];
@@ -549,8 +547,8 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    * @return bool
    *   is the extension installed
    */
-  public function isExtensionActive($extension_key) : bool
-  {
+  public function isExtensionActive($extension_key) : bool {
     return function_exists("_{$extension_key}_civix_civicrm_enable");
   }
+
 }

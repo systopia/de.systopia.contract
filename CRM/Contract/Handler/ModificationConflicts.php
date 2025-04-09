@@ -1,23 +1,24 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2017-2019 SYSTOPIA                             |
-| Author: B. Endres (endres -at- systopia.de)                  |
-|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
-|         P. Figel (pfigel -at- greenpeace.org)                |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
-
-class CRM_Contract_Handler_ModificationConflicts{
+/**
+ * -------------------------------------------------------------+
+ * | SYSTOPIA Contract Extension                                  |
+ * | Copyright (C) 2017-2019 SYSTOPIA                             |
+ * | Author: B. Endres (endres -at- systopia.de)                  |
+ * |         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+ * |         P. Figel (pfigel -at- greenpeace.org)                |
+ * | http://www.systopia.de/                                      |
+ * +--------------------------------------------------------------
+ */
+class CRM_Contract_Handler_ModificationConflicts {
 
   private $scheduledModifications = [];
   private $contractId = NULL;
 
-  function __construct(){
-    $this->needsReviewStatusId = civicrm_api3('OptionValue', 'getvalue', [ 'return' => "value", 'option_group_id' => "activity_status", 'name' => 'Needs Review']);
+  public function __construct() {
+    $this->needsReviewStatusId = civicrm_api3('OptionValue', 'getvalue', ['return' => 'value', 'option_group_id' => 'activity_status', 'name' => 'Needs Review']);
   }
 
-  function checkForConflicts($contractId){
+  public function checkForConflicts($contractId) {
     if (empty($contractId)) {
       throw new Exception('Missing contract ID, cannot check for conflicts');
     }
@@ -38,25 +39,26 @@ class CRM_Contract_Handler_ModificationConflicts{
 
     $this->whitelistPauseResume();
 
-    if(count($this->scheduledModifications)) {
-      foreach($this->scheduledModifications as $scheduledModification){
-        if($scheduledModification['status_id'] != $this->needsReviewStatusId){
+    if (count($this->scheduledModifications)) {
+      foreach ($this->scheduledModifications as $scheduledModification) {
+        if ($scheduledModification['status_id'] != $this->needsReviewStatusId) {
           $this->markForReview($scheduledModification['id']);
         }
       }
     }
   }
 
-  function getScheduledModifications(){
+  public function getScheduledModifications() {
     $scheduledModifications = civicrm_api3('activity', 'get', [
-      'option.limit' => 10000, // If we have more than 10,000 scheduled updates for this contract, probably time to review organisational proceedures
+    // If we have more than 10,000 scheduled updates for this contract, probably time to review organisational proceedures
+      'option.limit' => 10000,
       'source_record_id' => $this->contractId,
-      'status_id' => ['IN' => ['scheduled', 'needs review']]
+      'status_id' => ['IN' => ['scheduled', 'needs review']],
     ])['values'];
-    foreach($scheduledModifications as $k => &$scheduledModification){
+    foreach ($scheduledModifications as $k => &$scheduledModification) {
       $scheduledModification['activity_date_unixtime'] = strtotime($scheduledModification['activity_date_time']);
     }
-    usort($scheduledModifications, function($a, $b){
+    usort($scheduledModifications, function($a, $b) {
       return $a['activity_date_unixtime'] - $b['activity_date_unixtime'];
     });
     $this->scheduledModifications = $scheduledModifications;
@@ -66,17 +68,17 @@ class CRM_Contract_Handler_ModificationConflicts{
   /**
    * Mark a given activity as "Needs Review"
    */
-  function markForReview($id) {
+  public function markForReview($id) {
     $update_activity = [
       'id'           => $id,
       'status_id'    => 'Needs Review',
-      'skip_handler' => true,
+      'skip_handler' => TRUE,
     ];
 
     // assign to reviewers
     $reviewers = civicrm_api3('Setting', 'GetValue', [
       'name' => 'contract_modification_reviewers',
-      'group' => 'Contract preferences'
+      'group' => 'Contract preferences',
     ]);
     if ($reviewers) {
       $assignees = explode(',', $reviewers);
@@ -88,8 +90,8 @@ class CRM_Contract_Handler_ModificationConflicts{
     civicrm_api3('Activity', 'create', $update_activity);
   }
 
-  function whitelistOneActivity(){
-    if(count($this->scheduledModifications) == 1){
+  public function whitelistOneActivity() {
+    if (count($this->scheduledModifications) == 1) {
       // TODO we should perform extra validation here since we know what
       // the start state is, we can check that this would be a valid
       // modification and only whitelist it if so.
@@ -97,11 +99,10 @@ class CRM_Contract_Handler_ModificationConflicts{
     }
   }
 
-
-  function whitelistPauseResume(){
+  public function whitelistPauseResume() {
 
     // This whitelist only works when there are exactly two activities
-    if(count($this->scheduledModifications) != 2){
+    if (count($this->scheduledModifications) != 2) {
       return;
     }
 
@@ -111,10 +112,11 @@ class CRM_Contract_Handler_ModificationConflicts{
     $resumeActivity = next($this->scheduledModifications);
 
     if (
-           $pauseActivity['activity_type_id']  == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Pause')
+           $pauseActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Pause')
         && $resumeActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Resume')
-    ){
+    ) {
       $this->scheduledModifications = [];
     }
   }
+
 }

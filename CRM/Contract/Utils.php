@@ -10,15 +10,13 @@
 
 use CRM_Contract_ExtensionUtil as E;
 
-class CRM_Contract_Utils
-{
+class CRM_Contract_Utils {
 
   private static $_singleton;
   private static $coreMembershipHistoryActivityIds;
   static $customFieldCache;
 
-  public static function singleton()
-  {
+  public static function singleton() {
     if (!self::$_singleton) {
       self::$_singleton = new CRM_Contract_Utils();
     }
@@ -36,8 +34,8 @@ class CRM_Contract_Utils
     if ($status_names === NULL) {
       $status_names = [];
       $status_query = civicrm_api3('MembershipStatus', 'get', [
-          'return'       => 'id,name',
-          'option.limit' => 0,
+        'return'       => 'id,name',
+        'option.limit' => 0,
       ]);
       foreach ($status_query['values'] as $status) {
         $status_names[$status['id']] = $status['name'];
@@ -46,8 +44,7 @@ class CRM_Contract_Utils
     return CRM_Utils_Array::value($status_id, $status_names);
   }
 
-  static function getCustomFieldId($customField)
-  {
+  public static function getCustomFieldId($customField) {
 
     self::warmCustomFieldCache();
 
@@ -55,8 +52,9 @@ class CRM_Contract_Utils
     if (!isset(self::$customFieldCache[$customField])) {
       $parts = explode('.', $customField);
       try {
-        self::$customFieldCache[$customField] = 'custom_' . civicrm_api3('CustomField', 'getvalue', ['return' => "id", 'custom_group_id' => $parts[0], 'name' => $parts[1]]);
-      } catch (Exception $e) {
+        self::$customFieldCache[$customField] = 'custom_' . civicrm_api3('CustomField', 'getvalue', ['return' => 'id', 'custom_group_id' => $parts[0], 'name' => $parts[1]]);
+      }
+      catch (Exception $e) {
         throw new Exception("Could not find custom field '{$parts[1]}' in custom field set '{$parts[0]}'");
       }
     }
@@ -64,13 +62,13 @@ class CRM_Contract_Utils
     // Return result or return an error if it does not exist.
     if (isset(self::$customFieldCache[$customField])) {
       return self::$customFieldCache[$customField];
-    } else {
+    }
+    else {
       throw new Exception('Could not find custom field id for ' . $customField);
     }
   }
 
-  static function getCustomFieldName($customFieldId)
-  {
+  public static function getCustomFieldName($customFieldId) {
 
     self::warmCustomFieldCache();
     $name = array_search($customFieldId, self::$customFieldCache);
@@ -82,13 +80,13 @@ class CRM_Contract_Utils
     // Return result or return an error if it does not exist.
     if ($name = array_search($customFieldId, self::$customFieldCache)) {
       return $name;
-    } else {
+    }
+    else {
       throw new Exception('Could not find custom field for id' . $customFieldId);
     }
   }
 
-  static function warmCustomFieldCache()
-  {
+  public static function warmCustomFieldCache() {
     if (!self::$customFieldCache) {
       $customGroupNames = ['membership_general', 'membership_payment', 'membership_cancellation', 'contract_cancellation', 'contract_updates'];
       $custom_group_ids = [];
@@ -103,12 +101,12 @@ class CRM_Contract_Utils
     }
   }
 
-  static function getCoreMembershipHistoryActivityIds()
-  {
+  public static function getCoreMembershipHistoryActivityIds() {
     if (!self::$coreMembershipHistoryActivityIds) {
       $result = civicrm_api3('OptionValue', 'get', [
-              'option_group_id' => 'activity_type',
-              'name'            => ['IN' => ['Membership Signup', 'Membership Renewal', 'Change Membership Status', 'Change Membership Type', 'Membership Renewal Reminder']]]
+        'option_group_id' => 'activity_type',
+        'name'            => ['IN' => ['Membership Signup', 'Membership Renewal', 'Change Membership Status', 'Change Membership Type', 'Membership Renewal Reminder']],
+      ]
       );
       foreach ($result['values'] as $v) {
         self::$coreMembershipHistoryActivityIds[] = $v['value'];
@@ -122,10 +120,9 @@ class CRM_Contract_Utils
    *
    * @return array membership type data as delivered by the API
    */
-  public static function getMembershipTypes()
-  {
-    static $membership_types = null;
-    if ($membership_types === null) {
+  public static function getMembershipTypes() {
+    static $membership_types = NULL;
+    if ($membership_types === NULL) {
       $membership_types = \civicrm_api3('MembershipType', 'get', ['option.limit' => 0])['values'];
     }
     return $membership_types;
@@ -136,18 +133,17 @@ class CRM_Contract_Utils
    *
    * @return array|string membership type data as delivered by the API
    */
-  public static function getMembershipType($membership_type_id, $attribute = null)
-  {
+  public static function getMembershipType($membership_type_id, $attribute = NULL) {
     $types = self::getMembershipTypes();
     if (isset($types[$membership_type_id])) {
       if ($attribute) {
-        return $types[$membership_type_id][$attribute] ?? null;
-      } else {
-        return $types[$membership_type_id] ?? null;
+        return $types[$membership_type_id][$attribute] ?? NULL;
+      }
+      else {
+        return $types[$membership_type_id] ?? NULL;
       }
     }
   }
-
 
   /**
    * Download contract file
@@ -155,24 +151,25 @@ class CRM_Contract_Utils
    *
    * @return bool
    */
-  static function downloadContractFile($file)
-  {
+  public static function downloadContractFile($file) {
     if (!CRM_Contract_Utils::contractFileExists($file)) {
-      return false;
+      return FALSE;
     }
     $fullPath = CRM_Contract_Utils::contractFilePath($file);
 
-    ignore_user_abort(true);
-    set_time_limit(0); // disable the time limit for this script
+    ignore_user_abort(TRUE);
+    // disable the time limit for this script
+    set_time_limit(0);
 
-    if ($fd = fopen($fullPath, "r")) {
+    if ($fd = fopen($fullPath, 'r')) {
       $fsize      = filesize($fullPath);
       $path_parts = pathinfo($fullPath);
-      $ext        = strtolower($path_parts["extension"]);
-      header("Content-type: application/octet-stream");
-      header("Content-Disposition: filename=\"" . $path_parts["basename"] . "\"");
+      $ext        = strtolower($path_parts['extension']);
+      header('Content-type: application/octet-stream');
+      header('Content-Disposition: filename="' . $path_parts['basename'] . '"');
       header("Content-length: $fsize");
-      header("Cache-control: private"); //use this to open files directly
+      //use this to open files directly
+      header('Cache-control: private');
       while (!feof($fd)) {
         $buffer = fread($fd, 2048);
         echo $buffer;
@@ -187,15 +184,14 @@ class CRM_Contract_Utils
    * @param $logFile
    * @return boolean
    */
-  static function contractFileExists($file)
-  {
+  public static function contractFileExists($file) {
     $fullPath = CRM_Contract_Utils::contractFilePath($file);
     if ($fullPath) {
       if (file_exists($fullPath)) {
         return $fullPath;
       }
     }
-    return false;
+    return FALSE;
   }
 
   /**
@@ -204,8 +200,7 @@ class CRM_Contract_Utils
    *
    * @return string
    */
-  static function contractFileName($file)
-  {
+  public static function contractFileName($file) {
     return $file . '.tif';
   }
 
@@ -218,8 +213,7 @@ class CRM_Contract_Utils
    *
    * @return bool|string
    */
-  static function contractFilePath($file)
-  {
+  public static function contractFilePath($file) {
     // We need a valid filename
     if (empty($file)) {
       return FALSE;
@@ -234,7 +228,8 @@ class CRM_Contract_Utils
       }
       $fullPathWithFilename = $fullPath . self::contractFileName($file);
       return $fullPathWithFilename;
-    } else {
+    }
+    else {
       CRM_Core_Error::debug_log_message('Warning: Contract file path undefined! Did you set customFileUploadDir?');
       return FALSE;
     }
@@ -247,16 +242,18 @@ class CRM_Contract_Utils
    * @param $contract_id int the contract number
    */
   public static function deleteSystemActivities($contract_id) {
-    if (empty($contract_id)) return;
+    if (empty($contract_id)) {
+      return;
+    }
 
     $activity_types_to_delete = CRM_Contract_Configuration::suppressSystemActivityTypes();
     if (!empty($activity_types_to_delete)) {
       // find them
       $activity_search = civicrm_api3('Activity', 'get', [
-          'source_record_id'   => $contract_id,
-          'activity_type_id'   => ['IN' => $activity_types_to_delete],
-          'activity_date_time' => ['>=' => date('Ymd') . '000000'],
-          'return'             => 'id',
+        'source_record_id'   => $contract_id,
+        'activity_type_id'   => ['IN' => $activity_types_to_delete],
+        'activity_date_time' => ['>=' => date('Ymd') . '000000'],
+        'return'             => 'id',
       ]);
 
       // delete them
@@ -292,7 +289,7 @@ class CRM_Contract_Utils
       function($field) {
         return $field['id'];
       },
-      CRM_Contract_CustomData::getCustomFieldsForGroups(['contract_cancellation','contract_updates'])
+      CRM_Contract_CustomData::getCustomFieldsForGroups(['contract_cancellation', 'contract_updates'])
     );
     foreach ($data as $field => $value) {
       if (substr($field, 0, 7) === 'custom_') {
@@ -313,7 +310,7 @@ class CRM_Contract_Utils
    * @param $attribute string attribute having the desired value
    * @return mixed value
    */
-  static public function lookupValue($entity, $attribute, $query) {
+  public static function lookupValue($entity, $attribute, $query) {
     static $lookup_cache = [];
 
     // create a key
@@ -322,7 +319,8 @@ class CRM_Contract_Utils
     if (!isset($lookup_cache[$cache_key])) {
       try {
         $value = civicrm_api3($entity, 'getvalue', $query);
-      } catch (Exception $ex) {
+      }
+      catch (Exception $ex) {
         Civi::log()->debug("Error looking up {$entity} value, attribute '{$attribute}' with query " . json_encode($query));
         $value = 'ERROR';
       }
@@ -345,9 +343,11 @@ class CRM_Contract_Utils
    *
    * @return mixed value
    */
-  static public function lookupOptionValue($option_group_name, $value, $attribute = 'label') {
+  public static function lookupOptionValue($option_group_name, $value, $attribute = 'label') {
     return self::lookupValue('OptionValue', $attribute, [
-        'option_group_id' => $option_group_name,
-        'value'           => $value]);
+      'option_group_id' => $option_group_name,
+      'value'           => $value,
+    ]);
   }
+
 }

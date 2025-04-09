@@ -16,9 +16,10 @@ use CRM_Contract_ExtensionUtil as E;
 class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   // By convention, functions that look like "function upgrade_NNNN()" are
-  // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
 
-
+  /**
+   * upgrade tasks. They are executed in order (like Drupal's hook_update_N).
+   */
   public function install() {
     $this->executeSqlFile('sql/contract.sql');
   }
@@ -145,4 +146,5 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
+
 }

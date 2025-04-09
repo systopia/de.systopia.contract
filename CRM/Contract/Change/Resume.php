@@ -56,7 +56,8 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
     if ($this->isNew()) {
       // FIXME: replicating weird behaviour by old engine
       return "id{$contract_id}:";
-    } else {
+    }
+    else {
 
       $subject = "id{$contract_id}:";
       if (!empty($this->data['contract_cancellation.contact_history_cancel_reason'])) {
@@ -83,7 +84,7 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
    * @return string title
    */
   public static function getChangeTitle() {
-    return E::ts("Resume Contract");
+    return E::ts('Resume Contract');
   }
 
 }
