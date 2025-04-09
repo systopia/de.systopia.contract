@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -20,7 +21,7 @@ use CRM_Contract_ExtensionUtil as E;
  *
  * @package Civi\Contract\Event
  */
-class RapidCreateFormEvent extends ConfigurationEvent {
+class RapidCreateFormEventAbstract extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.rapidcreateform';
 
   /**
@@ -65,16 +66,18 @@ class RapidCreateFormEvent extends ConfigurationEvent {
    * @return string|null
    */
   public static function getUrl() {
-    $event = new RapidCreateFormEvent();
+    $event = new RapidCreateFormEventAbstract();
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     $rapid_create_url = $event->getRapidCreateFormUrl();
 
     // make sure that we don't end up in the classic form if not rapid create form is defined
     if (empty($rapid_create_url)) {
+      // phpcs:disable Generic.Files.LineLength.TooLong
       \CRM_Core_Session::setStatus(
           E::ts("No form for the quick entry of contact and membership data, please use the 'add membership' form in the contact's membership tab. Please contact an expert should you need such a form."),
           E::ts("'Rapid Create' form not available")
       );
+      // phpcs:enable
       $rapid_create_url = \CRM_Utils_System::url('civicrm/dashboard');
     }
 

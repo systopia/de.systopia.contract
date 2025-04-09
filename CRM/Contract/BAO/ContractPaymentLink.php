@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaymentLink {
@@ -22,7 +24,12 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    * @return object CRM_Contract_BAO_ContractPaymentLink resulting object
    * @throws Exception if mandatory fields aren't set
    */
-  public static function createPaymentLink($contract_id, $contribution_recur_id, $is_active = TRUE, $start_date = 'now', $end_date = NULL) {
+  public static function createPaymentLink($contract_id,
+    $contribution_recur_id,
+    $is_active = TRUE,
+    $start_date = 'now',
+    $end_date = NULL
+  ) {
     $params = [
       'contract_id'           => $contract_id,
       'contribution_recur_id' => $contribution_recur_id,
@@ -225,15 +232,24 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
 
       if ($active) {
         return [
-          'text'   => E::ts('%2 [%1] since %3', [1 => $contract['id'], 2 => $membership_type, 3 => $start_date]),
-          'link'   => CRM_Utils_System::url('civicrm/contact/view/membership', "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"),
+          'text' => E::ts('%2 [%1] since %3', [1 => $contract['id'], 2 => $membership_type, 3 => $start_date]),
+          'link' => CRM_Utils_System::url(
+            'civicrm/contact/view/membership',
+            "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"
+          ),
           'active' => $active,
         ];
       }
       else {
         return [
-          'text'   => E::ts('%2 [%1] from %3 to %4', [1 => $contract['id'], 2 => $membership_type, 3 => $start_date, 4 => $end_date]),
-          'link'   => CRM_Utils_System::url('civicrm/contact/view/membership', "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"),
+          'text' => E::ts(
+            '%2 [%1] from %3 to %4',
+            [1 => $contract['id'], 2 => $membership_type, 3 => $start_date, 4 => $end_date]
+          ),
+          'link' => CRM_Utils_System::url(
+            'civicrm/contact/view/membership',
+            "action=view&reset=1&cid={$contract['contact_id']}&id={$contract['id']}"
+          ),
           'active' => $active,
         ];
       }

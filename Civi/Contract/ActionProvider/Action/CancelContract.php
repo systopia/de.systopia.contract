@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Contract\ActionProvider\Action;
 
 use Civi\ActionProvider\Action\AbstractAction;
@@ -32,9 +34,26 @@ class CancelContract extends AbstractAction {
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
-      new Specification('default_membership_type_id', 'Integer', E::ts('Membership Type ID (default)'), TRUE, NULL, NULL, $this->getMembershipTypes(), FALSE),
-      new Specification('default_membership_cancellation.membership_cancel_reason', 'Integer', E::ts('Cancel Reason (default)'), TRUE, NULL, NULL, $this->getCancelReasons(), FALSE),
-
+      new Specification(
+        'default_membership_type_id',
+        'Integer',
+        E::ts('Membership Type ID (default)'),
+        TRUE,
+        NULL,
+        NULL,
+        $this->getMembershipTypes(),
+        FALSE
+      ),
+      new Specification(
+        'default_membership_cancellation.membership_cancel_reason',
+        'Integer',
+        E::ts('Cancel Reason (default)'),
+        TRUE,
+        NULL,
+        NULL,
+        $this->getCancelReasons(),
+        FALSE
+      ),
     ]);
   }
 
@@ -45,15 +64,38 @@ class CancelContract extends AbstractAction {
    */
   public function getParameterSpecification() {
     return new SpecificationBag([
-        // required fields
-      new Specification('contact_id', 'Integer', E::ts('Contact ID'), FALSE),
-      new Specification('contract_id', 'Integer', E::ts('Contract ID'), TRUE),
-      new Specification('date', 'Date', E::ts('Date'), TRUE, date('Y-m-d H:i:s')),
-      new Specification('membership_type_id', 'Integer', E::ts('Membership Type ID'), FALSE),
-      new Specification('membership_cancellation.membership_cancel_reason', 'Integer', E::ts('Cancel Reason'), FALSE),
-
-        // dates
-
+      // required fields
+      new Specification(
+        'contact_id',
+        'Integer',
+        E::ts('Contact ID'),
+        FALSE
+      ),
+      new Specification(
+        'contract_id',
+        'Integer',
+        E::ts('Contract ID'),
+        TRUE
+      ),
+      new Specification(
+        'date',
+        'Date',
+        E::ts('Date'),
+        TRUE,
+        date('Y-m-d H:i:s')
+      ),
+      new Specification(
+        'membership_type_id',
+        'Integer',
+        E::ts('Membership Type ID'),
+        FALSE
+      ),
+      new Specification(
+        'membership_cancellation.membership_cancel_reason',
+        'Integer',
+        E::ts('Cancel Reason'),
+        FALSE
+      ),
     ]);
   }
 
@@ -84,7 +126,13 @@ class CancelContract extends AbstractAction {
     $contract_data = ['action' => 'cancel'];
 
     // add basic fields to contract_data
-    foreach (['contact_id', 'contract_id', 'membership_type_id', 'date', 'membership_cancellation.membership_cancel_reason'] as $parameter_name) {
+    foreach ([
+      'contact_id',
+      'contract_id',
+      'membership_type_id',
+      'date',
+      'membership_cancellation.membership_cancel_reason',
+    ] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;

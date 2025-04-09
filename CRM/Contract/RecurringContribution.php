@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_RecurringContribution {
@@ -114,7 +116,6 @@ class CRM_Contract_RecurringContribution {
     // load attached mandates
     if (!empty($contributionRecurs)) {
       $sepaMandates = civicrm_api3('SepaMandate', 'get', [
-      //        'contact_id'   => $cid,
         'type'         => 'RCUR',
         'entity_table' => 'civicrm_contribution_recur',
         'entity_id'    => ['IN' => array_keys($contributionRecurs)],
@@ -177,7 +178,11 @@ class CRM_Contract_RecurringContribution {
       ];
       $mandate = $this->getSepaByRecurringContributionId($cr['id'], $sepaMandates);
       if (empty($mandate)) {
-        Civi::log()->debug("Data inconsistency: recurring contribution [{$cr['id']}] has a SEPA payment instrument, but no recurring contribution");
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        Civi::log()->debug(
+          "Data inconsistency: recurring contribution [{$cr['id']}] has a SEPA payment instrument, but no recurring contribution"
+        );
+        // phpcs:enable
       }
       $sepa_creditor_id = $mandate['creditor_id'] ?? NULL;
       $result['fields']['iban'] = $mandate['iban'] ?? '';
@@ -185,7 +190,8 @@ class CRM_Contract_RecurringContribution {
       $result['fields']['org_iban'] = $sepa_creditor_id ? ($sepaCreditors[$sepa_creditor_id]['iban']) : '';
       $result['fields']['creditor_name'] = $sepa_creditor_id ? ($sepaCreditors[$sepa_creditor_id]['name']) : '';
       $result['fields']['next_debit'] = substr($cr['next_sched_contribution_date'] ?? '', 0, 10);
-      $result['label'] = "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandate['reference']})";
+      $result['label'] =
+        "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandate['reference']})";
       // todo: use template? consolidate with payment preview
       $result['text_summary'] =
         E::ts('Debitor name') . ": {$result['fields']['display_name']}<br /> " .
@@ -216,7 +222,8 @@ class CRM_Contract_RecurringContribution {
         E::ts('Frequency') . ": {$result['fields']['frequency']}<br />" .
         E::ts('Annual amount') . ": {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />" .
         E::ts('Installment amount') . ": {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />";
-      $result['label'] = "{$result['fields']['payment_instrument']}, {$result['fields']['amount']} {$result['fields']['frequency']}";
+      $result['label'] =
+        "{$result['fields']['payment_instrument']}, {$result['fields']['amount']} {$result['fields']['frequency']}";
     }
 
     return $result;
@@ -290,10 +297,14 @@ class CRM_Contract_RecurringContribution {
       ]);
 
       $plural = $contributionRecur['frequency_interval'] > 1 ? 's' : '';
+      // phpcs:disable Generic.Files.LineLength.TooLong
       return "SEPA: {$sepaMandate['reference']} ({$contributionRecur['amount']} every {$contributionRecur['frequency_interval']} {$contributionRecur['frequency_unit']}{$plural})";
+      // phpcs:enable
     }
     else {
+      // phpcs:disable Generic.Files.LineLength.TooLong
       return "{$paymentInstruments[$contributionRecur['payment_instrument_id']]}: ({$contributionRecur['amount']} every {$contributionRecur['frequency_interval']} {$contributionRecur['frequency_unit']})";
+      // phpcs:enable
     }
   }
 
@@ -323,7 +334,14 @@ class CRM_Contract_RecurringContribution {
   public function getSepaPaymentInstruments() {
     if (!isset($this->sepaPaymentInstruments)) {
       $this->sepaPaymentInstruments = [];
-      $result = civicrm_api3('OptionValue', 'get', ['option_group_id' => 'payment_instrument', 'name' => ['IN' => ['RCUR', 'OOFF', 'FRST']]]);
+      $result = civicrm_api3(
+        'OptionValue',
+        'get',
+        [
+          'option_group_id' => 'payment_instrument',
+          'name' => ['IN' => ['RCUR', 'OOFF', 'FRST']],
+        ]
+      );
       foreach ($result['values'] as $paymentInstrument) {
         $this->sepaPaymentInstruments[] = $paymentInstrument['value'];
       }

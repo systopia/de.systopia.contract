@@ -1,8 +1,16 @@
 <?php
+/*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2017-2025 SYSTOPIA                             |
+| Author: B. Endres (endres -at- systopia.de)                  |
+|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+|         P. Figel (pfigel -at- greenpeace.org)                |
+| http://www.systopia.de/                                      |
++--------------------------------------------------------------*/
+
+declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
-
-include_once 'ContractTestBase.php';
 
 /**
  * Basic Contract Engine Tests
@@ -71,7 +79,11 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       $this->assertNotEquals($contract, $contract_changed2, 'This should have changed');
 
       // make sure status is cancelled
-      $this->assertEquals($this->getMembershipStatusID('Cancelled'), $contract_changed2['status_id'], "The contract wasn't cancelled");
+      $this->assertEquals(
+        $this->getMembershipStatusID('Cancelled'),
+        $contract_changed2['status_id'],
+        "The contract wasn't cancelled"
+      );
     }
   }
 
@@ -102,8 +114,16 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       $this->assertNotEquals($contract, $contract_changed2, 'This should have changed');
 
       // make sure status is current
-      $this->assertEquals($this->getMembershipStatusID('Current'), $contract_changed2['status_id'], "The contract isn't active");
-      $this->assertEquals(240.00, $contract_changed2['membership_payment.membership_annual'], 'The contract has the wrong amount');
+      $this->assertEquals(
+        $this->getMembershipStatusID('Current'),
+        $contract_changed2['status_id'],
+        "The contract isn't active"
+      );
+      $this->assertEquals(
+        240.00,
+        $contract_changed2['membership_payment.membership_annual'],
+        'The contract has the wrong amount'
+      );
     }
   }
 
@@ -129,7 +149,11 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+1 day');
       $contract_changed2 = $this->getContract($contract['id']);
-      $this->assertEquals($this->getMembershipStatusID('Paused'), $contract_changed2['status_id'], "The contract isn't paused");
+      $this->assertEquals(
+        $this->getMembershipStatusID('Paused'),
+        $contract_changed2['status_id'],
+        "The contract isn't paused"
+      );
     }
   }
 
@@ -152,7 +176,11 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       $this->assertNotEquals($contract, $contract_cancelled, 'This should have changed');
 
       // make sure status is cancelled
-      $this->assertEquals($this->getMembershipStatusID('Cancelled'), $contract_cancelled['status_id'], "The contract wasn't cancelled");
+      $this->assertEquals(
+        $this->getMembershipStatusID('Cancelled'),
+        $contract_cancelled['status_id'],
+        "The contract wasn't cancelled"
+      );
 
       // now: revive contract
       $this->modifyContract($contract['id'], 'revive', '+2 days', [
@@ -165,8 +193,16 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       $this->assertNotEquals($contract_cancelled, $contract_revived, 'This should have changed');
 
       // make sure status is cancelled
-      $this->assertEquals($this->getMembershipStatusID('Current'), $contract_revived['status_id'], "The contract wasn't revived");
-      $this->assertEquals(240.00, $contract_revived['membership_payment.membership_annual'], 'The contract has the wrong amount');
+      $this->assertEquals(
+        $this->getMembershipStatusID('Current'),
+        $contract_revived['status_id'],
+        "The contract wasn't revived"
+      );
+      $this->assertEquals(
+        240.00,
+        $contract_revived['membership_payment.membership_annual'],
+        'The contract has the wrong amount'
+      );
     }
   }
 
@@ -219,7 +255,9 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       'membership_payment.membership_annual' => '123.00',
     ]);
     // resolve "Needs Review"
-    CRM_Core_DAO::executeQuery("UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;");
+    CRM_Core_DAO::executeQuery(
+      "UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;"
+    );
     // run the cancellation (but not the update)
     $this->runContractEngine($contract['id'], '+2 days');
 
@@ -235,7 +273,9 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       'membership_cancellation.membership_cancel_reason' => 'Unknown',
     ]);
     // resolve "Needs Review"
-    CRM_Core_DAO::executeQuery("UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;");
+    CRM_Core_DAO::executeQuery(
+      "UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;"
+    );
     // run cancellation
     $this->callEngineFailure(
       $contract['id'],

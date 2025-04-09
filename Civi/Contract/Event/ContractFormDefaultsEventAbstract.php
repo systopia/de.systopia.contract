@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -21,7 +22,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class ContractFormDefaultsEvent extends ConfigurationEvent {
+class ContractFormDefaultsEventAbstract extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.form.defaults';
 
   /**
@@ -42,7 +43,7 @@ class ContractFormDefaultsEvent extends ConfigurationEvent {
    *  the form mode
    */
   public static function adjustDefaults(&$form_defaults, $action) {
-    $event = new ContractFormDefaultsEvent($form_defaults, $action);
+    $event = new ContractFormDefaultsEventAbstract($form_defaults, $action);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
   }
 

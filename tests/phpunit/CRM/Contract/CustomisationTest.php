@@ -1,9 +1,17 @@
 <?php
+/*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2017-2025 SYSTOPIA                             |
+| Author: B. Endres (endres -at- systopia.de)                  |
+|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+|         P. Figel (pfigel -at- greenpeace.org)                |
+| http://www.systopia.de/                                      |
++--------------------------------------------------------------*/
+
+declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
-use Civi\Contract\Event\RenderChangeSubjectEvent;
-
-include_once 'ContractTestBase.php';
+use Civi\Contract\Event\RenderChangeSubjectEventAbstract;
 
 /**
  * Basic Contract Engine Tests
@@ -15,7 +23,7 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
   public function setUp() : void {
     parent::setUp();
     Civi::dispatcher()->addListener(
-        RenderChangeSubjectEvent::EVENT_NAME,
+        RenderChangeSubjectEventAbstract::EVENT_NAME,
         ['CRM_Contract_CustomisationTest', 'renderSubjectTest1']);
 
   }
@@ -40,12 +48,12 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
   /**
    * Render a custom change activity subject
    *
-   * @param \Civi\Contract\Event\RenderChangeSubjectEvent $event
+   * @param \Civi\Contract\Event\RenderChangeSubjectEventAbstract $event
    *   the Contract Extension's render change subject event
    *
    * @see https://projekte.systopia.de/issues/18511#note-10
    */
-  public static function renderSubjectTest1(RenderChangeSubjectEvent $event) {
+  public static function renderSubjectTest1(RenderChangeSubjectEventAbstract $event) {
     $event->setRenderedSubject('TEST-' . $event->getActivityAction());
   }
 

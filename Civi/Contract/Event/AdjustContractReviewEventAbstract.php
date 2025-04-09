@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 
 namespace Civi\Contract\Event;
 
@@ -18,7 +20,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class AdjustContractReviewEvent extends ConfigurationEvent {
+class AdjustContractReviewEventAbstract extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.contractreview.adjust';
 
   /**
@@ -32,10 +34,10 @@ class AdjustContractReviewEvent extends ConfigurationEvent {
   /**
    * Dispatch the Symfony event to get the review table adjustments
    *
-   * @return AdjustContractReviewEvent
+   * @return AdjustContractReviewEventAbstract
    */
   public static function getContractReviewAdjustments() {
-    $event = new AdjustContractReviewEvent();
+    $event = new AdjustContractReviewEventAbstract();
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event;
   }

@@ -6,7 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
-use Civi\Contract\Event\RenderChangeSubjectEvent as RenderChangeSubjectEvent;
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -16,7 +17,9 @@ use CRM_Contract_ExtensionUtil as E;
  * This new 'Change' concept is the replacement for the CRM_Contract_ModificationActivity
  *  and the CRM_Contract_Handlers
  */
+// phpcs:disable Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Contract_Change {
+// phpcs:enable
 
   /**
    * Data representing the data. Will mostly be the activity data
@@ -232,7 +235,11 @@ abstract class CRM_Contract_Change {
     if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
       // we have a recurring contribution!
       try {
-        $contributionRecur = civicrm_api3('ContributionRecur', 'getsingle', ['id' => $contract['membership_payment.membership_recurring_contribution']]);
+        $contributionRecur = civicrm_api3(
+          'ContributionRecur',
+          'getsingle',
+          ['id' => $contract['membership_payment.membership_recurring_contribution']]
+        );
         $contract['membership_payment.membership_annual']    = $this->calcAnnualAmount($contributionRecur);
         $contract['membership_payment.membership_frequency'] = $this->calcPaymentFrequency($contributionRecur);
         $contract['membership_payment.cycle_day']            = $contributionRecur['cycle_day'];
@@ -245,14 +252,23 @@ abstract class CRM_Contract_Change {
         ]);
         if ($sepaMandateResult['count'] == 1) {
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
-          $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount($sepaMandate['contact_id'], $sepaMandate['iban'], $sepaMandate['bic']);
+          $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount(
+            $sepaMandate['contact_id'],
+            $sepaMandate['iban'],
+            $sepaMandate['bic']
+          );
           $contract['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
           $contract['membership_payment.from_name'] = $sepaMandate['account_holder'] ?? '';
 
         }
         elseif ($sepaMandateResult['count'] == 0) {
           // this should be a recurring contribution -> get from the latest contribution
-          list($from_ba, $to_ba) = CRM_Contract_BankingLogic::getAccountsFromRecurringContribution($contributionRecur['id']);
+          [
+            $from_ba,
+            $to_ba,
+          ] = CRM_Contract_BankingLogic::getAccountsFromRecurringContribution(
+            $contributionRecur['id']
+          );
           $contract['membership_payment.from_ba'] = $from_ba;
           $contract['membership_payment.to_ba']   = $to_ba;
 
@@ -266,7 +282,9 @@ abstract class CRM_Contract_Change {
         }
       }
       catch (Exception $ex) {
-        CRM_Core_Error::debug_log_message("Couldn't load recurring contribution [{$contract['membership_payment.membership_recurring_contribution']}]");
+        CRM_Core_Error::debug_log_message(
+          "Couldn't load recurring contribution [{$contract['membership_payment.membership_recurring_contribution']}]"
+        );
       }
     }
   }
@@ -336,7 +354,7 @@ abstract class CRM_Contract_Change {
    */
   public function renderChangeSubject($change, $contract_before, $contract_after) {
     // first, try to see if there is some customisation:
-    $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
+    $rendered_subject = RenderChangeSubjectEventAbstract::renderCustomChangeSubject(
         $change->getActionName(),
         $contract_before,
         $contract_after);
@@ -357,7 +375,11 @@ abstract class CRM_Contract_Change {
   protected function calcAnnualAmount($contributionRecur) {
     // only 'month' and 'year' should be in use
     $frequencyUnitTranslate = ['month' => 12, 'year' => 1];
-    return CRM_Contract_SepaLogic::formatMoney(CRM_Contract_SepaLogic::formatMoney($contributionRecur['amount']) * $frequencyUnitTranslate[$contributionRecur['frequency_unit']] / $contributionRecur['frequency_interval']);
+    return CRM_Contract_SepaLogic::formatMoney(
+      CRM_Contract_SepaLogic::formatMoney(
+        $contributionRecur['amount']
+      ) * $frequencyUnitTranslate[$contributionRecur['frequency_unit']] / $contributionRecur['frequency_interval']
+    );
   }
 
   /**
@@ -496,7 +518,11 @@ abstract class CRM_Contract_Change {
       case 'membership_payment.membership_frequency':
       case 'contract_updates.ch_frequency':
         if (is_numeric($value)) {
-          return $this->lookupValue('OptionValue', 'label', ['value' => $value, 'option_group_id' => 'payment_frequency']);
+          return $this->lookupValue(
+            'OptionValue',
+            'label',
+            ['value' => $value, 'option_group_id' => 'payment_frequency']
+          );
         }
         else {
           return $value;
@@ -516,7 +542,11 @@ abstract class CRM_Contract_Change {
       case 'membership_payment.payment_instrument':
       case 'contract_updates.ch_payment_instrument':
         if (is_numeric($value)) {
-          return $this->lookupValue('OptionValue', 'label', ['value' => $value, 'option_group_id' => 'payment_instrument']);
+          return $this->lookupValue(
+            'OptionValue',
+            'label',
+            ['value' => $value, 'option_group_id' => 'payment_instrument']
+          );
         }
         else {
           return $value;
@@ -525,7 +555,11 @@ abstract class CRM_Contract_Change {
       case 'membership_cancellation.membership_cancel_reason':
       case 'contract_cancellation.contact_history_cancel_reason':
         if (is_numeric($value)) {
-          return $this->lookupValue('OptionValue', 'label', ['value' => $value, 'option_group_id' => 'contract_cancel_reason']);
+          return $this->lookupValue(
+            'OptionValue',
+            'label',
+            ['value' => $value, 'option_group_id' => 'contract_cancel_reason']
+          );
         }
         else {
           return $value;
@@ -560,7 +594,11 @@ abstract class CRM_Contract_Change {
           return $value;
         }
         else {
-          return $this->lookupValue('OptionValue', 'value', ['label' => $value, 'option_group_id' => 'payment_frequency']);
+          return $this->lookupValue(
+            'OptionValue',
+            'value',
+            ['label' => $value, 'option_group_id' => 'payment_frequency']
+          );
         }
 
       case 'membership_payment.from_ba':
@@ -580,7 +618,11 @@ abstract class CRM_Contract_Change {
           return $value;
         }
         else {
-          return $this->lookupValue('OptionValue', 'value', ['label' => $value, 'option_group_id' => 'payment_instrument']);
+          return $this->lookupValue(
+            'OptionValue',
+            'value',
+            ['label' => $value, 'option_group_id' => 'payment_instrument']
+          );
         }
 
       case 'membership_cancellation.membership_cancel_reason':
@@ -589,7 +631,11 @@ abstract class CRM_Contract_Change {
           return $value;
         }
         else {
-          return $this->lookupValue('OptionValue', 'value', ['label' => $value, 'option_group_id' => 'contract_cancel_reason']);
+          return $this->lookupValue(
+            'OptionValue',
+            'value',
+            ['label' => $value, 'option_group_id' => 'contract_cancel_reason']
+          );
         }
 
       default:
@@ -607,7 +653,12 @@ abstract class CRM_Contract_Change {
    */
   public static function modifyActionLinks($membership_data, &$links) {
     // first remove the default ones that shouldn't be used any more
-    $obsolete_actions = [CRM_Core_Action::RENEW, CRM_Core_Action::FOLLOWUP, CRM_Core_Action::DELETE, CRM_Core_Action::UPDATE];
+    $obsolete_actions = [
+      CRM_Core_Action::RENEW,
+      CRM_Core_Action::FOLLOWUP,
+      CRM_Core_Action::DELETE,
+      CRM_Core_Action::UPDATE,
+    ];
     foreach ($links as $key => $link) {
       if (in_array($link['bit'], $obsolete_actions)) {
         unset($links[$key]);
@@ -750,7 +801,9 @@ abstract class CRM_Contract_Change {
 
     $change_class = self::getClassByActivityType($data['activity_type_id']);
     if (empty($change_class)) {
-      throw new Exception("Activity type ID '{$data['activity_type_id']}' is not a valid contract change type.");
+      throw new Exception(
+        "Activity type ID '{$data['activity_type_id']}' is not a valid contract change type."
+      );
     }
 
     // make sure we're using the descriptive indices, not the custom_[id] ones

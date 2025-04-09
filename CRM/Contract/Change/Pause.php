@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -136,8 +138,10 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
       $subject = "id{$contract_id}:";
       if (!empty($this->data['contract_cancellation.contact_history_cancel_reason'])) {
         // FIXME: replicating weird behaviour by old engine
-        $subject .= ' cancel reason ' . $this->resolveValue($this->data['contract_cancellation.contact_history_cancel_reason'], 'contract_cancellation.contact_history_cancel_reason');
-        //$subject .= ' cancel reason ' . $this->labelValue($this->data['contract_cancellation.contact_history_cancel_reason'], 'contract_cancellation.contact_history_cancel_reason');
+        $subject .= ' cancel reason ' . $this->resolveValue(
+            $this->data['contract_cancellation.contact_history_cancel_reason'],
+            'contract_cancellation.contact_history_cancel_reason'
+          );
       }
       return $subject;
     }

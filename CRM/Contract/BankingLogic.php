@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Interface to CiviBanking functions
  *
@@ -117,7 +119,11 @@ class CRM_Contract_BankingLogic {
   public static function getCreditorBankAccount() {
     if (self::$_creditorBankAccount === NULL) {
       $creditor = CRM_Contract_SepaLogic::getCreditor();
-      self::$_creditorBankAccount = self::getOrCreateBankAccount($creditor->creditor_id, $creditor->iban, $creditor->bic);
+      self::$_creditorBankAccount = self::getOrCreateBankAccount(
+        $creditor->creditor_id,
+        $creditor->iban,
+        $creditor->bic
+      );
     }
     return self::$_creditorBankAccount;
   }

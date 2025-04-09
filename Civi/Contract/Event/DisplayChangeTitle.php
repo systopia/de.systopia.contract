@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -24,7 +25,7 @@ use civicrm_api3 as civicrm_api3;
  *
  * @package Civi\Contract\Event
  */
-class DisplayChangeTitle extends ConfigurationEvent {
+class DisplayChangeTitle extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.renderchangedisplay';
 
   /**
@@ -105,7 +106,7 @@ class DisplayChangeTitle extends ConfigurationEvent {
       return $this->change_activity_display_title;
     }
     else {
-      // default is: "id {change action}"
+      // Default is "id {change action}".
       $activity_class = CRM_Contract_Change::getClassByActivityType($this->change_activity_type_id);
       $activity_name = CRM_Contract_Change::getActionByClass($activity_class);
       return "{$this->change_activity_id} {$activity_name}";

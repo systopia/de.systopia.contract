@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -92,7 +94,11 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         $this->setParameter($change_field, $contract_after[$membership_field]);
       }
     }
-    $this->setParameter('contract_updates.ch_annual_diff', (float) $contract_after['membership_payment.membership_annual'] - (float) $contract_before['membership_payment.membership_annual']);
+    $this->setParameter(
+      'contract_updates.ch_annual_diff',
+      (float) $contract_after['membership_payment.membership_annual']
+      - (float) $contract_before['membership_payment.membership_annual']
+    );
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
     $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name']);
     $this->setStatus('Completed');
@@ -151,18 +157,6 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       $value_after      = $this->labelValue($raw_value_after, $field_name);
 
       // FIXME: replicating weird behaviour by old engine
-      // TODO: not needed any more? (see https://redmine.greenpeace.at/issues/1276#note-74)
-      /*
-      if (!$this->isNew() && $subject_abbreviation == 'member iban') {
-      // add member iban in any case
-      $differences[] = "{$subject_abbreviation} {$value_before} to {$value_after}";
-      continue;
-      } elseif (!$this->isNew() && $subject_abbreviation == 'freq.') {
-      // use the values, not the labels
-      $differences[] = "{$subject_abbreviation} {$raw_value_before} to {$raw_value_after}";
-      continue;
-      }
-       */
 
       // standard behaviour:
       if ($value_before != $value_after) {

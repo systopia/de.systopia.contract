@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 
 namespace Civi\Contract\Event;
 
@@ -20,7 +22,7 @@ use CRM_Utils_System;
  *
  * @package Civi\Contract\Event
  */
-class ContractCreateFormEvent extends ConfigurationEvent {
+class ContractCreateFormEventAbstract extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.createform';
 
   /**
@@ -79,7 +81,7 @@ class ContractCreateFormEvent extends ConfigurationEvent {
    * @return string
    */
   public static function getUrl($contact_id) {
-    $event = new ContractCreateFormEvent($contact_id);
+    $event = new ContractCreateFormEventAbstract($contact_id);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->getContractCreateFormUrl();
   }
