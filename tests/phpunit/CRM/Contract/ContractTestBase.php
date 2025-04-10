@@ -16,6 +16,7 @@ use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
+use Civi\Test\CiviEnvBuilder;
 
 /**
  * FIXME - Add test description.
@@ -39,9 +40,9 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     callAPISuccess as public traitCallAPISuccess;
   }
 
-  protected static $counter = 0;
+  protected static int $counter = 0;
 
-  public function setUpHeadless() {
+  public function setUpHeadless(): CiviEnvBuilder {
     // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
     // See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
     return \Civi\Test::headless()
@@ -82,64 +83,39 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
 
   /**
    * Test if the needle string is contained in the haystack
-   *
-   * @param string $needle
-   *   the string to be looked for in the haystack
-   *
-   * @param string $haystack
-   *   the string to find the needle in
-   *
-   * @param string $error
-   *   error message
-   *
-   * @return void
    */
-  protected function assertStringContainsOtherString($needle, $haystack, $error = NULL) {
+  protected function assertStringContainsOtherString(string $needle, string $haystack, ?string $error = NULL): void {
     $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== FALSE);
     if (!$contains) {
-      if (empty($error)) {
-        $error = "String '{$needle}' not contained in '{$haystack}'.";
-      }
-      $this->fail($error);
+      static::fail($error ?? "String '{$needle}' not contained in '{$haystack}'.");
     }
   }
 
   /**
    * Test if the needle string is NOT contained in the haystack
    *
-   * @param string $needle
-   *   the string to be looked for in the haystack
-   *
-   * @param string $haystack
-   *   the string to find the needle in
-   *
-   * @param string $error
-   *   error message
-   *
    * @return void
    */
-  protected function assertStringNotContainsOtherString($needle, $haystack, $error = NULL) {
+  protected function assertStringNotContainsOtherString(string $needle, string $haystack, ?string $error = NULL) {
     $contains = ($needle !== '' && mb_strpos($haystack, $needle) !== FALSE);
     if ($contains) {
-      if (empty($error)) {
-        $error = "String '{$needle}' not contained in '{$haystack}'.";
-      }
-      $this->fail($error);
+      static::fail($error ?? "String '{$needle}' not contained in '{$haystack}'.");
     }
   }
 
   /**
    * Run the contract engine, and make sure it works
    *
-   * @param $contract_id
+   * @return array<string, mixed>
    */
-  public function runContractEngine($contract_id, $now = 'now') {
-    $this->assertNotEmpty($contract_id, 'You can only run the contract engine on a specific contract ID.');
+  public function runContractEngine(int $contract_id, string $now = 'now'): array {
+    static::assertNotEmpty($contract_id, 'You can only run the contract engine on a specific contract ID.');
+    /** @phpstan-var array{values: array<string, mixed>} $result */
     $result = $this->callAPISuccess('Contract', 'process_scheduled_modifications', [
       'now' => $now,
       'id'  => $contract_id,
     ]);
-    $this->assertTrue(empty($result['values']['failed']), 'Contract Engine reports failure');
+    static::assertTrue(empty($result['values']['failed']), 'Contract Engine reports failure');
     return $result;
   }
 
@@ -243,6 +219,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
   public function getContract($contract_id) {
     $contract = $this->callAPISuccess('Membership', 'getsingle', ['id' => $contract_id]);
     CRM_Contract_CustomData::labelCustomFields($contract);
+    $contract['id'] = (int) $contract['id'];
     return $contract;
   }
 
@@ -443,7 +420,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    * @param $contract_id int    Contract ID
    * @param $types       array  list of types
    * @param $status      array  list of activity status
-   * @return array|null activity data
+   * @return array activity data
    */
   public function getLastChangeActivity($contract_id, $types = NULL, $status = []) {
     $activities = $this->getChangeActivities($contract_id, $types, $status);

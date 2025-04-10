@@ -42,7 +42,7 @@ function civicrm_api3_Contract_create($params) {
   );
   if (!empty($params[$recurring_contribution_field_key])) {
     // link recurring contribution to contract
-    CRM_Contract_SepaLogic::setContractPaymentLink($membership['id'], $params[$recurring_contribution_field_key]);
+    CRM_Contract_SepaLogic::setContractPaymentLink($membership['id'], (int) $params[$recurring_contribution_field_key]);
   }
 
   // create 'sign' activity

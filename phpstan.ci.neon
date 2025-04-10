@@ -3,7 +3,10 @@ includes:
 
 parameters:
 	scanDirectories:
+		- ci/vendor/civicrm/civicrm-core/api/
+		- ci/vendor/civicrm/civicrm-core/Civi/
 		- ci/vendor/civicrm/civicrm-core/CRM/
+		- ci/vendor/civicrm/civicrm-core/ext/
 	bootstrapFiles:
 		- ci/vendor/autoload.php
 	# Because we test with different versions in CI we have unmatched errors

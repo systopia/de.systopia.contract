@@ -30,10 +30,8 @@ class GetContract extends AbstractAction {
 
   /**
    * Returns the specification of the configuration options for the actual action.
-   *
-   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
-  public function getConfigurationSpecification() {
+  public function getConfigurationSpecification(): SpecificationBag {
     return new SpecificationBag([
       new Specification(
         'default_membership_type_id',
@@ -50,10 +48,8 @@ class GetContract extends AbstractAction {
 
   /**
    * Returns the specification of the parameters of the actual action.
-   *
-   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
-  public function getParameterSpecification() {
+  public function getParameterSpecification(): SpecificationBag {
     return new SpecificationBag([
         // required fields
       new Specification('contact_id', 'Integer', E::ts('Contact ID'), TRUE),

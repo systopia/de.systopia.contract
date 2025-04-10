@@ -228,7 +228,7 @@ class CRM_Contract_SepaLogic {
 
       // create and reload (to get all data)
       $new_mandate = self::createNewMandate($new_mandate_values);
-      $new_recurring_contribution = $new_mandate['entity_id'];
+      $new_recurring_contribution = (int) $new_mandate['entity_id'];
 
       // try to create replacement link
       if (!empty($current_state['membership_payment.membership_recurring_contribution'])) {

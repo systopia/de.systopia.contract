@@ -21,9 +21,9 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   /**
    * Get a list of required fields for this type
    *
-   * @return array list of required fields
+   * @phpstan-return list<string>
    */
-  public function getRequiredFields() {
+  public function getRequiredFields(): array {
     return [
       self::MEMBERSHIP_CANCEL_REASON,
     ];
@@ -54,7 +54,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    *
    * @throws Exception should anything go wrong in the execution
    */
-  public function execute() {
+  public function execute(): void {
     $contract = $this->getContract();
 
     // cancel the contract by setting the end date

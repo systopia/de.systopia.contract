@@ -18,9 +18,9 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
   /**
    * Get a list of required fields for this type
    *
-   * @return array list of required fields
+   * @phpstan-return list<string>
    */
-  public function getRequiredFields() {
+  public function getRequiredFields(): array {
     // none required because change is documentary
     return [];
   }
@@ -30,7 +30,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
    *
    * @throws Exception should anything go wrong in the execution
    */
-  public function execute() {
+  public function execute(): void {
     throw new Exception(
       'New membership sign-ups are documentary, they cannot be scheduled into the future, and therefore not executed.'
     );

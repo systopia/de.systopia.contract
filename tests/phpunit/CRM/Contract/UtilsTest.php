@@ -19,7 +19,7 @@ use CRM_Contract_ExtensionUtil as E;
  */
 class CRM_Contract_UtilsTest extends CRM_Contract_ContractTestBase {
 
-  public function testStripNonContractActivityCustomFields() {
+  public function testStripNonContractActivityCustomFields(): void {
     $fields = CRM_Contract_CustomData::getCustomFieldsForGroups(['contract_cancellation', 'contract_updates']);
     $activityData = [
       'id'                         => 1,
