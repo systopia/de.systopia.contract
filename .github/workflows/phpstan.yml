@@ -44,6 +44,7 @@ jobs:
     - name: Install dependencies
       run: |
         git clone --depth=1 https://github.com/project60/org.project60.sepa.git ../org.project60.sepa &&
+        git clone --depth=1 https://lab.civicrm.org/extensions/action-provider.git ../action-provider &&
         composer update --no-progress --prefer-dist --${{ matrix.prefer }} --optimize-autoloader &&
         composer composer-phpunit -- update --no-progress --prefer-dist &&
         composer composer-phpstan -- update --no-progress --prefer-dist --optimize-autoloader &&
