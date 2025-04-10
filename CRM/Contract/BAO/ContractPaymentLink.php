@@ -18,17 +18,20 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    * @param int $contract_id            the contract to link
    * @param int $contribution_recur_id  the ID of the entity to link to
    * @param bool $is_active             is the link active? default is YES
-   * @param string $start_date          start date of the link, default NOW
-   * @param string $end_date            end date of the link, default is NONE
+   * @param string $start_date
+   *   Start date of the link, default NOW.
+   * @param string|null $end_date
+   *   End date of the link, default is NONE.
    *
    * @return object CRM_Contract_BAO_ContractPaymentLink resulting object
    * @throws Exception if mandatory fields aren't set
    */
-  public static function createPaymentLink($contract_id,
-    $contribution_recur_id,
-    $is_active = TRUE,
-    $start_date = 'now',
-    $end_date = NULL
+  public static function createPaymentLink(
+    int $contract_id,
+    int $contribution_recur_id,
+    bool $is_active = TRUE,
+    string $start_date = 'now',
+    ?string $end_date = NULL
   ) {
     $params = [
       'contract_id'           => $contract_id,
@@ -36,12 +39,20 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
       '$is_active'            => $is_active ? 1 : 0,
     ];
 
-    // set dates
-    if ($start_date) {
-      $params['start_date'] = date('YmdHis', strtotime($start_date));
+    // Set dates.
+    if ('' !== $start_date) {
+      $startDate = date_create($start_date);
+      if (FALSE === $startDate) {
+        throw new RuntimeException('Start date must be a valid date.');
+      }
+      $params['start_date'] = $startDate->format('YmdHis');
     }
-    if ($end_date) {
-      $params['end_date'] = date('YmdHis', strtotime($end_date));
+    if (NULL !== $end_date && '' !== $end_date) {
+      $endDate = date_create($end_date);
+      if (FALSE === $endDate) {
+        throw new RuntimeException('End date must be a valid date.');
+      }
+      $params['end_date'] = $endDate->format('YmdHis');
     }
 
     return self::add($params);
@@ -60,10 +71,12 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    *
    * @todo: add limit
    *
-   * @return array of link data
-   * @throws Exception if contract_id is invalid
+   * @return array<string,mixed>
+   *   Link data.
+   * @throws Exception
+   *   When contract_id is invalid.
    */
-  public static function getActiveLinks($contract_id = NULL, $contribution_recur_id = NULL, $date = 'now') {
+  public static function getActiveLinks($contract_id = NULL, $contribution_recur_id = NULL, $date = 'now'): array {
     // build where clause
     $WHERE_CLAUSES = [];
 
