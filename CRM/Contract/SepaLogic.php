@@ -790,6 +790,7 @@ class CRM_Contract_SepaLogic {
    */
   public static function formatMoney($raw_value) {
     // strip whitespaces
+    $raw_value = (string) $raw_value;
     $stripped_value = preg_replace('#\s#', '', $raw_value);
 
     // find out if there's a problem with ','

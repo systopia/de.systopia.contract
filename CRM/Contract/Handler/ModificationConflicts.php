@@ -16,6 +16,7 @@ class CRM_Contract_Handler_ModificationConflicts {
 
   private $scheduledModifications = [];
   private $contractId = NULL;
+  protected $needsReviewStatusId;
 
   public function __construct() {
     $this->needsReviewStatusId = civicrm_api3(
