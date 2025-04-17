@@ -22,7 +22,7 @@ use CRM_Utils_System;
  *
  * @package Civi\Contract\Event
  */
-class ContractCreateFormEventAbstract extends AbstractConfigurationEvent {
+class ContractCreateFormEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.createform';
 
   /**
@@ -81,7 +81,7 @@ class ContractCreateFormEventAbstract extends AbstractConfigurationEvent {
    * @return string
    */
   public static function getUrl($contact_id) {
-    $event = new ContractCreateFormEventAbstract($contact_id);
+    $event = new ContractCreateFormEvent($contact_id);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->getContractCreateFormUrl();
   }

@@ -20,7 +20,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class AdjustContractReviewEventAbstract extends AbstractConfigurationEvent {
+class AdjustContractReviewEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.contractreview.adjust';
 
   /**
@@ -34,10 +34,10 @@ class AdjustContractReviewEventAbstract extends AbstractConfigurationEvent {
   /**
    * Dispatch the Symfony event to get the review table adjustments
    *
-   * @return AdjustContractReviewEventAbstract
+   * @return AdjustContractReviewEvent
    */
   public static function getContractReviewAdjustments() {
-    $event = new AdjustContractReviewEventAbstract();
+    $event = new AdjustContractReviewEvent();
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event;
   }

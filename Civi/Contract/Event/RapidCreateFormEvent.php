@@ -21,7 +21,7 @@ use CRM_Contract_ExtensionUtil as E;
  *
  * @package Civi\Contract\Event
  */
-class RapidCreateFormEventAbstract extends AbstractConfigurationEvent {
+class RapidCreateFormEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.rapidcreateform';
 
   /**
@@ -66,7 +66,7 @@ class RapidCreateFormEventAbstract extends AbstractConfigurationEvent {
    * @return string|null
    */
   public static function getUrl() {
-    $event = new RapidCreateFormEventAbstract();
+    $event = new RapidCreateFormEvent();
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     $rapid_create_url = $event->getRapidCreateFormUrl();
 

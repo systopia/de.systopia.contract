@@ -22,7 +22,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class ContractFormDefaultsEventAbstract extends AbstractConfigurationEvent {
+class ContractFormDefaultsEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.form.defaults';
 
   /**
@@ -43,7 +43,7 @@ class ContractFormDefaultsEventAbstract extends AbstractConfigurationEvent {
    *  the form mode
    */
   public static function adjustDefaults(&$form_defaults, $action) {
-    $event = new ContractFormDefaultsEventAbstract($form_defaults, $action);
+    $event = new ContractFormDefaultsEvent($form_defaults, $action);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
   }
 

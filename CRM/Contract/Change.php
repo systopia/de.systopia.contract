@@ -8,6 +8,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\Event\RenderChangeSubjectEvent;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -354,7 +355,7 @@ abstract class CRM_Contract_Change {
    */
   public function renderChangeSubject($change, $contract_before, $contract_after) {
     // first, try to see if there is some customisation:
-    $rendered_subject = RenderChangeSubjectEventAbstract::renderCustomChangeSubject(
+    $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
         $change->getActionName(),
         $contract_before,
         $contract_after);

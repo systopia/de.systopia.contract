@@ -25,7 +25,7 @@ use CRM_Contract_CustomData as CRM_Contract_CustomData;
  *
  * @package Civi\Contract\Event
  */
-class RenderChangeSubjectEventAbstract extends AbstractConfigurationEvent {
+class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
@@ -96,7 +96,7 @@ class RenderChangeSubjectEventAbstract extends AbstractConfigurationEvent {
    */
   public static function renderCustomChangeSubject($change_action, $contract_data_before, $contract_data_after) {
     // create and run event
-    $event = new RenderChangeSubjectEventAbstract($change_action, $contract_data_before, $contract_data_after);
+    $event = new RenderChangeSubjectEvent($change_action, $contract_data_before, $contract_data_after);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
 
     $custom_subject = $event->getRenderedSubject();

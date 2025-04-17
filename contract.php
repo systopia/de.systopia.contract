@@ -190,7 +190,7 @@ function contract_civicrm_buildForm($formName, &$form) {
       if ($form->getAction() === CRM_Core_Action::ADD) {
         if ($cid = CRM_Utils_Request::retrieve('cid', 'Integer')) {
           // if the cid is given, it's the "add membership" for an existing contract
-          $contract_create_form_url = ContractCreateFormEventAbstract::getUrl($cid);
+          $contract_create_form_url = \Civi\Contract\Event\ContractCreateFormEvent::getUrl($cid);
           if ($contract_create_form_url) {
             CRM_Utils_System::redirect($contract_create_form_url);
           }
