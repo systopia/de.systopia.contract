@@ -398,7 +398,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     }
 
     // add customisation
-    ContractFormDefaultsEventAbstract::adjustDefaults($defaults, $this->modify_action);
+    \Civi\Contract\Event\ContractFormDefaultsEvent::adjustDefaults($defaults, $this->modify_action);
 
     parent::setDefaults($defaults);
   }

@@ -198,7 +198,7 @@ function contract_civicrm_buildForm($formName, &$form) {
         else {
           // no id - this is a 'create new membership':
           //   check if somebody registered a rapid create form and redirect
-          $rapid_create_form_url = RapidCreateFormEventAbstract::getUrl();
+          $rapid_create_form_url = \Civi\Contract\Event\RapidCreateFormEvent::getUrl();
           if ($rapid_create_form_url) {
             CRM_Utils_System::redirect($rapid_create_form_url);
           }
