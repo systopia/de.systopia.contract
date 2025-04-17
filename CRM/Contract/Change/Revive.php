@@ -6,13 +6,15 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Revive Membership" change
  */
-class CRM_Contract_Change_Revive extends CRM_Contract_Change_Upgrade
-{
+class CRM_Contract_Change_Revive extends CRM_Contract_Change_Upgrade {
+
   /**
    * Update the contract with the given data
    *
@@ -41,7 +43,7 @@ class CRM_Contract_Change_Revive extends CRM_Contract_Change_Upgrade
    * @return string title
    */
   public static function getChangeTitle() {
-    return E::ts("Revive Contract");
+    return E::ts('Revive Contract');
   }
 
   /**
@@ -54,12 +56,13 @@ class CRM_Contract_Change_Revive extends CRM_Contract_Change_Upgrade
   public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
     if (in_array($current_status_name, self::getStartStatusList())) {
       $links[] = [
-          'name'  => E::ts("Revive"),
-          'title' => self::getChangeTitle(),
-          'url'   => "civicrm/contract/modify",
-          'bit'   => CRM_Core_Action::UPDATE,
-          'qs'    => "modify_action=revive&id=%%id%%",
+        'name'  => E::ts('Revive'),
+        'title' => self::getChangeTitle(),
+        'url'   => 'civicrm/contract/modify',
+        'bit'   => CRM_Core_Action::UPDATE,
+        'qs'    => 'modify_action=revive&id=%%id%%',
       ];
     }
   }
+
 }

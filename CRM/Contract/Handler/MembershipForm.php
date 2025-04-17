@@ -8,6 +8,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 /**
  * Amendments to the "regular" CiviCRM membership form
@@ -34,4 +35,5 @@ class CRM_Contract_Handler_MembershipForm {
       }
     }
   }
+
 }

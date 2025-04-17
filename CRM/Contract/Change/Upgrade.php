@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -42,7 +44,6 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     }
   }
 
-
   /**
    * Apply the given change to the contract
    *
@@ -60,14 +61,14 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       if ($contract_before['membership_type_id'] != $membership_type_update) {
         $contract_update['membership_type_id'] = $membership_type_update;
       }
-    } else {
+    }
+    else {
       // FIXME: replicating weird behaviour by old engine
       $this->setParameter('contract_updates.ch_membership_type', $contract_before['membership_type_id']);
     }
 
     // check payemnt instrument for the new contract
     $membership_type_update = $this->getParameter('contract_updates.ch_membership_type');
-
 
     // adjust mandate/payment mode?
     $new_payment_contract = CRM_Contract_SepaLogic::updateSepaMandate(
@@ -93,7 +94,11 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         $this->setParameter($change_field, $contract_after[$membership_field]);
       }
     }
-    $this->setParameter('contract_updates.ch_annual_diff', (float) $contract_after['membership_payment.membership_annual'] - (float) $contract_before['membership_payment.membership_annual']);
+    $this->setParameter(
+      'contract_updates.ch_annual_diff',
+      (float) $contract_after['membership_payment.membership_annual']
+      - (float) $contract_before['membership_payment.membership_annual']
+    );
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
     $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name']);
     $this->setStatus('Completed');
@@ -135,14 +140,14 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     // calculate differences
     $differences        = [];
     $field2abbreviation = [
-        'membership_type_id'                      => 'type',
-        'membership_payment.membership_annual'    => 'amt.',
-        'membership_payment.membership_frequency' => 'freq.',
-        'membership_payment.to_ba'                => 'gp iban',
-        'membership_payment.from_ba'              => 'member iban',
-        'membership_payment.cycle_day'            => 'cycle day',
-        'membership_payment.payment_instrument'   => 'payment method',
-        'membership_payment.defer_payment_start'  => 'defer',
+      'membership_type_id'                      => 'type',
+      'membership_payment.membership_annual'    => 'amt.',
+      'membership_payment.membership_frequency' => 'freq.',
+      'membership_payment.to_ba'                => 'gp iban',
+      'membership_payment.from_ba'              => 'member iban',
+      'membership_payment.cycle_day'            => 'cycle day',
+      'membership_payment.payment_instrument'   => 'payment method',
+      'membership_payment.defer_payment_start'  => 'defer',
     ];
 
     foreach ($field2abbreviation as $field_name => $subject_abbreviation) {
@@ -152,18 +157,6 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       $value_after      = $this->labelValue($raw_value_after, $field_name);
 
       // FIXME: replicating weird behaviour by old engine
-      // TODO: not needed any more? (see https://redmine.greenpeace.at/issues/1276#note-74)
-      /*
-      if (!$this->isNew() && $subject_abbreviation == 'member iban') {
-        // add member iban in any case
-        $differences[] = "{$subject_abbreviation} {$value_before} to {$value_after}";
-        continue;
-      } elseif (!$this->isNew() && $subject_abbreviation == 'freq.') {
-        // use the values, not the labels
-        $differences[] = "{$subject_abbreviation} {$raw_value_before} to {$raw_value_after}";
-        continue;
-      }
-      */
 
       // standard behaviour:
       if ($value_before != $value_after) {
@@ -193,7 +186,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
    * @return string title
    */
   public static function getChangeTitle() {
-    return E::ts("Update Contract");
+    return E::ts('Update Contract');
   }
 
   /**
@@ -206,12 +199,13 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
   public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
     if (in_array($current_status_name, self::getStartStatusList())) {
       $links[] = [
-          'name'  => E::ts("Update"),
-          'title' => self::getChangeTitle(),
-          'url'   => "civicrm/contract/modify",
-          'bit'   => CRM_Core_Action::UPDATE,
-          'qs'    => "modify_action=update&id=%%id%%",
+        'name'  => E::ts('Update'),
+        'title' => self::getChangeTitle(),
+        'url'   => 'civicrm/contract/modify',
+        'bit'   => CRM_Core_Action::UPDATE,
+        'qs'    => 'modify_action=update&id=%%id%%',
       ];
     }
   }
+
 }

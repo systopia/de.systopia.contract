@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -24,8 +25,7 @@ use CRM_Contract_CustomData as CRM_Contract_CustomData;
  *
  * @package Civi\Contract\Event
  */
-class RenderChangeSubjectEvent extends ConfigurationEvent
-{
+class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
@@ -64,16 +64,11 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    *
    * @param array $contract_data_after
    *   the state of the contract after the change
-   *
-   * @param array|null $change_data
-   *   the state of the contract after the change
-   *
    */
-  public function __construct($change_action, $contract_data_before, $contract_data_after)
-  {
-    $this->subject = null;
+  public function __construct($change_action, $contract_data_before, $contract_data_after) {
+    $this->subject = NULL;
     $this->change_action = $change_action;
-    $this->change_data = null;
+    $this->change_data = NULL;
     $this->contract_data_before = $contract_data_before;
     $this->contract_data_after = $contract_data_after;
     if ($this->contract_data_before) {
@@ -83,7 +78,6 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
       CRM_Contract_CustomData::labelCustomFields($this->contract_data_after);
     }
   }
-
 
   /**
    * Issue a Symfony event to render a contract change's subject/title
@@ -100,14 +94,12 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return string
    *   the subject line of the given change activity
    */
-  public static function renderCustomChangeSubject($change_action, $contract_data_before, $contract_data_after)
-  {
+  public static function renderCustomChangeSubject($change_action, $contract_data_before, $contract_data_after) {
     // create and run event
     $event = new RenderChangeSubjectEvent($change_action, $contract_data_before, $contract_data_after);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
 
     $custom_subject = $event->getRenderedSubject();
-    //if ($custom_subject) Civi::log()->debug("Custom subject generated: {$custom_subject}");
     return $custom_subject;
   }
 
@@ -117,23 +109,19 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @param string $subject
    *    the proposed subject for the change
    */
-  public function setRenderedSubject($subject)
-  {
+  public function setRenderedSubject($subject) {
     $this->subject = $subject;
   }
 
   /**
    * Get the currently proposed subject
    *
-   * @return string $subject
-   *    the proposed subject for the change
+   * @return string
+   *   the proposed subject for the change
    */
-  public function getRenderedSubject()
-  {
+  public function getRenderedSubject() {
     return $this->subject;
   }
-
-
 
   /**
    * Get the contract data before this change
@@ -141,14 +129,14 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @param null|string $attribute
    *   if attribute name is given, the attribute is returned
    *
-   * @return mixed $subject
-   *    raw contract data before the change
+   * @return mixed
+   *   raw contract data before the change
    */
-  public function getContractDataBefore($attribute = null)
-  {
+  public function getContractDataBefore($attribute = NULL) {
     if ($attribute) {
-      return $this->contract_data_before[$attribute] ?? null;
-    } else {
+      return $this->contract_data_before[$attribute] ?? NULL;
+    }
+    else {
       return $this->contract_data_before;
     }
   }
@@ -159,14 +147,14 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @param null|string $attribute
    *   if attribute name is given, the attribute is returned
    *
-   * @return mixed $subject
-   *    raw contract data after the change
+   * @return mixed
+   *   raw contract data after the change
    */
-  public function getContractDataAfter($attribute = null)
-  {
+  public function getContractDataAfter($attribute = NULL) {
     if ($attribute) {
-      return $this->contract_data_after[$attribute] ?? null;
-    } else {
+      return $this->contract_data_after[$attribute] ?? NULL;
+    }
+    else {
       return $this->contract_data_after;
     }
   }
@@ -182,12 +170,11 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return mixed|null
    *   the value
    */
-  public function getContractAttribute($attribute_name)
-  {
+  public function getContractAttribute($attribute_name) {
     return $this->contract_data_after[$attribute_name]
         ?? $_REQUEST[$attribute_name]
         ?? $this->contract_data_before[$attribute_name]
-        ?? null;
+        ?? NULL;
   }
 
   /**
@@ -201,8 +188,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    * @return mixed|null
    *   the value
    */
-  public function getChangeAttribute($attribute_name)
-  {
+  public function getChangeAttribute($attribute_name) {
     // this is all mixed up in the same pile
     return $this->getContractAttribute($attribute_name);
   }
@@ -212,29 +198,27 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    *
    * @return string
    */
-  public function getActivityAction()
-  {
+  public function getActivityAction() {
     return $this->change_action;
   }
 
   /**
    * @return string label of the membership type
    */
-  public function getMembershipTypeName()
-  {
+  public function getMembershipTypeName() {
     $type_id = $this->getContractAttribute('membership_type_id');
     if (!empty($type_id)) {
       return \CRM_Contract_Utils::lookupValue('MembershipType', 'name', ['id' => $type_id]);
-    } else {
-      return E::ts("(not found)");
+    }
+    else {
+      return E::ts('(not found)');
     }
   }
 
   /**
    * @return string label of the cancel reason
    */
-  public function getCancelReason()
-  {
+  public function getCancelReason() {
     $reason_id = $this->getChangeAttribute('contract_cancellation.contact_history_cancel_reason');
     if (empty($reason_id)) {
       $reason_id = $this->getContractAttribute('membership_cancellation.membership_cancel_reason');
@@ -242,8 +226,9 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
 
     if (!empty($reason_id)) {
       return \CRM_Contract_Utils::lookupOptionValue('contract_cancel_reason', $reason_id);
-    } else {
-      return E::ts("(not found)");
+    }
+    else {
+      return E::ts('(not found)');
     }
   }
 
@@ -251,8 +236,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
    *
    * @return float annual amount
    */
-  public function getMembershipAnnualAmount()
-  {
+  public function getMembershipAnnualAmount() {
     $new_amount = (float) $this->getChangeAttribute('contract_updates.ch_annual');
     if (empty($new_amount)) {
       $new_amount = (float) $this->getContractAttribute('membership_payment.membership_annual');
@@ -263,8 +247,7 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * @return float annual amount
    */
-  public function getMembershipIncreaseAmount()
-  {
+  public function getMembershipIncreaseAmount() {
     $value = $this->getChangeAttribute('contract_updates.ch_annual_diff');
     if (!$value) {
       // no diff recorded, try to calculate
@@ -283,12 +266,12 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * @return string rendered
    */
-  public function getExecutionDate($date_format = 'Y-m-d')
-  {
+  public function getExecutionDate($date_format = 'Y-m-d') {
     $date = $this->getChangeAttribute('activity_date_time');
     if ($date) {
       return date('Y-m-d', strtotime($date));
-    } else {
+    }
+    else {
       return 'n/a';
     }
   }
@@ -296,12 +279,12 @@ class RenderChangeSubjectEvent extends ConfigurationEvent
   /**
    * @return string label of the frequency
    */
-  public function getMembershipPaymentFrequency()
-  {
+  public function getMembershipPaymentFrequency() {
     $frequency = (int) $this->getChangeAttribute('contract_updates.ch_frequency');
     if (empty($frequency)) {
       $frequency = (int) $this->getContractAttribute('membership_payment.membership_frequency');
     }
     return \CRM_Contract_Utils::lookupOptionValue('payment_frequency', $frequency);
   }
+
 }

@@ -14,12 +14,14 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Contract\ActionProvider\Action;
 
-use \Civi\ActionProvider\Action\AbstractAction;
-use \Civi\ActionProvider\Parameter\ParameterBagInterface;
-use \Civi\ActionProvider\Parameter\Specification;
-use \Civi\ActionProvider\Parameter\SpecificationBag;
+use Civi\ActionProvider\Action\AbstractAction;
+use Civi\ActionProvider\Parameter\ParameterBagInterface;
+use Civi\ActionProvider\Parameter\Specification;
+use Civi\ActionProvider\Parameter\SpecificationBag;
 
 use CRM_Contract_ExtensionUtil as E;
 
@@ -28,59 +30,140 @@ class CreateContract extends AbstractAction {
   /**
    * Returns the specification of the configuration options for the actual action.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
-        new Specification('default_membership_type_id',       'Integer', E::ts('Membership Type ID (default)'), true, null, null, $this->getMembershipTypes(), false),
-        new Specification('default_creditor_id',       'Integer', E::ts('Creditor (default)'), true, null, null, $this->getCreditors(), false),
-        new Specification('default_financial_type_id', 'Integer', E::ts('Financial Type (default)'), true, null, null, $this->getFinancialTypes(), false),
-        new Specification('default_campaign_id',       'Integer', E::ts('Campaign (default)'), false, null, null, $this->getCampaigns(), false),
-        new Specification('default_frequency',         'Integer', E::ts('Frequency (default)'), true, 12, null, $this->getFrequencies()),
-        new Specification('default_cycle_day',         'Integer', E::ts('Collection Day (default)'), false, 0, null, $this->getCollectionDays()),
-        new Specification('buffer_days',               'Integer', E::ts('Buffer Days'), true, 7),
-        new Specification('prevent_multiple_contracts',         'Integer', E::ts('If a Contract already exists'), false, 0, null, $this->getMultipleContractOptions()),
-
+      new Specification(
+        'default_membership_type_id',
+        'Integer',
+        E::ts('Membership Type ID (default)'),
+        TRUE,
+        NULL,
+        NULL,
+        $this->getMembershipTypes(),
+        FALSE
+      ),
+      new Specification(
+        'default_creditor_id',
+        'Integer',
+        E::ts('Creditor (default)'),
+        TRUE,
+        NULL,
+        NULL,
+        $this->getCreditors(),
+        FALSE
+      ),
+      new Specification(
+        'default_financial_type_id',
+        'Integer',
+        E::ts('Financial Type (default)'),
+        TRUE,
+        NULL,
+        NULL,
+        $this->getFinancialTypes(),
+        FALSE
+      ),
+      new Specification(
+        'default_campaign_id',
+        'Integer',
+        E::ts('Campaign (default)'),
+        FALSE,
+        NULL,
+        NULL,
+        $this->getCampaigns(),
+        FALSE
+      ),
+      new Specification(
+        'default_frequency',
+        'Integer',
+        E::ts('Frequency (default)'),
+        TRUE,
+        12,
+        NULL,
+        $this->getFrequencies()
+      ),
+      new Specification(
+        'default_cycle_day',
+        'Integer',
+        E::ts('Collection Day (default)'),
+        FALSE,
+        0,
+        NULL,
+        $this->getCollectionDays()
+      ),
+      new Specification('buffer_days', 'Integer', E::ts('Buffer Days'), TRUE, 7),
+      new Specification(
+        'prevent_multiple_contracts',
+        'Integer',
+        E::ts('If a Contract already exists'),
+        FALSE,
+        0,
+        NULL,
+        $this->getMultipleContractOptions()
+      ),
     ]);
   }
 
   /**
    * Returns the specification of the parameters of the actual action.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getParameterSpecification() {
     return new SpecificationBag([
         // required fields
-        new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
-        new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
-        new Specification('iban',       'String',  E::ts('IBAN'), true),
-        new Specification('bic',        'String',  E::ts('BIC'), true),
-        new Specification('amount',     'Money',   E::ts('Amount'), true),
-        new Specification('reference',  'String',  E::ts('Mandate Reference'), false),
+      new Specification('contact_id', 'Integer', E::ts('Contact ID'), TRUE),
+      new Specification('membership_type_id', 'Integer', E::ts('Membership Type ID'), FALSE),
+      new Specification('iban', 'String', E::ts('IBAN'), TRUE),
+      new Specification('bic', 'String', E::ts('BIC'), TRUE),
+      new Specification('amount', 'Money', E::ts('Amount'), TRUE),
+      new Specification('reference', 'String', E::ts('Mandate Reference'), FALSE),
 
         // recurring information
-        new Specification('frequency',  'Integer', E::ts('Frequency'),      false, 12, null, $this->getFrequencies()),
-        new Specification('cycle_day',  'Integer', E::ts('Collection Day'), false, 1,  null, $this->getCollectionDays()),
+      new Specification('frequency', 'Integer', E::ts('Frequency'), FALSE, 12, NULL, $this->getFrequencies()),
+      new Specification('cycle_day', 'Integer', E::ts('Collection Day'), FALSE, 1, NULL, $this->getCollectionDays()),
 
         // basic overrides
-        new Specification('creditor_id',       'Integer', E::ts('Creditor (default)'), false, null, null, $this->getCreditors(), false),
-        new Specification('financial_type_id', 'Integer', E::ts('Financial Type (default)'), false, null, null, $this->getFinancialTypes(), false),
-        new Specification('campaign_id',       'Integer', E::ts('Campaign (default)'), false, null, null, $this->getCampaigns(), false),
+      new Specification(
+        'creditor_id',
+        'Integer',
+        E::ts('Creditor (default)'),
+        FALSE,
+        NULL,
+        NULL,
+        $this->getCreditors(),
+        FALSE
+      ),
+      new Specification(
+        'financial_type_id',
+        'Integer',
+        E::ts('Financial Type (default)'),
+        FALSE,
+        NULL,
+        NULL,
+        $this->getFinancialTypes(),
+        FALSE
+      ),
+      new Specification(
+        'campaign_id',
+        'Integer',
+        E::ts('Campaign (default)'),
+        FALSE,
+        NULL,
+        NULL,
+        $this->getCampaigns(),
+        FALSE
+      ),
 
-        // dates
-        new Specification('start_date',      'Date', E::ts('Start Date'), false, date('Y-m-d H:i:s')),
-        new Specification('join_date',      'Date', E::ts('Member Since'), false, date('Y-m-d')),
-        new Specification('date',            'Date', E::ts('Signature Date'),  false, date('Y-m-d H:i:s')),
-        new Specification('validation_date', 'Date', E::ts('Validation Date'), false, date('Y-m-d H:i:s')),
+      // dates
+      new Specification('start_date', 'Date', E::ts('Start Date'), FALSE, date('Y-m-d H:i:s')),
+      new Specification('join_date', 'Date', E::ts('Member Since'), FALSE, date('Y-m-d')),
+      new Specification('date', 'Date', E::ts('Signature Date'), FALSE, date('Y-m-d H:i:s')),
+      new Specification('validation_date', 'Date', E::ts('Validation Date'), FALSE, date('Y-m-d H:i:s')),
 
         # Contract stuff
-        new Specification('account_holder',       'String',  E::ts('Members Bank Account'), false),
-        #new Specification('membership_payment.to_ba',       'String',  E::ts('IBAN'), true),
-        #new Specification('membership_payment.membership_annual',      'Money',  E::ts('Annual Amount'), false),
-        #new Specification('membership_payment.membership_frequency',      'Integer',  E::ts('Frequency'), false),
-        #new Specification('membership_payment.cycle_day',      'Integer',  E::ts('Cycle Day'), false),
-        #new Specification('membership_type_id',       'Integer', E::ts('Membership Type ID'), false),
+      new Specification('account_holder', 'String', E::ts('Members Bank Account'), FALSE),
     ]);
   }
 
@@ -89,44 +172,54 @@ class CreateContract extends AbstractAction {
    *
    * This function could be overridden by child classes.
    *
-   * @return SpecificationBag specs
+   * @return \Civi\ActionProvider\Parameter\SpecificationBag specs
    */
   public function getOutputSpecification() {
     return new SpecificationBag([
-      new Specification('mandate_id',        'Integer', E::ts('Mandate ID'), false, null, null, null, false),
-      new Specification('mandate_reference', 'String',  E::ts('Mandate Reference'), false, null, null, null, false),
-      new Specification('contract_id',        'Integer', E::ts('Contract ID'), false, null, null, null, false),
-      new Specification('error',             'String',  E::ts('Error Message (if creation failed)'), false, null, null, null, false),
+      new Specification('mandate_id', 'Integer', E::ts('Mandate ID'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('mandate_reference', 'String', E::ts('Mandate Reference'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('contract_id', 'Integer', E::ts('Contract ID'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification('error', 'String', E::ts('Error Message (if creation failed)'), FALSE, NULL, NULL, NULL, FALSE),
     ]);
   }
 
   /**
    * Run the action
    *
-   * @param ParameterBagInterface $parameters
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
    *   The parameters to this action.
-   * @param ParameterBagInterface $output
-   * 	 The parameters this action can send back
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $output
+   *      The parameters this action can send back
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
     $mandate_data = ['type' => 'RCUR'];
 
     // If a Contract already exists: show error
-    if($this->configuration->getParameter('prevent_multiple_contracts') == 1){
-        $getcount_params = ['contact_id' => $parameters->getParameter('contact_id'), 'active_only' => 1];
-        $count = \civicrm_api3('Contract', 'getcount', $getcount_params);
-        if ($count){
-          $output->setParameter('mandate_id', '');
-          $output->setParameter('mandate_reference', '');
-          $output->setParameter('contract_id', '');
-          $output->setParameter('error', E::ts("Contract already exists"));
-          return;
-        }
+    if ($this->configuration->getParameter('prevent_multiple_contracts') == 1) {
+      $getcount_params = ['contact_id' => $parameters->getParameter('contact_id'), 'active_only' => 1];
+      $count = \civicrm_api3('Contract', 'getcount', $getcount_params);
+      if ($count) {
+        $output->setParameter('mandate_id', '');
+        $output->setParameter('mandate_reference', '');
+        $output->setParameter('contract_id', '');
+        $output->setParameter('error', E::ts('Contract already exists'));
+        return;
+      }
     }
 
     // add basic fields to mandate_data
-    foreach (['contact_id', 'iban', 'bic', 'reference', 'amount', 'start_date', 'date', 'validation_date','account_holder'] as $parameter_name) {
+    foreach ([
+      'contact_id',
+      'iban',
+      'bic',
+      'reference',
+      'amount',
+      'start_date',
+      'date',
+      'validation_date',
+      'account_holder',
+    ] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $mandate_data[$parameter_name] = $value;
@@ -162,14 +255,14 @@ class CreateContract extends AbstractAction {
 
     $contract_data = [];
     // add basic fields to contract_data
-    foreach (['contact_id','membership_type_id','start_date','join_date'] as $parameter_name) {
+    foreach (['contact_id', 'membership_type_id', 'start_date', 'join_date'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
       }
     }
     // add override fields to contract_data
-    foreach (['membership_type_id',] as $parameter_name) {
+    foreach (['membership_type_id'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (empty($value)) {
         $value = $this->configuration->getParameter("default_{$parameter_name}");
@@ -179,14 +272,17 @@ class CreateContract extends AbstractAction {
 
     // add account holder
     $account_holder = $parameters->getParameter('account_holder');
-    if(!empty($account_holder)){
-        $contract_data['membership_payment.from_name'] = $account_holder;
+    if (!empty($account_holder)) {
+      $contract_data['membership_payment.from_name'] = $account_holder;
     }
 
     // create mandate
     try {
       $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
-      $mandate = \civicrm_api3('SepaMandate', 'getsingle', ['id' => $mandate['id'], 'return' => 'id,entity_id,reference']);
+      $mandate = \civicrm_api3('SepaMandate', 'getsingle', [
+        'id' => $mandate['id'],
+        'return' => 'id,entity_id,reference',
+      ]);
       $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['entity_id'];
       if (empty($contract_data['join_date']) and (!empty($contract_data['start_date']))) {
         $contract_data['join_date'] = $contract_data['start_date'];
@@ -195,14 +291,14 @@ class CreateContract extends AbstractAction {
       $output->setParameter('mandate_id', $mandate['id']);
       $output->setParameter('mandate_reference', $mandate['reference']);
       $output->setParameter('contract_id', $contract['id']);
-    } catch (\Exception $ex) {
+    }
+    catch (\Exception $ex) {
       $output->setParameter('mandate_id', '');
       $output->setParameter('mandate_reference', '');
       $output->setParameter('contract_id', '');
       $output->setParameter('error', $ex->getMessage());
     }
   }
-
 
   /**
    * Get a list of all membership types
@@ -221,11 +317,11 @@ class CreateContract extends AbstractAction {
    */
   protected function getFrequencies() {
     return [
-        1  => E::ts("annually"),
-        2  => E::ts("semi-annually"),
-        4  => E::ts("quarterly"),
-        6  => E::ts("bi-monthly"),
-        12 => E::ts("monthly"),
+      1  => E::ts('annually'),
+      2  => E::ts('semi-annually'),
+      4  => E::ts('quarterly'),
+      6  => E::ts('bi-monthly'),
+      12 => E::ts('monthly'),
     ];
   }
 
@@ -241,30 +337,32 @@ class CreateContract extends AbstractAction {
     return $creditor_list;
   }
 
-    /**
+  /**
    * Get a list of all financial types
    */
   protected function getFinancialTypes() {
     $list = [];
     $query = \civicrm_api3('FinancialType', 'get', [
-        'option.limit' => 0,
-        'is_enabled'   => 1,
-        'return'       => 'id,name']);
+      'option.limit' => 0,
+      'is_enabled'   => 1,
+      'return'       => 'id,name',
+    ]);
     foreach ($query['values'] as $entity) {
       $list[$entity['id']] = $entity['name'];
     }
     return $list;
   }
 
-    /**
+  /**
    * Get a list of all campaigns
    */
   protected function getCampaigns() {
     $list = [];
     $query = \civicrm_api3('Campaign', 'get', [
-        'option.limit' => 0,
-        'is_active'    => 1,
-        'return'       => 'id,title']);
+      'option.limit' => 0,
+      'is_active'    => 1,
+      'return'       => 'id,title',
+    ]);
     foreach ($query['values'] as $entity) {
       $list[$entity['id']] = $entity['title'];
     }
@@ -275,60 +373,63 @@ class CreateContract extends AbstractAction {
    * Get list of collection days
    */
   protected function getCollectionDays() {
-    $list = range(0,28);
+    $list = range(0, 28);
     $options = array_combine($list, $list);
-    $options[0] = E::ts("as soon as possible");
+    $options[0] = E::ts('as soon as possible');
     return $options;
   }
 
-    /**
-     * Select the cycle day from the given creditor,
-     *  that allows for the soonest collection given the buffer time
-     *
-     * @param array $mandate_data
-     *      all data known about the mandate
-     *
-     */
+  /**
+   * Select the cycle day from the given creditor,
+   *  that allows for the soonest collection given the buffer time
+   *
+   * @param array $mandate_data
+   *      all data known about the mandate
+   *
+   */
   protected function calculateSoonestCycleDay($mandate_data) {
-      // get creditor ID
-      $creditor_id = (int) $mandate_data['creditor_id'];
-      if (!$creditor_id) {
-          $default_creditor = \CRM_Sepa_Logic_Settings::defaultCreditor();
-          if ($default_creditor) {
-              $creditor_id = $default_creditor->id;
-          } else {
-              \Civi::log()->notice("CreateRecurringMandate action: No creditor, and no default creditor set! Using cycle day 1");
-              return 1;
-          }
+    // get creditor ID
+    $creditor_id = (int) $mandate_data['creditor_id'];
+    if (!$creditor_id) {
+      $default_creditor = \CRM_Sepa_Logic_Settings::defaultCreditor();
+      if ($default_creditor) {
+        $creditor_id = $default_creditor->id;
       }
-
-      // get start date
-      $date = strtotime(\CRM_Utils_Array::value('start_date', $mandate_data, date('Y-m-d')));
-
-      // get cycle days
-      $cycle_days = \CRM_Sepa_Logic_Settings::getListSetting("cycledays", range(1, 28), $creditor_id);
-
-      // iterate through the days until we hit a cycle day
-      for ($i = 0; $i < 31; $i++) {
-        if (in_array(date('j', $date), $cycle_days)) {
-            // we found our cycle_day!
-            return date('j', $date);
-        } else {
-            // no? try the next one...
-            $date = strtotime("+ 1 day", $date);
-        }
+      else {
+        \Civi::log()->notice(
+          'CreateRecurringMandate action: No creditor, and no default creditor set! Using cycle day 1'
+        );
+        return 1;
       }
+    }
 
-      // no hit? that shouldn't happen...
-      return 1;
+    // get start date
+    $date = strtotime(\CRM_Utils_Array::value('start_date', $mandate_data, date('Y-m-d')));
+
+    // get cycle days
+    $cycle_days = \CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), $creditor_id);
+
+    // iterate through the days until we hit a cycle day
+    for ($i = 0; $i < 31; $i++) {
+      if (in_array(date('j', $date), $cycle_days)) {
+        // we found our cycle_day!
+        return date('j', $date);
+      }
+      else {
+        // no? try the next one...
+        $date = strtotime('+ 1 day', $date);
+      }
+    }
+
+    // no hit? that shouldn't happen...
+    return 1;
   }
 
   protected function getMultipleContractOptions() {
     return [
-        0  => E::ts("ignore"),
-        1  => E::ts("show error message"),
+      0  => E::ts('ignore'),
+      1  => E::ts('show error message'),
     ];
   }
-
 
 }

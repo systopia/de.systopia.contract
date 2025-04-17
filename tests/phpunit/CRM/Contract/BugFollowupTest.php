@@ -1,11 +1,16 @@
 <?php
+/*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2017-2025 SYSTOPIA                             |
+| Author: B. Endres (endres -at- systopia.de)                  |
+|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+|         P. Figel (pfigel -at- greenpeace.org)                |
+| http://www.systopia.de/                                      |
++--------------------------------------------------------------*/
+
+declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
-
-include_once 'ContractTestBase.php';
 
 /**
  * Bug reproduction and follow-up tests
@@ -29,7 +34,7 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
 
     // schedule and update for tomorrow
     $this->modifyContract($contract['id'], 'cancel', 'tomorrow', [
-        'membership_cancellation.membership_cancel_reason' => 'Unknown'
+      'membership_cancellation.membership_cancel_reason' => 'Unknown',
     ]);
 
     // run engine see if anything changed
@@ -41,10 +46,24 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $contract_after_cancellation = $this->getContract($contract['id']);
 
     // things should not have changed
-    $this->assertArrayHasKey('membership_cancellation.membership_cancel_reason', $contract_after_cancellation, "the cancel reason wasn't saved.");
-    $this->assertNotEmpty($contract_after_cancellation['membership_cancellation.membership_cancel_reason'], "the cancel reason wasn't saved.");
-    $this->assertArrayHasKey('membership_cancellation.membership_cancel_date', $contract_after_cancellation, "the cancel date wasn't saved.");
-    $this->assertNotEmpty($contract_after_cancellation['membership_cancellation.membership_cancel_date'], "the cancel date wasn't saved.");
+    $this->assertArrayHasKey(
+      'membership_cancellation.membership_cancel_reason',
+      $contract_after_cancellation,
+      "the cancel reason wasn't saved."
+    );
+    $this->assertNotEmpty(
+      $contract_after_cancellation['membership_cancellation.membership_cancel_reason'],
+      "the cancel reason wasn't saved."
+    );
+    $this->assertArrayHasKey(
+      'membership_cancellation.membership_cancel_date',
+      $contract_after_cancellation,
+      "the cancel date wasn't saved."
+    );
+    $this->assertNotEmpty(
+      $contract_after_cancellation['membership_cancellation.membership_cancel_date'],
+      "the cancel date wasn't saved."
+    );
   }
 
   /**
@@ -57,55 +76,75 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
   public function testTicket19651() {
     // test 1: new sepa mandate, no contribution yet
     $payment = $this->createPaymentContract([
-        'start_date' => date("Y-m-d", strtotime("now -6 months")),
-        'frequency_interval' => 12,
-        'frequency_unit' => 'month',
-    ],                                      true);
+      'start_date' => date('Y-m-d', strtotime('now -6 months')),
+      'frequency_interval' => 12,
+      'frequency_unit' => 'month',
+    ], TRUE);
     $contract = $this->createNewContract([
-        'membership_payment.membership_recurring_contribution' => $payment['id'],
-        'contact_id' => $payment['contact_id']
-     ]);
+      'membership_payment.membership_recurring_contribution' => $payment['id'],
+      'contact_id' => $payment['contact_id'],
+    ]);
 
     // calculate next installment date, should be in roughly six months
-    $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate($contract['membership_payment.membership_recurring_contribution']);
-    $this->assertTrue(strtotime($next_installment) > strtotime("now + 5 months"), "The next installment for this yearly contract should be in 6 months, since it started 6 months ago.");
-    $this->assertTrue(strtotime($next_installment) < strtotime("now + 7 months"), "The next installment for this yearly contract should be in 6 months, since it started 6 months ago.");
-
-
+    $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate(
+      $contract['membership_payment.membership_recurring_contribution']
+    );
+    $this->assertTrue(
+      strtotime($next_installment) > strtotime('now + 5 months'),
+      'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
+    );
+    $this->assertTrue(
+      strtotime($next_installment) < strtotime('now + 7 months'),
+      'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
+    );
 
     // test 2: new sepa mandate in the future
     $payment = $this->createPaymentContract([
-            'start_date' => date("Y-m-d", strtotime("+6 month")),
-            'frequency_interval' => 12,
-            'frequency_unit' => 'month',
-        ],                                  true);
+      'start_date' => date('Y-m-d', strtotime('+6 month')),
+      'frequency_interval' => 12,
+      'frequency_unit' => 'month',
+    ], TRUE);
     $contract = $this->createNewContract([
-         'membership_payment.membership_recurring_contribution' => $payment['id'],
-         'contact_id' => $payment['contact_id']
-     ]);
+      'membership_payment.membership_recurring_contribution' => $payment['id'],
+      'contact_id' => $payment['contact_id'],
+    ]);
 
     // calculate next installment date, earliest should be in 6 months
-    $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate($contract['membership_payment.membership_recurring_contribution']);
-    $this->assertTrue(strtotime($next_installment) > strtotime("+5 month"), "The next installment for this yearly contract should be in 6 months, since it started 6 months ago.");
-    $this->assertTrue(strtotime($next_installment) < strtotime("+7 month"), "The next installment for this yearly contract should be in 6 months, since it started 6 months ago.");
-
-
+    $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate(
+      $contract['membership_payment.membership_recurring_contribution']
+    );
+    $this->assertTrue(
+      strtotime($next_installment) > strtotime('+5 month'),
+      'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
+    );
+    $this->assertTrue(
+      strtotime($next_installment) < strtotime('+7 month'),
+      'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
+    );
 
     // test 3: new sepa mandate in the future
     $payment = $this->createPaymentContract([
-          'start_date' => date("Y-m-d", strtotime("now - 1 month")),
-          'frequency_interval' => 3,
-          'frequency_unit' => 'month',
-      ],                                    true);
+      'start_date' => date('Y-m-d', strtotime('now - 1 month')),
+      'frequency_interval' => 3,
+      'frequency_unit' => 'month',
+    ], TRUE);
     $contract = $this->createNewContract([
-         'membership_payment.membership_recurring_contribution' => $payment['id'],
-         'contact_id' => $payment['contact_id']
-     ]);
+      'membership_payment.membership_recurring_contribution' => $payment['id'],
+      'contact_id' => $payment['contact_id'],
+    ]);
 
     // calculate next installment date, earliest should be in 2 months
-    $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate($contract['membership_payment.membership_recurring_contribution']);
-    $this->assertTrue(strtotime($next_installment) > strtotime("+1 month + 2 weeks"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
-    $this->assertTrue(strtotime($next_installment) < strtotime("+3 month"), "The next installment for this yearly contract should be in 2 months, since it started 1 month ago.");
+    $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate(
+      $contract['membership_payment.membership_recurring_contribution']
+    );
+    $this->assertTrue(
+      strtotime($next_installment) > strtotime('+1 month + 2 weeks'),
+      'The next installment for this yearly contract should be in 2 months, since it started 1 month ago.'
+    );
+    $this->assertTrue(
+      strtotime($next_installment) < strtotime('+3 month'),
+      'The next installment for this yearly contract should be in 2 months, since it started 1 month ago.'
+    );
   }
 
   /**
@@ -118,20 +157,20 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
   public function testTicket20444() {
     // test 1: new sepa mandate, no contribution yet
     $payment = $this->createPaymentContract([
-          'start_date' => date("Y-m-d", strtotime("now -1 hour")),
-          'frequency_interval' => 1,
-          'frequency_unit' => 'month',
-        ],true);
+      'start_date' => date('Y-m-d', strtotime('now -1 hour')),
+      'frequency_interval' => 1,
+      'frequency_unit' => 'month',
+    ], TRUE);
     $contract = $this->createNewContract([
-         'membership_payment.membership_recurring_contribution' => $payment['id'],
-         'contact_id' => $payment['contact_id']
-     ]);
+      'membership_payment.membership_recurring_contribution' => $payment['id'],
+      'contact_id' => $payment['contact_id'],
+    ]);
 
     // now: schedule an amount change, but this would fail
     $this->callAPIFailure('Contract', 'modify', [
       'id' => $contract['id'],
       'modify_action' => 'update',
-      'date' => date("Y-m-d", strtotime("yesterday")),
+      'date' => date('Y-m-d', strtotime('yesterday')),
     ]);
 
     // now: set the adjustment range and try again
@@ -139,7 +178,7 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $this->callAPISuccess('Contract', 'modify', [
       'id' => $contract['id'],
       'modify_action' => 'update',
-      'date' => date("Y-m-d", strtotime("-23 hours")),
+      'date' => date('Y-m-d', strtotime('-23 hours')),
     ]);
   }
 
@@ -152,15 +191,15 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
   public function testTicket23397() {
     // test 1: new sepa mandate, no contribution yet
     $payment = $this->createPaymentContract([
-          'start_date' => date("Y-m-d", strtotime("now -2 day")),
-          'amount' => "1800.00",
-          'frequency_unit' => 'month',
-          'frequency_interval' => 12,
-        ],true);
+      'start_date' => date('Y-m-d', strtotime('now -2 day')),
+      'amount' => '1800.00',
+      'frequency_unit' => 'month',
+      'frequency_interval' => 12,
+    ], TRUE);
     $contract = $this->createNewContract([
-         'membership_payment.membership_recurring_contribution' => $payment['id'],
-         'contact_id' => $payment['contact_id']
-       ]);
+      'membership_payment.membership_recurring_contribution' => $payment['id'],
+      'contact_id' => $payment['contact_id'],
+    ]);
     $initial_change_activity = $this->getLastChangeActivity($contract['id']);
 
     // modify contract and check again
@@ -172,12 +211,14 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
 
     // reload contract
     $updated_contract = $this->getContract($contract['id']);
-    $this->assertNotEmpty($change_activity, "There should be a change activity.");
-    $this->assertNotEmpty($change_activity['subject'], "There should be a change activity subject.");
+    $this->assertNotEmpty($change_activity, 'There should be a change activity.');
+    $this->assertNotEmpty($change_activity['subject'], 'There should be a change activity subject.');
     if ($this->isExtensionActive('tazcontract')) {
-      $this->assertStringContainsOtherString("1,320.00", $change_activity['subject']);
-    } else {
-      $this->assertStringContainsOtherString("amt. to 480.00", $change_activity['subject']);
+      $this->assertStringContainsOtherString('1,320.00', $change_activity['subject']);
+    }
+    else {
+      $this->assertStringContainsOtherString('amt. to 480.00', $change_activity['subject']);
     }
   }
+
 }

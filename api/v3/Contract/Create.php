@@ -8,6 +8,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 /**
  * A wrapper around Membership.create with appropriate fields passed.
@@ -22,11 +23,11 @@ function _civicrm_api3_Contract_create_spec(&$params) {
  * A wrapper around Membership.create with appropriate fields passed.
  * You cannot schedule Contract.create for the future.
  */
-function civicrm_api3_Contract_create($params){
+function civicrm_api3_Contract_create($params) {
   // Any parameters with a period in will be converted to the custom_N format
   // Other fields will be passed directly to the membership.create API
-  foreach ($params as $key => $value){
-    if(strpos($key, '.')){
+  foreach ($params as $key => $value) {
+    if (strpos($key, '.')) {
       unset($params[$key]);
       $params[CRM_Contract_Utils::getCustomFieldId($key)] = $value;
     }
@@ -36,7 +37,9 @@ function civicrm_api3_Contract_create($params){
   $membership = civicrm_api3('Membership', 'create', $params);
 
   // link SEPA Mandate
-  $recurring_contribution_field_key = CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution');
+  $recurring_contribution_field_key = CRM_Contract_Utils::getCustomFieldId(
+    'membership_payment.membership_recurring_contribution'
+  );
   if (!empty($params[$recurring_contribution_field_key])) {
     // link recurring contribution to contract
     CRM_Contract_SepaLogic::setContractPaymentLink($membership['id'], $params[$recurring_contribution_field_key]);
@@ -46,7 +49,7 @@ function civicrm_api3_Contract_create($params){
   $params['activity_type_id'] = 'sign';
   $change = CRM_Contract_Change::getChangeForData($params);
   $change->setParameter('source_contact_id', CRM_Contract_Configuration::getUserID());
-  $change->setParameter('source_record_id',  $membership['id']);
+  $change->setParameter('source_record_id', $membership['id']);
   $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
   $change->setStatus('Completed');
   $change->populateData();
@@ -55,11 +58,12 @@ function civicrm_api3_Contract_create($params){
   $change->save();
 
   // also derive contract fields
-  $change->updateContract(['membership_payment.membership_recurring_contribution' => $params[$recurring_contribution_field_key]]);
+  $change->updateContract(
+    ['membership_payment.membership_recurring_contribution' => $params[$recurring_contribution_field_key]]
+  );
 
   // maybe we need to do some cleanup:
   CRM_Contract_Utils::deleteSystemActivities($membership['id']);
 
   return $membership;
 }
-

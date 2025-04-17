@@ -6,11 +6,11 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
 use Civi;
-use CRM_Utils_System;
 
 /**
  * Class ContractFormDefaultsEvent
@@ -22,16 +22,16 @@ use CRM_Utils_System;
  *
  * @package Civi\Contract\Event
  */
-class ContractFormDefaultsEvent extends ConfigurationEvent
-{
+class ContractFormDefaultsEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.form.defaults';
 
-  /** @var string action */
+  /**
+   * @var string action */
   protected $action;
 
-  /** @var array the form defaults to be manipulated (in place) */
+  /**
+   * @var array the form defaults to be manipulated (in place) */
   protected $form_defaults;
-
 
   /**
    * Dispatch the Symfony event and return the resulting url
@@ -42,8 +42,7 @@ class ContractFormDefaultsEvent extends ConfigurationEvent
    * @param string $action
    *  the form mode
    */
-  public static function adjustDefaults(&$form_defaults, $action)
-  {
+  public static function adjustDefaults(&$form_defaults, $action) {
     $event = new ContractFormDefaultsEvent($form_defaults, $action);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
   }
@@ -57,8 +56,7 @@ class ContractFormDefaultsEvent extends ConfigurationEvent
    * @param string $action
    *  the form mode
    */
-  protected function __construct(&$form_defaults, $action)
-  {
+  protected function __construct(&$form_defaults, $action) {
     $this->action = $action;
     $this->form_defaults = &$form_defaults;
   }
@@ -68,8 +66,7 @@ class ContractFormDefaultsEvent extends ConfigurationEvent
    *
    * @return bool
    */
-  public function isCreateMode()
-  {
+  public function isCreateMode() {
     return $this->action == 'create';
   }
 
@@ -78,8 +75,7 @@ class ContractFormDefaultsEvent extends ConfigurationEvent
    *
    * @return bool
    */
-  public function isModifyMode()
-  {
+  public function isModifyMode() {
     // remark: does 'modify' even exist as an action?
     return in_array($this->action, ['cancel', 'pause', 'modify', 'update', 'revive']);
   }
@@ -89,9 +85,8 @@ class ContractFormDefaultsEvent extends ConfigurationEvent
    *
    * @return mixed|null
    */
-  public function getFormDefault($field_name)
-  {
-    return $this->form_defaults[$field_name] ?? null;
+  public function getFormDefault($field_name) {
+    return $this->form_defaults[$field_name] ?? NULL;
   }
 
   /**
@@ -100,8 +95,8 @@ class ContractFormDefaultsEvent extends ConfigurationEvent
    * @param string $field_name
    * @param mixed|null $field_value
    */
-  public function setFormDefault($field_name, $field_value)
-  {
+  public function setFormDefault($field_name, $field_value) {
     $this->form_defaults[$field_name] = $field_value;
   }
+
 }

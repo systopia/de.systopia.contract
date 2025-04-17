@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -18,46 +20,46 @@ use CRM_Contract_ExtensionUtil as E;
  */
 function _civicrm_api3_contract_payment_link_create_spec(&$spec) {
   $spec['id'] = [
-      'name'         => 'id',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'ContractPaymentLink ID',
-      'description'  => 'ID of existing ContractPaymentLink entity',
+    'name'         => 'id',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'ContractPaymentLink ID',
+    'description'  => 'ID of existing ContractPaymentLink entity',
   ];
   $spec['contract_id'] = [
-      'name'         => 'contract_id',
-      'api.required' => 1,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Contract ID',
-      'description'  => 'Contract this link relates to',
+    'name'         => 'contract_id',
+    'api.required' => 1,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Contract ID',
+    'description'  => 'Contract this link relates to',
   ];
   $spec['contribution_recur_id'] = [
-      'name'         => 'contribution_recur_id',
-      'api.required' => 1,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'ContributionRecur ID',
-      'description'  => 'Linked payment ID',
+    'name'         => 'contribution_recur_id',
+    'api.required' => 1,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'ContributionRecur ID',
+    'description'  => 'Linked payment ID',
   ];
   $spec['is_active'] = [
-      'name'         => 'is_active',
-      'api.default'  => 1,
-      'type'         => CRM_Utils_Type::T_BOOLEAN,
-      'title'        => 'Is Active?',
-      'description'  => 'Is the link currently active?',
+    'name'         => 'is_active',
+    'api.default'  => 1,
+    'type'         => CRM_Utils_Type::T_BOOLEAN,
+    'title'        => 'Is Active?',
+    'description'  => 'Is the link currently active?',
   ];
   $spec['start_date'] = [
-      'name'         => 'start_date',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_DATE,
-      'title'        => '(Start) Date',
-      'description'  => 'When did this link relationship happen or start?',
+    'name'         => 'start_date',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_DATE,
+    'title'        => '(Start) Date',
+    'description'  => 'When did this link relationship happen or start?',
   ];
   $spec['end_date'] = [
-      'name'         => 'end_date',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_DATE,
-      'title'        => 'End Date',
-      'description'  => 'When did this link relationship end?',
+    'name'         => 'end_date',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_DATE,
+    'title'        => 'End Date',
+    'description'  => 'When did this link relationship end?',
   ];
 }
 
@@ -94,7 +96,6 @@ function civicrm_api3_contract_payment_link_get($params) {
   return _civicrm_api3_basic_get('CRM_Contract_BAO_ContractPaymentLink', $params);
 }
 
-
 /**
  * ContractPaymentLink.getactive API specification
  *
@@ -104,28 +105,27 @@ function civicrm_api3_contract_payment_link_get($params) {
  */
 function _civicrm_api3_contract_payment_link_getactive_spec(&$spec) {
   $spec['contract_id'] = [
-      'name'         => 'contract_id',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Contract ID',
-      'description'  => 'Contract/Membership this link relates to',
+    'name'         => 'contract_id',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Contract ID',
+    'description'  => 'Contract/Membership this link relates to',
   ];
   $spec['contribution_recur_id'] = [
-      'name'         => 'contribution_recur_id',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Payment ID',
-      'description'  => 'ContributionRcur this link relates to',
+    'name'         => 'contribution_recur_id',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Payment ID',
+    'description'  => 'ContributionRcur this link relates to',
   ];
   $spec['date'] = [
-      'name'         => 'date',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_DATE,
-      'title'        => 'Date',
-      'description'  => 'What point in time are we looking at? Default: now',
+    'name'         => 'date',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_DATE,
+    'title'        => 'Date',
+    'description'  => 'What point in time are we looking at? Default: now',
   ];
 }
-
 
 /**
  * ContractPaymentLink.getactive API
@@ -141,7 +141,8 @@ function civicrm_api3_contract_payment_link_getactive($params) {
         CRM_Utils_Array::value('contribution_recur_id', $params, NULL),
         CRM_Utils_Array::value('date', $params, 'now'));
     return civicrm_api3_create_success($result);
-  } catch (Exception $ex) {
+  }
+  catch (Exception $ex) {
     throw new API_Exception($ex->getMessage());
   }
 }

@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 
 namespace Civi\Contract\Event;
 
@@ -20,22 +22,21 @@ use CRM_Utils_System;
  *
  * @package Civi\Contract\Event
  */
-class ContractCreateFormEvent extends ConfigurationEvent
-{
+class ContractCreateFormEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.createform';
 
-  /** @var int ID of the contact involved */
+  /**
+   * @var int ID of the contact involved */
   protected $contact_id;
 
   /**
    * @var string|null URL to a contract create from - if one exists
    */
-  protected $url = null;
+  protected $url = NULL;
 
-  protected function __construct($contact_id)
-  {
+  protected function __construct($contact_id) {
     $this->contact_id = $contact_id;
-    $this->url = CRM_Utils_System::url('civicrm/contract/create', 'cid='.$contact_id, true);
+    $this->url = CRM_Utils_System::url('civicrm/contract/create', 'cid=' . $contact_id, TRUE);
   }
 
   /**
@@ -43,8 +44,7 @@ class ContractCreateFormEvent extends ConfigurationEvent
    *
    * @return int
    */
-  public function getContactID(): int
-  {
+  public function getContactID(): int {
     return $this->contact_id;
   }
 
@@ -55,10 +55,9 @@ class ContractCreateFormEvent extends ConfigurationEvent
    *    the new url to the form
    *
    * @return string|null
-   *    the previously set url
+   *   the previously set url
    */
-  public function setContractCreateFormUrl($url)
-  {
+  public function setContractCreateFormUrl($url) {
     $old_url = $this->url;
     $this->url = $url;
     return $old_url;
@@ -69,8 +68,7 @@ class ContractCreateFormEvent extends ConfigurationEvent
    *
    * @return string
    */
-  public function getContractCreateFormUrl(): ?string
-  {
+  public function getContractCreateFormUrl(): ?string {
     return $this->url;
   }
 
@@ -82,10 +80,10 @@ class ContractCreateFormEvent extends ConfigurationEvent
    *
    * @return string
    */
-  public static function getUrl($contact_id)
-  {
+  public static function getUrl($contact_id) {
     $event = new ContractCreateFormEvent($contact_id);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event->getContractCreateFormUrl();
   }
+
 }

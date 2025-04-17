@@ -8,15 +8,17 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Schedule a Contract modification
  */
 function _civicrm_api3_contribution_recur_getdetails_spec(&$params) {
   $params['contact_id'] = [
-      'name'         => 'contact_id',
-      'title'        => 'CiviCRM Contact ID',
-      'api.required' => 1,
-      'type'         => 1,
+    'name'         => 'contact_id',
+    'title'        => 'CiviCRM Contact ID',
+    'api.required' => 1,
+    'type'         => 1,
   ];
 }
 
@@ -28,4 +30,3 @@ function civicrm_api3_contribution_recur_getdetails($params) {
   $data = $recurringContribution->getAll($params['contact_id']);
   return civicrm_api3_create_success($data);
 }
-

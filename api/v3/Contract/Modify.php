@@ -6,11 +6,12 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 /**
  * Schedule a Contract modification
  */
-function _civicrm_api3_Contract_modify_spec(&$params){
+function _civicrm_api3_Contract_modify_spec(&$params) {
   $params['modify_action'] = [
     'name'         => 'modify_action',
     'title'        => 'Action',
@@ -26,19 +27,18 @@ function _civicrm_api3_Contract_modify_spec(&$params){
     'description'  => 'Contract (Membership) ID of the contract to be modified',
   ];
   $params['medium_id'] = [
-      'name'         => 'medium_id',
-      'title'        => 'Medium ID',
-      'api.required' => 1,
-      'description'  => 'How was the modification received',
+    'name'         => 'medium_id',
+    'title'        => 'Medium ID',
+    'api.required' => 1,
+    'description'  => 'How was the modification received',
   ];
   $params['date'] = [
-      'name'         => 'date',
-      'title'        => 'Date',
-      'api.default'  => 'now',
-      'description'  => 'Scheduled execution date (not in the past, and in format Y-m-d H:i:s)',
+    'name'         => 'date',
+    'title'        => 'Date',
+    'api.default'  => 'now',
+    'description'  => 'Scheduled execution date (not in the past, and in format Y-m-d H:i:s)',
   ];
 }
-
 
 /**
  * Schedule a new Contract modification
@@ -64,7 +64,11 @@ function civicrm_api3_Contract_modify($params) {
   $requested_execution_time = strtotime($params['date']);
   $requested_execution_time = CRM_Contract_Form_Settings::adjustRequestedExecutionTime($requested_execution_time);
   if ($requested_execution_time < strtotime('today')) {
-    throw new Exception("Parameter 'date' ('{$params['date']}') rejected because it's too far in the past, see the 'date_adjustment' setting.");
+    // phpcs:disable Generic.Files.LineLength.TooLong
+    throw new Exception(
+      "Parameter 'date' ('{$params['date']}') rejected because it's too far in the past, see the 'date_adjustment' setting."
+    );
+    // phpcs:enable
   }
 
   // modify data to match internal structure
@@ -75,7 +79,6 @@ function civicrm_api3_Contract_modify($params) {
   if (!empty($params['note'])) {
     $params['details'] = $params['note'];
   }
-
 
   // generate change (activity)
   $change = CRM_Contract_Change::getChangeForData($params);

@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Interface to CiviBanking functions
  *
@@ -13,7 +15,8 @@
  */
 class CRM_Contract_BankingLogic {
 
-  /** cached value for self::getCreditorBankAccount() */
+  /**
+   * cached value for self::getCreditorBankAccount() */
   protected static $_creditorBankAccount = NULL;
   protected static $_ibanReferenceType = NULL;
 
@@ -21,7 +24,9 @@ class CRM_Contract_BankingLogic {
    * get bank account information
    */
   public static function getBankAccount($account_id) {
-    if (empty($account_id)) return NULL;
+    if (empty($account_id)) {
+      return NULL;
+    }
 
     $data = [];
     $account = civicrm_api3('BankingAccount', 'getsingle', ['id' => $account_id]);
@@ -41,7 +46,8 @@ class CRM_Contract_BankingLogic {
     // load IBAN reference
     $reference = civicrm_api3('BankingAccountReference', 'getsingle', [
       'ba_id'             => $account_id,
-      'reference_type_id' => self::getIbanReferenceTypeID()]);
+      'reference_type_id' => self::getIbanReferenceTypeID(),
+    ]);
     $data['iban'] = $reference['reference'];
 
     return $data;
@@ -65,7 +71,8 @@ class CRM_Contract_BankingLogic {
       $existing_references = civicrm_api3('BankingAccountReference', 'get', [
         'reference'         => $iban,
         'reference_type_id' => self::getIbanReferenceTypeID(),
-        'option.limit'      => 0]);
+        'option.limit'      => 0,
+      ]);
 
       // get the accounts for this
       $bank_account_ids = [];
@@ -76,7 +83,8 @@ class CRM_Contract_BankingLogic {
         $contact_bank_accounts = civicrm_api3('BankingAccount', 'get', [
           'id'           => ['IN' => $bank_account_ids],
           'contact_id'   => $contact_id,
-          'option.limit' => 1]);
+          'option.limit' => 1,
+        ]);
         if ($contact_bank_accounts['count']) {
           // bank account already exists with the contact
           $account = reset($contact_bank_accounts['values']);
@@ -89,15 +97,18 @@ class CRM_Contract_BankingLogic {
       $data = ['BIC' => $bic, 'country' => substr($iban, 0, 2)];
       $bank_account = civicrm_api3('BankingAccount', 'create', [
         'contact_id'  => $contact_id,
-        'description' => "Bulk Importer",
-        'data_parsed' => json_encode($data)]);
+        'description' => 'Bulk Importer',
+        'data_parsed' => json_encode($data),
+      ]);
 
       $bank_account_reference = civicrm_api3('BankingAccountReference', 'create', [
         'reference'         => $iban,
-        'reference_type_id' =>self::getIbanReferenceTypeID(),
-        'ba_id'             => $bank_account['id']]);
+        'reference_type_id' => self::getIbanReferenceTypeID(),
+        'ba_id'             => $bank_account['id'],
+      ]);
       return $bank_account['id'];
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       error_log("Couldn't add bank account '{$iban}' [{$contact_id}]");
     }
   }
@@ -108,7 +119,11 @@ class CRM_Contract_BankingLogic {
   public static function getCreditorBankAccount() {
     if (self::$_creditorBankAccount === NULL) {
       $creditor = CRM_Contract_SepaLogic::getCreditor();
-      self::$_creditorBankAccount = self::getOrCreateBankAccount($creditor->creditor_id, $creditor->iban, $creditor->bic);
+      self::$_creditorBankAccount = self::getOrCreateBankAccount(
+        $creditor->creditor_id,
+        $creditor->iban,
+        $creditor->bic
+      );
     }
     return self::$_creditorBankAccount;
   }
@@ -120,11 +135,13 @@ class CRM_Contract_BankingLogic {
     $iban_references = civicrm_api3('BankingAccountReference', 'get', [
       'ba_id'             => $bank_account_id,
       'reference_type_id' => self::getIbanReferenceTypeID(),
-      'return'            => 'reference']);
+      'return'            => 'reference',
+    ]);
     if ($iban_references['count'] > 0) {
       $reference = reset($iban_references['values']);
       return $reference['reference'];
-    } else {
+    }
+    else {
       return '';
     }
   }
@@ -138,7 +155,8 @@ class CRM_Contract_BankingLogic {
         'value'           => 'IBAN',
         'return'          => 'id',
         'option_group_id' => 'civicrm_banking.reference_types',
-        'is_active'       => 1]);
+        'is_active'       => 1,
+      ]);
       self::$_ibanReferenceType = $reference_type_value['id'];
     }
     return self::$_ibanReferenceType;
@@ -153,25 +171,53 @@ class CRM_Contract_BankingLogic {
    */
   public static function getAccountsFromRecurringContribution($contribution_recur_id) {
     $contribution_recur_id = (int) $contribution_recur_id;
-    if (!empty($contribution_recur_id)) {
-      try {
-        // TODO: make this relationship configurable
-        $most_recent_contribution = CRM_Core_DAO::executeQuery("
-          SELECT from_ba, to_ba
-          FROM civicrm_contribution c
-            LEFT JOIN civicrm_value_contribution_information i ON i.entity_id = c.id
-          WHERE c.contribution_recur_id = {$contribution_recur_id}
-          ORDER BY receive_date DESC
-          LIMIT 1;");
-        if ($most_recent_contribution->fetch()) {
-          return [$most_recent_contribution->from_ba, $most_recent_contribution->to_ba];
-        }
-      } catch (Exception $ex) {
-        // the civicrm_value_contribution_information probably doesn't exist
-      }
+
+    if (empty($contribution_recur_id)) {
+      return NULL;
     }
 
-    // fallback: empty
-    return ['', ''];
+    $dao = CRM_Core_DAO::executeQuery("
+    SELECT COUNT(*) AS count
+    FROM information_schema.tables
+    WHERE table_schema = DATABASE()
+      AND table_name = 'civicrm_value_contribution_information'
+  ");
+    $dao->fetch();
+    if ($dao->count == 0) {
+      return NULL;
+    }
+
+    $dao = CRM_Core_DAO::executeQuery("
+    SELECT COUNT(*) AS count
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE()
+      AND table_name = 'civicrm_value_contribution_information'
+      AND column_name IN ('from_ba', 'to_ba')
+  ");
+    $dao->fetch();
+    if ($dao->count < 2) {
+      return NULL;
+    }
+
+    try {
+      $most_recent_contribution = CRM_Core_DAO::executeQuery("
+      SELECT from_ba, to_ba
+      FROM civicrm_contribution c
+        LEFT JOIN civicrm_value_contribution_information i ON i.entity_id = c.id
+      WHERE c.contribution_recur_id = {$contribution_recur_id}
+      ORDER BY receive_date DESC
+      LIMIT 1
+    ");
+
+      if ($most_recent_contribution->fetch()) {
+        return [$most_recent_contribution->from_ba, $most_recent_contribution->to_ba];
+      }
+    }
+    catch (Exception $ex) {
+
+    }
+
+    return NULL;
   }
+
 }

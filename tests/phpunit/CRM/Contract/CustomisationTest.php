@@ -1,12 +1,17 @@
 <?php
+/*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2017-2025 SYSTOPIA                             |
+| Author: B. Endres (endres -at- systopia.de)                  |
+|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+|         P. Figel (pfigel -at- greenpeace.org)                |
+| http://www.systopia.de/                                      |
++--------------------------------------------------------------*/
+
+declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
 use Civi\Contract\Event\RenderChangeSubjectEvent;
-
-include_once 'ContractTestBase.php';
 
 /**
  * Basic Contract Engine Tests
@@ -29,27 +34,27 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
   public function testRenderSubjectCustomisation() {
     $contract = $this->createNewContract(['is_sepa' => 1]);
     $last_change = $this->getLastChangeActivity($contract['id']);
-    $this->assertEquals('TEST-sign', $last_change['subject'], "The customisation hook failed.");
+    $this->assertEquals('TEST-sign', $last_change['subject'], 'The customisation hook failed.');
 
     // cancel contract
     $this->modifyContract($contract['id'], 'cancel', 'tomorrow', [
-        'membership_cancellation.membership_cancel_reason' => 'Unknown'
+      'membership_cancellation.membership_cancel_reason' => 'Unknown',
     ]);
     $this->runContractEngine($contract['id'], '+2 days');
     $last_change = $this->getLastChangeActivity($contract['id']);
-    $this->assertEquals('TEST-cancel', $last_change['subject'], "The customisation hook failed.");
+    $this->assertEquals('TEST-cancel', $last_change['subject'], 'The customisation hook failed.');
   }
 
   /**
    * Render a custom change activity subject
    *
-   * @param RenderChangeSubjectEvent $event
+   * @param \Civi\Contract\Event\RenderChangeSubjectEvent $event
    *   the Contract Extension's render change subject event
    *
    * @see https://projekte.systopia.de/issues/18511#note-10
    */
-  public static function renderSubjectTest1(RenderChangeSubjectEvent $event)
-  {
-    $event->setRenderedSubject("TEST-" . $event->getActivityAction());
+  public static function renderSubjectTest1(RenderChangeSubjectEvent $event) {
+    $event->setRenderedSubject('TEST-' . $event->getActivityAction());
   }
+
 }
