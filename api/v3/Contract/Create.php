@@ -8,6 +8,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * A wrapper around Membership.create with appropriate fields passed.
  * You cannot schedule Contract.create for the future.
@@ -35,7 +37,9 @@ function civicrm_api3_Contract_create($params) {
   $membership = civicrm_api3('Membership', 'create', $params);
 
   // link SEPA Mandate
-  $recurring_contribution_field_key = CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution');
+  $recurring_contribution_field_key = CRM_Contract_Utils::getCustomFieldId(
+    'membership_payment.membership_recurring_contribution'
+  );
   if (!empty($params[$recurring_contribution_field_key])) {
     // link recurring contribution to contract
     CRM_Contract_SepaLogic::setContractPaymentLink($membership['id'], $params[$recurring_contribution_field_key]);
@@ -54,7 +58,9 @@ function civicrm_api3_Contract_create($params) {
   $change->save();
 
   // also derive contract fields
-  $change->updateContract(['membership_payment.membership_recurring_contribution' => $params[$recurring_contribution_field_key]]);
+  $change->updateContract(
+    ['membership_payment.membership_recurring_contribution' => $params[$recurring_contribution_field_key]]
+  );
 
   // maybe we need to do some cleanup:
   CRM_Contract_Utils::deleteSystemActivities($membership['id']);

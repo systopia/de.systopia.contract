@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -21,7 +22,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class ContractFormDefaultsEvent extends ConfigurationEvent {
+class ContractFormDefaultsEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.form.defaults';
 
   /**

@@ -8,13 +8,15 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Utils {
 
   private static $_singleton;
   private static $coreMembershipHistoryActivityIds;
-  static $customFieldCache;
+  public static $customFieldCache;
 
   public static function singleton() {
     if (!self::$_singleton) {
@@ -52,7 +54,15 @@ class CRM_Contract_Utils {
     if (!isset(self::$customFieldCache[$customField])) {
       $parts = explode('.', $customField);
       try {
-        self::$customFieldCache[$customField] = 'custom_' . civicrm_api3('CustomField', 'getvalue', ['return' => 'id', 'custom_group_id' => $parts[0], 'name' => $parts[1]]);
+        self::$customFieldCache[$customField] = 'custom_' . civicrm_api3(
+            'CustomField',
+            'getvalue',
+            [
+              'return' => 'id',
+              'custom_group_id' => $parts[0],
+              'name' => $parts[1],
+            ]
+          );
       }
       catch (Exception $e) {
         throw new Exception("Could not find custom field '{$parts[1]}' in custom field set '{$parts[0]}'");
@@ -73,8 +83,16 @@ class CRM_Contract_Utils {
     self::warmCustomFieldCache();
     $name = array_search($customFieldId, self::$customFieldCache);
     if (!$name) {
-      $customField                                                             = civicrm_api3('CustomField', 'getsingle', ['id' => substr($customFieldId, 7)]);
-      $customGroup                                                             = civicrm_api3('CustomGroup', 'getsingle', ['id' => $customField['custom_group_id']]);
+      $customField = civicrm_api3(
+        'CustomField',
+        'getsingle',
+        ['id' => substr($customFieldId, 7)]
+      );
+      $customGroup = civicrm_api3(
+        'CustomGroup',
+        'getsingle',
+        ['id' => $customField['custom_group_id']]
+      );
       self::$customFieldCache["{$customGroup['name']}.{$customField['name']}"] = $customFieldId;
     }
     // Return result or return an error if it does not exist.
@@ -88,13 +106,34 @@ class CRM_Contract_Utils {
 
   public static function warmCustomFieldCache() {
     if (!self::$customFieldCache) {
-      $customGroupNames = ['membership_general', 'membership_payment', 'membership_cancellation', 'contract_cancellation', 'contract_updates'];
+      $customGroupNames = [
+        'membership_general',
+        'membership_payment',
+        'membership_cancellation',
+        'contract_cancellation',
+        'contract_updates',
+      ];
       $custom_group_ids = [];
-      $customGroups     = civicrm_api3('CustomGroup', 'get', ['name' => ['IN' => $customGroupNames], 'return' => 'name', 'options' => ['limit' => 0]])['values'];
+      $customGroups = civicrm_api3(
+        'CustomGroup',
+        'get',
+        [
+          'name' => ['IN' => $customGroupNames],
+          'return' => 'name',
+          'options' => ['limit' => 0],
+        ]
+      )['values'];
       foreach ($customGroups as $customGroup) {
         $custom_group_ids[] = $customGroup['id'];
       }
-      $customFields = civicrm_api3('CustomField', 'get', ['custom_group_id' => ['IN' => $custom_group_ids], 'options' => ['limit' => 0]]);
+      $customFields = civicrm_api3(
+        'CustomField',
+        'get',
+        [
+          'custom_group_id' => ['IN' => $custom_group_ids],
+          'options' => ['limit' => 0],
+        ]
+      );
       foreach ($customFields['values'] as $c) {
         self::$customFieldCache["{$customGroups[$c['custom_group_id']]['name']}.{$c['name']}"] = "custom_{$c['id']}";
       }
@@ -103,10 +142,21 @@ class CRM_Contract_Utils {
 
   public static function getCoreMembershipHistoryActivityIds() {
     if (!self::$coreMembershipHistoryActivityIds) {
-      $result = civicrm_api3('OptionValue', 'get', [
-        'option_group_id' => 'activity_type',
-        'name'            => ['IN' => ['Membership Signup', 'Membership Renewal', 'Change Membership Status', 'Change Membership Type', 'Membership Renewal Reminder']],
-      ]
+      $result = civicrm_api3(
+        'OptionValue',
+        'get',
+        [
+          'option_group_id' => 'activity_type',
+          'name' => [
+            'IN' => [
+              'Membership Signup',
+              'Membership Renewal',
+              'Change Membership Status',
+              'Change Membership Type',
+              'Membership Renewal Reminder',
+            ],
+          ],
+        ]
       );
       foreach ($result['values'] as $v) {
         self::$coreMembershipHistoryActivityIds[] = $v['value'];
@@ -224,13 +274,17 @@ class CRM_Contract_Utils {
     if (!empty($config->customFileUploadDir)) {
       $fullPath = $config->customFileUploadDir . '/contracts/';
       if (!is_dir($fullPath)) {
-        CRM_Core_Error::debug_log_message('Warning: Contract file path does not exist.  It should be at: ' . $fullPath);
+        CRM_Core_Error::debug_log_message(
+          'Warning: Contract file path does not exist.  It should be at: ' . $fullPath
+        );
       }
       $fullPathWithFilename = $fullPath . self::contractFileName($file);
       return $fullPathWithFilename;
     }
     else {
-      CRM_Core_Error::debug_log_message('Warning: Contract file path undefined! Did you set customFileUploadDir?');
+      CRM_Core_Error::debug_log_message(
+        'Warning: Contract file path undefined! Did you set customFileUploadDir?'
+      );
       return FALSE;
     }
   }
@@ -321,7 +375,11 @@ class CRM_Contract_Utils {
         $value = civicrm_api3($entity, 'getvalue', $query);
       }
       catch (Exception $ex) {
-        Civi::log()->debug("Error looking up {$entity} value, attribute '{$attribute}' with query " . json_encode($query));
+        Civi::log()->debug(
+          "Error looking up {$entity} value, attribute '{$attribute}' with query " . json_encode(
+            $query
+          )
+        );
         $value = 'ERROR';
       }
       $lookup_cache[$cache_key] = $value;

@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 
 namespace Civi\Contract\Event;
 
@@ -20,7 +22,7 @@ use CRM_Utils_System;
  *
  * @package Civi\Contract\Event
  */
-class ContractCreateFormEvent extends ConfigurationEvent {
+class ContractCreateFormEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.createform';
 
   /**

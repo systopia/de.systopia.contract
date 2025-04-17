@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 /**
  * Schedule a Contract modification
  */
@@ -62,7 +64,11 @@ function civicrm_api3_Contract_modify($params) {
   $requested_execution_time = strtotime($params['date']);
   $requested_execution_time = CRM_Contract_Form_Settings::adjustRequestedExecutionTime($requested_execution_time);
   if ($requested_execution_time < strtotime('today')) {
-    throw new Exception("Parameter 'date' ('{$params['date']}') rejected because it's too far in the past, see the 'date_adjustment' setting.");
+    // phpcs:disable Generic.Files.LineLength.TooLong
+    throw new Exception(
+      "Parameter 'date' ('{$params['date']}') rejected because it's too far in the past, see the 'date_adjustment' setting."
+    );
+    // phpcs:enable
   }
 
   // modify data to match internal structure

@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -54,7 +56,8 @@ class CRM_Contract_Configuration {
   /**
    * Allows you to suppress the automatic creation of the given activity types
    *
-   * @return array list of civicrm activity types that aber being automatically created,
+   * @return array
+   *   list of civicrm activity types that aber being automatically created,
    *   but should be suppressed or removed
    */
   public static function suppressSystemActivityTypes() {
@@ -65,7 +68,8 @@ class CRM_Contract_Configuration {
   /**
    * Allows you to adjust the list of eligible campaigns
    *
-   * @return array list of civicrm activity types that aber being automatically created,
+   * @return array
+   *   list of civicrm activity types that aber being automatically created,
    *   but should be suppressed or removed
    */
   public static function getCampaignList() {
@@ -175,10 +179,11 @@ class CRM_Contract_Configuration {
   /**
    * Get the list of eligible payment options
    *
-   * @return array possibly having the following values
-   *   'select'   => a recurring_contribution_id is presented as the new contract
-   *   'nochange' => no changes to the payment contract requested
-   *   <other>    => the new payment instrument, e.g. RCUR or Cash
+   * @return array
+   *   possibly having the following values
+   *   - 'select'   => a recurring_contribution_id is presented as the new contract
+   *   - 'nochange' => no changes to the payment contract requested
+   *   - <other>    => the new payment instrument, e.g. RCUR or Cash
    */
   public static function getPaymentOptions($allow_new_contracts = TRUE, $allow_no_change = TRUE) {
     $payment_options['select'] = E::ts('select existing contract');

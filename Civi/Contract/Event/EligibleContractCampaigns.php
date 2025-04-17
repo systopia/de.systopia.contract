@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -18,7 +19,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class EligibleContractCampaigns extends ConfigurationEvent {
+class EligibleContractCampaigns extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.eligible_campaigns';
 
   /**

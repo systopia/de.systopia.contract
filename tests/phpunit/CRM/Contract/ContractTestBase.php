@@ -1,4 +1,14 @@
 <?php
+/*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2017-2025 SYSTOPIA                             |
+| Author: B. Endres (endres -at- systopia.de)                  |
+|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+|         P. Figel (pfigel -at- greenpeace.org)                |
+| http://www.systopia.de/                                      |
++--------------------------------------------------------------*/
+
+declare(strict_types = 1);
 
 use Civi\Test\Api3TestTrait;
 use CRM_Contract_ExtensionUtil as E;
@@ -21,7 +31,10 @@ use PHPUnit\Framework\TestCase;
  *
  * @group headless
  */
+// phpcs:disable Generic.Files.LineLength.TooLong
 class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+// phpcs:enable
+
   use Api3TestTrait {
     callAPISuccess as public traitCallAPISuccess;
   }
@@ -35,7 +48,6 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       ->installMe(__DIR__)
       ->install('org.project60.sepa')
       ->install('org.project60.banking')
-        //->install('tazcontract') // if changed, don't forget to 'DELETE FROM civitest_revs;' before running again
       ->apply();
   }
 
@@ -143,7 +155,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       'id'  => $contract_id,
     ])['values'];
     $this->assertNotEmpty($result['failed'], 'Contract Engine should report failure(s)');
-    if (!is_null($expectedError)) {
+    if (NULL !== $expectedError) {
       $errorDetails = implode("\n", $result['error_details']);
       $this->assertStringContainsOtherString(
         $expectedError,
@@ -307,24 +319,38 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     }
 
     //membership_payment.membership_recurring_contribution
-    $contract = $this->callAPISuccess('Contract', 'create', [
-      'contact_id'         => $contact_id,
-      'membership_type_id' => (!empty($params['membership_type_id'])) ? $params['membership_type_id'] : $this->getRandomMembershipTypeID(),
-      'join_date'          => (!empty($params['join_date'])) ? $params['join_date'] : date('YmdHis'),
-      'start_date'         => (!empty($params['start_date'])) ? $params['start_date'] : date('YmdHis'),
-      'end_date'           => (!empty($params['end_date'])) ? $params['end_date'] : NULL,
-      'campaign_id'        => (!empty($params['campaign_id'])) ? $params['campaign_id'] : NULL,
-      'note'               => (!empty($params['note'])) ? $params['note'] : 'Test',
-      'medium_id'          => (!empty($params['medium_id'])) ? $params['medium_id'] : '1',
+    $contract = $this->callAPISuccess(
+      'Contract',
+      'create',
+      [
+        'contact_id' => $contact_id,
+        // phpcs:disable Drupal.Arrays.Array.ArrayIndentation
+        'membership_type_id' => (!empty($params['membership_type_id']))
+          ? $params['membership_type_id']
+          : $this->getRandomMembershipTypeID(),
+        // phpcs:enable
+        'join_date' => (!empty($params['join_date'])) ? $params['join_date'] : date(
+          'YmdHis'
+        ),
+        'start_date' => (!empty($params['start_date'])) ? $params['start_date'] : date(
+          'YmdHis'
+        ),
+        'end_date' => (!empty($params['end_date'])) ? $params['end_date'] : NULL,
+        'campaign_id' => (!empty($params['campaign_id'])) ? $params['campaign_id'] : NULL,
+        'note' => (!empty($params['note'])) ? $params['note'] : 'Test',
+        'medium_id' => (!empty($params['medium_id'])) ? $params['medium_id'] : '1',
         // custom stuff:
-      'membership_payment.membership_recurring_contribution' => $params['membership_payment.membership_recurring_contribution'],
-      'membership_general.membership_dialoger'               => $contact_id,
-      'membership_payment.from_name'                         => 'Johannes',
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        'membership_payment.membership_recurring_contribution' => $params['membership_payment.membership_recurring_contribution'],
+        // phpcs:enable
+        'membership_general.membership_dialoger' => $contact_id,
+        'membership_payment.from_name' => 'Johannes',
         // membership_general.membership_contract   // Contract number
         // membership_general.membership_reference  // Reference number
         // membership_general.membership_contract   // Contract number
         // membership_general.membership_channel    // Membership Channel
-    ]);
+      ]
+    );
     $this->assertNotEmpty($contract['id'], "Contract couldn't be created");
 
     // load the contract
@@ -466,7 +492,12 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    * @param $attribute_list      array list of attributes to check. default is ALL
    * @param $exception_list      array list of attributes to NOT check. default is NONE
    */
-  public function assertArraysEqual($expected_data, $current_data, $attribute_list = NULL, $exception_list = [], $source = 'Unknown') {
+  public function assertArraysEqual($expected_data,
+    $current_data,
+    $attribute_list = NULL,
+    $exception_list = [],
+    $source = 'Unknown'
+  ) {
     if ($attribute_list == NULL) {
       $attribute_list = array_keys(array_merge($expected_data, $current_data));
     }
@@ -477,7 +508,6 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       }
       $expected_value = CRM_Utils_Array::value($attribute, $expected_data);
       $current_value  = CRM_Utils_Array::value($attribute, $current_data);
-      //$this->assertEquals($expected_value, $current_value, "Attribute '{$attribute}' differs. Expected: '{$expected_value}', got '{$current_value}'.");
       $this->assertEquals($expected_value, $current_value, "Attribute '{$attribute}' differs. ({$source})");
     }
   }

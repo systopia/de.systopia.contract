@@ -9,13 +9,21 @@
  * | http://www.systopia.de/                                      |
  * +--------------------------------------------------------------
  */
+
+declare(strict_types = 1);
+
 class CRM_Contract_Handler_ModificationConflicts {
 
   private $scheduledModifications = [];
   private $contractId = NULL;
+  protected $needsReviewStatusId;
 
   public function __construct() {
-    $this->needsReviewStatusId = civicrm_api3('OptionValue', 'getvalue', ['return' => 'value', 'option_group_id' => 'activity_status', 'name' => 'Needs Review']);
+    $this->needsReviewStatusId = civicrm_api3(
+      'OptionValue',
+      'getvalue',
+      ['return' => 'value', 'option_group_id' => 'activity_status', 'name' => 'Needs Review']
+    );
   }
 
   public function checkForConflicts($contractId) {
@@ -50,7 +58,7 @@ class CRM_Contract_Handler_ModificationConflicts {
 
   public function getScheduledModifications() {
     $scheduledModifications = civicrm_api3('activity', 'get', [
-    // If we have more than 10,000 scheduled updates for this contract, probably time to review organisational proceedures
+    // With more than 10,000 scheduled updates for this contract, probably time to review organisational procedures.
       'option.limit' => 10000,
       'source_record_id' => $this->contractId,
       'status_id' => ['IN' => ['scheduled', 'needs review']],
@@ -112,8 +120,8 @@ class CRM_Contract_Handler_ModificationConflicts {
     $resumeActivity = next($this->scheduledModifications);
 
     if (
-           $pauseActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Pause')
-        && $resumeActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Resume')
+      $pauseActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Pause')
+      && $resumeActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Resume')
     ) {
       $this->scheduledModifications = [];
     }

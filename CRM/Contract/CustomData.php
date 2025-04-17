@@ -15,12 +15,15 @@
  * | written permission from the original author(s).        |
  * +--------------------------------------------------------
  */
+
+declare(strict_types = 1);
+
 class CRM_Contract_CustomData {
-  const CUSTOM_DATA_HELPER_VERSION   = '0.12.0';
-  const CUSTOM_DATA_HELPER_LOG_LEVEL = 0;
-  const CUSTOM_DATA_HELPER_LOG_DEBUG = 1;
-  const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
-  const CUSTOM_DATA_HELPER_LOG_ERROR = 5;
+  protected const CUSTOM_DATA_HELPER_VERSION   = '0.12.0';
+  protected const CUSTOM_DATA_HELPER_LOG_LEVEL = 0;
+  protected const CUSTOM_DATA_HELPER_LOG_DEBUG = 1;
+  protected const CUSTOM_DATA_HELPER_LOG_INFO  = 3;
+  protected const CUSTOM_DATA_HELPER_LOG_ERROR = 5;
 
   /**
    * caches custom field data, indexed by group name */
@@ -66,7 +69,10 @@ class CRM_Contract_CustomData {
       }
       elseif ($entity == 'FAILED') {
         // Couldn't identify:
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update {$data['entity']}: " . json_encode($entity_data));
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Couldn't create/update {$data['entity']}: " . json_encode($entity_data)
+        );
       }
       else {
         // update OptionValue
@@ -116,7 +122,10 @@ class CRM_Contract_CustomData {
       }
       elseif ($optionValue == 'FAILED') {
         // Couldn't identify:
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update OptionValue: " . json_encode($optionValueSpec));
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Couldn't create/update OptionValue: " . json_encode($optionValueSpec)
+        );
       }
       else {
         // update OptionValue
@@ -173,7 +182,13 @@ class CRM_Contract_CustomData {
     }
     else {
       // update CustomGroup
-      $this->updateEntity('CustomGroup', $data, $customGroup, ['extends', 'style', 'is_active', 'title', 'extends_entity_column_value'], $force_update);
+      $this->updateEntity(
+        'CustomGroup',
+        $data,
+        $customGroup,
+        ['extends', 'style', 'is_active', 'title', 'extends_entity_column_value'],
+        $force_update
+      );
     }
 
     // now run the update for the CustomFields
@@ -185,7 +200,10 @@ class CRM_Contract_CustomData {
         // look up custom group id
         $optionGroup = $this->getEntityID('OptionGroup', ['name' => $customFieldSpec['option_group_id']]);
         if ($optionGroup == 'FAILED' || $optionGroup == NULL) {
-          $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update CustomField, bad option_group: {$customFieldSpec['option_group_id']}");
+          $this->log(
+            self::CUSTOM_DATA_HELPER_LOG_ERROR,
+            "Couldn't create/update CustomField, bad option_group: {$customFieldSpec['option_group_id']}"
+          );
           return;
         }
         $customFieldSpec['option_group_id'] = $optionGroup['id'];
@@ -197,11 +215,19 @@ class CRM_Contract_CustomData {
       }
       elseif ($customField == 'FAILED') {
         // Couldn't identify:
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Couldn't create/update CustomField: " . json_encode($customFieldSpec));
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Couldn't create/update CustomField: " . json_encode($customFieldSpec)
+        );
       }
       else {
         // update CustomField
-        $this->updateEntity('CustomField', $customFieldSpec, $customField, ['in_selector', 'is_view', 'is_searchable', 'html_type', 'data_type', 'custom_group_id']);
+        $this->updateEntity(
+          'CustomField',
+          $customFieldSpec,
+          $customField,
+          ['in_selector', 'is_view', 'is_searchable', 'html_type', 'data_type', 'custom_group_id']
+        );
       }
     }
   }
@@ -260,7 +286,10 @@ class CRM_Contract_CustomData {
 
       default:
         // bad lookup selector
-        $this->log(self::CUSTOM_DATA_HELPER_LOG_ERROR, "Bad {$entity_type} lookup selector: " . json_encode($lookup_query));
+        $this->log(
+          self::CUSTOM_DATA_HELPER_LOG_ERROR,
+          "Bad {$entity_type} lookup selector: " . json_encode($lookup_query)
+        );
         return 'FAILED';
     }
   }
@@ -319,9 +348,6 @@ class CRM_Contract_CustomData {
         }
         elseif (isset($current_data[$required_field])) {
           $update_query[$required_field] = $current_data[$required_field];
-        }
-        else {
-          // nothing we can do...
         }
       }
 
@@ -500,9 +526,6 @@ class CRM_Contract_CustomData {
             $custom_key = 'custom_' . $custom_field['id'];
             $data[$custom_key] = $data[$key];
             unset($data[$key]);
-          }
-          else {
-            // TODO: unknown data field $match['group_name'] . $match['field_name']
           }
         }
       }
@@ -855,7 +878,7 @@ class CRM_Contract_CustomData {
    * This function was specifically introduced as 1:1 replacement
    *  for the deprecated CRM_Core_OptionGroup::getValue function
    *
-   * @param string $groupName
+   * @param string $group_name
    *   name of the group
    *
    * @param $label
@@ -875,7 +898,12 @@ class CRM_Contract_CustomData {
    *
    * @throws Exception
    */
-  public static function getOptionValue($group_name, $label, $label_field = 'label', $label_type = 'String', $value_field = 'value') {
+  public static function getOptionValue($group_name,
+    $label,
+    $label_field = 'label',
+    $label_type = 'String',
+    $value_field = 'value'
+  ) {
     if (empty($label) || empty($group_name)) {
       return NULL;
     }

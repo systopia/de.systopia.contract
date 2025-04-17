@@ -6,10 +6,9 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
-
-require_once 'CRM/Core/Form.php';
-
 
 /**
  * Form controller class
@@ -22,10 +21,13 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     CRM_Utils_System::setTitle(ts('Detach Contributions from Membership'));
 
     // compile an info text
-    $infotext = E::ts('%1 of the %2 contributions are currently attached to a membership, and <strong>will be detached.</strong>', [
-      1 => $this->getAssignedCount(),
-      2 => count($this->_contributionIds),
-    ]);
+    $infotext = E::ts(
+      '%1 of the %2 contributions are currently attached to a membership, and <strong>will be detached.</strong>',
+      [
+        1 => $this->getAssignedCount(),
+        2 => count($this->_contributionIds),
+      ]
+    );
     $this->assign('infotext', $infotext);
 
     // additional options
@@ -59,7 +61,11 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
       CRM_Core_DAO::executeQuery("DELETE FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
     }
 
-    CRM_Core_Session::setStatus(E::ts('All contribution(s) have been detached from their memberships.'), E::ts('Success'), 'info');
+    CRM_Core_Session::setStatus(
+      E::ts('All contribution(s) have been detached from their memberships.'),
+      E::ts('Success'),
+      'info'
+    );
 
     // detach the recurring contributions
     $values = $this->exportValues();
@@ -76,14 +82,31 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
           $dcounter += 1;
         }
         catch (Exception $ex) {
-          CRM_Core_Session::setStatus(E::ts("Contribution [%1] couldn't be detached: %2", [1 => $contribution_id, 2 => $ex->getMessage()]), E::ts('Error'), 'error');
+          CRM_Core_Session::setStatus(
+            E::ts("Contribution [%1] couldn't be detached: %2", [1 => $contribution_id, 2 => $ex->getMessage()]),
+            E::ts('Error'),
+            'error'
+          );
         }
       }
       // inform the user:
-      CRM_Core_Session::setStatus(E::ts('%1 contribution(s) have been detached from the recurring contribution.', [1 => $dcounter]), E::ts('Success'), 'info');
+      CRM_Core_Session::setStatus(
+        E::ts('%1 contribution(s) have been detached from the recurring contribution.', [1 => $dcounter]),
+        E::ts('Success'),
+        'info'
+      );
       $sepa_contribution_count = count($this->_contributionIds) - count($nonsepa_contribution_ids);
       if ($sepa_contribution_count) {
-        CRM_Core_Session::setStatus(E::ts('%1 contribution(s) have <strong>not</strong> been detached from the recurring contribution, because they belong to a CiviSEPA mandate.', [1 => $sepa_contribution_count]), E::ts('Cannot Detach'), 'info');
+        // phpcs:disable Generic.Files.LineLength.TooLong
+        CRM_Core_Session::setStatus(
+          E::ts(
+            '%1 contribution(s) have <strong>not</strong> been detached from the recurring contribution, because they belong to a CiviSEPA mandate.',
+            [1 => $sepa_contribution_count]
+          ),
+          E::ts('Cannot Detach'),
+          'info'
+        );
+        // phpcs:enable
       }
     }
 
@@ -101,11 +124,22 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
           $ccounter += 1;
         }
         catch (Exception $ex) {
-          CRM_Core_Session::setStatus(E::ts("Financial type for contribution [%1] couldn't be changed: %2", [1 => $contribution_id, 2 => $ex->getMessage()]), E::ts('Error'), 'error');
+          CRM_Core_Session::setStatus(
+            E::ts(
+              "Financial type for contribution [%1] couldn't be changed: %2",
+              [1 => $contribution_id, 2 => $ex->getMessage()]
+            ),
+            E::ts('Error'),
+            'error'
+          );
         }
       }
       // inform the user:
-      CRM_Core_Session::setStatus(E::ts('Financial type for %1 contribution(s) has been updated.', [1 => $ccounter]), E::ts('Success'), 'info');
+      CRM_Core_Session::setStatus(
+        E::ts('Financial type for %1 contribution(s) has been updated.', [1 => $ccounter]),
+        E::ts('Success'),
+        'info'
+      );
 
       // update all recurring contributions
       if (!empty($values['change_recur_financial_type'])) {
@@ -119,11 +153,22 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
             $rcounter += 1;
           }
           catch (Exception $ex) {
-            CRM_Core_Session::setStatus(E::ts("Financial type for recurring contribution [%1] couldn't be changed: %2", [1 => $recur_id, 2 => $ex->getMessage()]), E::ts('Error'), 'error');
+            CRM_Core_Session::setStatus(
+              E::ts(
+                "Financial type for recurring contribution [%1] couldn't be changed: %2",
+                [1 => $recur_id, 2 => $ex->getMessage()]
+              ),
+              E::ts('Error'),
+              'error'
+            );
           }
         }
         // inform the user:
-        CRM_Core_Session::setStatus(E::ts('Financial type for %1 recurring contribution(s) has been updated.', [1 => $rcounter]), E::ts('Success'), 'info');
+        CRM_Core_Session::setStatus(
+          E::ts('Financial type for %1 recurring contribution(s) has been updated.', [1 => $rcounter]),
+          E::ts('Success'),
+          'info'
+        );
       }
     }
   }
@@ -137,7 +182,9 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
       return 0;
     }
     else {
-      return CRM_Core_DAO::singleValueQuery("SELECT COUNT(id) FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
+      return CRM_Core_DAO::singleValueQuery(
+        "SELECT COUNT(id) FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})"
+      );
     }
   }
 
@@ -150,7 +197,9 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
       return 0;
     }
     else {
-      return CRM_Core_DAO::singleValueQuery("SELECT COUNT(DISTINCT(contribution_recur_id)) FROM civicrm_contribution WHERE id IN ({$id_list})");
+      return CRM_Core_DAO::singleValueQuery(
+        "SELECT COUNT(DISTINCT(contribution_recur_id)) FROM civicrm_contribution WHERE id IN ({$id_list})"
+      );
     }
   }
 
@@ -161,7 +210,9 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     $id_list = implode(',', $this->_contributionIds);
     $rcur_ids = [];
     if (!empty($id_list)) {
-      $query = CRM_Core_DAO::executeQuery("SELECT DISTINCT(contribution_recur_id) AS rid FROM civicrm_contribution WHERE id IN ({$id_list})");
+      $query = CRM_Core_DAO::executeQuery(
+        "SELECT DISTINCT(contribution_recur_id) AS rid FROM civicrm_contribution WHERE id IN ({$id_list})"
+      );
       while ($query->fetch()) {
         if (!empty($query->rid)) {
           $rcur_ids[] = $query->rid;
@@ -196,13 +247,17 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     $id_list = implode(',', $this->_contributionIds);
     $nonsepa_ids = [];
     if (!empty($id_list)) {
-      $query = CRM_Core_DAO::executeQuery("
-          SELECT contribution.id AS rid
+      $query = CRM_Core_DAO::executeQuery(
+        <<<SQL
+        SELECT contribution.id AS rid
           FROM civicrm_contribution contribution
-          LEFT JOIN civicrm_sdd_mandate mandate  ON mandate.entity_id = contribution.contribution_recur_id
-                                                AND mandate.entity_table = 'civicrm_contribution_recur'
+          LEFT JOIN civicrm_sdd_mandate mandate
+            ON mandate.entity_id = contribution.contribution_recur_id
+            AND mandate.entity_table = 'civicrm_contribution_recur'
           WHERE contribution.id IN ({$id_list})
-            AND mandate.id IS NULL;");
+            AND mandate.id IS NULL;
+        SQL
+      );
       while ($query->fetch()) {
         $nonsepa_ids[] = $query->rid;
       }

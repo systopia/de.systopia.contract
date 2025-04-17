@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Contract\ActionProvider\Action;
 
 use Civi\ActionProvider\Action\AbstractAction;
@@ -41,8 +43,7 @@ class GetSepaRcur extends AbstractAction {
    */
   public function getParameterSpecification() {
     return new SpecificationBag([
-        // required fields
-        #new Specification('contact_id', 'Integer', E::ts('Contact ID'), true),
+        // Required fields.
       new Specification('recurring_contribution_id', 'Integer', E::ts('Recurring Contribution ID'), TRUE),
     ]);
   }
@@ -56,10 +57,46 @@ class GetSepaRcur extends AbstractAction {
    */
   public function getOutputSpecification() {
     $specifications = [
-      new Specification('reference', 'String', E::ts('Mandate Reference'), FALSE, NULL, NULL, NULL, FALSE),
-      new Specification('iban', 'Date', E::ts('IBAN'), FALSE, NULL, NULL, NULL, FALSE),
-      new Specification('bic', 'Date', E::ts('BIC'), FALSE, NULL, NULL, NULL, FALSE),
-      new Specification('error', 'String', E::ts('Error Message (if failed)'), FALSE, NULL, NULL, NULL, FALSE),
+      new Specification(
+        'reference',
+        'String',
+        E::ts('Mandate Reference'),
+        FALSE,
+        NULL,
+        NULL,
+        NULL,
+        FALSE
+      ),
+      new Specification(
+        'iban',
+        'Date',
+        E::ts('IBAN'),
+        FALSE,
+        NULL,
+        NULL,
+        NULL,
+        FALSE
+      ),
+      new Specification(
+        'bic',
+        'Date',
+        E::ts('BIC'),
+        FALSE,
+        NULL,
+        NULL,
+        NULL,
+        FALSE
+      ),
+      new Specification(
+        'error',
+        'String',
+        E::ts('Error Message (if failed)'),
+        FALSE,
+        NULL,
+        NULL,
+        NULL,
+        FALSE
+      ),
     ];
 
     return new SpecificationBag($specifications);

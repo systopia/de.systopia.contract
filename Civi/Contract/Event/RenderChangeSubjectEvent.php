@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -24,7 +25,7 @@ use CRM_Contract_CustomData as CRM_Contract_CustomData;
  *
  * @package Civi\Contract\Event
  */
-class RenderChangeSubjectEvent extends ConfigurationEvent {
+class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
@@ -63,10 +64,6 @@ class RenderChangeSubjectEvent extends ConfigurationEvent {
    *
    * @param array $contract_data_after
    *   the state of the contract after the change
-   *
-   * @param array|null $change_data
-   *   the state of the contract after the change
-   *
    */
   public function __construct($change_action, $contract_data_before, $contract_data_after) {
     $this->subject = NULL;
@@ -103,7 +100,6 @@ class RenderChangeSubjectEvent extends ConfigurationEvent {
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
 
     $custom_subject = $event->getRenderedSubject();
-    //if ($custom_subject) Civi::log()->debug("Custom subject generated: {$custom_subject}");
     return $custom_subject;
   }
 

@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Contract\ActionProvider\Action;
 
 use Civi\ActionProvider\Action\AbstractAction;
@@ -32,8 +34,23 @@ class ReviveContract extends AbstractAction {
    */
   public function getConfigurationSpecification() {
     return new SpecificationBag([
-      new Specification('default_membership_type_id', 'Integer', E::ts('Membership Type ID (default)'), TRUE, NULL, NULL, $this->getMembershipTypes(), FALSE),
-      new Specification('config_defer_payment_start', 'Boolean', E::ts('Defer Payment Start'), FALSE, FALSE),
+      new Specification(
+        'default_membership_type_id',
+        'Integer',
+        E::ts('Membership Type ID (default)'),
+        TRUE,
+        NULL,
+        NULL,
+        $this->getMembershipTypes(),
+        FALSE
+      ),
+      new Specification(
+        'config_defer_payment_start',
+        'Boolean',
+        E::ts('Defer Payment Start'),
+        FALSE,
+        FALSE
+      ),
     ]);
   }
 

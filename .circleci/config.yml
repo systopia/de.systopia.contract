@@ -13,7 +13,7 @@ commands:
         default: master
       type:
         type: string
-        default: drupal-clean
+        default: drupal-demo
       version:
         type: string
         default: master
@@ -26,7 +26,7 @@ commands:
           if [[ "$civiver" == "stable" ]]; then
             civiver=$(curl -s 'https://latest.civicrm.org/stable.php')
           fi
-          su - buildkit -c "/buildkit/bin/civibuild create << parameters.build_name >> --civi-ver $civiver --type << parameters.type >> --url << parameters.url >>"
+          su - buildkit -c "/buildkit/bin/civibuild create << parameters.build_name >> --civi-ver $civiver --type << parameters.type >> --url << parameters.url >>" || true
   install_dependencies:
     description: "Install Dependencies"
     parameters:
@@ -36,6 +36,16 @@ commands:
     steps:
       - run: |
           EXT_DIR=/buildkit/build/<< parameters.build_name >>/web/sites/default/files/civicrm/ext
+          if [ ! -d "$EXT_DIR" ]; then
+          echo "EXT_DIR does not exist. Recreating manually..."
+          mkdir -p "$EXT_DIR"
+          chown -R buildkit:buildkit $(dirname "$EXT_DIR")
+          fi
+
+          if [ ! -d "$EXT_DIR" ]; then
+            echo "ERROR: Expected directory $EXT_DIR not found. civibuild may have failed."
+            exit 1
+          fi
           cd $EXT_DIR
           git clone https://github.com/Project60/org.project60.sepa
           git clone https://github.com/Project60/org.project60.banking

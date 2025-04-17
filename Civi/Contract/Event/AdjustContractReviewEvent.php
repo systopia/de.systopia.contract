@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 
 namespace Civi\Contract\Event;
 
@@ -18,7 +20,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class AdjustContractReviewEvent extends ConfigurationEvent {
+class AdjustContractReviewEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.contractreview.adjust';
 
   /**

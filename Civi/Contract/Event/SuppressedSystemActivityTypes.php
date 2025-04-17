@@ -6,6 +6,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
@@ -18,7 +19,7 @@ use Civi;
  *
  * @package Civi\Contract\Event
  */
-class SuppressedSystemActivityTypes extends ConfigurationEvent {
+class SuppressedSystemActivityTypes extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.suppress_system_activity_types';
 
   /**

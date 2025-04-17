@@ -8,6 +8,7 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
 /**
  * Amendments to the "regular" CiviCRM membership API
@@ -28,7 +29,10 @@ class CRM_Contract_Handler_MembershipAPI implements API_Wrapper {
       CRM_Contract_CustomData::labelCustomFields($params);
       if (!empty($params['membership_general.membership_contract'])) {
         // validate contact number
-        $validation_error = CRM_Contract_Validation_ContractNumber::verifyContractNumber($params['membership_general.membership_contract'], CRM_Utils_Array::value('id', $params));
+        $validation_error = CRM_Contract_Validation_ContractNumber::verifyContractNumber(
+          $params['membership_general.membership_contract'],
+          CRM_Utils_Array::value('id', $params)
+        );
         if ($validation_error) {
           throw new Exception($validation_error, 1);
         }

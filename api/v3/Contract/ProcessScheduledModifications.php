@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 const CE_ENGINE_PROCESSING_LIMIT = 500;
 
 /**
@@ -40,12 +42,16 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
   /** @var $lock Civi\Core\Lock\LockInterface */
   $lock = Civi\Core\Container::singleton()->get('lockManager')->acquire('worker.member.contract_engine');
   if (!$lock->isAcquired()) {
-    return civicrm_api3_create_success(['message' => 'Another instance of the Contract.process_scheduled_modifications process is running. Skipped.']);
+    return civicrm_api3_create_success(
+      ['message' => 'Another instance of the Contract.process_scheduled_modifications process is running. Skipped.']
+    );
   }
 
   // make sure that the time machine only works with a single contract, see GP-936
   if (isset($params['now']) && empty($params['id'])) {
-    return civicrm_api3_create_error("You can only use the time machine for specific contract! set the 'id' parameter.");
+    return civicrm_api3_create_error(
+      "You can only use the time machine for specific contract! set the 'id' parameter."
+    );
   }
 
   if (empty($params['limit'])) {
@@ -54,15 +60,16 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
 
   // compile query
   $activityParams = [
-    'activity_type_id'   => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
-    'status_id'          => 'scheduled',
-  // execute everything scheduled in the past
+    'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
+    'status_id' => 'scheduled',
+    // execute everything scheduled in the past
     'activity_date_time' => ['<=' => date('Y-m-d H:i:s', strtotime(CRM_Utils_Array::value('now', $params, 'now')))],
-    'option.limit'       => $params['limit'],
-  // in the scheduled order(!)
-    'sequential'         => 1,
-    'option.sort'        => 'activity_date_time ASC, id ASC',
-    'return'             => 'id,activity_type_id,status_id,activity_date_time,subject,source_record_id,' . CRM_Contract_Change::getCustomFieldList(),
+    'option.limit' => $params['limit'],
+    // in the scheduled order(!)
+    'sequential' => 1,
+    'option.sort' => 'activity_date_time ASC, id ASC',
+    'return' => 'id,activity_type_id,status_id,activity_date_time,subject,source_record_id,'
+    . CRM_Contract_Change::getCustomFieldList(),
   ];
   if (!empty($params['id'])) {
     $activityParams['source_record_id'] = (int) $params['id'];

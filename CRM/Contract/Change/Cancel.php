@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -13,8 +15,8 @@ use CRM_Contract_ExtensionUtil as E;
  */
 class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
 
-  const MEMBERSHIP_CANCEL_REASON = 'membership_cancellation.membership_cancel_reason';
-  const MEMBERSHIP_CANCEL_DATE   = 'membership_cancellation.membership_cancel_date';
+  private const MEMBERSHIP_CANCEL_REASON = 'membership_cancellation.membership_cancel_reason';
+  private const MEMBERSHIP_CANCEL_DATE   = 'membership_cancellation.membership_cancel_date';
 
   /**
    * Get a list of required fields for this type
@@ -32,12 +34,18 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    */
   public function populateData() {
     if ($this->isNew()) {
-      $this->setParameter('contract_cancellation.contact_history_cancel_reason', $this->getParameter(self::MEMBERSHIP_CANCEL_REASON));
+      $this->setParameter(
+        'contract_cancellation.contact_history_cancel_reason',
+        $this->getParameter(self::MEMBERSHIP_CANCEL_REASON)
+      );
       $this->setParameter('subject', $this->getSubject(NULL));
     }
     else {
       parent::populateData();
-      $this->setParameter(self::MEMBERSHIP_CANCEL_REASON, $this->getParameter('contract_cancellation.contact_history_cancel_reason'));
+      $this->setParameter(
+        self::MEMBERSHIP_CANCEL_REASON,
+        $this->getParameter('contract_cancellation.contact_history_cancel_reason')
+      );
     }
   }
 
@@ -140,8 +148,10 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       if (!empty($this->data['contract_cancellation.contact_history_cancel_reason'])) {
         // TODO: not needed any more? (see https://redmine.greenpeace.at/issues/1276#note-74)
         // FIXME: replicating weird behaviour by old engine
-        //$subject .= ' cancel reason ' . $this->resolveValue($this->data['contract_cancellation.contact_history_cancel_reason'], 'contract_cancellation.contact_history_cancel_reason');
-        $subject .= ' cancel reason ' . $this->labelValue($this->data['contract_cancellation.contact_history_cancel_reason'], 'contract_cancellation.contact_history_cancel_reason');
+        $subject .= ' cancel reason ' . $this->labelValue(
+            $this->data['contract_cancellation.contact_history_cancel_reason'],
+            'contract_cancellation.contact_history_cancel_reason'
+          );
       }
       return $subject;
     }

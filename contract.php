@@ -8,15 +8,17 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
 
+// phpcs:disable PSR1.Files.SideEffects
 require_once 'contract.civix.php';
+// phpcs:enable
+
 use CRM_Contract_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Civi\Contract\Event\RapidCreateFormEvent as RapidCreateFormEvent;
-use Civi\Contract\Event\ContractCreateFormEvent as ContractCreateFormEvent;
 
 /**
- * Implements hook_civicrm_container()
+ * Implements hook_civicrm_container().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
  */
@@ -54,18 +56,6 @@ function contract_civicrm_enable() {
 }
 
 /**
- * Implements hook_civicrm_managed().
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
- */
-// function contract_civicrm_managed(&$entities) {
-//   _contract_civix_civicrm_managed($entities);
-// }
-
-/**
  * UI Adjustements for membership forms
  */
 function contract_civicrm_pageRun(&$page) {
@@ -77,15 +67,20 @@ function contract_civicrm_pageRun(&$page) {
   }
   elseif ($page_name == 'CRM_Contact_Page_View_Summary') {
     // this is the contact summary page
-    Civi::resources()->addVars('de.systopia.contract', ['ce_activity_types' => CRM_Contract_Change::getActivityTypeIds()]);
-    Civi::resources()->addScriptUrl(E::url('js/hide-ce-activity-types.js'));
+    Civi::resources()
+      ->addVars('de.systopia.contract', ['ce_activity_types' => CRM_Contract_Change::getActivityTypeIds()])
+      ->addScriptUrl(E::url('js/hide-ce-activity-types.js'));
 
   }
   elseif ($page_name == 'CRM_Member_Page_Tab') {
     // thus is the membership summary tab
     $contractStatuses = [];
     foreach (civicrm_api3('Membership', 'get', ['contact_id' => $page->_contactId])['values'] as $contract) {
-      $contractStatuses[$contract['id']] = civicrm_api3('Contract', 'get_open_modification_counts', ['id' => $contract['id']])['values'];
+      $contractStatuses[$contract['id']] = civicrm_api3(
+        'Contract',
+        'get_open_modification_counts',
+        ['id' => $contract['id']]
+      )['values'];
     }
     CRM_Core_Resources::singleton()->addStyleFile('de.systopia.contract', 'css/contract.css');
     CRM_Core_Resources::singleton()->addVars('de.systopia.contract', ['contractStatuses' => $contractStatuses]);
@@ -108,7 +103,6 @@ function contract_civicrm_pageRun(&$page) {
  * @todo shorten this function call - move into an 1 or more alter functions
  */
 function contract_civicrm_buildForm($formName, &$form) {
-
   switch ($formName) {
     // Membership form in view mode
     case 'CRM_Member_Form_MembershipView':
@@ -123,7 +117,6 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       // Add link for contract download
       $membershipId = CRM_Utils_Request::retrieve('id', 'Positive', $form);
-      // removed: $formUtils->showPaymentContractDetails();
       $formUtils->addMembershipContractFileDownloadLink($membershipId);
 
       // GP-814 - hide 'edit' button if 'edit core membership CiviContract' is not granted
@@ -141,11 +134,28 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       if (in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD])) {
         // Use JS to hide form elements
-        CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'templates/CRM/Member/Form/Membership.js');
-        $filteredMembershipStatuses = civicrm_api3('MembershipStatus', 'get', ['name' => ['IN' => ['Current', 'Cancelled']]]);
-        CRM_Core_Resources::singleton()->addVars('de.systopia.contract', ['filteredMembershipStatuses' => $filteredMembershipStatuses]);
-        $hiddenCustomFields = civicrm_api3('CustomField', 'get', ['name' => ['IN' => ['membership_annual', 'membership_frequency']]]);
-        CRM_Core_Resources::singleton()->addVars('de.systopia.contract', ['hiddenCustomFields' => $hiddenCustomFields]);
+        CRM_Core_Resources::singleton()
+          ->addScriptFile('de.systopia.contract', 'templates/CRM/Member/Form/Membership.js');
+        $filteredMembershipStatuses = civicrm_api3('MembershipStatus', 'get', [
+          'name' => [
+            'IN' => [
+              'Current',
+              'Cancelled',
+            ],
+          ],
+        ]);
+        CRM_Core_Resources::singleton()
+          ->addVars('de.systopia.contract', ['filteredMembershipStatuses' => $filteredMembershipStatuses]);
+        $hiddenCustomFields = civicrm_api3('CustomField', 'get', [
+          'name' => [
+            'IN' => [
+              'membership_annual',
+              'membership_frequency',
+            ],
+          ],
+        ]);
+        CRM_Core_Resources::singleton()
+          ->addVars('de.systopia.contract', ['hiddenCustomFields' => $hiddenCustomFields]);
 
         if ($form->getAction() == CRM_Core_Action::ADD) {
           $form->setDefaults([
@@ -155,16 +165,20 @@ function contract_civicrm_buildForm($formName, &$form) {
         }
 
         $formUtils = new CRM_Contract_FormUtils($form, 'Membership');
-        if (!isset($form->_groupTree)) {
+        if (isset($form->_groupTree)) {
           // NOTE for initial launch: all core membership fields should be editable
           // $formUtils->removeMembershipEditDisallowedCoreFields();
           // NOTE for initial launch: allow editing of payment contracts via the standard form
 
           // Custom data version
-        }
-        else {
-          $result = civicrm_api3('CustomField', 'GetSingle', ['custom_group_id' => 'membership_payment', 'name' => 'membership_recurring_contribution']);
-          $customGroupTableId = isset($form->_groupTree[$result['custom_group_id']]['table_id']) ? $form->_groupTree[$result['custom_group_id']]['table_id'] : '-1';
+
+          $result = civicrm_api3('CustomField', 'GetSingle', [
+            'custom_group_id' => 'membership_payment',
+            'name' => 'membership_recurring_contribution',
+          ]);
+          $customGroupTableId = isset($form->_groupTree[$result['custom_group_id']]['table_id'])
+            ? $form->_groupTree[$result['custom_group_id']]['table_id']
+            : '-1';
           $elementName = "custom_{$result['id']}_{$customGroupTableId}";
           $form->removeElement($elementName);
           $formUtils->addPaymentContractSelect2($elementName, $contactId, TRUE, $id);
@@ -176,7 +190,7 @@ function contract_civicrm_buildForm($formName, &$form) {
       if ($form->getAction() === CRM_Core_Action::ADD) {
         if ($cid = CRM_Utils_Request::retrieve('cid', 'Integer')) {
           // if the cid is given, it's the "add membership" for an existing contract
-          $contract_create_form_url = ContractCreateFormEvent::getUrl($cid);
+          $contract_create_form_url = \Civi\Contract\Event\ContractCreateFormEvent::getUrl($cid);
           if ($contract_create_form_url) {
             CRM_Utils_System::redirect($contract_create_form_url);
           }
@@ -184,7 +198,7 @@ function contract_civicrm_buildForm($formName, &$form) {
         else {
           // no id - this is a 'create new membership':
           //   check if somebody registered a rapid create form and redirect
-          $rapid_create_form_url = RapidCreateFormEvent::getUrl();
+          $rapid_create_form_url = \Civi\Contract\Event\RapidCreateFormEvent::getUrl();
           if ($rapid_create_form_url) {
             CRM_Utils_System::redirect($rapid_create_form_url);
           }
@@ -227,7 +241,10 @@ function contract_civicrm_buildForm($formName, &$form) {
  * Custom validation for membership forms
  */
 function contract_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
-  if ($formName == 'CRM_Member_Form_Membership' && in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD])) {
+  if (
+    $formName == 'CRM_Member_Form_Membership'
+    && in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD])
+  ) {
     CRM_Contract_Handler_MembershipForm::validateForm($formName, $fields, $files, $form, $errors);
   }
 }
@@ -251,9 +268,13 @@ function contract_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$
     $contribution_id = (int) $objectId;
     if ($contribution_id) {
       // add 'view contract' link
-      $membership_id = CRM_Core_DAO::singleValueQuery("SELECT membership_id FROM civicrm_membership_payment WHERE contribution_id = {$contribution_id} LIMIT 1");
+      $membership_id = CRM_Core_DAO::singleValueQuery(
+        "SELECT membership_id FROM civicrm_membership_payment WHERE contribution_id = {$contribution_id} LIMIT 1"
+      );
       if ($membership_id) {
-        $contact_id = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = {$membership_id} LIMIT 1");
+        $contact_id = CRM_Core_DAO::singleValueQuery(
+          "SELECT contact_id FROM civicrm_membership WHERE id = {$membership_id} LIMIT 1"
+        );
         if ($contact_id) {
           $links[] = [
             'name'  => 'Contract',
@@ -307,7 +328,7 @@ function contract_civicrm_navigationMenu(&$menus) {
 }
 
 /**
- * Implements hook_civicrm_apiWrappers
+ * Implements hook_civicrm_apiWrappers().
  */
 function contract_civicrm_apiWrappers(&$wrappers, $apiRequest) {
   // add contract reference validation for Memberships

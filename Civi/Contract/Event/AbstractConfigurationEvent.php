@@ -6,6 +6,8 @@
 | http://www.systopia.de/                                      |
 +--------------------------------------------------------------*/
 
+declare(strict_types = 1);
+
 namespace Civi\Contract\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
@@ -17,5 +19,5 @@ use Symfony\Contracts\EventDispatcher\Event;
  *
  * Abstract event class to provide some basic functions
  */
-abstract class ConfigurationEvent extends Event {
+abstract class AbstractConfigurationEvent extends Event {
 }

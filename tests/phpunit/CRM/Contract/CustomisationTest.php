@@ -1,9 +1,17 @@
 <?php
+/*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2017-2025 SYSTOPIA                             |
+| Author: B. Endres (endres -at- systopia.de)                  |
+|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+|         P. Figel (pfigel -at- greenpeace.org)                |
+| http://www.systopia.de/                                      |
++--------------------------------------------------------------*/
+
+declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
 use Civi\Contract\Event\RenderChangeSubjectEvent;
-
-include_once 'ContractTestBase.php';
 
 /**
  * Basic Contract Engine Tests

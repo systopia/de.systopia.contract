@@ -1,8 +1,16 @@
 <?php
+/*-------------------------------------------------------------+
+| SYSTOPIA Contract Extension                                  |
+| Copyright (C) 2017-2025 SYSTOPIA                             |
+| Author: B. Endres (endres -at- systopia.de)                  |
+|         M. McAndrew (michaelmcandrew@thirdsectordesign.org)  |
+|         P. Figel (pfigel -at- greenpeace.org)                |
+| http://www.systopia.de/                                      |
++--------------------------------------------------------------*/
+
+declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
-
-include_once 'ContractTestBase.php';
 
 /**
  * Compatibility Tests: Make sure the the engine refactoring
@@ -46,14 +54,38 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
     $this->assertNotEmpty($change_activity, 'There should be a change activity after the upgrade');
 
     if ($this->isExtensionActive('tazcontract')) {
-      $this->assertStringContainsOtherString('Anpassung', $change_activity['subject'], "Activity subject should contain 'Anpassung'");
-      $this->assertStringContainsOtherString('erhöht', $change_activity['subject'], "Activity subject should contain 'erhöht'");
+      $this->assertStringContainsOtherString(
+        'Anpassung',
+        $change_activity['subject'],
+        "Activity subject should contain 'Anpassung'"
+      );
+      $this->assertStringContainsOtherString(
+        'erhöht',
+        $change_activity['subject'],
+        "Activity subject should contain 'erhöht'"
+      );
     }
     else {
-      $this->assertStringContainsOtherString('cycle day 25 to 3', $change_activity['subject'], 'Activity subject should contain the changed cycle day');
-      $this->assertStringContainsOtherString('amt. 144.00 to 168.00', $change_activity['subject'], 'Activity subject should contain the changed amount');
-      $this->assertStringNotContainsOtherString('DE89370400440532013000', $change_activity['subject'], 'Activity subject should NOT contain the unchanged IBAN');
-      $this->assertStringNotContainsOtherString('freq. 12 to 12', $change_activity['subject'], 'Activity subject should NOT contain the unchanged frequency');
+      $this->assertStringContainsOtherString(
+        'cycle day 25 to 3',
+        $change_activity['subject'],
+        'Activity subject should contain the changed cycle day'
+      );
+      $this->assertStringContainsOtherString(
+        'amt. 144.00 to 168.00',
+        $change_activity['subject'],
+        'Activity subject should contain the changed amount'
+      );
+      $this->assertStringNotContainsOtherString(
+        'DE89370400440532013000',
+        $change_activity['subject'],
+        'Activity subject should NOT contain the unchanged IBAN'
+      );
+      $this->assertStringNotContainsOtherString(
+        'freq. 12 to 12',
+        $change_activity['subject'],
+        'Activity subject should NOT contain the unchanged frequency'
+      );
     }
   }
 
@@ -83,7 +115,11 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
     $this->runContractEngine($contract['id'], '+2 days');
     $change_activity = $this->getLastChangeActivity($contract['id']);
     $this->assertNotEmpty($change_activity, 'There should be a change activity after the upgrade');
-    $this->assertStringContainsOtherString('Unknown', $change_activity['subject'], 'Activity subject should contain the cancel reason');
+    $this->assertStringContainsOtherString(
+      'Unknown',
+      $change_activity['subject'],
+      'Activity subject should contain the cancel reason'
+    );
   }
 
   /**
@@ -119,7 +155,10 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
         'activity_type_id'  => ['IN' => $suppressed_types],
         'target_contact_id' => $contact_id,
       ], $last_activity_id);
-      $this->assertEmpty($next_activity_id, "A system activity was generated after contract creation event though it's supposed to be suppressed");
+      $this->assertEmpty(
+        $next_activity_id,
+        "A system activity was generated after contract creation event though it's supposed to be suppressed"
+      );
 
       // modify contract
       $this->modifyContract($contract['id'], 'update', 'tomorrow', [
@@ -133,7 +172,10 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
         'activity_type_id'  => ['IN' => $suppressed_types],
         'target_contact_id' => $contact_id,
       ], $last_activity_id);
-      $this->assertEmpty($next_activity_id, "A system activity was generated after contract update event though it's supposed to be suppressed");
+      $this->assertEmpty(
+        $next_activity_id,
+        "A system activity was generated after contract update event though it's supposed to be suppressed"
+      );
 
       // pause contract
       $this->modifyContract($contract['id'], 'pause', '+2 days');
@@ -142,7 +184,10 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
         'activity_type_id'  => ['IN' => $suppressed_types],
         'target_contact_id' => $contact_id,
       ], $last_activity_id);
-      $this->assertEmpty($next_activity_id, "A system activity was generated after contract pause event though it's supposed to be suppressed");
+      $this->assertEmpty(
+        $next_activity_id,
+        "A system activity was generated after contract pause event though it's supposed to be suppressed"
+      );
     }
   }
 
