@@ -167,7 +167,8 @@ class CRM_Contract_RecurringContribution {
     $result = [];
 
     $paymentInstruments = $this->getPaymentInstruments();
-    if ($this->isSepaPaymentInstrument($cr['payment_instrument_id'] ?? NULL)) {
+    $paymentInstrumentId = isset($cr['payment_instrument_id']) ? (int) $cr['payment_instrument_id'] : NULL;
+    if ($this->isSepaPaymentInstrument($paymentInstrumentId)) {
       // this is a SEPA contract
       $result['fields'] = [
         'display_name' => $contact['display_name'],
@@ -176,7 +177,7 @@ class CRM_Contract_RecurringContribution {
         'amount' => CRM_Contract_SepaLogic::formatMoney($cr['amount']),
         'annual_amount' => CRM_Contract_SepaLogic::formatMoney($this->calcAnnualAmount($cr)),
       ];
-      $mandate = $this->getSepaByRecurringContributionId($cr['id'], $sepaMandates);
+      $mandate = $this->getSepaByRecurringContributionId((int) $cr['id'], $sepaMandates);
       if (empty($mandate)) {
         // phpcs:disable Generic.Files.LineLength.TooLong
         Civi::log()->debug(

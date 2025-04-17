@@ -16,7 +16,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
 
   public function run() {
     // get the adjustments
-    $adjustments = AdjustContractReviewEventAbstract::getContractReviewAdjustments();
+    $adjustments = \Civi\Contract\Event\AdjustContractReviewEvent::getContractReviewAdjustments();
 
     if (!$id = CRM_Utils_Request::retrieve('id', 'Positive')) {
       throw new Exception('Missing a valid contract ID');

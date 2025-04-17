@@ -250,7 +250,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
     $defaults['contact_id'] = $this->cid;
 
-    ContractFormDefaultsEventAbstract::adjustDefaults($defaults, 'create');
+    \Civi\Contract\Event\ContractFormDefaultsEvent::adjustDefaults($defaults, 'create');
 
     parent::setDefaults($defaults);
   }
