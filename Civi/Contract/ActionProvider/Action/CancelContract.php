@@ -22,7 +22,8 @@ use Civi\ActionProvider\Action\AbstractAction;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\Specification;
 use Civi\ActionProvider\Parameter\SpecificationBag;
-
+use Civi\Api4\MembershipType;
+use Civi\Api4\OptionValue;
 use CRM_Contract_ExtensionUtil as E;
 
 class CancelContract extends AbstractAction {
@@ -134,14 +135,14 @@ class CancelContract extends AbstractAction {
       'membership_cancellation.membership_cancel_reason',
     ] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
-      if (!empty($value)) {
+      if (NULL !== $value && '' !== $value) {
         $contract_data[$parameter_name] = $value;
       }
     }
     // add override fields to contract_data
     foreach (['membership_type_id', 'membership_cancellation.membership_cancel_reason'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
-      if (empty($value)) {
+      if (NULL === $value || '' === $value) {
         $value = $this->configuration->getParameter("default_{$parameter_name}");
       }
       $contract_data[$parameter_name] = $value;
@@ -150,6 +151,7 @@ class CancelContract extends AbstractAction {
     // create mandate
     try {
       $contract = \civicrm_api3('Contract', 'modify', $contract_data);
+      /** @phpstan-var array<string, mixed> $contract */
       $output->setParameter('contract_id', $contract['id']);
     }
     catch (\Exception $ex) {
@@ -159,27 +161,28 @@ class CancelContract extends AbstractAction {
   }
 
   /**
-   * Get a list of all membership types
+   * @return array<int, string>
    */
-  protected function getMembershipTypes() {
-    $creditor_list = [];
-    $creditor_query = \civicrm_api3('MembershipType', 'get', ['option.limit' => 0]);
-    foreach ($creditor_query['values'] as $creditor) {
-      $creditor_list[$creditor['id']] = $creditor['name'];
-    }
-    return $creditor_list;
+  protected function getMembershipTypes(): array {
+    return MembershipType::get(FALSE)
+      ->addSelect('id', 'name')
+      ->execute()
+      ->indexBy('id')
+      ->column('name');
   }
 
   /**
    * Get a list of cancel reasons
+   *
+   * @return array<string, string>
    */
-  protected function getCancelReasons() {
-    $cancel_reasons = [];
-    $query = \civicrm_api3('OptionValue', 'get', ['option_group_id' => 'contract_cancel_reason', 'option.limit' => 0]);
-    foreach ($query['values'] as $reason) {
-      $cancel_reasons[$reason['value']] = $reason['name'];
-    }
-    return $cancel_reasons;
+  protected function getCancelReasons(): array {
+    return OptionValue::get(FALSE)
+      ->addSelect('value', 'name')
+      ->addWhere('option_group_id:name', '=', 'contract_cancel_reason')
+      ->execute()
+      ->indexBy('value')
+      ->column('name');
   }
 
 }
