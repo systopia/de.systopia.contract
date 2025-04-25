@@ -139,6 +139,96 @@ class ModifyFormTest extends ContractTestBase {
     self::assertTrue($form->validate());
   }
 
+  public function testFormSubmissionModifyContract(): void {
+    $cid = $this->contact['id'];
+    /** @phpstan-ignore-next-line */
+    $_REQUEST['cid'] = (string) $this->contact['id'];
+    /** @phpstan-ignore-next-line */
+    $_REQUEST['id'] = (string) $this->contract['id'];
+    /** @phpstan-ignore-next-line */
+    $_REQUEST['modify_action'] = 'cancel';
+
+    $form = new class() extends ModifyForm {
+      /** @var array<string, mixed> */
+      public $_submitValues = [];
+
+      /**
+       * @param array<string>|null $elementList
+       * @param bool $filterInternal
+       * @return array<string, mixed>
+       */
+      public function exportValues($elementList = NULL, $filterInternal = FALSE): array {
+        return $this->_submitValues;
+      }
+
+    };
+    /** @phpstan-ignore-next-line */
+    $form->controller = new class((int) $cid, (int) $this->contract['id']) {
+      public ?string $_destination = NULL;
+      private int $id;
+      private int $cid;
+      private int $contractId;
+
+      public function __construct(int $cid, int $contractId) {
+        $this->id = $contractId;
+        $this->cid = $cid;
+        $this->contractId = $contractId;
+      }
+
+      public function set(string $k, mixed $v = NULL): void {}
+
+      public function get(string $k): mixed {
+        return match($k) {
+          'id' => $this->id,
+          'cid' => $this->cid,
+          'contract_id' => $this->contractId,
+          default => NULL,
+        };
+      }
+
+      public function setDestination(string $url): void {
+        $this->_destination = $url;
+      }
+
+    };
+    /** @phpstan-ignore-next-line */
+    $form->set('cid', $this->contact['id']);
+    $form->preProcess();
+    $form->buildQuickForm();
+
+    $submissionValues = [
+      'payment_option' => 'RCUR',
+      'join_date'      => date('Y-m-d'),
+      'end_date'       => date('Y-m-d'),
+      'activity_date_time' => date('H:i:s'),
+      'activity_date' => date('Y-m-d'),
+      'membership_dialoger' => '',
+      'activity_details' => '',
+      'activity_medium' => '',
+      'payment_amount' => '120',
+      'payment_frequency' => '12',
+      'iban' => 'DE89370400440532013000',
+      'bic' => 'DEUTDEFF',
+      'start_date' => date('Y-m-d'),
+      'membership_type_id' => $this->membershipType['id'],
+      'campaign_id' => $this->campaign['id'] ?? NULL,
+      'account_holder' => $this->contact['display_name'],
+      'membership_contract' => 'TEST-001',
+      'membership_reference' => 'REF-001',
+      'cancel_reason' => 'Unknown',
+    ];
+
+    $form->_submitValues = $submissionValues;
+    $form->setDefaults($submissionValues);
+    $form->postProcess();
+    /** @phpstan-ignore-next-line */
+    $contracts = civicrm_api3('Contract', 'get', [
+      'contact_id' => $this->contact['id'],
+    ]);
+    // assert 0 if the contract is canceled successfully
+    self::assertEquals(0, $contracts['count']);
+  }
+
   public function tearDown(): void {
     try {
       /** @phpstan-ignore-next-line */
