@@ -86,6 +86,46 @@ class CreateFormTest extends ContractTestBase {
         ]);
         $this->campaign = $campaign['values'][$campaign['id']];
       }
+      /** @phpstan-ignore-next-line */
+      $membershipGeneralGroup = civicrm_api3('CustomGroup', 'get', [
+        'name' => 'membership_general',
+        'sequential' => 1,
+      ]);
+
+      $groupId = NULL;
+      if ($membershipGeneralGroup['count'] === 0) {
+        /** @phpstan-ignore-next-line */
+        $membershipGeneralGroup = civicrm_api3('CustomGroup', 'create', [
+          'title' => 'Membership General',
+          'name' => 'membership_general',
+          'extends' => 'Membership',
+          'is_active' => 1,
+          'style' => 'Inline',
+        ]);
+        $groupId = $membershipGeneralGroup['id'];
+      }
+      else {
+        $groupId = $membershipGeneralGroup['values'][0]['id'];
+      }
+      /** @phpstan-ignore-next-line */
+      $membershipNotesField = civicrm_api3('CustomField', 'get', [
+        'custom_group_id' => $groupId,
+        'name' => 'membership_notes',
+        'sequential' => 1,
+      ]);
+
+      if ($membershipNotesField['count'] === 0) {
+        /** @phpstan-ignore-next-line */
+        civicrm_api3('CustomField', 'create', [
+          'custom_group_id' => $groupId,
+          'label' => 'Membership Notes',
+          'name' => 'membership_notes',
+          'data_type' => 'Memo',
+          'html_type' => 'TextArea',
+          'is_active' => 1,
+          'is_searchable' => 1,
+        ]);
+      }
 
     }
     catch (Exception $e) {
