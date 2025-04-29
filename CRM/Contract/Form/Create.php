@@ -280,13 +280,14 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     // check if all values for 'create new mandate' are there
     if ($submitted['payment_option'] == 'create') {
+      $amountRaw = (float) ($submitted['payment_amount'] ?? 0);
+      $frequencyRaw = (int) ($submitted['payment_frequency'] ?? 0);
+
       if (empty($submitted['payment_frequency'])) {
         $this->setElementError('payment_frequency', 'Please enter a frequency');
       }
 
-      $amount = CRM_Contract_SepaLogic::formatMoney(
-        (float) ($submitted['payment_amount'] / $submitted['payment_frequency'])
-      );
+      $amount = CRM_Contract_SepaLogic::formatMoney($amountRaw / $frequencyRaw);
       if ($amount < 0.01) {
         $this->setElementError('payment_amount', 'Annual amount too small.');
       }

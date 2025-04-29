@@ -30,7 +30,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     parent::preProcess();
 
     // If we requested a contract file download
-    $download = CRM_Utils_Request::retrieve('ct_dl', 'String', NULL, FALSE, '', 'GET');
+    $store = NULL;
+    $download = CRM_Utils_Request::retrieve('ct_dl', 'String', $store, FALSE, '', 'GET');
     if (!empty($download)) {
       // FIXME: Could use CRM_Utils_System::download but it still requires you to do all the work (load file to stream
       //        etc) before calling.
