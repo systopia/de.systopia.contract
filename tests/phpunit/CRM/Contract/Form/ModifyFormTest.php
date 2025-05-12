@@ -11,8 +11,8 @@ use CRM_Contract_Form_Modify as ModifyForm;
 class ModifyFormTest extends ContractTestBase {
 
   /**
-   * @var array{id: int, email: string, display_name: string} */
-  protected array $contact = ['id' => 0, 'email' => '', 'display_name' => ''];
+   * @var array<string, mixed> */
+  protected array $contact = [];
 
   /**
    * @var array<string, mixed> */
@@ -28,33 +28,34 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function createRequiredEntities(): void {
-
     $contact = $this->createContactWithRandomEmail();
 
     /** @phpstan-ignore-next-line */
-    $contactDetails = civicrm_api3('Contact', 'getsingle', [
-      'id' => $contact['id'],
-      'return' => ['id', 'email', 'display_name'],
+    $contactResult = civicrm_api4('Contact', 'get', [
+      'where' => [['id', '=', $contact['id']]],
+      'limit' => 1,
     ]);
 
-    $this->contact = [
-      'id' => (int) $contactDetails['id'],
-      'email' => $contactDetails['email'],
-      'display_name' => $contactDetails['display_name'],
-    ];
+    if ($contactResult->count() === 0) {
+      throw new \RuntimeException('Contact not found');
+    }
+
+    $this->contact = $contactResult[0];
 
     /** @phpstan-ignore-next-line */
-    $membershipType = civicrm_api3('MembershipType', 'create', [
-      'name' => 'Modify Membership Type',
-      'member_of_contact_id' => $this->contact['id'],
-      'financial_type_id' => 2,
-      'duration_unit' => 'year',
-      'duration_interval' => 1,
-      'period_type' => 'rolling',
-      'is_active' => 1,
+    $membershipTypeResult = civicrm_api4('MembershipType', 'create', [
+      'values' => [
+        'name' => 'Modify Membership Type',
+        'member_of_contact_id' => $this->contact['id'],
+        'financial_type_id' => 2,
+        'duration_unit' => 'year',
+        'duration_interval' => 1,
+        'period_type' => 'rolling',
+        'is_active' => 1,
+      ],
     ]);
 
-    $this->membershipType = $membershipType['values'][$membershipType['id']];
+    $this->membershipType = $membershipTypeResult[0];
 
     $this->contract = $this->createNewContract([
       'is_sepa'            => 1,
@@ -105,9 +106,9 @@ class ModifyFormTest extends ContractTestBase {
       public function get(string $k): mixed {
         return match($k) {
           'id' => $this->id,
-                    'cid' => $this->cid,
-                    'contract_id' => $this->contractId,
-                    default => NULL,
+          'cid' => $this->cid,
+          'contract_id' => $this->contractId,
+          default => NULL,
         };
       }
 
@@ -142,7 +143,7 @@ class ModifyFormTest extends ContractTestBase {
   public function testFormSubmissionModifyContract(): void {
     $cid = $this->contact['id'];
     /** @phpstan-ignore-next-line */
-    $_REQUEST['cid'] = (string) $this->contact['id'];
+    $_REQUEST['cid'] = (string) $cid;
     /** @phpstan-ignore-next-line */
     $_REQUEST['id'] = (string) $this->contract['id'];
     /** @phpstan-ignore-next-line */
@@ -162,6 +163,7 @@ class ModifyFormTest extends ContractTestBase {
       }
 
     };
+
     /** @phpstan-ignore-next-line */
     $form->controller = new class((int) $cid, (int) $this->contract['id']) {
       public ?string $_destination = NULL;
@@ -191,8 +193,9 @@ class ModifyFormTest extends ContractTestBase {
       }
 
     };
+
     /** @phpstan-ignore-next-line */
-    $form->set('cid', $this->contact['id']);
+    $form->set('cid', $cid);
     $form->preProcess();
     $form->buildQuickForm();
 
@@ -221,20 +224,23 @@ class ModifyFormTest extends ContractTestBase {
     $form->_submitValues = $submissionValues;
     $form->setDefaults($submissionValues);
     $form->postProcess();
+
     /** @phpstan-ignore-next-line */
     $contracts = civicrm_api3('Contract', 'get', [
-      'contact_id' => $this->contact['id'],
+      'contact_id' => $cid,
     ]);
-    // assert 0 if the contract is canceled successfully
+
     self::assertEquals(0, $contracts['count']);
   }
 
   public function tearDown(): void {
     try {
       /** @phpstan-ignore-next-line */
-      civicrm_api3('Contact', 'create', [
-        'id' => $this->contact['id'],
-        'is_deleted' => 1,
+      civicrm_api4('Contact', 'update', [
+        'values' => [
+          'id' => $this->contact['id'],
+          'is_deleted' => 1,
+        ],
       ]);
     }
     catch (Exception $e) {
@@ -248,7 +254,11 @@ class ModifyFormTest extends ContractTestBase {
 
     if (isset($this->membershipType['id']) && $this->membershipType['id'] !== 0) {
       /** @phpstan-ignore-next-line */
-      civicrm_api3('MembershipType', 'delete', ['id' => $this->membershipType['id']]);
+      civicrm_api4('MembershipType', 'delete', [
+        'where' => [
+          ['id', '=', $this->membershipType['id']],
+        ],
+      ]);
     }
 
     parent::tearDown();
