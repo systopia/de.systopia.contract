@@ -371,11 +371,19 @@ class CreateFormTest extends ContractTestBase {
     $form->postProcess();
 
     /** @phpstan-ignore-next-line */
-    $contracts = civicrm_api3('Contract', 'get', [
+    $result = civicrm_api3('Contract', 'getsingle', [
       'contact_id' => $this->contact['id'],
     ]);
 
-    self::assertEquals(1, $contracts['count']);
+    $contract = $this->getContract($result['id']);
+
+    self::assertEquals($this->contact['id'], $contract['contact_id']);
+    self::assertEquals($this->membershipType['id'], $contract['membership_type_id']);
+    self::assertEquals(12, $contract['membership_payment.membership_frequency']);
+    self::assertEquals('1,440.00', $contract['membership_payment.membership_annual']);
+    self::assertEquals('TEST-001', $contract['membership_general.membership_contract']);
+    self::assertEquals('REF-001', $contract['membership_general.membership_reference']);
+
   }
 
   public function tearDown(): void {

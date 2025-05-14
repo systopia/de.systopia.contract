@@ -348,6 +348,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       'datepicker',
       'resume_date',
       E::ts('Resume Date'),
+      [],
       TRUE,
       ['time' => FALSE, 'formatType' => 'activityDate']
     );

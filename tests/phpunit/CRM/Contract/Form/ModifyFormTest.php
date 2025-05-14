@@ -20,7 +20,13 @@ class ModifyFormTest extends ContractTestBase {
 
   /**
    * @var array<string, mixed> */
+  protected array $mandate = [];
+
+  /**
+   * @var array<string, mixed> */
   protected array $contract = [];
+
+  protected ?string $recurContributionStatusId = NULL;
 
   public function setUp(): void {
     parent::setUp();
@@ -40,7 +46,7 @@ class ModifyFormTest extends ContractTestBase {
       throw new \RuntimeException('Contact not found');
     }
 
-    $this->contact = $contactResult[0];
+    $this->contact = $contactResult->first();
 
     /** @phpstan-ignore-next-line */
     $membershipTypeResult = civicrm_api4('MembershipType', 'create', [
@@ -58,11 +64,126 @@ class ModifyFormTest extends ContractTestBase {
     $this->membershipType = $membershipTypeResult[0];
 
     $this->contract = $this->createNewContract([
+      'contact_id'         => $this->contact['id'],
       'is_sepa'            => 1,
       'amount'             => '10.00',
       'frequency_unit'     => 'month',
       'frequency_interval' => '1',
     ]);
+
+    /** @phpstan-ignore-next-line */
+    $membership = civicrm_api3('Membership', 'getsingle', ['id' => $this->contract['id']]);
+    $recurContriId = $membership[CRM_Contract_Utils::getCustomFieldId(
+      'membership_payment.membership_recurring_contribution'
+    )];
+    /** @phpstan-ignore-next-line */
+    civicrm_api4('SepaMandate', 'delete', [
+      'where' => [
+        ['contact_id', '=', $contact['id']],
+      ],
+      'checkPermissions' => TRUE,
+    ]);
+
+    /** @phpstan-ignore-next-line */
+    $creditor = civicrm_api4('SepaCreditor', 'create', [
+      'values' => [
+        'identifier' => 'TESTCREDITOR01',
+        'name' => 'Creditor Organization',
+        'iban' => 'DE44500105175407324931',
+        'bic' => 'DEUTDEFF500',
+        'creditor_type' => 'OOFF',
+        'payment_processor_id' => 1,
+      ],
+    ]);
+
+    $creditor = $creditor->first();
+
+    /** @phpstan-ignore-next-line */
+    $result = civicrm_api4('SepaMandate', 'create', [
+      'values' => [
+        'contact_id'     => $contact['id'],
+        'type'           => 'RCUR',
+        'entity_table'   => 'civicrm_contribution_recur',
+        'entity_id'      => $recurContriId,
+        'reference'      => 'TEST-MANDATE-001',
+        'date'           => '2025-05-01 13:00:00',
+        'iban'           => 'DE12500105170648489890',
+        'bic'            => 'INGDDEFFXXX',
+        'creditor_id'    => $creditor['id'],
+        'status'         => 'INIT',
+      ],
+      'checkPermissions' => TRUE,
+    ]);
+    $this->mandate = $result->first();
+
+    /** @phpstan-ignore-next-line */
+    $optionGroupResult = civicrm_api4('OptionGroup', 'get', [
+      'where' => [['name', '=', 'contribution_status']],
+    ]);
+
+    if ($optionGroupResult->count() === 0) {
+      /** @phpstan-ignore-next-line */
+      $optionGroupResult = civicrm_api4('OptionGroup', 'create', [
+        'values' => [
+          'name' => 'contribution_status',
+          'title' => 'Contribution Status',
+          'is_active' => 1,
+        ],
+      ]);
+    }
+
+    $optionGroupId = $optionGroupResult[0]['id'];
+
+    /** @phpstan-ignore-next-line */
+    $status = civicrm_api4('OptionValue', 'get', [
+      'where' => [
+        ['option_group_id', '=', $optionGroupId],
+        ['name', '=', 'In Progress'],
+        ['is_active', '=', 1],
+      ],
+    ]);
+
+    if ($status->count() === 0) {
+      /** @phpstan-ignore-next-line */
+      civicrm_api4('OptionValue', 'create', [
+        'values' => [
+          'option_group_id' => $optionGroupId,
+          'label' => 'In Progress',
+          'name' => 'In Progress',
+          'value' => 5,
+          'is_active' => 1,
+          'is_reserved' => 1,
+        ],
+      ]);
+      $this->recurContributionStatusId = '5';
+    }
+    else {
+      $first = $status[0];
+      $this->recurContributionStatusId = $first['value'];
+    }
+
+    /** @phpstan-ignore-next-line */
+    $completedStatus = civicrm_api4('OptionValue', 'get', [
+      'where' => [
+        ['option_group_id', '=', $optionGroupId],
+        ['name', '=', 'Completed'],
+      ],
+    ]);
+
+    if ($completedStatus->count() === 0) {
+      /** @phpstan-ignore-next-line */
+      civicrm_api4('OptionValue', 'create', [
+        'values' => [
+          'option_group_id' => $optionGroupId,
+          'label' => 'Completed',
+          'name' => 'Completed',
+          'value' => 1,
+          'is_active' => 1,
+          'is_default' => 1,
+        ],
+      ]);
+    }
+
   }
 
   public function testModifyFormValidation(): void {
@@ -140,14 +261,28 @@ class ModifyFormTest extends ContractTestBase {
     self::assertTrue($form->validate());
   }
 
-  public function testFormSubmissionModifyContract(): void {
+  /**
+   * @return array<string, array{0: string}>
+   */
+  public function modifyActionProvider(): array {
+    return [
+      'cancel' => ['cancel'],
+      'update' => ['update'],
+      'pause' => ['pause'],
+    ];
+  }
+
+  /**
+   * @dataProvider modifyActionProvider
+   */
+  public function testFormSubmissionModifyContract(String $modifyAction): void {
     $cid = $this->contact['id'];
     /** @phpstan-ignore-next-line */
     $_REQUEST['cid'] = (string) $cid;
     /** @phpstan-ignore-next-line */
     $_REQUEST['id'] = (string) $this->contract['id'];
     /** @phpstan-ignore-next-line */
-    $_REQUEST['modify_action'] = 'cancel';
+    $_REQUEST['modify_action'] = $modifyAction;
 
     $form = new class() extends ModifyForm {
       /** @var array<string, mixed> */
@@ -208,11 +343,13 @@ class ModifyFormTest extends ContractTestBase {
       'membership_dialoger' => '',
       'activity_details' => '',
       'activity_medium' => '',
+      'cycle_day' => '30',
       'payment_amount' => '120',
       'payment_frequency' => '12',
       'iban' => 'DE89370400440532013000',
       'bic' => 'DEUTDEFF',
       'start_date' => date('Y-m-d'),
+      'resume_date' => date('Y-m-d', strtotime('+1 day')),
       'membership_type_id' => $this->membershipType['id'],
       'campaign_id' => $this->campaign['id'] ?? NULL,
       'account_holder' => $this->contact['display_name'],
@@ -230,7 +367,7 @@ class ModifyFormTest extends ContractTestBase {
       'contact_id' => $cid,
     ]);
 
-    self::assertEquals(0, $contracts['count']);
+    self::assertEquals(1, $contracts['count']);
   }
 
   public function tearDown(): void {
