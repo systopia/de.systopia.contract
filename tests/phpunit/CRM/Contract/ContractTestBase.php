@@ -46,6 +46,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     // See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
     return \Civi\Test::headless()
       ->installMe(__DIR__)
+      ->install('civi_campaign')
       ->install('org.project60.sepa')
       ->install('org.project60.banking')
       ->apply();

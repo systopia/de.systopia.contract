@@ -31,8 +31,6 @@ class CreateFormTest extends ContractTestBase {
   protected ?string $recurContributionStatusId = NULL;
 
   public function setUp(): void {
-
-    Contact::get(TRUE);
     parent::setUp();
     $this->setupRecurContributionStatus();
     $this->createRequiredEntities();
@@ -41,105 +39,71 @@ class CreateFormTest extends ContractTestBase {
   private function createRequiredEntities(): void {
     $contact = $this->createContactWithRandomEmail();
 
-    $contactResult = Contact::get(TRUE)
+    $this->contact = Contact::get(FALSE)
       ->addWhere('id', '=', $contact['id'])
-      ->setLimit(1)
-      ->execute();
+      ->execute()
+      ->single();
 
-    if ($contactResult->count() === 0) {
-      throw new \RuntimeException('Contact not found');
-    }
+    $campaignType = OptionValue::save(FALSE)
+      ->addRecord([
+        'option_group_id:name' => 'campaign_type',
+        'name' => 'test_campaign_type',
+        'label' => 'Test Campaign Type',
+        'value' => 1,
+        'is_active' => 1,
+      ])
+      ->setMatch(['option_group_id', 'value'])
+      ->execute()
+      ->single();
 
-    $this->contact = $contactResult[0];
-
-    try {
-      $group = OptionGroup::get(TRUE)
-        ->addWhere('name', '=', 'campaign_type')
-        ->execute();
-      $optionGroupId = $group[0]['id'];
-
-      $existing = OptionValue::get(TRUE)
-        ->addWhere('option_group_id', '=', $optionGroupId)
-        ->addWhere('name', '=', 'test_campaign_type')
-        ->execute();
-
-      if ($existing->count() === 0) {
-        OptionValue::create(TRUE)
-          ->addValue('option_group_id', $optionGroupId)
-          ->addValue('label', 'Test Campaign Type')
-          ->addValue('name', 'test_campaign_type')
-          ->addValue('is_active', 1)
-          ->execute();
-      }
-
-      /** @phpstan-ignore-next-line */
-      $existingCampaign = civicrm_api3('Campaign', 'get', [
+    $this->campaign = Campaign::save(FALSE)
+      ->addRecord([
         'title' => 'Test Campaign',
-        'campaign_type_id' => 1,
-      ]);
+        'campaign_type_id' => $campaignType['value'],
+        'status_id' => 1,
+        'is_active' => 1,
+      ])
+      ->setMatch(['title', 'campaign_type_id'])
+      ->execute()
+      ->single();
 
-      if (isset($existingCampaign['values']) && $existingCampaign['values'] !== []) {
-        $this->campaign = reset($existingCampaign['values']);
-      }
-      else {
-        /** @phpstan-ignore-next-line */
-        $campaign = civicrm_api3('Campaign', 'create', [
-          'title' => 'Test Campaign',
-          'campaign_type_id' => 1,
-          'status_id' => 1,
-          'is_active' => 1,
-        ]);
-        $this->campaign = $campaign['values'][$campaign['id']];
-      }
+    CustomGroup::save(FALSE)
+      ->addRecord([
+        'title' => 'Membership General',
+        'name' => 'membership_general',
+        'extends' => 'Membership',
+        'is_active' => 1,
+        'style' => 'Inline',
+      ])
+      ->setMatch(['name'])
+      ->execute()
+      ->single();
 
-      $membershipGeneralGroup = CustomGroup::get(TRUE)
-        ->addWhere('name', '=', 'membership_general')
-        ->execute();
-
-      if ($membershipGeneralGroup->count() === 0) {
-        $membershipGeneralGroup = CustomGroup::create(TRUE)
-          ->addValue('title', 'Membership General')
-          ->addValue('name', 'membership_general')
-          ->addValue('extends', 'Membership')
-          ->addValue('is_active', 1)
-          ->addValue('style', 'Inline')
-          ->execute();
-      }
-      $groupId = $membershipGeneralGroup[0]['id'];
-
-      $membershipNotesField = CustomField::get(TRUE)
-        ->addWhere('custom_group_id', '=', $groupId)
-        ->addWhere('name', '=', 'membership_notes')
-        ->execute();
-
-      if ($membershipNotesField->count() === 0) {
-        CustomField::create(TRUE)
-          ->addValue('custom_group_id', $groupId)
-          ->addValue('label', 'Membership Notes')
-          ->addValue('name', 'membership_notes')
-          ->addValue('data_type', 'Memo')
-          ->addValue('html_type', 'TextArea')
-          ->addValue('is_active', 1)
-          ->addValue('is_searchable', 1)
-          ->execute();
-      }
-
-    }
-    catch (Exception $e) {
-      throw $e;
-    }
-
-    $membershipType = MembershipType::create(TRUE)
-      ->addValue('name', 'Test Membership Type')
-      ->addValue('member_of_contact_id', $this->contact['id'])
-      ->addValue('financial_type_id', 2)
-      ->addValue('duration_unit', 'year')
-      ->addValue('duration_interval', 1)
-      ->addValue('period_type', 'rolling')
-      ->addValue('is_active', 1)
+    CustomField::save(FALSE)
+      ->addRecord([
+        'custom_group_id:name' => 'membership_general',
+        'label' => 'Membership Notes',
+        'name' => 'membership_notes',
+        'data_type' => 'Memo',
+        'html_type' => 'TextArea',
+        'is_active' => 1,
+        'is_searchable' => 1,
+      ])
+      ->setMatch(['custom_group_id', 'name'])
       ->execute();
 
-    $this->membershipType = $membershipType[0];
+    $this->membershipType = MembershipType::create(FALSE)
+      ->setValues([
+        'name' => 'Test Membership Type',
+        'member_of_contact_id' => $this->contact['id'],
+        'financial_type_id' => 2,
+        'duration_unit' => 'year',
+        'duration_interval' => 1,
+        'period_type' => 'rolling',
+        'is_active' => 1,
+      ])
+      ->execute()
+      ->single();
   }
 
   private function setupRecurContributionStatus(): void {
