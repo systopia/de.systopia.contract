@@ -4,6 +4,12 @@ declare(strict_types = 1);
 
 use CRM_Contract_ContractTestBase as ContractTestBase;
 use CRM_Contract_Form_Create as CreateForm;
+use Civi\Api4\Contact;
+use Civi\Api4\OptionValue;
+use Civi\Api4\Campaign;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\CustomField;
+use Civi\Api4\MembershipType;
 
 /**
  * @group headless
@@ -32,118 +38,61 @@ class CreateFormTest extends ContractTestBase {
   private function createRequiredEntities(): void {
     $contact = $this->createContactWithRandomEmail();
 
-    /** @phpstan-ignore-next-line */
-    $contactResult = civicrm_api4('Contact', 'get', [
-      'where' => [['id', '=', $contact['id']]],
-      'limit' => 1,
-    ]);
+    $this->contact = Contact::get(FALSE)
+      ->addWhere('id', '=', $contact['id'])
+      ->execute()
+      ->single();
 
-    if ($contactResult->count() === 0) {
-      throw new \RuntimeException('Contact not found');
-    }
+    $campaignType = OptionValue::save(FALSE)
+      ->addRecord([
+        'option_group_id:name' => 'campaign_type',
+        'name' => 'test_campaign_type',
+        'label' => 'Test Campaign Type',
+        'value' => 1,
+        'is_active' => 1,
+      ])
+      ->setMatch(['option_group_id', 'name'])
+      ->execute()
+      ->single();
 
-    $this->contact = $contactResult[0];
-
-    try {
-      /** @phpstan-ignore-next-line */
-      $group = civicrm_api4('OptionGroup', 'get', [
-        'where' => [['name', '=', 'campaign_type']],
-      ]);
-      $optionGroupId = $group[0]['id'];
-
-      /** @phpstan-ignore-next-line */
-      $existing = civicrm_api4('OptionValue', 'get', [
-        'where' => [
-          ['option_group_id', '=', $optionGroupId],
-          ['name', '=', 'test_campaign_type'],
-        ],
-      ]);
-
-      if ($existing->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        civicrm_api4('OptionValue', 'create', [
-          'values' => [
-            'option_group_id' => $optionGroupId,
-            'label' => 'Test Campaign Type',
-            'name' => 'test_campaign_type',
-            'is_active' => 1,
-          ],
-        ]);
-      }
-
-      /** @phpstan-ignore-next-line */
-      $existingCampaign = civicrm_api3('Campaign', 'get', [
+    $this->campaign = Campaign::save(FALSE)
+      ->addRecord([
         'title' => 'Test Campaign',
-        'campaign_type_id' => 1,
-      ]);
+        'campaign_type_id' => $campaignType['value'],
+        'status_id' => 1,
+        'is_active' => 1,
+      ])
+      ->setMatch(['title', 'campaign_type_id'])
+      ->execute()
+      ->single();
 
-      if (isset($existingCampaign['values']) && $existingCampaign['values'] !== []) {
-        $this->campaign = reset($existingCampaign['values']);
-      }
-      else {
-        /** @phpstan-ignore-next-line */
-        $campaign = civicrm_api3('Campaign', 'create', [
-          'title' => 'Test Campaign',
-          'campaign_type_id' => 1,
-          'status_id' => 1,
-          'is_active' => 1,
-        ]);
-        $this->campaign = $campaign['values'][$campaign['id']];
-      }
+    CustomGroup::save(FALSE)
+      ->addRecord([
+        'title' => 'Membership General',
+        'name' => 'membership_general',
+        'extends' => 'Membership',
+        'is_active' => 1,
+        'style' => 'Inline',
+      ])
+      ->setMatch(['name'])
+      ->execute()
+      ->single();
 
-      /** @phpstan-ignore-next-line */
-      $membershipGeneralGroup = civicrm_api4('CustomGroup', 'get', [
-        'where' => [['name', '=', 'membership_general']],
-      ]);
+    CustomField::save(FALSE)
+      ->addRecord([
+        'custom_group_id:name' => 'membership_general',
+        'label' => 'Membership Notes',
+        'name' => 'membership_notes',
+        'data_type' => 'Memo',
+        'html_type' => 'TextArea',
+        'is_active' => 1,
+        'is_searchable' => 1,
+      ])
+      ->setMatch(['custom_group_id', 'name'])
+      ->execute();
 
-      if ($membershipGeneralGroup->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        $membershipGeneralGroup = civicrm_api4('CustomGroup', 'create', [
-          'values' => [
-            'title' => 'Membership General',
-            'name' => 'membership_general',
-            'extends' => 'Membership',
-            'is_active' => 1,
-            'style' => 'Inline',
-          ],
-        ]);
-        $groupId = $membershipGeneralGroup[0]['id'];
-      }
-      else {
-        $groupId = $membershipGeneralGroup[0]['id'];
-      }
-
-      /** @phpstan-ignore-next-line */
-      $membershipNotesField = civicrm_api4('CustomField', 'get', [
-        'where' => [
-          ['custom_group_id', '=', $groupId],
-          ['name', '=', 'membership_notes'],
-        ],
-      ]);
-
-      if ($membershipNotesField->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        civicrm_api4('CustomField', 'create', [
-          'values' => [
-            'custom_group_id' => $groupId,
-            'label' => 'Membership Notes',
-            'name' => 'membership_notes',
-            'data_type' => 'Memo',
-            'html_type' => 'TextArea',
-            'is_active' => 1,
-            'is_searchable' => 1,
-          ],
-        ]);
-      }
-
-    }
-    catch (Exception $e) {
-      throw $e;
-    }
-
-    /** @phpstan-ignore-next-line */
-    $membershipType = civicrm_api4('MembershipType', 'create', [
-      'values' => [
+    $this->membershipType = MembershipType::create(FALSE)
+      ->setValues([
         'name' => 'Test Membership Type',
         'member_of_contact_id' => $this->contact['id'],
         'financial_type_id' => 2,
@@ -151,10 +100,9 @@ class CreateFormTest extends ContractTestBase {
         'duration_interval' => 1,
         'period_type' => 'rolling',
         'is_active' => 1,
-      ],
-    ]);
-
-    $this->membershipType = $membershipType[0];
+      ])
+      ->execute()
+      ->single();
   }
 
   private function setupRecurContributionStatus(): void {
