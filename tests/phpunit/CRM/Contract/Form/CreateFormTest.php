@@ -51,7 +51,7 @@ class CreateFormTest extends ContractTestBase {
         'value' => 1,
         'is_active' => 1,
       ])
-      ->setMatch(['option_group_id', 'name'])
+      ->setMatch(['option_group_id', 'value'])
       ->execute()
       ->single();
 
