@@ -5,6 +5,13 @@ declare(strict_types = 1);
 use CRM_Contract_ContractTestBase as ContractTestBase;
 use CRM_Contract_Form_Modify as ModifyForm;
 
+use Civi\Api4\Contact;
+use Civi\Api4\MembershipType;
+use Civi\Api4\SepaMandate;
+use Civi\Api4\SepaCreditor;
+use Civi\Api4\OptionGroup;
+use Civi\Api4\OptionValue;
+
 /**
  * @group headless
  */
@@ -36,31 +43,25 @@ class ModifyFormTest extends ContractTestBase {
   private function createRequiredEntities(): void {
     $contact = $this->createContactWithRandomEmail();
 
-    /** @phpstan-ignore-next-line */
-    $contactResult = civicrm_api4('Contact', 'get', [
-      'where' => [['id', '=', $contact['id']]],
-      'limit' => 1,
-    ]);
+    $contactResult = Contact::get(TRUE)
+      ->addWhere('id', '=', $contact['id'])
+      ->setLimit(1)
+      ->execute();
 
     if ($contactResult->count() === 0) {
       throw new \RuntimeException('Contact not found');
     }
-
     $this->contact = $contactResult->first();
 
-    /** @phpstan-ignore-next-line */
-    $membershipTypeResult = civicrm_api4('MembershipType', 'create', [
-      'values' => [
-        'name' => 'Modify Membership Type',
-        'member_of_contact_id' => $this->contact['id'],
-        'financial_type_id' => 2,
-        'duration_unit' => 'year',
-        'duration_interval' => 1,
-        'period_type' => 'rolling',
-        'is_active' => 1,
-      ],
-    ]);
-
+    $membershipTypeResult = MembershipType::create(TRUE)
+      ->addValue('name', 'Modify Membership Type')
+      ->addValue('member_of_contact_id', $this->contact['id'])
+      ->addValue('financial_type_id', 2)
+      ->addValue('duration_unit', 'year')
+      ->addValue('duration_interval', 1)
+      ->addValue('period_type', 'rolling')
+      ->addValue('is_active', 1)
+      ->execute();
     $this->membershipType = $membershipTypeResult[0];
 
     $this->contract = $this->createNewContract([
@@ -76,114 +77,84 @@ class ModifyFormTest extends ContractTestBase {
     $recurContriId = $membership[CRM_Contract_Utils::getCustomFieldId(
       'membership_payment.membership_recurring_contribution'
     )];
-    /** @phpstan-ignore-next-line */
-    civicrm_api4('SepaMandate', 'delete', [
-      'where' => [
-        ['contact_id', '=', $contact['id']],
-      ],
-      'checkPermissions' => TRUE,
-    ]);
 
-    /** @phpstan-ignore-next-line */
-    $creditor = civicrm_api4('SepaCreditor', 'create', [
-      'values' => [
-        'identifier' => 'TESTCREDITOR01',
-        'name' => 'Creditor Organization',
-        'iban' => 'DE44500105175407324931',
-        'bic' => 'DEUTDEFF500',
-        'creditor_type' => 'OOFF',
-        'payment_processor_id' => 1,
-      ],
-    ]);
+    SepaMandate::delete(TRUE)
+      ->addWhere('contact_id', '=', $contact['id'])
+      ->execute();
 
-    $creditor = $creditor->first();
+    $creditor = SepaCreditor::create(TRUE)
+      ->addValue('identifier', 'TESTCREDITOR01')
+      ->addValue('name', 'Creditor Organization')
+      ->addValue('iban', 'DE44500105175407324931')
+      ->addValue('bic', 'DEUTDEFF500')
+      ->addValue('creditor_type', 'OOFF')
+      ->addValue('payment_processor_id', 1)
+      ->execute()
+      ->first();
 
-    /** @phpstan-ignore-next-line */
-    $result = civicrm_api4('SepaMandate', 'create', [
-      'values' => [
-        'contact_id'     => $contact['id'],
-        'type'           => 'RCUR',
-        'entity_table'   => 'civicrm_contribution_recur',
-        'entity_id'      => $recurContriId,
-        'reference'      => 'TEST-MANDATE-001',
-        'date'           => '2025-05-01 13:00:00',
-        'iban'           => 'DE12500105170648489890',
-        'bic'            => 'INGDDEFFXXX',
-        'creditor_id'    => $creditor['id'],
-        'status'         => 'INIT',
-      ],
-      'checkPermissions' => TRUE,
-    ]);
-    $this->mandate = $result->first();
+    $this->mandate = SepaMandate::create(TRUE)
+      ->addValue('contact_id', $contact['id'])
+      ->addValue('type', 'RCUR')
+      ->addValue('entity_table', 'civicrm_contribution_recur')
+      ->addValue('entity_id', $recurContriId)
+      ->addValue('reference', 'TEST-MANDATE-001')
+      ->addValue('date', '2025-05-01 13:00:00')
+      ->addValue('iban', 'DE12500105170648489890')
+      ->addValue('bic', 'INGDDEFFXXX')
+      ->addValue('creditor_id', $creditor['id'])
+      ->addValue('status', 'INIT')
+      ->execute()
+      ->first();
 
-    /** @phpstan-ignore-next-line */
-    $optionGroupResult = civicrm_api4('OptionGroup', 'get', [
-      'where' => [['name', '=', 'contribution_status']],
-    ]);
+    $optionGroupResult = OptionGroup::get(TRUE)
+      ->addWhere('name', '=', 'contribution_status')
+      ->execute();
 
     if ($optionGroupResult->count() === 0) {
-      /** @phpstan-ignore-next-line */
-      $optionGroupResult = civicrm_api4('OptionGroup', 'create', [
-        'values' => [
-          'name' => 'contribution_status',
-          'title' => 'Contribution Status',
-          'is_active' => 1,
-        ],
-      ]);
+      $optionGroupResult = OptionGroup::create(TRUE)
+        ->addValue('name', 'contribution_status')
+        ->addValue('title', 'Contribution Status')
+        ->addValue('is_active', 1)
+        ->execute();
     }
-
     $optionGroupId = $optionGroupResult[0]['id'];
 
-    /** @phpstan-ignore-next-line */
-    $status = civicrm_api4('OptionValue', 'get', [
-      'where' => [
-        ['option_group_id', '=', $optionGroupId],
-        ['name', '=', 'In Progress'],
-        ['is_active', '=', 1],
-      ],
-    ]);
+    $status = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $optionGroupId)
+      ->addWhere('name', '=', 'In Progress')
+      ->addWhere('is_active', '=', 1)
+      ->execute();
 
     if ($status->count() === 0) {
-      /** @phpstan-ignore-next-line */
-      civicrm_api4('OptionValue', 'create', [
-        'values' => [
-          'option_group_id' => $optionGroupId,
-          'label' => 'In Progress',
-          'name' => 'In Progress',
-          'value' => 5,
-          'is_active' => 1,
-          'is_reserved' => 1,
-        ],
-      ]);
+      OptionValue::create(TRUE)
+        ->addValue('option_group_id', $optionGroupId)
+        ->addValue('label', 'In Progress')
+        ->addValue('name', 'In Progress')
+        ->addValue('value', 5)
+        ->addValue('is_active', 1)
+        ->addValue('is_reserved', 1)
+        ->execute();
       $this->recurContributionStatusId = '5';
     }
     else {
-      $first = $status[0];
-      $this->recurContributionStatusId = $first['value'];
+      $this->recurContributionStatusId = $status[0]['value'];
     }
 
-    /** @phpstan-ignore-next-line */
-    $completedStatus = civicrm_api4('OptionValue', 'get', [
-      'where' => [
-        ['option_group_id', '=', $optionGroupId],
-        ['name', '=', 'Completed'],
-      ],
-    ]);
+    $completedStatus = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $optionGroupId)
+      ->addWhere('name', '=', 'Completed')
+      ->execute();
 
     if ($completedStatus->count() === 0) {
-      /** @phpstan-ignore-next-line */
-      civicrm_api4('OptionValue', 'create', [
-        'values' => [
-          'option_group_id' => $optionGroupId,
-          'label' => 'Completed',
-          'name' => 'Completed',
-          'value' => 1,
-          'is_active' => 1,
-          'is_default' => 1,
-        ],
-      ]);
+      OptionValue::create(TRUE)
+        ->addValue('option_group_id', $optionGroupId)
+        ->addValue('label', 'Completed')
+        ->addValue('name', 'Completed')
+        ->addValue('value', 1)
+        ->addValue('is_active', 1)
+        ->addValue('is_default', 1)
+        ->execute();
     }
-
   }
 
   public function testModifyFormValidation(): void {
@@ -372,15 +343,12 @@ class ModifyFormTest extends ContractTestBase {
 
   public function tearDown(): void {
     try {
-      /** @phpstan-ignore-next-line */
-      civicrm_api4('Contact', 'update', [
-        'values' => [
-          'id' => $this->contact['id'],
-          'is_deleted' => 1,
-        ],
-      ]);
+      Contact::update(TRUE)
+        ->addValue('id', $this->contact['id'])
+        ->addValue('is_deleted', 1)
+        ->execute();
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       throw $e;
     }
 
@@ -390,12 +358,9 @@ class ModifyFormTest extends ContractTestBase {
     }
 
     if (isset($this->membershipType['id']) && $this->membershipType['id'] !== 0) {
-      /** @phpstan-ignore-next-line */
-      civicrm_api4('MembershipType', 'delete', [
-        'where' => [
-          ['id', '=', $this->membershipType['id']],
-        ],
-      ]);
+      MembershipType::delete(TRUE)
+        ->addWhere('id', '=', $this->membershipType['id'])
+        ->execute();
     }
 
     parent::tearDown();

@@ -5,6 +5,13 @@ declare(strict_types = 1);
 use CRM_Contract_ContractTestBase as ContractTestBase;
 use CRM_Contract_Form_Create as CreateForm;
 
+use Civi\Api4\Contact;
+use Civi\Api4\OptionGroup;
+use Civi\Api4\OptionValue;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\CustomField;
+use Civi\Api4\MembershipType;
+
 /**
  * @group headless
  */
@@ -24,6 +31,8 @@ class CreateFormTest extends ContractTestBase {
   protected ?string $recurContributionStatusId = NULL;
 
   public function setUp(): void {
+
+    Contact::get(TRUE);
     parent::setUp();
     $this->setupRecurContributionStatus();
     $this->createRequiredEntities();
@@ -32,11 +41,10 @@ class CreateFormTest extends ContractTestBase {
   private function createRequiredEntities(): void {
     $contact = $this->createContactWithRandomEmail();
 
-    /** @phpstan-ignore-next-line */
-    $contactResult = civicrm_api4('Contact', 'get', [
-      'where' => [['id', '=', $contact['id']]],
-      'limit' => 1,
-    ]);
+    $contactResult = Contact::get(TRUE)
+      ->addWhere('id', '=', $contact['id'])
+      ->setLimit(1)
+      ->execute();
 
     if ($contactResult->count() === 0) {
       throw new \RuntimeException('Contact not found');
@@ -45,30 +53,23 @@ class CreateFormTest extends ContractTestBase {
     $this->contact = $contactResult[0];
 
     try {
-      /** @phpstan-ignore-next-line */
-      $group = civicrm_api4('OptionGroup', 'get', [
-        'where' => [['name', '=', 'campaign_type']],
-      ]);
+      $group = OptionGroup::get(TRUE)
+        ->addWhere('name', '=', 'campaign_type')
+        ->execute();
       $optionGroupId = $group[0]['id'];
 
-      /** @phpstan-ignore-next-line */
-      $existing = civicrm_api4('OptionValue', 'get', [
-        'where' => [
-          ['option_group_id', '=', $optionGroupId],
-          ['name', '=', 'test_campaign_type'],
-        ],
-      ]);
+      $existing = OptionValue::get(TRUE)
+        ->addWhere('option_group_id', '=', $optionGroupId)
+        ->addWhere('name', '=', 'test_campaign_type')
+        ->execute();
 
       if ($existing->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        civicrm_api4('OptionValue', 'create', [
-          'values' => [
-            'option_group_id' => $optionGroupId,
-            'label' => 'Test Campaign Type',
-            'name' => 'test_campaign_type',
-            'is_active' => 1,
-          ],
-        ]);
+        OptionValue::create(TRUE)
+          ->addValue('option_group_id', $optionGroupId)
+          ->addValue('label', 'Test Campaign Type')
+          ->addValue('name', 'test_campaign_type')
+          ->addValue('is_active', 1)
+          ->execute();
       }
 
       /** @phpstan-ignore-next-line */
@@ -91,49 +92,36 @@ class CreateFormTest extends ContractTestBase {
         $this->campaign = $campaign['values'][$campaign['id']];
       }
 
-      /** @phpstan-ignore-next-line */
-      $membershipGeneralGroup = civicrm_api4('CustomGroup', 'get', [
-        'where' => [['name', '=', 'membership_general']],
-      ]);
+      $membershipGeneralGroup = CustomGroup::get(TRUE)
+        ->addWhere('name', '=', 'membership_general')
+        ->execute();
 
       if ($membershipGeneralGroup->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        $membershipGeneralGroup = civicrm_api4('CustomGroup', 'create', [
-          'values' => [
-            'title' => 'Membership General',
-            'name' => 'membership_general',
-            'extends' => 'Membership',
-            'is_active' => 1,
-            'style' => 'Inline',
-          ],
-        ]);
-        $groupId = $membershipGeneralGroup[0]['id'];
+        $membershipGeneralGroup = CustomGroup::create(TRUE)
+          ->addValue('title', 'Membership General')
+          ->addValue('name', 'membership_general')
+          ->addValue('extends', 'Membership')
+          ->addValue('is_active', 1)
+          ->addValue('style', 'Inline')
+          ->execute();
       }
-      else {
-        $groupId = $membershipGeneralGroup[0]['id'];
-      }
+      $groupId = $membershipGeneralGroup[0]['id'];
 
-      /** @phpstan-ignore-next-line */
-      $membershipNotesField = civicrm_api4('CustomField', 'get', [
-        'where' => [
-          ['custom_group_id', '=', $groupId],
-          ['name', '=', 'membership_notes'],
-        ],
-      ]);
+      $membershipNotesField = CustomField::get(TRUE)
+        ->addWhere('custom_group_id', '=', $groupId)
+        ->addWhere('name', '=', 'membership_notes')
+        ->execute();
 
       if ($membershipNotesField->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        civicrm_api4('CustomField', 'create', [
-          'values' => [
-            'custom_group_id' => $groupId,
-            'label' => 'Membership Notes',
-            'name' => 'membership_notes',
-            'data_type' => 'Memo',
-            'html_type' => 'TextArea',
-            'is_active' => 1,
-            'is_searchable' => 1,
-          ],
-        ]);
+        CustomField::create(TRUE)
+          ->addValue('custom_group_id', $groupId)
+          ->addValue('label', 'Membership Notes')
+          ->addValue('name', 'membership_notes')
+          ->addValue('data_type', 'Memo')
+          ->addValue('html_type', 'TextArea')
+          ->addValue('is_active', 1)
+          ->addValue('is_searchable', 1)
+          ->execute();
       }
 
     }
@@ -141,95 +129,76 @@ class CreateFormTest extends ContractTestBase {
       throw $e;
     }
 
-    /** @phpstan-ignore-next-line */
-    $membershipType = civicrm_api4('MembershipType', 'create', [
-      'values' => [
-        'name' => 'Test Membership Type',
-        'member_of_contact_id' => $this->contact['id'],
-        'financial_type_id' => 2,
-        'duration_unit' => 'year',
-        'duration_interval' => 1,
-        'period_type' => 'rolling',
-        'is_active' => 1,
-      ],
-    ]);
+    $membershipType = MembershipType::create(TRUE)
+      ->addValue('name', 'Test Membership Type')
+      ->addValue('member_of_contact_id', $this->contact['id'])
+      ->addValue('financial_type_id', 2)
+      ->addValue('duration_unit', 'year')
+      ->addValue('duration_interval', 1)
+      ->addValue('period_type', 'rolling')
+      ->addValue('is_active', 1)
+      ->execute();
 
     $this->membershipType = $membershipType[0];
   }
 
   private function setupRecurContributionStatus(): void {
     try {
-      /** @phpstan-ignore-next-line */
-      $optionGroupResult = civicrm_api4('OptionGroup', 'get', [
-        'where' => [['name', '=', 'contribution_status']],
-      ]);
+      $optionGroupResult = OptionGroup::get(TRUE)
+        ->addWhere('name', '=', 'contribution_status')
+        ->execute();
 
       if ($optionGroupResult->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        $optionGroupResult = civicrm_api4('OptionGroup', 'create', [
-          'values' => [
-            'name' => 'contribution_status',
-            'title' => 'Contribution Status',
-            'is_active' => 1,
-          ],
-        ]);
+        $optionGroupResult = OptionGroup::create(TRUE)
+          ->addValue('name', 'contribution_status')
+          ->addValue('title', 'Contribution Status')
+          ->addValue('is_active', 1)
+          ->execute();
       }
 
       $optionGroupId = $optionGroupResult[0]['id'];
 
-      /** @phpstan-ignore-next-line */
-      $status = civicrm_api4('OptionValue', 'get', [
-        'where' => [
-          ['option_group_id', '=', $optionGroupId],
-          ['name', '=', 'In Progress'],
-          ['is_active', '=', 1],
-        ],
-      ]);
+      $status = OptionValue::get(TRUE)
+        ->addWhere('option_group_id', '=', $optionGroupId)
+        ->addWhere('name', '=', 'In Progress')
+        ->addWhere('is_active', '=', 1)
+        ->execute();
 
       if ($status->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        civicrm_api4('OptionValue', 'create', [
-          'values' => [
-            'option_group_id' => $optionGroupId,
-            'label' => 'In Progress',
-            'name' => 'In Progress',
-            'value' => 5,
-            'is_active' => 1,
-            'is_reserved' => 1,
-          ],
-        ]);
+        OptionValue::create(TRUE)
+          ->addValue('option_group_id', $optionGroupId)
+          ->addValue('label', 'In Progress')
+          ->addValue('name', 'In Progress')
+          ->addValue('value', 5)
+          ->addValue('is_active', 1)
+          ->addValue('is_reserved', 1)
+          ->execute();
         $this->recurContributionStatusId = '5';
       }
       else {
-        $first = $status[0];
-        $this->recurContributionStatusId = $first['value'];
+        $this->recurContributionStatusId = $status[0]['value'];
       }
 
-      /** @phpstan-ignore-next-line */
-      $completedStatus = civicrm_api4('OptionValue', 'get', [
-        'where' => [
-          ['option_group_id', '=', $optionGroupId],
-          ['name', '=', 'Completed'],
-        ],
-      ]);
+      $completedStatus = OptionValue::get(TRUE)
+        ->addWhere('option_group_id', '=', $optionGroupId)
+        ->addWhere('name', '=', 'Completed')
+        ->execute();
 
       if ($completedStatus->count() === 0) {
-        /** @phpstan-ignore-next-line */
-        civicrm_api4('OptionValue', 'create', [
-          'values' => [
-            'option_group_id' => $optionGroupId,
-            'label' => 'Completed',
-            'name' => 'Completed',
-            'value' => 1,
-            'is_active' => 1,
-            'is_default' => 1,
-          ],
-        ]);
+        OptionValue::create(TRUE)
+          ->addValue('option_group_id', $optionGroupId)
+          ->addValue('label', 'Completed')
+          ->addValue('name', 'Completed')
+          ->addValue('value', 1)
+          ->addValue('is_active', 1)
+          ->addValue('is_default', 1)
+          ->execute();
       }
+
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       /** @phpstan-ignore-next-line */
-      throw new CRM_Core_Exception($e->getMessage(), 0, $e);
+      throw new \CRM_Core_Exception($e->getMessage(), 0, $e);
     }
   }
 
@@ -388,15 +357,12 @@ class CreateFormTest extends ContractTestBase {
 
   public function tearDown(): void {
     try {
-      /** @phpstan-ignore-next-line */
-      civicrm_api4('Contact', 'update', [
-        'values' => [
-          'id' => $this->contact['id'],
-          'is_deleted' => 1,
-        ],
-      ]);
+      Contact::update(TRUE)
+        ->addValue('id', $this->contact['id'])
+        ->addValue('is_deleted', 1)
+        ->execute();
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       throw $e;
     }
 
@@ -406,12 +372,9 @@ class CreateFormTest extends ContractTestBase {
     }
 
     if (isset($this->membershipType['id']) && $this->membershipType['id'] !== 0) {
-      /** @phpstan-ignore-next-line */
-      civicrm_api4('MembershipType', 'delete', [
-        'where' => [
-          ['id', '=', $this->membershipType['id']],
-        ],
-      ]);
+      MembershipType::delete(TRUE)
+        ->addWhere('id', '=', $this->membershipType['id'])
+        ->execute();
     }
 
     parent::tearDown();
