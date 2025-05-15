@@ -15,6 +15,10 @@ use CRM_Contract_ExtensionUtil as E;
 class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
   /**
+   * @var ?int */
+  protected ?int $id;
+
+  /**
    * @var ?string the modify action */
   protected ?string $modify_action = NULL;
 

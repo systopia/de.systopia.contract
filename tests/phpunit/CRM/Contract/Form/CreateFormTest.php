@@ -8,6 +8,7 @@ use CRM_Contract_Form_Create as CreateForm;
 use Civi\Api4\Contact;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
+use Civi\Api4\Campaign;
 use Civi\Api4\CustomGroup;
 use Civi\Api4\CustomField;
 use Civi\Api4\MembershipType;
@@ -28,7 +29,7 @@ class CreateFormTest extends ContractTestBase {
   /**
    * @var array<string, mixed> */
   protected array $membershipType = [];
-  protected ?string $recurContributionStatusId = NULL;
+  protected ?int $recurContributionStatusId = NULL;
 
   public function setUp(): void {
     parent::setUp();
@@ -108,57 +109,44 @@ class CreateFormTest extends ContractTestBase {
 
   private function setupRecurContributionStatus(): void {
     try {
-      $optionGroupResult = OptionGroup::get(TRUE)
-        ->addWhere('name', '=', 'contribution_status')
+      $optionGroup = OptionGroup::save(TRUE)
+        ->addRecord([
+          'name' => 'contribution_status',
+          'title' => 'Contribution Status',
+          'is_active' => 1,
+        ])
+        ->setMatch(['name'])
+        ->execute()
+        ->single();
+
+      $optionGroupId = $optionGroup['id'];
+
+      $inProgress = OptionValue::save(TRUE)
+        ->addRecord([
+          'option_group_id' => $optionGroupId,
+          'label' => 'In Progress',
+          'name' => 'In Progress',
+          'value' => 5,
+          'is_active' => 1,
+          'is_reserved' => 1,
+        ])
+        ->setMatch(['option_group_id', 'name'])
+        ->execute()
+        ->single();
+
+      $this->recurContributionStatusId = $inProgress['value'];
+
+      OptionValue::save(TRUE)
+        ->addRecord([
+          'option_group_id' => $optionGroupId,
+          'label' => 'Completed',
+          'name' => 'Completed',
+          'value' => 1,
+          'is_active' => 1,
+          'is_default' => 1,
+        ])
+        ->setMatch(['option_group_id', 'name'])
         ->execute();
-
-      if ($optionGroupResult->count() === 0) {
-        $optionGroupResult = OptionGroup::create(TRUE)
-          ->addValue('name', 'contribution_status')
-          ->addValue('title', 'Contribution Status')
-          ->addValue('is_active', 1)
-          ->execute();
-      }
-
-      $optionGroupId = $optionGroupResult[0]['id'];
-
-      $status = OptionValue::get(TRUE)
-        ->addWhere('option_group_id', '=', $optionGroupId)
-        ->addWhere('name', '=', 'In Progress')
-        ->addWhere('is_active', '=', 1)
-        ->execute();
-
-      if ($status->count() === 0) {
-        OptionValue::create(TRUE)
-          ->addValue('option_group_id', $optionGroupId)
-          ->addValue('label', 'In Progress')
-          ->addValue('name', 'In Progress')
-          ->addValue('value', 5)
-          ->addValue('is_active', 1)
-          ->addValue('is_reserved', 1)
-          ->execute();
-        $this->recurContributionStatusId = '5';
-      }
-      else {
-        $this->recurContributionStatusId = $status[0]['value'];
-      }
-
-      $completedStatus = OptionValue::get(TRUE)
-        ->addWhere('option_group_id', '=', $optionGroupId)
-        ->addWhere('name', '=', 'Completed')
-        ->execute();
-
-      if ($completedStatus->count() === 0) {
-        OptionValue::create(TRUE)
-          ->addValue('option_group_id', $optionGroupId)
-          ->addValue('label', 'Completed')
-          ->addValue('name', 'Completed')
-          ->addValue('value', 1)
-          ->addValue('is_active', 1)
-          ->addValue('is_default', 1)
-          ->execute();
-      }
-
     }
     catch (\Exception $e) {
       /** @phpstan-ignore-next-line */

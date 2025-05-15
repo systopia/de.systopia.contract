@@ -33,7 +33,7 @@ class ModifyFormTest extends ContractTestBase {
    * @var array<string, mixed> */
   protected array $contract = [];
 
-  protected ?string $recurContributionStatusId = NULL;
+  protected ?int $recurContributionStatusId = NULL;
 
   public function setUp(): void {
     parent::setUp();
@@ -53,23 +53,28 @@ class ModifyFormTest extends ContractTestBase {
     }
     $this->contact = $contactResult->first();
 
-    $membershipTypeResult = MembershipType::create(TRUE)
-      ->addValue('name', 'Modify Membership Type')
-      ->addValue('member_of_contact_id', $this->contact['id'])
-      ->addValue('financial_type_id', 2)
-      ->addValue('duration_unit', 'year')
-      ->addValue('duration_interval', 1)
-      ->addValue('period_type', 'rolling')
-      ->addValue('is_active', 1)
-      ->execute();
-    $this->membershipType = $membershipTypeResult[0];
+    $this->membershipType = MembershipType::save(TRUE)
+      ->addRecord([
+        'name' => 'Modify Membership Type',
+        'member_of_contact_id' => $this->contact['id'],
+        'financial_type_id' => 2,
+        'duration_unit' => 'year',
+        'duration_interval' => 1,
+        'period_type' => 'rolling',
+        'is_active' => 1,
+      ])
+      ->setMatch(['name'])
+      ->execute()
+      ->first();
 
     $this->contract = $this->createNewContract([
-      'contact_id'         => $this->contact['id'],
-      'is_sepa'            => 1,
-      'amount'             => '10.00',
-      'frequency_unit'     => 'month',
+      'contact_id' => $this->contact['id'],
+      'is_sepa' => 1,
+      'amount' => '10.00',
+      'frequency_unit' => 'month',
       'frequency_interval' => '1',
+      'membership_contract' => 'TEST-001',
+      'membership_reference' => 'REF-001',
     ]);
 
     /** @phpstan-ignore-next-line */
@@ -82,79 +87,74 @@ class ModifyFormTest extends ContractTestBase {
       ->addWhere('contact_id', '=', $contact['id'])
       ->execute();
 
-    $creditor = SepaCreditor::create(TRUE)
-      ->addValue('identifier', 'TESTCREDITOR01')
-      ->addValue('name', 'Creditor Organization')
-      ->addValue('iban', 'DE44500105175407324931')
-      ->addValue('bic', 'DEUTDEFF500')
-      ->addValue('creditor_type', 'OOFF')
-      ->addValue('payment_processor_id', 1)
+    $creditor = SepaCreditor::save(TRUE)
+      ->addRecord([
+        'identifier' => 'TESTCREDITOR01',
+        'name' => 'Creditor Organization',
+        'iban' => 'DE44500105175407324931',
+        'bic' => 'DEUTDEFF500',
+        'creditor_type' => 'OOFF',
+        'payment_processor_id' => 1,
+      ])
+      ->setMatch(['identifier'])
       ->execute()
       ->first();
 
-    $this->mandate = SepaMandate::create(TRUE)
-      ->addValue('contact_id', $contact['id'])
-      ->addValue('type', 'RCUR')
-      ->addValue('entity_table', 'civicrm_contribution_recur')
-      ->addValue('entity_id', $recurContriId)
-      ->addValue('reference', 'TEST-MANDATE-001')
-      ->addValue('date', '2025-05-01 13:00:00')
-      ->addValue('iban', 'DE12500105170648489890')
-      ->addValue('bic', 'INGDDEFFXXX')
-      ->addValue('creditor_id', $creditor['id'])
-      ->addValue('status', 'INIT')
+    $this->mandate = SepaMandate::save(TRUE)
+      ->addRecord([
+        'contact_id' => $contact['id'],
+        'type' => 'RCUR',
+        'entity_table' => 'civicrm_contribution_recur',
+        'entity_id' => $recurContriId,
+        'reference' => 'TEST-MANDATE-001',
+        'date' => '2025-05-01 13:00:00',
+        'iban' => 'DE12500105170648489890',
+        'bic' => 'INGDDEFFXXX',
+        'creditor_id' => $creditor['id'],
+        'status' => 'RCUR',
+      ])
+      ->setMatch(['reference'])
       ->execute()
       ->first();
 
-    $optionGroupResult = OptionGroup::get(TRUE)
-      ->addWhere('name', '=', 'contribution_status')
+    $optionGroup = OptionGroup::save(TRUE)
+      ->addRecord([
+        'name' => 'contribution_status',
+        'title' => 'Contribution Status',
+        'is_active' => 1,
+      ])
+      ->setMatch(['name'])
+      ->execute()
+      ->single();
+
+    $optionGroupId = $optionGroup['id'];
+
+    $inProgress = OptionValue::save(TRUE)
+      ->addRecord([
+        'option_group_id' => $optionGroupId,
+        'label' => 'In Progress',
+        'name' => 'In Progress',
+        'value' => 5,
+        'is_active' => 1,
+        'is_reserved' => 1,
+      ])
+      ->setMatch(['option_group_id', 'name'])
+      ->execute()
+      ->single();
+
+    $this->recurContributionStatusId = $inProgress['value'];
+
+    OptionValue::save(TRUE)
+      ->addRecord([
+        'option_group_id' => $optionGroupId,
+        'label' => 'Completed',
+        'name' => 'Completed',
+        'value' => 1,
+        'is_active' => 1,
+        'is_default' => 1,
+      ])
+      ->setMatch(['option_group_id', 'name'])
       ->execute();
-
-    if ($optionGroupResult->count() === 0) {
-      $optionGroupResult = OptionGroup::create(TRUE)
-        ->addValue('name', 'contribution_status')
-        ->addValue('title', 'Contribution Status')
-        ->addValue('is_active', 1)
-        ->execute();
-    }
-    $optionGroupId = $optionGroupResult[0]['id'];
-
-    $status = OptionValue::get(TRUE)
-      ->addWhere('option_group_id', '=', $optionGroupId)
-      ->addWhere('name', '=', 'In Progress')
-      ->addWhere('is_active', '=', 1)
-      ->execute();
-
-    if ($status->count() === 0) {
-      OptionValue::create(TRUE)
-        ->addValue('option_group_id', $optionGroupId)
-        ->addValue('label', 'In Progress')
-        ->addValue('name', 'In Progress')
-        ->addValue('value', 5)
-        ->addValue('is_active', 1)
-        ->addValue('is_reserved', 1)
-        ->execute();
-      $this->recurContributionStatusId = '5';
-    }
-    else {
-      $this->recurContributionStatusId = $status[0]['value'];
-    }
-
-    $completedStatus = OptionValue::get(TRUE)
-      ->addWhere('option_group_id', '=', $optionGroupId)
-      ->addWhere('name', '=', 'Completed')
-      ->execute();
-
-    if ($completedStatus->count() === 0) {
-      OptionValue::create(TRUE)
-        ->addValue('option_group_id', $optionGroupId)
-        ->addValue('label', 'Completed')
-        ->addValue('name', 'Completed')
-        ->addValue('value', 1)
-        ->addValue('is_active', 1)
-        ->addValue('is_default', 1)
-        ->execute();
-    }
   }
 
   public function testModifyFormValidation(): void {
@@ -246,12 +246,15 @@ class ModifyFormTest extends ContractTestBase {
   /**
    * @dataProvider modifyActionProvider
    */
-  public function testFormSubmissionModifyContract(String $modifyAction): void {
+  public function testFormSubmissionModifyContract(
+    string $modifyAction
+  ): void {
     $cid = $this->contact['id'];
+    $contractId = $this->contract['id'];
     /** @phpstan-ignore-next-line */
     $_REQUEST['cid'] = (string) $cid;
     /** @phpstan-ignore-next-line */
-    $_REQUEST['id'] = (string) $this->contract['id'];
+    $_REQUEST['id'] = (string) $contractId;
     /** @phpstan-ignore-next-line */
     $_REQUEST['modify_action'] = $modifyAction;
 
@@ -305,40 +308,67 @@ class ModifyFormTest extends ContractTestBase {
     $form->preProcess();
     $form->buildQuickForm();
 
-    $submissionValues = [
-      'payment_option' => 'RCUR',
-      'join_date'      => date('Y-m-d'),
-      'end_date'       => date('Y-m-d'),
-      'activity_date_time' => date('H:i:s'),
-      'activity_date' => date('Y-m-d'),
-      'membership_dialoger' => '',
-      'activity_details' => '',
-      'activity_medium' => '',
-      'cycle_day' => '30',
-      'payment_amount' => '120',
-      'payment_frequency' => '12',
-      'iban' => 'DE89370400440532013000',
-      'bic' => 'DEUTDEFF',
-      'start_date' => date('Y-m-d'),
-      'resume_date' => date('Y-m-d', strtotime('+1 day')),
-      'membership_type_id' => $this->membershipType['id'],
-      'campaign_id' => $this->campaign['id'] ?? NULL,
-      'account_holder' => $this->contact['display_name'],
-      'membership_contract' => 'TEST-001',
-      'membership_reference' => 'REF-001',
-      'cancel_reason' => 'Unknown',
-    ];
-
+    $submissionValues = $this->getModifyActionSubmissionValues($modifyAction);
     $form->_submitValues = $submissionValues;
     $form->setDefaults($submissionValues);
     $form->postProcess();
 
     /** @phpstan-ignore-next-line */
-    $contracts = civicrm_api3('Contract', 'get', [
-      'contact_id' => $cid,
-    ]);
+    $result = civicrm_api3('Contract', 'get', ['contact_id' => $cid]);
+    $contract = $this->getContract($result['id']);
 
-    self::assertEquals(1, $contracts['count']);
+    $expectedStatus = match ($modifyAction) {
+      'update' => 'Current',
+      'cancel' => 'Cancelled',
+      'pause' => 'Paused',
+      default => throw new \RuntimeException("Unhandled modifyAction: $modifyAction"),
+    };
+
+    self::assertEquals($this->getMembershipStatusID($expectedStatus), $contract['status_id']);
+
+    if ($modifyAction === 'update') {
+      self::assertEquals($this->contact['id'], $contract['contact_id']);
+      self::assertEquals(6, $contract['membership_payment.membership_frequency']);
+    }
+  }
+
+  /**
+   * @return array<string, array<string, mixed>>
+   */
+  private function getModifyActionSubmissionValues(string $modifyAction): array {
+    $base = [
+      'payment_option' => 'RCUR',
+      'membership_type_id' => $this->membershipType['id'],
+      'campaign_id' => $this->campaign['id'] ?? NULL,
+      'account_holder' => $this->contact['display_name'],
+      'activity_details' => '',
+      'activity_medium' => '',
+      'membership_contract' => 'UPDATE TEST-001',
+      'membership_reference' => 'UPDATE REF-001',
+      'activity_date_time' => date('H:i:s'),
+      'activity_date' => date('Y-m-d'),
+    ];
+
+    return match ($modifyAction) {
+      'update' => $base + [
+        'join_date' => date('Y-m-d'),
+        'end_date' => date('Y-m-d'),
+        'membership_dialoger' => '',
+        'cycle_day' => '30',
+        'payment_amount' => '120',
+        'payment_frequency' => '6',
+        'iban' => 'DE89370400440532013000',
+        'bic' => 'DEUTDEFF',
+        'start_date' => date('Y-m-d'),
+      ],
+      'pause' => $base + [
+        'resume_date' => date('Y-m-d', strtotime('+1 day')),
+      ],
+      'cancel' => $base + [
+        'cancel_reason' => 'Unknown',
+      ],
+      default => throw new \RuntimeException("Unhandled modifyAction: $modifyAction"),
+    };
   }
 
   public function tearDown(): void {
