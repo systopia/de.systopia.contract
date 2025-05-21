@@ -53,19 +53,16 @@ class ModifyFormTest extends ContractTestBase {
     }
     $this->contact = $contactResult->first();
 
-    $this->membershipType = MembershipType::save(TRUE)
-      ->addRecord([
-        'name' => 'Modify Membership Type',
-        'member_of_contact_id' => $this->contact['id'],
-        'financial_type_id' => 2,
-        'duration_unit' => 'year',
-        'duration_interval' => 1,
-        'period_type' => 'rolling',
-        'is_active' => 1,
-      ])
-      ->setMatch(['name'])
+    $this->membershipType = MembershipType::create(TRUE)
+      ->addValue('name', 'Modify Membership Type')
+      ->addValue('member_of_contact_id', $this->contact['id'])
+      ->addValue('financial_type_id', 2)
+      ->addValue('duration_unit', 'year')
+      ->addValue('duration_interval', 1)
+      ->addValue('period_type', 'rolling')
+      ->addValue('is_active', 1)
       ->execute()
-      ->first();
+      ->single();
 
     $this->contract = $this->createNewContract([
       'contact_id' => $this->contact['id'],
@@ -87,33 +84,27 @@ class ModifyFormTest extends ContractTestBase {
       ->addWhere('contact_id', '=', $contact['id'])
       ->execute();
 
-    $creditor = SepaCreditor::save(TRUE)
-      ->addRecord([
-        'identifier' => 'TESTCREDITOR01',
-        'name' => 'Creditor Organization',
-        'iban' => 'DE44500105175407324931',
-        'bic' => 'DEUTDEFF500',
-        'creditor_type' => 'OOFF',
-        'payment_processor_id' => 1,
-      ])
-      ->setMatch(['identifier'])
+    $creditor = SepaCreditor::create(TRUE)
+      ->addValue('identifier', 'TESTCREDITOR01')
+      ->addValue('name', 'Creditor Organization')
+      ->addValue('iban', 'DE44500105175407324931')
+      ->addValue('bic', 'DEUTDEFF500')
+      ->addValue('creditor_type', 'OOFF')
+      ->addValue('payment_processor_id', 1)
       ->execute()
       ->first();
 
-    $this->mandate = SepaMandate::save(TRUE)
-      ->addRecord([
-        'contact_id' => $contact['id'],
-        'type' => 'RCUR',
-        'entity_table' => 'civicrm_contribution_recur',
-        'entity_id' => $recurContriId,
-        'reference' => 'TEST-MANDATE-001',
-        'date' => '2025-05-01 13:00:00',
-        'iban' => 'DE12500105170648489890',
-        'bic' => 'INGDDEFFXXX',
-        'creditor_id' => $creditor['id'],
-        'status' => 'RCUR',
-      ])
-      ->setMatch(['reference'])
+    $this->mandate = SepaMandate::create(TRUE)
+      ->addValue('contact_id', $contact['id'])
+      ->addValue('type', 'RCUR')
+      ->addValue('entity_table', 'civicrm_contribution_recur')
+      ->addValue('entity_id', $recurContriId)
+      ->addValue('reference', 'TEST-MANDATE-001')
+      ->addValue('date', '2025-05-01 13:00:00')
+      ->addValue('iban', 'DE12500105170648489890')
+      ->addValue('bic', 'INGDDEFFXXX')
+      ->addValue('creditor_id', $creditor['id'])
+      ->addValue('status', 'INIT')
       ->execute()
       ->first();
 
