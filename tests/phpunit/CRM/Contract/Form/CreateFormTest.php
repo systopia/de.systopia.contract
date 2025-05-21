@@ -50,17 +50,17 @@ class CreateFormTest extends ContractTestBase {
         'option_group_id:name' => 'campaign_type',
         'name' => 'test_campaign_type',
         'label' => 'Test Campaign Type',
-        'value' => 1,
+        'value' => '',
         'is_active' => 1,
       ])
-      ->setMatch(['option_group_id', 'value'])
+      ->setMatch(['option_group_id', 'name'])
       ->execute()
       ->single();
 
     $this->campaign = Campaign::save(FALSE)
       ->addRecord([
         'title' => 'Test Campaign',
-        'campaign_type_id' => $campaignType['value'],
+        'campaign_type_id:name' => $campaignType['name'],
         'status_id' => 1,
         'is_active' => 1,
       ])
