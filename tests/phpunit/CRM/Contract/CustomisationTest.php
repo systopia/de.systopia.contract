@@ -31,10 +31,10 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
   /**
    * Test execution of multiple updates and conflict handling
    */
-  public function testRenderSubjectCustomisation() {
+  public function testRenderSubjectCustomisation(): void {
     $contract = $this->createNewContract(['is_sepa' => 1]);
     $last_change = $this->getLastChangeActivity($contract['id']);
-    $this->assertEquals('TEST-sign', $last_change['subject'], 'The customisation hook failed.');
+    static::assertEquals('TEST-sign', $last_change['subject'], 'The customisation hook failed.');
 
     // cancel contract
     $this->modifyContract($contract['id'], 'cancel', 'tomorrow', [
@@ -42,7 +42,7 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
     ]);
     $this->runContractEngine($contract['id'], '+2 days');
     $last_change = $this->getLastChangeActivity($contract['id']);
-    $this->assertEquals('TEST-cancel', $last_change['subject'], 'The customisation hook failed.');
+    static::assertEquals('TEST-cancel', $last_change['subject'], 'The customisation hook failed.');
   }
 
   /**

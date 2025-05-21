@@ -23,20 +23,22 @@ abstract class CRM_Contract_Change {
 // phpcs:enable
 
   /**
+   * @phpstan-var array<string, mixed>
    * Data representing the data. Will mostly be the activity data
    */
-  protected $data = NULL;
+  protected ?array $data = NULL;
 
   /**
+   * @phpstan-var array<string, mixed>
    * Contract data (cached)
    */
-  protected $contract = NULL;
+  protected ?array $contract = NULL;
 
   /**
    * List of known changes,
    *  activity_type_name => change class
    */
-  protected static $type2class = [
+  protected const TYPE2CLASS = [
     'Contract_Signed'    => 'CRM_Contract_Change_Sign',
     'Contract_Cancelled' => 'CRM_Contract_Change_Cancel',
     'Contract_Updated'   => 'CRM_Contract_Change_Upgrade',
@@ -49,7 +51,7 @@ abstract class CRM_Contract_Change {
    * List of known actions,
    *  activity_type_name => change class
    */
-  protected static $action2class = [
+  protected const ACTION2CLASS = [
     'sign'    => 'CRM_Contract_Change_Sign',
     'cancel'  => 'CRM_Contract_Change_Cancel',
     'update'  => 'CRM_Contract_Change_Upgrade',
@@ -59,15 +61,16 @@ abstract class CRM_Contract_Change {
   ];
 
   /**
+   * @phpstan-var array<int|string, string>
    * List of activity_type_id => change class
    * Will be be populated on demand
    */
-  protected static $_type_id2class = NULL;
+  protected static ?array $_type_id2class = NULL;
 
   /**
-   * @var array Maps the contract fields to the change activity fields
+   * Maps the contract fields to the change activity fields
    */
-  protected static $field_mapping_change_contract = [
+  protected const FIELD_MAPPING_CHANGE_CONTRACT = [
     'membership_type_id'                                   => 'contract_updates.ch_membership_type',
     'membership_payment.membership_recurring_contribution' => 'contract_updates.ch_recurring_contribution',
     'membership_payment.payment_instrument'                => 'contract_updates.ch_payment_instrument',
@@ -81,10 +84,9 @@ abstract class CRM_Contract_Change {
   ];
 
   /**
-   * CRM_Contract_Change constructor.
-   * @param $data
+   * @phpstan-param array<string, mixed>|null $data
    */
-  protected function __construct($data) {
+  protected function __construct(?array $data) {
     $this->data = $data;
     // make sure activity_type_id is numeric
     $this->data['activity_type_id'] = $this->getActvityTypeID();
@@ -99,14 +101,14 @@ abstract class CRM_Contract_Change {
    *
    * @throws Exception should anything go wrong in the execution
    */
-  abstract public function execute();
+  abstract public function execute(): void;
 
   /**
    * Get a list of required fields for this type
    *
-   * @return array list of required fields
+   * @return list<string>
    */
-  abstract public function getRequiredFields();
+  abstract public function getRequiredFields(): array;
 
   /**
    * Get action name for
@@ -167,7 +169,7 @@ abstract class CRM_Contract_Change {
    * Get the internal action name
    */
   public function getActionName() {
-    $class2action = array_flip(self::$action2class);
+    $class2action = array_flip(self::ACTION2CLASS);
     return $class2action[get_class($this)];
   }
 
@@ -175,7 +177,7 @@ abstract class CRM_Contract_Change {
    * Get the contract ID
    */
   public function getContractID() {
-    return $this->data['source_record_id'];
+    return (int) $this->data['source_record_id'];
   }
 
   /**
@@ -186,7 +188,7 @@ abstract class CRM_Contract_Change {
     $contract = $this->getContract(TRUE);
 
     // propagate derived fields
-    foreach (CRM_Contract_Change::$field_mapping_change_contract as $contract_attribute => $change_attribute) {
+    foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
       if (empty($this->data[$change_attribute])) {
         $this->data[$change_attribute] = CRM_Utils_Array::value($contract_attribute, $contract, '');
       }
@@ -683,13 +685,13 @@ abstract class CRM_Contract_Change {
    */
   public static function getClassByActivityType($activity_type_id) {
     // check name -> class mapping first
-    if (isset(self::$type2class[$activity_type_id])) {
-      return self::$type2class[$activity_type_id];
+    if (isset(self::TYPE2CLASS[$activity_type_id])) {
+      return self::TYPE2CLASS[$activity_type_id];
     }
 
     // check action -> class mapping second
-    if (isset(self::$action2class[$activity_type_id])) {
-      return self::$action2class[$activity_type_id];
+    if (isset(self::ACTION2CLASS[$activity_type_id])) {
+      return self::ACTION2CLASS[$activity_type_id];
     }
 
     // then try ID -> class
@@ -709,7 +711,7 @@ abstract class CRM_Contract_Change {
    * @return string class name
    */
   public static function getClassByAction($action) {
-    return CRM_Utils_Array::value(strtolower($action), self::$action2class);
+    return CRM_Utils_Array::value(strtolower($action), self::ACTION2CLASS);
   }
 
   /**
@@ -719,7 +721,7 @@ abstract class CRM_Contract_Change {
    * @return string action name, e.g. 'cancel'
    */
   public static function getActionByClass($class_name) {
-    return CRM_Utils_Array::value($class_name, array_flip(self::$action2class));
+    return CRM_Utils_Array::value($class_name, array_flip(self::ACTION2CLASS));
   }
 
   /**
@@ -733,14 +735,14 @@ abstract class CRM_Contract_Change {
       self::$_type_id2class = [];
       $query = civicrm_api3('OptionValue', 'get', [
         'option_group_id' => 'activity_type',
-        'name'            => ['IN' => array_keys(self::$type2class)],
+        'name'            => ['IN' => array_keys(self::TYPE2CLASS)],
         'return'          => 'value,name',
         'option.limit'    => 0,
         'sequential'      => 1,
       ]);
       foreach ($query['values'] as $entry) {
-        if (isset(self::$type2class[$entry['name']])) {
-          self::$_type_id2class[$entry['value']] = self::$type2class[$entry['name']];
+        if (isset(self::TYPE2CLASS[$entry['name']])) {
+          self::$_type_id2class[$entry['value']] = self::TYPE2CLASS[$entry['name']];
         }
       }
     }
@@ -835,7 +837,7 @@ abstract class CRM_Contract_Change {
    * @param $reverse boolean  reverse the transition
    */
   public static function convertContract2ChangeData($data, $reverse = FALSE) {
-    $mapping = self::$field_mapping_change_contract;
+    $mapping = self::FIELD_MAPPING_CHANGE_CONTRACT;
     if ($reverse) {
       $mapping = array_flip($mapping);
     }
