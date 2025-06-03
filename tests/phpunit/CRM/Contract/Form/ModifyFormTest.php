@@ -104,7 +104,7 @@ class ModifyFormTest extends ContractTestBase {
       ->addValue('iban', 'DE12500105170648489890')
       ->addValue('bic', 'INGDDEFFXXX')
       ->addValue('creditor_id', $creditor['id'])
-      ->addValue('status', 'INIT')
+      ->addValue('status', 'RCUR')
       ->execute()
       ->first();
 
