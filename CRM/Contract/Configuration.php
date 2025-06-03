@@ -131,6 +131,7 @@ class CRM_Contract_Configuration {
     if ($eligible_payment_option_labels === NULL) {
       $generally_supported_payment_types = [
         // todo: setting?
+        'None' => E::ts('No Payment required'),
         'RCUR' => E::ts('SEPA Lastschrift'),
         'Cash' => E::ts('Barzahlung'),
         'EFT' => E::ts('Überweisung'),
@@ -187,7 +188,7 @@ class CRM_Contract_Configuration {
    */
   public static function getPaymentOptions($allow_new_contracts = TRUE, $allow_no_change = TRUE) {
     $payment_options['select'] = E::ts('select existing contract');
-
+    $payment_options['none'] = E::ts('No payment required');
     if ($allow_new_contracts) {
       $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes();
       foreach ($payment_types as $payment_key => $payment_type) {

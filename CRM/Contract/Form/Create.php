@@ -272,7 +272,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     }
 
     // check if an amount is necessary
-    if (!in_array($submitted['payment_option'], ['existing', 'nochange', 'select'])) {
+    if (!in_array($submitted['payment_option'], ['existing', 'nochange', 'select', 'none'])) {
       if (empty($submitted['payment_amount'])) {
         $this->setElementError('payment_amount', 'Please enter an amount');
       }

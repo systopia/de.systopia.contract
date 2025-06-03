@@ -36,6 +36,11 @@ function showHidePaymentElements() {
         cj("div.payment-create").hide(300);
         cj("div.payment-select").show(300);
 
+    } else if (new_mode === "none") {
+      cj("div.payment-select").hide(300);
+      cj("div.payment-create").hide(300);
+      cj("div.payment-modify").show(300);
+
     } else if (new_mode === "modify") {
         cj("div.payment-select").hide(300);
         cj("div.payment-create").hide(300);
@@ -148,7 +153,16 @@ function updatePaymentSummaryText() { (function (cj, ts){
             cj('.recurring-contribution-summary-text').html(ts('None'));
         }
 
-    // NO CHANGE TO CONTRACT
+    } else if (mode === "none") {
+      cj("#payment_amount").attr("placeholder", 0);
+      let recurring_contributions = CRM.vars['de.systopia.contract'].recurring_contributions;
+      let key = CRM.vars['de.systopia.contract'].current_recurring;
+      if (key in recurring_contributions) {
+        cj('.recurring-contribution-summary-text').html(recurring_contributions[key].text_summary);
+      } else {
+        cj('.recurring-contribution-summary-text').html(ts('None'));
+      }
+      // NO CHANGE TO CONTRACT
     } else if (mode === "nochange") {
         let recurring_contributions = CRM.vars['de.systopia.contract'].recurring_contributions;
         let key = CRM.vars['de.systopia.contract'].current_recurring;
@@ -212,7 +226,7 @@ function updatePaymentSummaryText() { (function (cj, ts){
         cj('#payment_amount_currency').text(creditor.currency);
 
 
-    } else {  // CREATE NEW CONTRACT
+     } else {  // CREATE NEW CONTRACT
         let creditor_id = cj('[name=creditor]').val();
         let creditor = CRM.vars['de.systopia.contract'].creditor;
         let cycle_day = cj('[name=cycle_day]').val();
