@@ -18,9 +18,9 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
   /**
    * Get a list of required fields for this type
    *
-   * @return array list of required fields
+   * @phpstan-return
    */
-  public function getRequiredFields() {
+  public function getRequiredFields(): array {
     return [];
   }
 
@@ -33,7 +33,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       $contract_after_execution = $contract;
 
       // copy submitted changes to change activity
-      foreach (CRM_Contract_Change::$field_mapping_change_contract as $contract_attribute => $change_attribute) {
+      foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
         if (!empty($this->data[$contract_attribute])) {
           $this->data[$change_attribute] = $this->data[$contract_attribute];
           $contract_after_execution[$contract_attribute] = $this->data[$contract_attribute];
@@ -49,7 +49,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
    *
    * @throws Exception should anything go wrong in the execution
    */
-  public function execute() {
+  public function execute(): void {
     $contract_before = $this->getContract(TRUE);
 
     // compile upgrade
@@ -88,7 +88,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
 
     // update change activity
     $contract_after = $this->getContract();
-    foreach (CRM_Contract_Change::$field_mapping_change_contract as $membership_field => $change_field) {
+    foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $membership_field => $change_field) {
       // copy fields
       if (isset($contract_after[$membership_field])) {
         $this->setParameter($change_field, $contract_after[$membership_field]);

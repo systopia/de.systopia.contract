@@ -18,9 +18,9 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
   /**
    * Get a list of required fields for this type
    *
-   * @return array list of required fields
+   * @phpstan-return list<string>
    */
-  public function getRequiredFields() {
+  public function getRequiredFields(): array {
     return [];
   }
 
@@ -29,7 +29,7 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
    *
    * @throws Exception should anything go wrong in the execution
    */
-  public function execute() {
+  public function execute(): void {
     $contract = $this->getContract(TRUE);
 
     // pause the mandate

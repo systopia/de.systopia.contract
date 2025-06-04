@@ -23,6 +23,10 @@ use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\Specification;
 use Civi\ActionProvider\Parameter\SpecificationBag;
 
+use Civi\Api4\Campaign;
+use Civi\Api4\FinancialType;
+use Civi\Api4\MembershipType;
+use Civi\Api4\SepaCreditor;
 use CRM_Contract_ExtensionUtil as E;
 
 class CreateContract extends AbstractAction {
@@ -193,101 +197,32 @@ class CreateContract extends AbstractAction {
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
-    $mandate_data = ['type' => 'RCUR'];
-
-    // If a Contract already exists: show error
-    if ($this->configuration->getParameter('prevent_multiple_contracts') == 1) {
-      $getcount_params = ['contact_id' => $parameters->getParameter('contact_id'), 'active_only' => 1];
-      $count = \civicrm_api3('Contract', 'getcount', $getcount_params);
-      if ($count) {
-        $output->setParameter('mandate_id', '');
-        $output->setParameter('mandate_reference', '');
-        $output->setParameter('contract_id', '');
-        $output->setParameter('error', E::ts('Contract already exists'));
-        return;
-      }
-    }
-
-    // add basic fields to mandate_data
-    foreach ([
-      'contact_id',
-      'iban',
-      'bic',
-      'reference',
-      'amount',
-      'start_date',
-      'date',
-      'validation_date',
-      'account_holder',
-    ] as $parameter_name) {
-      $value = $parameters->getParameter($parameter_name);
-      if (!empty($value)) {
-        $mandate_data[$parameter_name] = $value;
-      }
-    }
-
-    // add override fields to mandate_data
-    foreach (['creditor_id', 'financial_type_id', 'campaign_id', 'cycle_day', 'frequency'] as $parameter_name) {
-      $value = $parameters->getParameter($parameter_name);
-      if (empty($value)) {
-        $value = $this->configuration->getParameter("default_{$parameter_name}");
-      }
-      $mandate_data[$parameter_name] = $value;
-    }
-
-    // sort out frequency
-    $mandate_data['frequency_interval'] = 12 / $mandate_data['frequency'];
-    $mandate_data['frequency_unit'] = 'month';
-    unset($mandate_data['frequency']);
-
-    // verify/adjust start date
-    $buffer_days = (int) $this->configuration->getParameter('buffer_days');
-    $earliest_start_date = strtotime("+ {$buffer_days} days");
-    $current_start_date = strtotime($mandate_data['start_date']);
-    if ($current_start_date < $earliest_start_date) {
-      $mandate_data['start_date'] = date('YmdHis', $earliest_start_date);
-    }
-
-    // if not set, calculate the closest cycle day
-    if (empty($mandate_data['cycle_day'])) {
-      $mandate_data['cycle_day'] = $this->calculateSoonestCycleDay($mandate_data);
-    }
-
-    $contract_data = [];
-    // add basic fields to contract_data
-    foreach (['contact_id', 'membership_type_id', 'start_date', 'join_date'] as $parameter_name) {
-      $value = $parameters->getParameter($parameter_name);
-      if (!empty($value)) {
-        $contract_data[$parameter_name] = $value;
-      }
-    }
-    // add override fields to contract_data
-    foreach (['membership_type_id'] as $parameter_name) {
-      $value = $parameters->getParameter($parameter_name);
-      if (empty($value)) {
-        $value = $this->configuration->getParameter("default_{$parameter_name}");
-      }
-      $contract_data[$parameter_name] = $value;
-    }
-
-    // add account holder
-    $account_holder = $parameters->getParameter('account_holder');
-    if (!empty($account_holder)) {
-      $contract_data['membership_payment.from_name'] = $account_holder;
+    if (
+      1 === $this->configuration->getParameter('prevent_multiple_contracts')
+      && \CRM_Contract_Utils::getActiveContractCount($parameters->getParameter('contact_id')) > 0
+    ) {
+      $output->setParameter('mandate_id', '');
+      $output->setParameter('mandate_reference', '');
+      $output->setParameter('contract_id', '');
+      $output->setParameter('error', E::ts('Contract already exists'));
+      return;
     }
 
     // create mandate
     try {
+      $mandate_data = $this->buildMandateDate($parameters);
+      /** @phpstan-var array<string, mixed> $mandate */
       $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
+      /** @phpstan-var array<string, mixed> $mandate */
       $mandate = \civicrm_api3('SepaMandate', 'getsingle', [
         'id' => $mandate['id'],
         'return' => 'id,entity_id,reference',
       ]);
-      $contract_data['membership_payment.membership_recurring_contribution'] = $mandate['entity_id'];
-      if (empty($contract_data['join_date']) and (!empty($contract_data['start_date']))) {
-        $contract_data['join_date'] = $contract_data['start_date'];
-      }
+
+      $contract_data = $this->buildContractData($parameters, $mandate);
+      /** @phpstan-var array<string, mixed> $contract */
       $contract = \civicrm_api3('Contract', 'create', $contract_data);
+
       $output->setParameter('mandate_id', $mandate['id']);
       $output->setParameter('mandate_reference', $mandate['reference']);
       $output->setParameter('contract_id', $contract['id']);
@@ -301,21 +236,20 @@ class CreateContract extends AbstractAction {
   }
 
   /**
-   * Get a list of all membership types
+   * @return array<int, string>
    */
-  protected function getMembershipTypes() {
-    $creditor_list = [];
-    $creditor_query = \civicrm_api3('MembershipType', 'get', ['option.limit' => 0]);
-    foreach ($creditor_query['values'] as $creditor) {
-      $creditor_list[$creditor['id']] = $creditor['name'];
-    }
-    return $creditor_list;
+  protected function getMembershipTypes(): array {
+    return MembershipType::get(FALSE)
+      ->addSelect('id', 'name')
+      ->execute()
+      ->indexBy('id')
+      ->column('name');
   }
 
   /**
-   * Get list of frequencies
+   * @return array<int, string>
    */
-  protected function getFrequencies() {
+  protected function getFrequencies(): array {
     return [
       1  => E::ts('annually'),
       2  => E::ts('semi-annually'),
@@ -326,53 +260,44 @@ class CreateContract extends AbstractAction {
   }
 
   /**
-   * Get a list of all creditors
+   * @return array<int, string>
    */
-  protected function getCreditors() {
-    $creditor_list = [];
-    $creditor_query = \civicrm_api3('SepaCreditor', 'get', ['option.limit' => 0]);
-    foreach ($creditor_query['values'] as $creditor) {
-      $creditor_list[$creditor['id']] = $creditor['name'];
-    }
-    return $creditor_list;
+  protected function getCreditors(): array {
+    return SepaCreditor::get(FALSE)
+      ->addSelect('id', 'name')
+      ->execute()
+      ->indexBy('id')
+      ->column('name');
   }
 
   /**
-   * Get a list of all financial types
+   * @return array<int, string>
    */
-  protected function getFinancialTypes() {
-    $list = [];
-    $query = \civicrm_api3('FinancialType', 'get', [
-      'option.limit' => 0,
-      'is_enabled'   => 1,
-      'return'       => 'id,name',
-    ]);
-    foreach ($query['values'] as $entity) {
-      $list[$entity['id']] = $entity['name'];
-    }
-    return $list;
+  protected function getFinancialTypes(): array {
+    return FinancialType::get(FALSE)
+      ->addSelect('id', 'name')
+      ->addWhere('is_enabled', '=', TRUE)
+      ->execute()
+      ->indexBy('id')
+      ->column('name');
   }
 
   /**
-   * Get a list of all campaigns
+   * @return array<int, string>
    */
-  protected function getCampaigns() {
-    $list = [];
-    $query = \civicrm_api3('Campaign', 'get', [
-      'option.limit' => 0,
-      'is_active'    => 1,
-      'return'       => 'id,title',
-    ]);
-    foreach ($query['values'] as $entity) {
-      $list[$entity['id']] = $entity['title'];
-    }
-    return $list;
+  protected function getCampaigns(): array {
+    return Campaign::get(FALSE)
+      ->addSelect('id', 'name')
+      ->addWhere('is_active', '=', TRUE)
+      ->execute()
+      ->indexBy('id')
+      ->column('name');
   }
 
   /**
-   * Get list of collection days
+   * @return array<int<0, 28>, int<1, 28>|string>
    */
-  protected function getCollectionDays() {
+  protected function getCollectionDays(): array {
     $list = range(0, 28);
     $options = array_combine($list, $list);
     $options[0] = E::ts('as soon as possible');
@@ -383,11 +308,10 @@ class CreateContract extends AbstractAction {
    * Select the cycle day from the given creditor,
    *  that allows for the soonest collection given the buffer time
    *
-   * @param array $mandate_data
+   * @param array<string, mixed> $mandate_data
    *      all data known about the mandate
-   *
    */
-  protected function calculateSoonestCycleDay($mandate_data) {
+  protected static function calculateSoonestCycleDay(array $mandate_data): int {
     // get creditor ID
     $creditor_id = (int) $mandate_data['creditor_id'];
     if (!$creditor_id) {
@@ -407,29 +331,126 @@ class CreateContract extends AbstractAction {
     $date = strtotime(\CRM_Utils_Array::value('start_date', $mandate_data, date('Y-m-d')));
 
     // get cycle days
-    $cycle_days = \CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), $creditor_id);
+    /** @phpstan-var list<int> $cycleDays */
+    // TODO: Is this safe to return a list of integers only?
+    $cycleDays = \CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), $creditor_id);
 
     // iterate through the days until we hit a cycle day
     for ($i = 0; $i < 31; $i++) {
-      if (in_array(date('j', $date), $cycle_days)) {
-        // we found our cycle_day!
-        return date('j', $date);
+      $cycleDay = (int) date('j', $date);
+      if (in_array($cycleDay, $cycleDays)) {
+        return $cycleDay;
       }
-      else {
-        // no? try the next one...
-        $date = strtotime('+ 1 day', $date);
-      }
+      $date = strtotime('+ 1 day', $date);
     }
 
-    // no hit? that shouldn't happen...
     return 1;
   }
 
-  protected function getMultipleContractOptions() {
+  /**
+   * @return array<int, string>
+   */
+  protected function getMultipleContractOptions(): array {
     return [
       0  => E::ts('ignore'),
       1  => E::ts('show error message'),
     ];
+  }
+
+  /**
+   * @return array<string, mixed>
+   */
+  protected function buildMandateDate(ParameterBagInterface $parameters): array {
+    $mandateData = ['type' => 'RCUR'];
+
+    // add basic fields to mandate_data
+    foreach ([
+      'contact_id',
+      'iban',
+      'bic',
+      'reference',
+      'amount',
+      'start_date',
+      'date',
+      'validation_date',
+      'account_holder',
+    ] as $parameterName) {
+      $value = $parameters->getParameter($parameterName);
+      if (NULL !== $value && '' !== $value) {
+        $mandateData[$parameterName] = $value;
+      }
+    }
+
+    // add override fields to mandate_data
+    foreach (['creditor_id', 'financial_type_id', 'campaign_id', 'cycle_day', 'frequency'] as $parameterName) {
+      $value = $parameters->getParameter($parameterName);
+      if (NULL === $value || '' === $value) {
+        $value = $this->configuration->getParameter("default_{$parameterName}");
+      }
+      $mandateData[$parameterName] = $value;
+    }
+
+    // sort out frequency
+    $mandateData['frequency_interval'] = 12 / $mandateData['frequency'];
+    $mandateData['frequency_unit'] = 'month';
+    unset($mandateData['frequency']);
+
+    // verify/adjust start date
+    $buffer_days = (int) $this->configuration->getParameter('buffer_days');
+    $earliestStartDate = strtotime("+ {$buffer_days} days");
+    $currentStartDate = strtotime($mandateData['start_date']);
+    if (
+      FALSE !== $earliestStartDate && FALSE !== $currentStartDate
+      && $currentStartDate < $earliestStartDate
+    ) {
+      $mandateData['start_date'] = date('YmdHis', $earliestStartDate);
+    }
+
+    // if not set, calculate the closest cycle day
+    if (NULL === $mandateData['cycle_day'] || '' === $mandateData['cycle_day']) {
+      $mandateData['cycle_day'] = static::calculateSoonestCycleDay($mandateData);
+    }
+
+    return $mandateData;
+  }
+
+  /**
+   * @param \Civi\ActionProvider\Parameter\ParameterBagInterface $parameters
+   * @param array<string, mixed> $mandate
+   *
+   * @return array<string, mixed>
+   */
+  protected function buildContractData(ParameterBagInterface $parameters, array $mandate): array {
+    $contractData = [];
+    // add basic fields to contract_data
+    foreach (['contact_id', 'membership_type_id', 'start_date', 'join_date'] as $parameter_name) {
+      $value = $parameters->getParameter($parameter_name);
+      if (!empty($value)) {
+        $contractData[$parameter_name] = $value;
+      }
+    }
+    // add override fields to contract_data
+    foreach (['membership_type_id'] as $parameter_name) {
+      $value = $parameters->getParameter($parameter_name);
+      if (empty($value)) {
+        $value = $this->configuration->getParameter("default_{$parameter_name}");
+      }
+      $contractData[$parameter_name] = $value;
+    }
+
+    // add account holder
+    $account_holder = $parameters->getParameter('account_holder');
+    if (!empty($account_holder)) {
+      $contractData['membership_payment.from_name'] = $account_holder;
+    }
+
+    if (empty($contractData['join_date']) and (!empty($contractData['start_date']))) {
+      $contractData['join_date'] = $contractData['start_date'];
+    }
+
+    $contractData['membership_payment.membership_recurring_contribution'] = $mandate['entity_id'];
+
+    return $contractData;
   }
 
 }

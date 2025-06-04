@@ -15,6 +15,10 @@ use CRM_Contract_ExtensionUtil as E;
 class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
   /**
+   * @var ?int */
+  protected ?int $id;
+
+  /**
    * @var ?string the modify action */
   protected ?string $modify_action = NULL;
 
@@ -30,7 +34,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     parent::preProcess();
 
     // If we requested a contract file download
-    $download = CRM_Utils_Request::retrieve('ct_dl', 'String', NULL, FALSE, '', 'GET');
+    $store = NULL;
+    $download = CRM_Utils_Request::retrieve('ct_dl', 'String', $store, FALSE, '', 'GET');
     if (!empty($download)) {
       // FIXME: Could use CRM_Utils_System::download but it still requires you to do all the work (load file to stream
       //        etc) before calling.
@@ -347,6 +352,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       'datepicker',
       'resume_date',
       E::ts('Resume Date'),
+      [],
       TRUE,
       ['time' => FALSE, 'formatType' => 'activityDate']
     );

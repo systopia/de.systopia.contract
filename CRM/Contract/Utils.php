@@ -408,4 +408,13 @@ class CRM_Contract_Utils {
     ]);
   }
 
+  public static function getActiveContractCount(int $contactId): int {
+    /** @phpstan-var int $count */
+    $count = \civicrm_api3('Contract', 'getcount', [
+      'contact_id' => $contactId,
+      'active_only' => 1,
+    ]);
+    return $count;
+  }
+
 }
