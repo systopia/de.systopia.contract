@@ -140,8 +140,11 @@ function renderContractPreview(debitor_name, iban, creditor, frequency_label, an
  */
 function updatePaymentSummaryText() { (function (cj, ts){
     let mode = cj("#payment_option").val();
-    // SELECT EXISTING CONTRACT
-    if (mode === "select") {
+
+    if (mode === undefined) {
+      // No payment option in the form (Cancel or Pause)
+      return true;
+    }else if (mode === "select") {
         // display the selected recurring contribution
         let recurring_contributions = CRM.vars['de.systopia.contract'].recurring_contributions;
         let key = cj('[name=recurring_contribution]').val();

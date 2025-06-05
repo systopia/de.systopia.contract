@@ -94,14 +94,14 @@
   {if isset($form.cancel_date.html)}
     <div class="crm-section">
       <div class="label">{$form.cancel_date.label}</div>
-      <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=cancel_date}</div>
+      <div class="content">{$form.cancel_date.html}</div>
       <div class="clear"></div>
     </div>
   {/if}
   {if isset($form.resume_date.html)}
     <div class="crm-section">
       <div class="label">{$form.resume_date.label}</div>
-      <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=resume_date}</div>
+      <div class="content">{$form.resume_date.html}</div>
       <div class="clear"></div>
     </div>
   {/if}
