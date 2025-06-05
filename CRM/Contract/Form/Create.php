@@ -383,6 +383,34 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         ]);
         break;
 
+      // NONE
+      case 'none':
+        $payment_contract_params = [
+          'contact_id' => $this->get('cid'),
+          'amount' => 0,
+          'currency' => CRM_Contract_SepaLogic::getCreditor()->currency,
+          'start_date' => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
+          // NOW
+          'create_date' => date('YmdHis'),
+          'date' => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
+          // NOW
+          'validation_date' => date('YmdHis'),
+          'account_holder' => $submitted['account_holder'],
+          'campaign_id' => $submitted['campaign_id'] ?? '',
+          'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName(
+            $submitted['payment_option']
+          ),
+          // Membership Dues
+          'financial_type_id' => 2,
+          'frequency_unit' => 'month',
+          'cycle_day' => $submitted['cycle_day'],
+          'frequency_interval' => $frequency_interval,
+          'checkPermissions' => TRUE,
+        ];
+        CRM_Contract_CustomData::resolveCustomFields($payment_contract_params);
+        $new_recurring_contribution = civicrm_api3('ContributionRecur', 'create', $payment_contract_params);
+        $payment_contract['id'] = $new_recurring_contribution['id'];
+        break;
       // SELECT EXISTING PAYMENT CONTRACT
       case 'existing':
         $payment_contract['id'] = $submitted['recurring_contribution'];

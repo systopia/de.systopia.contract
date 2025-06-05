@@ -209,22 +209,28 @@ class CRM_Contract_RecurringContribution {
     else {
       $result['fields'] = [
         'display_name' => $contact['display_name'],
-        'payment_instrument' => $paymentInstruments[$cr['payment_instrument_id'] ?? NULL] ?? E::ts('Error'),
+        'payment_instrument' => $paymentInstruments[$cr['payment_instrument_id'] ?? NULL] ?? NULL,
         'frequency' => $this->writeFrequency($cr),
         'amount' => CRM_Contract_SepaLogic::formatMoney($cr['amount']),
         'annual_amount' => CRM_Contract_SepaLogic::formatMoney($this->calcAnnualAmount($cr)),
         'next_debit' => '?',
       ];
 
-      // this is a non-SEPA recurring contribution
-      $result['text_summary'] =
-        E::ts('Paid by') . ": {$result['fields']['display_name']}<br />" .
-        E::ts('Payment method') . ": {$result['fields']['payment_instrument']}<br />" .
-        E::ts('Frequency') . ": {$result['fields']['frequency']}<br />" .
-        E::ts('Annual amount') . ": {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />" .
-        E::ts('Installment amount') . ": {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />";
-      $result['label'] =
-        "{$result['fields']['payment_instrument']}, {$result['fields']['amount']} {$result['fields']['frequency']}";
+
+      if(!$result['fields']['payment_instrument']){
+        $result['text_summary']  = "No payment required";
+      } else {
+        // this is a non-SEPA recurring contribution
+        $result['text_summary'] =
+          E::ts('Paid by') . ": {$result['fields']['display_name']}<br />" .
+          E::ts('Payment method') . ": {$result['fields']['payment_instrument']}<br />" .
+          E::ts('Frequency') . ": {$result['fields']['frequency']}<br />" .
+          E::ts('Annual amount') . ": {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />" .
+          E::ts('Installment amount') . ": {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />";
+        $result['label'] =
+          "{$result['fields']['payment_instrument']}, {$result['fields']['amount']} {$result['fields']['frequency']}";
+
+      }
     }
 
     return $result;

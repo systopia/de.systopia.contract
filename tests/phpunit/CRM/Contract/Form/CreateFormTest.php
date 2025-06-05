@@ -232,12 +232,27 @@ class CreateFormTest extends ContractTestBase {
       'create + 1' => ['create', 1],
       'RCUR + null' => ['RCUR', NULL],
       'RCUR + 1' => ['RCUR', 1],
+      'None + null' => ['none', NULL],
+      'None + 1' => ['none', 1],
       'empty + null' => ['', NULL],
       'empty + 1' => ['', 1],
     ];
   }
 
-  public function testFormSubmissionCreatesContract(): void {
+  /**
+   * @return array<string, array{0: string, 1: mixed}>
+   */
+  public function paymentOptionDataProvider(): array {
+    return [
+      'none + 0' => ['none', 0],
+      'RCUR + 120' => ['RCUR', 120],
+    ];
+  }
+
+  /**
+   * @dataProvider paymentOptionDataProvider
+   */
+  public function testFormSubmissionCreatesContract(string $paymentOption, mixed $paymentAmount): void {
     $cid = $this->contact['id'];
     $form = new CreateForm();
 
@@ -269,12 +284,12 @@ class CreateFormTest extends ContractTestBase {
     $form->buildQuickForm();
 
     $submissionValues = [
-      'payment_option' => 'RCUR',
+      'payment_option' => $paymentOption,
       'join_date'      => date('Y-m-d'),
       'end_date'       => date('Y-m-d'),
       'membership_dialoger' => '',
       'activity_details' => '',
-      'payment_amount' => '120',
+      'payment_amount' => $paymentAmount,
       'payment_frequency' => '12',
       'iban' => 'DE89370400440532013000',
       'bic' => 'DEUTDEFF',
@@ -301,10 +316,15 @@ class CreateFormTest extends ContractTestBase {
     self::assertEquals($this->contact['id'], $contract['contact_id']);
     self::assertEquals($this->membershipType['id'], $contract['membership_type_id']);
     self::assertEquals(12, $contract['membership_payment.membership_frequency']);
-    self::assertEquals('1,440.00', $contract['membership_payment.membership_annual']);
     self::assertEquals('TEST-001', $contract['membership_general.membership_contract']);
     self::assertEquals('REF-001', $contract['membership_general.membership_reference']);
+    if ($paymentOption == 'none') {
+      self::assertEquals('0.00', $contract['membership_payment.membership_annual']);
 
+    }
+    elseif ($paymentOption == 'RCUR') {
+      self::assertEquals('1,440.00', $contract['membership_payment.membership_annual']);
+    }
   }
 
   public function tearDown(): void {

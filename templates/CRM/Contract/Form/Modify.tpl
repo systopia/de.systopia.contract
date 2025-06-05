@@ -21,7 +21,7 @@
     {$form.current_contract_amount.html}
   {/if}
 
-  {if $modificationActivity eq 'update' OR $modificationActivity eq 'revive' }
+  {if $modificationActivity eq 'update' OR $modificationActivity eq 'revive'}
 
     <div class="crm-section">
       <div class="label">{ts}Payment Preview{/ts}</div>

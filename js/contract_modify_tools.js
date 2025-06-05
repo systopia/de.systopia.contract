@@ -39,7 +39,7 @@ function showHidePaymentElements() {
     } else if (new_mode === "none") {
       cj("div.payment-select").hide(300);
       cj("div.payment-create").hide(300);
-      cj("div.payment-modify").show(300);
+      cj("div.payment-modify").hide(300);
 
     } else if (new_mode === "modify") {
         cj("div.payment-select").hide(300);
@@ -140,8 +140,6 @@ function renderContractPreview(debitor_name, iban, creditor, frequency_label, an
  */
 function updatePaymentSummaryText() { (function (cj, ts){
     let mode = cj("#payment_option").val();
-    console.log("updatePaymentSummaryText: " + mode);
-
     // SELECT EXISTING CONTRACT
     if (mode === "select") {
         // display the selected recurring contribution
@@ -155,13 +153,7 @@ function updatePaymentSummaryText() { (function (cj, ts){
 
     } else if (mode === "none") {
       cj("#payment_amount").attr("placeholder", 0);
-      let recurring_contributions = CRM.vars['de.systopia.contract'].recurring_contributions;
-      let key = CRM.vars['de.systopia.contract'].current_recurring;
-      if (key in recurring_contributions) {
-        cj('.recurring-contribution-summary-text').html(recurring_contributions[key].text_summary);
-      } else {
-        cj('.recurring-contribution-summary-text').html(ts('None'));
-      }
+      cj('.recurring-contribution-summary-text').html(ts('No payment required'));
       // NO CHANGE TO CONTRACT
     } else if (mode === "nochange") {
         let recurring_contributions = CRM.vars['de.systopia.contract'].recurring_contributions;
