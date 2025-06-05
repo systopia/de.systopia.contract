@@ -216,10 +216,10 @@ class CRM_Contract_RecurringContribution {
         'next_debit' => '?',
       ];
 
-
-      if(!$result['fields']['payment_instrument']){
-        $result['text_summary']  = "No payment required";
-      } else {
+      if (!$result['fields']['payment_instrument']) {
+        $result['text_summary'] = 'No payment required';
+      }
+      else {
         // this is a non-SEPA recurring contribution
         $result['text_summary'] =
           E::ts('Paid by') . ": {$result['fields']['display_name']}<br />" .

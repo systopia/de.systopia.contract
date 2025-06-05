@@ -411,6 +411,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         $new_recurring_contribution = civicrm_api3('ContributionRecur', 'create', $payment_contract_params);
         $payment_contract['id'] = $new_recurring_contribution['id'];
         break;
+
       // SELECT EXISTING PAYMENT CONTRACT
       case 'existing':
         $payment_contract['id'] = $submitted['recurring_contribution'];
