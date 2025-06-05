@@ -150,7 +150,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     }
 
     // add the JS file for the payment preview
-    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/contract_modify_tools.js');
+    CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/contract_modify_tools.js');
 
     $this->addButtons([
     // since Cancel looks bad when viewed next to the Cancel action
@@ -184,7 +184,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     );
     // JS for the pop up
     CRM_Core_Resources::singleton()->addVars(
-      'de.systopia.contract',
+      'contract',
       [
         'cid' => $this->membership['contact_id'],
         'current_recurring' => $this->membership[CRM_Contract_Utils::getCustomFieldId(

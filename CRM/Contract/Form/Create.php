@@ -45,14 +45,17 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
     $formUtils->addPaymentContractSelect2('recurring_contribution', $this->get('cid'), FALSE, NULL);
-    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', [
-      'cid'                     => $this->get('cid'),
-      'debitor_name'            => $this->contact['display_name'],
-      'creditor'                => CRM_Contract_SepaLogic::getCreditor(),
-      'frequencies'             => CRM_Contract_SepaLogic::getPaymentFrequencies(),
-      'grace_end'               => NULL,
-      'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid')),
-    ]);
+    CRM_Core_Resources::singleton()->addVars(
+      'contract',
+      [
+        'cid' => $this->get('cid'),
+        'debitor_name' => $this->contact['display_name'],
+        'creditor' => CRM_Contract_SepaLogic::getCreditor(),
+        'frequencies' => CRM_Contract_SepaLogic::getPaymentFrequencies(),
+        'grace_end' => NULL,
+        'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid')),
+      ]
+    );
 
     CRM_Contract_SepaLogic::addJsSepaTools();
 
@@ -221,7 +224,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add('wysiwyg', 'activity_details', E::ts('Notes'));
 
     // add the JS file for the payment preview
-    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/contract_modify_tools.js');
+    CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/contract_modify_tools.js');
 
     $this->addButtons([
       ['type' => 'cancel', 'name' => E::ts('Cancel'), 'submitOnce' => TRUE],
