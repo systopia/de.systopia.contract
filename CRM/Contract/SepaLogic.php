@@ -843,9 +843,8 @@ class CRM_Contract_SepaLogic {
     $creditor_parameters['default'] = $creditor_parameters[$default_creditor_id];
 
     // prep script and inject
-    $script = file_get_contents(__DIR__ . '/../../js/sepa_tools.js');
-    $script = str_replace('SEPA_CREDITOR_PARAMETERS', json_encode($creditor_parameters), $script);
-    CRM_Core_Region::instance('page-header')->add(['script' => $script]);
+    Civi::resources()->addVars('contract', ['sepa_creditor_parameters' => $creditor_parameters]);
+    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/sepa_tools.js');
   }
 
 }

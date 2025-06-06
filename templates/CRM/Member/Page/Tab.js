@@ -10,12 +10,12 @@
 
 CRM.$(function($) {
 
-  var contractStatuses = CRM.vars['de.systopia.contract'].contractStatuses;
-  var reviewLinkTitles = CRM.vars['de.systopia.contract'].reviewLinkTitles;
+  var contractStatuses = CRM.vars.contract.contractStatuses;
+  var reviewLinkTitles = CRM.vars.contract.reviewLinkTitles;
 
   // # Link to membership create should be replaced with contract create #
-  $('a[href="/civicrm/contact/view/membership?reset=1&action=add&cid=' + CRM.vars['de.systopia.contract'].cid + '&context=membership"]')
-  .attr("href", "/civicrm/contract/create?cid=" + CRM.vars['de.systopia.contract'].cid);
+  $('a[href="/civicrm/contact/view/membership?reset=1&action=add&cid=' + CRM.vars.contract.cid + '&context=membership"]')
+  .attr("href", "/civicrm/contract/create?cid=" + CRM.vars.contract.cid);
 
   // Add a membership-review tr with appropriate colspan under each row to
   // receive the contract history
@@ -103,7 +103,7 @@ CRM.$(function($) {
   // We have to ensure the listeners are only added once (this seems like a
   // fairly mad way to do that but anyhow...)
 
-  if(CRM.vars['de.systopia.contract'].listenersLoaded !== true){
+  if(CRM.vars.contract.listenersLoaded !== true){
 
     // Clicking on the toggle-review link toggles the membership-review tr
     $(document).on( 'click', '.toggle-review', function(e){
@@ -133,7 +133,7 @@ CRM.$(function($) {
       }
     });
 
-    CRM.vars['de.systopia.contract'].listenersLoaded = true;
+    CRM.vars.contract.listenersLoaded = true;
   }
 });
 

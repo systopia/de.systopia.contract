@@ -45,14 +45,17 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     $formUtils = new CRM_Contract_FormUtils($this, 'Membership');
     $formUtils->addPaymentContractSelect2('recurring_contribution', $this->get('cid'), FALSE, NULL);
-    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', [
-      'cid'                     => $this->get('cid'),
-      'debitor_name'            => $this->contact['display_name'],
-      'creditor'                => CRM_Contract_SepaLogic::getCreditor(),
-      'frequencies'             => CRM_Contract_SepaLogic::getPaymentFrequencies(),
-      'grace_end'               => NULL,
-      'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid')),
-    ]);
+    CRM_Core_Resources::singleton()->addVars(
+      'contract',
+      [
+        'cid' => $this->get('cid'),
+        'debitor_name' => $this->contact['display_name'],
+        'creditor' => CRM_Contract_SepaLogic::getCreditor(),
+        'frequencies' => CRM_Contract_SepaLogic::getPaymentFrequencies(),
+        'grace_end' => NULL,
+        'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid')),
+      ]
+    );
 
     CRM_Contract_SepaLogic::addJsSepaTools();
 
@@ -221,7 +224,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add('wysiwyg', 'activity_details', E::ts('Notes'));
 
     // add the JS file for the payment preview
-    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/contract_modify_tools.js');
+    CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/contract_modify_tools.js');
 
     $this->addButtons([
       ['type' => 'cancel', 'name' => E::ts('Cancel'), 'submitOnce' => TRUE],
@@ -383,6 +386,35 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         ]);
         break;
 
+      // NONE
+      case 'none':
+        $payment_contract_params = [
+          'contact_id' => $this->get('cid'),
+          'amount' => 0,
+          'currency' => CRM_Contract_SepaLogic::getCreditor()->currency,
+          'start_date' => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
+          // NOW
+          'create_date' => date('YmdHis'),
+          'date' => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
+          // NOW
+          'validation_date' => date('YmdHis'),
+          'account_holder' => $submitted['account_holder'],
+          'campaign_id' => $submitted['campaign_id'] ?? '',
+          'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName(
+            $submitted['payment_option']
+          ),
+          // Membership Dues
+          'financial_type_id' => 2,
+          'frequency_unit' => 'month',
+          'cycle_day' => $submitted['cycle_day'],
+          'frequency_interval' => $frequency_interval,
+          'checkPermissions' => TRUE,
+        ];
+        CRM_Contract_CustomData::resolveCustomFields($payment_contract_params);
+        $new_recurring_contribution = civicrm_api3('ContributionRecur', 'create', $payment_contract_params);
+        $payment_contract['id'] = $new_recurring_contribution['id'];
+        break;
+
       // SELECT EXISTING PAYMENT CONTRACT
       case 'existing':
         $payment_contract['id'] = $submitted['recurring_contribution'];
@@ -446,8 +478,6 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $params['membership_general.membership_dialoger'] = $submitted['membership_dialoger'];
     // Membership Channel
     $params['membership_general.membership_channel'] = $submitted['membership_channel'] ?? '';
-    // Membership Channel
-    $params['membership_general.membership_notes'] = $submitted['activity_details'];
 
     // add payment contract
     // Recurring contribution

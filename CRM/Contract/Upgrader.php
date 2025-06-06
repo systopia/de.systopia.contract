@@ -37,7 +37,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     }
 
     require_once 'CRM/Contract/CustomData.php';
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_contract_cancel_reason.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_contract_cancel_reason.json'));
@@ -67,7 +67,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
    */
   public function upgrade_1360() {
     $this->ctx->log->info('Applying update 1360');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     return TRUE;
@@ -88,7 +88,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_1402() {
     $this->ctx->log->info('Applying updates for 14xx');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
@@ -97,7 +97,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_1403() {
     $this->ctx->log->info('Applying updates for 14xx');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncOptionGroup(E::path('resources/custom_group_membership_payment.json'));
     return TRUE;
@@ -105,7 +105,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_1501() {
     $this->ctx->log->info('Applying localisation');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_contract_cancel_reason.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_payment_frequency.json'));
@@ -122,14 +122,14 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_1502() {
     $this->ctx->log->info('Hide/filter activity types');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
 
   public function upgrade_1503() {
     $this->ctx->log->info('Update translations');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     return TRUE;
@@ -137,14 +137,14 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_2000() {
     $this->ctx->log->info('Adjust filters for contract actions');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
 
   public function upgrade_2001() {
     $this->ctx->log->info('Add AWO contact types');
-    $customData = new CRM_Contract_CustomData('de.systopia.contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }

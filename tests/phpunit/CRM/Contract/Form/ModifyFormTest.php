@@ -35,6 +35,8 @@ class ModifyFormTest extends ContractTestBase {
 
   protected ?int $recurContributionStatusId = NULL;
 
+  protected ?string $initialPaymentMethod = NULL;
+
   public function setUp(): void {
     parent::setUp();
     $this->createRequiredEntities();
@@ -74,40 +76,42 @@ class ModifyFormTest extends ContractTestBase {
       'membership_reference' => 'REF-001',
     ]);
 
-    /** @phpstan-ignore-next-line */
-    $membership = civicrm_api3('Membership', 'getsingle', ['id' => $this->contract['id']]);
-    $recurContriId = $membership[CRM_Contract_Utils::getCustomFieldId(
-      'membership_payment.membership_recurring_contribution'
-    )];
+    if ($this->initialPaymentMethod !== 'none') {
 
-    SepaMandate::delete(TRUE)
-      ->addWhere('contact_id', '=', $contact['id'])
-      ->execute();
+      /** @phpstan-ignore-next-line */
+      $membership = civicrm_api3('Membership', 'getsingle', ['id' => $this->contract['id']]);
+      $recurContriId = $membership[CRM_Contract_Utils::getCustomFieldId(
+            'membership_payment.membership_recurring_contribution'
+        )];
 
-    $creditor = SepaCreditor::create(TRUE)
-      ->addValue('identifier', 'TESTCREDITOR01')
-      ->addValue('name', 'Creditor Organization')
-      ->addValue('iban', 'DE44500105175407324931')
-      ->addValue('bic', 'DEUTDEFF500')
-      ->addValue('creditor_type', 'OOFF')
-      ->addValue('payment_processor_id', 1)
-      ->execute()
-      ->first();
+      SepaMandate::delete(TRUE)
+        ->addWhere('contact_id', '=', $contact['id'])
+        ->execute();
 
-    $this->mandate = SepaMandate::create(TRUE)
-      ->addValue('contact_id', $contact['id'])
-      ->addValue('type', 'RCUR')
-      ->addValue('entity_table', 'civicrm_contribution_recur')
-      ->addValue('entity_id', $recurContriId)
-      ->addValue('reference', 'TEST-MANDATE-001')
-      ->addValue('date', '2025-05-01 13:00:00')
-      ->addValue('iban', 'DE12500105170648489890')
-      ->addValue('bic', 'INGDDEFFXXX')
-      ->addValue('creditor_id', $creditor['id'])
-      ->addValue('status', 'RCUR')
-      ->execute()
-      ->first();
+      $creditor = SepaCreditor::create(TRUE)
+        ->addValue('identifier', 'TESTCREDITOR01')
+        ->addValue('name', 'Creditor Organization')
+        ->addValue('iban', 'DE44500105175407324931')
+        ->addValue('bic', 'DEUTDEFF500')
+        ->addValue('creditor_type', 'OOFF')
+        ->addValue('payment_processor_id', 1)
+        ->execute()
+        ->first();
 
+      $this->mandate = SepaMandate::create(TRUE)
+        ->addValue('contact_id', $contact['id'])
+        ->addValue('type', 'RCUR')
+        ->addValue('entity_table', 'civicrm_contribution_recur')
+        ->addValue('entity_id', $recurContriId)
+        ->addValue('reference', 'TEST-MANDATE-001')
+        ->addValue('date', '2025-05-01 13:00:00')
+        ->addValue('iban', 'DE12500105170648489890')
+        ->addValue('bic', 'INGDDEFFXXX')
+        ->addValue('creditor_id', $creditor['id'])
+        ->addValue('status', 'RCUR')
+        ->execute()
+        ->first();
+    }
     $optionGroup = OptionGroup::save(TRUE)
       ->addRecord([
         'name' => 'contribution_status',
@@ -228,9 +232,10 @@ class ModifyFormTest extends ContractTestBase {
    */
   public function modifyActionProvider(): array {
     return [
-      'cancel' => ['cancel'],
-      'update' => ['update'],
-      'pause' => ['pause'],
+      'cancel' => ['cancel', NULL],
+      'update + none' => ['update', 'none'],
+      'update + RCUR' => ['update', 'RCUR'],
+      'pause' => ['pause', NULL],
     ];
   }
 
@@ -238,7 +243,7 @@ class ModifyFormTest extends ContractTestBase {
    * @dataProvider modifyActionProvider
    */
   public function testFormSubmissionModifyContract(
-    string $modifyAction
+    string $modifyAction, mixed $initialPaymentMethod
   ): void {
     $cid = $this->contact['id'];
     $contractId = $this->contract['id'];
@@ -249,6 +254,7 @@ class ModifyFormTest extends ContractTestBase {
     /** @phpstan-ignore-next-line */
     $_REQUEST['modify_action'] = $modifyAction;
 
+    $this->initialPaymentMethod = $initialPaymentMethod;
     $form = new class() extends ModifyForm {
       /** @var array<string, mixed> */
       public $_submitValues = [];
@@ -320,6 +326,17 @@ class ModifyFormTest extends ContractTestBase {
     if ($modifyAction === 'update') {
       self::assertEquals($this->contact['id'], $contract['contact_id']);
       self::assertEquals(6, $contract['membership_payment.membership_frequency']);
+
+      $recurring_contribution_id = $contract['membership_payment.membership_recurring_contribution'];
+      $sepaMandates = civicrm_api3('SepaMandate', 'get', [
+        'contact_id'   => $this->contact['id'],
+        'type'         => 'RCUR',
+        'entity_table' => 'civicrm_contribution_recur',
+        'entity_id'    => $recurring_contribution_id,
+      ])['values'];
+
+      self::assertCount(1, $sepaMandates);
+
     }
   }
 
@@ -327,8 +344,12 @@ class ModifyFormTest extends ContractTestBase {
    * @return array<string, array<string, mixed>>
    */
   private function getModifyActionSubmissionValues(string $modifyAction): array {
+
+    $modifiedPaymentMethod = ($this->initialPaymentMethod == 'none')
+        ? $this->initialPaymentMethod : 'RCUR';
+
     $base = [
-      'payment_option' => 'RCUR',
+      'payment_option' => $modifiedPaymentMethod,
       'membership_type_id' => $this->membershipType['id'],
       'campaign_id' => $this->campaign['id'] ?? NULL,
       'account_holder' => $this->contact['display_name'],

@@ -14,21 +14,15 @@ use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
-  /**
-   * @var ?int */
-  protected ?int $id;
+  protected ?int $id = NULL;
 
-  /**
-   * @var ?string the modify action */
   protected ?string $modify_action = NULL;
 
-  /**
-   * the membership data */
-  protected array $membership;
+  protected ?array $membership = NULL;
 
-  protected string $change_class;
+  protected ?string $change_class = NULL;
 
-  protected array $contact;
+  protected ?array $contact = NULL;
 
   public function preProcess() {
     parent::preProcess();
@@ -49,11 +43,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
     // Not sure why this isn't simpler but here is my way of ensuring that the
     // id parameter is available throughout this forms life
-    $this->id = CRM_Utils_Request::retrieve('id', 'Integer');
-    if ($this->id) {
-      $this->set('id', $this->id);
-    }
-    if (!$this->get('id')) {
+    $this->id = $this->get('id') ?? CRM_Utils_Request::retrieve('id', 'Integer');
+    $this->set('id', $this->id);
+    if (!isset($this->id)) {
       throw new CRM_Core_Exception(E::ts('Missing the contract ID'));
     }
 
@@ -81,7 +73,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     }
 
     // Process the requested action
-    $this->modify_action = strtolower(CRM_Utils_Request::retrieve('modify_action', 'String'));
+    $this->modify_action = $this->get('modify_action')
+      ?? strtolower(CRM_Utils_Request::retrieve('modify_action', 'String'));
+    $this->set('modify_action', $this->modify_action);
     $this->assign('modificationActivity', $this->modify_action);
     $this->change_class = CRM_Contract_Change::getClassByAction($this->modify_action);
     if (empty($this->change_class)) {
@@ -150,7 +144,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     }
 
     // add the JS file for the payment preview
-    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/contract_modify_tools.js');
+    CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/contract_modify_tools.js');
 
     $this->addButtons([
     // since Cancel looks bad when viewed next to the Cancel action
@@ -184,7 +178,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     );
     // JS for the pop up
     CRM_Core_Resources::singleton()->addVars(
-      'de.systopia.contract',
+      'contract',
       [
         'cid' => $this->membership['contact_id'],
         'current_recurring' => $this->membership[CRM_Contract_Utils::getCustomFieldId(

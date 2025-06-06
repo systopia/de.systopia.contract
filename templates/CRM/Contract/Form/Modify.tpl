@@ -7,7 +7,9 @@
 +-------------------------------------------------------------*}
 {crmScope extensionKey='de.systopia.contract'}
 <div class="crm-block crm-form-block">
-  <!-- <h3>
+  <!--
+  {*
+  <h3>
   {if $historyAction eq 'cancel'}
     Please choose a reason for cancelling this contract and click on 'Cancel' below.
   {elseif $isUpdate}
@@ -15,13 +17,15 @@
   {else}
     Please confirm that you want to {$historyAction} this contract by clicking on '{$historyAction}' below.
   {/if}
-</h3> -->
+  </h3>
+  *}
+  -->
   {if isset($form.current_contract_amount)}
     {* add some more info to the form *}
     {$form.current_contract_amount.html}
   {/if}
 
-  {if $modificationActivity eq 'update' OR $modificationActivity eq 'revive' }
+  {if $modificationActivity eq 'update' OR $modificationActivity eq 'revive'}
 
     <div class="crm-section">
       <div class="label">{ts}Payment Preview{/ts}</div>
@@ -94,14 +98,14 @@
   {if isset($form.cancel_date.html)}
     <div class="crm-section">
       <div class="label">{$form.cancel_date.label}</div>
-      <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=cancel_date}</div>
+      <div class="content">{$form.cancel_date.html}</div>
       <div class="clear"></div>
     </div>
   {/if}
   {if isset($form.resume_date.html)}
     <div class="crm-section">
       <div class="label">{$form.resume_date.label}</div>
-      <div class="content">{include file="CRM/common/jcalendar.tpl" elementName=resume_date}</div>
+      <div class="content">{$form.resume_date.html}</div>
       <div class="clear"></div>
     </div>
   {/if}
