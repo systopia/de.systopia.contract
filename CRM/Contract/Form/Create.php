@@ -478,8 +478,6 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $params['membership_general.membership_dialoger'] = $submitted['membership_dialoger'];
     // Membership Channel
     $params['membership_general.membership_channel'] = $submitted['membership_channel'] ?? '';
-    // Membership Channel
-    $params['membership_general.membership_notes'] = $submitted['activity_details'];
 
     // add payment contract
     // Recurring contribution

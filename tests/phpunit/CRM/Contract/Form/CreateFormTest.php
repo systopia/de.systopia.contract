@@ -80,19 +80,6 @@ class CreateFormTest extends ContractTestBase {
       ->execute()
       ->single();
 
-    CustomField::save(FALSE)
-      ->addRecord([
-        'custom_group_id:name' => 'membership_general',
-        'label' => 'Membership Notes',
-        'name' => 'membership_notes',
-        'data_type' => 'Memo',
-        'html_type' => 'TextArea',
-        'is_active' => 1,
-        'is_searchable' => 1,
-      ])
-      ->setMatch(['custom_group_id', 'name'])
-      ->execute();
-
     $this->membershipType = MembershipType::create(FALSE)
       ->setValues([
         'name' => 'Test Membership Type',

@@ -217,7 +217,8 @@ class CRM_Contract_RecurringContribution {
       ];
 
       if (!$result['fields']['payment_instrument']) {
-        $result['text_summary'] = 'No payment required';
+        $result['text_summary'] = E::ts('No payment required');
+        $result['label'] = E::ts('No payment required');
       }
       else {
         // this is a non-SEPA recurring contribution
