@@ -68,7 +68,7 @@ function contract_civicrm_pageRun(&$page) {
   elseif ($page_name == 'CRM_Contact_Page_View_Summary') {
     // this is the contact summary page
     Civi::resources()
-      ->addVars('de.systopia.contract', ['ce_activity_types' => CRM_Contract_Change::getActivityTypeIds()])
+      ->addVars('contract', ['ce_activity_types' => CRM_Contract_Change::getActivityTypeIds()])
       ->addScriptUrl(E::url('js/hide-ce-activity-types.js'));
 
   }
@@ -82,11 +82,11 @@ function contract_civicrm_pageRun(&$page) {
         ['id' => $contract['id']]
       )['values'];
     }
-    CRM_Core_Resources::singleton()->addStyleFile('de.systopia.contract', 'css/contract.css');
-    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', ['contractStatuses' => $contractStatuses]);
-    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', ['cid' => $page->_contactId]);
-    CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'templates/CRM/Member/Page/Tab.js');
-    CRM_Core_Resources::singleton()->addVars('de.systopia.contract', [
+    CRM_Core_Resources::singleton()->addStyleFile(E::LONG_NAME, 'css/contract.css');
+    CRM_Core_Resources::singleton()->addVars('contract', ['contractStatuses' => $contractStatuses]);
+    CRM_Core_Resources::singleton()->addVars('contract', ['cid' => $page->_contactId]);
+    CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'templates/CRM/Member/Page/Tab.js');
+    CRM_Core_Resources::singleton()->addVars('contract', [
       'reviewLinkTitles' => [
         'needs review' => E::ts('needs review'),
         'scheduled modifications' => E::ts('scheduled modifications'),
@@ -121,7 +121,7 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       // GP-814 - hide 'edit' button if 'edit core membership CiviContract' is not granted
       if (!CRM_Core_Permission::check('edit core membership CiviContract')) {
-        CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/membership_view_hide_edit.js');
+        CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/membership_view_hide_edit.js');
       }
 
       break;
@@ -135,7 +135,7 @@ function contract_civicrm_buildForm($formName, &$form) {
       if (in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD])) {
         // Use JS to hide form elements
         CRM_Core_Resources::singleton()
-          ->addScriptFile('de.systopia.contract', 'templates/CRM/Member/Form/Membership.js');
+          ->addScriptFile(E::LONG_NAME, 'templates/CRM/Member/Form/Membership.js');
         $filteredMembershipStatuses = civicrm_api3('MembershipStatus', 'get', [
           'name' => [
             'IN' => [
@@ -145,7 +145,7 @@ function contract_civicrm_buildForm($formName, &$form) {
           ],
         ]);
         CRM_Core_Resources::singleton()
-          ->addVars('de.systopia.contract', ['filteredMembershipStatuses' => $filteredMembershipStatuses]);
+          ->addVars('contract', ['filteredMembershipStatuses' => $filteredMembershipStatuses]);
         $hiddenCustomFields = civicrm_api3('CustomField', 'get', [
           'name' => [
             'IN' => [
@@ -155,7 +155,7 @@ function contract_civicrm_buildForm($formName, &$form) {
           ],
         ]);
         CRM_Core_Resources::singleton()
-          ->addVars('de.systopia.contract', ['hiddenCustomFields' => $hiddenCustomFields]);
+          ->addVars('contract', ['hiddenCustomFields' => $hiddenCustomFields]);
 
         if ($form->getAction() == CRM_Core_Action::ADD) {
           $form->setDefaults([
@@ -207,7 +207,7 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       // workaround for GP-671
       if ($form->getAction() === CRM_Core_Action::UPDATE) {
-        CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'js/membership_edit_protection.js');
+        CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/membership_edit_protection.js');
       }
       break;
 
@@ -230,7 +230,7 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       }
       elseif ($form->getAction() == CRM_Core_Action::UPDATE) {
-        CRM_Core_Resources::singleton()->addScriptFile('de.systopia.contract', 'templates/CRM/Activity/Form/Edit.js');
+        CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'templates/CRM/Activity/Form/Edit.js');
       }
       break;
 

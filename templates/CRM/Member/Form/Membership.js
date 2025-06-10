@@ -17,13 +17,13 @@ CRM.$(function($) {
 
   // Hide membership options apart from the ones we want
   $('select#status_id option').hide();
-  $.each(CRM.vars['de.systopia.contract'].filteredMembershipStatuses.values, function(key, value) {
+  $.each(CRM.vars.contract.filteredMembershipStatuses.values, function(key, value) {
     $('select#status_id option[value=' + value.id + ']').show();
   });
 
   // Hide custom fields we don't want to be populated
   $.hideCustomFields = function(){
-    $.each(CRM.vars['de.systopia.contract'].hiddenCustomFields.values, function(key, value) {
+    $.each(CRM.vars.contract.hiddenCustomFields.values, function(key, value) {
       $('[class*=custom_' + value.id + ']').hide();
     });
   };

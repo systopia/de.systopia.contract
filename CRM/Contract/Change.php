@@ -246,7 +246,7 @@ abstract class CRM_Contract_Change {
         $contract['membership_payment.membership_annual']    = $this->calcAnnualAmount($contributionRecur);
         $contract['membership_payment.membership_frequency'] = $this->calcPaymentFrequency($contributionRecur);
         $contract['membership_payment.cycle_day']            = $contributionRecur['cycle_day'];
-        $contract['membership_payment.payment_instrument']   = $contributionRecur['payment_instrument_id'];
+        $contract['membership_payment.payment_instrument']   = $contributionRecur['payment_instrument_id'] ?? NULL;
 
         // if this is a sepa payment, get the 'to' and 'from' bank account
         $sepaMandateResult = civicrm_api3('SepaMandate', 'get', [
