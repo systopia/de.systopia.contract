@@ -27,7 +27,7 @@ CRM.$(function($) {
     // update/create the review link
     var link = $(document).find('#crm-membership-review-link_' + membershipId);
     if (link.length == 0) {
-      var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
+      var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=2&id=' + membershipId);
       link = " <a class='toggle-review' id='crm-membership-review-link_" + membershipId + "' href='" + queryURL + "'>[" + getReviewLinkText(membershipId) + "]</a>";
       $(this).after("<tr class='crm-membership crm-membership-review odd odd-row' id='crm-membership-review_" + membershipId + "'><td colspan='" + $(this).find('td').length + "'></td></tr>");
       $(this).find('td.crm-membership-status').append(link);
@@ -76,7 +76,7 @@ CRM.$(function($) {
       reviewRow.hide();
       reviewLink.html('[' + getReviewLinkText(membershipId) + ']');
     }else{
-      var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
+      var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=2&id=' + membershipId);
       reviewRow.find('table.contract-history-table').parent().remove(); // this seems to still stick around...
       reviewRow.find('td').load(queryURL, function(){
         reviewRow.show();
@@ -87,7 +87,7 @@ CRM.$(function($) {
 
   function updateReviewPane(membershipId){
     var reviewRow = $(document).find('#crm-membership-review_' + membershipId);
-    var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=1&id=' + membershipId);
+    var queryURL = CRM.url('civicrm/contract/review', 'reset=&snippet=2&id=' + membershipId);
     reviewRow.find('td').load(queryURL);
   }
 
