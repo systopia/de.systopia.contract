@@ -362,7 +362,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     // SWITCH: contract creation/selection differs on the slected option
     switch ($submitted['payment_option']) {
       // CREATE NEW SEPA MANDATE
-      case '':
+      case 'RCUR':
         $payment_contract = CRM_Contract_SepaLogic::createNewMandate([
           'type'               => 'RCUR',
           'contact_id'         => $this->get('cid'),
@@ -377,7 +377,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           'iban'               => $submitted['iban'],
           'bic'                => $submitted['bic'],
           'account_holder'     => $submitted['account_holder'],
-          'campaign_id'        => $submitted['campaign_id'],
+          'campaign_id'        => $submitted['campaign_id'] ?? NULL,
         // Membership Dues
           'financial_type_id'  => 2,
           'frequency_unit'     => 'month',

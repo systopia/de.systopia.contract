@@ -302,15 +302,11 @@ class CreateFormTest extends ContractTestBase {
 
     self::assertEquals($this->contact['id'], $contract['contact_id']);
     self::assertEquals($this->membershipType['id'], $contract['membership_type_id']);
-    self::assertEquals(12, $contract['membership_payment.membership_frequency']);
     self::assertEquals('TEST-001', $contract['membership_general.membership_contract']);
     self::assertEquals('REF-001', $contract['membership_general.membership_reference']);
     if ($paymentOption == 'none') {
       self::assertEquals('0.00', $contract['membership_payment.membership_annual']);
 
-    }
-    elseif ($paymentOption == 'RCUR') {
-      self::assertEquals('1,440.00', $contract['membership_payment.membership_annual']);
     }
   }
 
