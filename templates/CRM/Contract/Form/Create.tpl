@@ -7,14 +7,6 @@
 
 {crmScope extensionKey='de.systopia.contract'}
 
-  <h3>{ts}Zugang{/ts}</h3>
-  <div class="crm-section">
-    <div class="label">{$form.membership_dialoger.label}</div>
-    <div class="content">{$form.membership_dialoger.html}</div>
-    <div class="clear"></div>
-  </div>
-
-
   <h3>{ts}Mitgliedschaftsdaten{/ts}</h3>
 
   <div class="crm-section">

@@ -117,7 +117,7 @@
    */
   function updatePaymentSummaryText() {
     let mode = $('#payment_option').val();
-
+    console.log('Update Payment')
     if (mode === undefined) {
       // No payment option in the form (Cancel or Pause)
       return true;
@@ -163,7 +163,7 @@
       let frequency_label = CRM.vars.contract.frequencies[frequency];
       // let next_collection = CRM.vars.contract.next_collections[cycle_day];
       let start_date = $('[name=activity_date]').val();
-      let annual = 0.0;
+      let annual = (installment.toFixed(2) * parseFloat(frequency)).toFixed(2);
 
       // In case of an update (not revive), we need to respect the already paid period, see #771
       let next_collection = '';
@@ -216,7 +216,7 @@
       let frequency_label = CRM.vars.contract.frequencies[frequency];
       let start_date = $('[name=activity_date]').val();
       let next_collection = CRM.contract.sepaTools.nextCollectionDate(cycle_day, start_date);
-      let annual = 0.0;
+      let annual = (installment.toFixed(2) * parseFloat(frequency)).toFixed(2);
 
       $('.recurring-contribution-summary-text')
         .html(renderContractPreview(debitor_name, iban, creditor, frequency_label, annual, installment, next_collection, mode))
