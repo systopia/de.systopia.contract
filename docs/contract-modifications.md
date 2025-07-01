@@ -29,12 +29,36 @@ form to ensure that modifications made using this form fit the contract model.
 
 ## Significant changes
 
-Significant changes those in which one of the following contract fields is
+Significant changes are those in which one of the following contract fields is
 updated
 
 *   status
 *   membership type
 *   recurring membership payment
+
+
+### Changes to the recurring membership payment
+
+Changes to how a membership is being paid for might depend on the current and
+the future payment instrument. The extension comes with a set of available
+payment options (those might be configurable in future releases):
+
+* Electronic Funds Transfer (EFT)
+* Cash
+* SEPA Direct Debit (using [*CiviSEPA*](https://github.com/project60/org.project60.sepa))
+* No payment (for free memberships)
+
+Especially with the *CiviSEPA* implementation for direct debit mandates, for
+legal reasons updating involves cancelling an existing mandate and creating a
+new one if relevant information changes. A SEPA mandate is only valid for a
+specific debitor, a specific amount and installment cycle, so changes to those
+properties will have to result in a new SEPA mandate being created.
+
+Also, when changing the payment method from e.g. SEPA Direct Debit to EFT, the
+mandate needs to be ended accordingly, because CiviSEPA would otherwise continue
+to collect installments from the debitor, while legally the mandate is no longer
+valid.
+
 
 ## Modifying contracts with the API
 
@@ -84,7 +108,7 @@ A note on passing dates to the contract API
 
 Contracts can also be modified by updating the contract directly (for example,
 via the Contract API or via the contract edit form). When an attempt is made to
-modified a contract directly, the contract extension checks to ensure that the
+modify a contract directly, the contract extension checks to ensure that the
 modification is allowed by the contract extension. If it is valid, the update is
 made and a *completed* contract modification activity is recorded for the
 contract.
