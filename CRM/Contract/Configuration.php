@@ -187,12 +187,12 @@ class CRM_Contract_Configuration {
    *   - <other>    => the new payment instrument, e.g. RCUR or Cash
    */
   public static function getPaymentOptions($allow_new_contracts = TRUE, $allow_no_change = TRUE) {
-    $payment_options['select'] = E::ts('select existing contract');
+    $payment_options['select'] = E::ts('select existing');
     $payment_options['none'] = E::ts('no payment required');
     if ($allow_new_contracts) {
       $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes();
       foreach ($payment_types as $payment_key => $payment_type) {
-        $payment_options[$payment_key] = E::ts('new contract: %1', [1 => $payment_type]);
+        $payment_options[$payment_key] = $payment_type;
       }
     }
 
