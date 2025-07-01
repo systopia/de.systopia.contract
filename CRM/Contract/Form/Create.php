@@ -196,12 +196,12 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       FALSE
     );
 
-    // DD-Fundraiser
-    $this->addEntityRef(
-      'membership_dialoger',
-      E::ts('Fundraiser'),
-      ['api' => ['params' => ['contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger']]]
-    );
+//    // DD-Fundraiser
+//    $this->addEntityRef(
+//      'membership_dialoger',
+//      E::ts('Fundraiser'),
+//      ['api' => ['params' => ['contact_type' => 'Individual', 'contact_sub_type' => 'Dialoger']]]
+//    );
 
     // Membership channel
     $membershipChannelOptions = [];
@@ -475,8 +475,6 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $params['membership_general.membership_reference'] = $submitted['membership_reference'] ?? '';
     // Contract number
     $params['membership_general.membership_contract'] = $submitted['membership_contract'];
-    // DD fundraiser
-    $params['membership_general.membership_dialoger'] = $submitted['membership_dialoger'];
     // Membership Channel
     $params['membership_general.membership_channel'] = $submitted['membership_channel'] ?? '';
 
