@@ -416,7 +416,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         break;
 
       // SELECT EXISTING PAYMENT CONTRACT
-      case 'existing':
+      case 'select':
         $payment_contract['id'] = $submitted['recurring_contribution'];
         break;
 
