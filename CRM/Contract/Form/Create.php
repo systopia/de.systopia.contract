@@ -363,7 +363,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     switch ($submitted['payment_option']) {
       // CREATE NEW SEPA MANDATE
       case 'RCUR':
-        $payment_contract = CRM_Contract_SepaLogic::createNewMandate([
+        $sepaMandate = CRM_Contract_SepaLogic::createNewMandate([
           'type'               => 'RCUR',
           'contact_id'         => $this->get('cid'),
           'amount'             => $amount,
@@ -384,6 +384,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           'cycle_day'          => $submitted['cycle_day'],
           'frequency_interval' => $frequency_interval,
         ]);
+        $payment_contract['id'] = (int) $sepaMandate['entity_id'];
         break;
 
       // NONE
