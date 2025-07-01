@@ -117,7 +117,6 @@
    */
   function updatePaymentSummaryText() {
     let mode = $('#payment_option').val();
-    console.log('Update Payment')
     if (mode === undefined) {
       // No payment option in the form (Cancel or Pause)
       return true;
