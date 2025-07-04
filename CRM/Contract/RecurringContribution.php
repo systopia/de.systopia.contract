@@ -397,4 +397,43 @@ class CRM_Contract_RecurringContribution {
     return NULL;
   }
 
+  public static function createRecurringContribution(
+    int $contactId,
+    float $amount,
+    string $startDate,
+    string $accountHolder,
+    string $paymentOption,
+    int $cycleDay,
+    string $frequencyInterval,
+    ?int $campaignId
+  ) {
+    $payment_contract_params = [
+      'contact_id' => $contactId,
+      'amount' => $amount,
+      // TODO: Why use currency from SEPA creditor?
+      'currency' => CRM_Contract_SepaLogic::getCreditor()->currency,
+      'start_date' => CRM_Utils_Date::processDate($startDate, NULL, NULL, 'Y-m-d H:i:s'),
+      // NOW
+      'create_date' => date('YmdHis'),
+      'date' => CRM_Utils_Date::processDate($startDate, NULL, NULL, 'Y-m-d H:i:s'),
+      // NOW
+      'validation_date' => date('YmdHis'),
+      'account_holder' => $accountHolder,
+      'campaign_id' => $campaignId ?? '',
+      'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName($paymentOption),
+      // Membership Dues
+      'financial_type_id' => 2,
+      'frequency_unit' => 'month',
+      'cycle_day' => $cycleDay,
+      'frequency_interval' => $frequencyInterval,
+      'checkPermissions' => TRUE,
+    ];
+    CRM_Contract_CustomData::resolveCustomFields($payment_contract_params);
+    $new_recurring_contribution = civicrm_api3('ContributionRecur', 'create', $payment_contract_params);
+    if ((bool) $new_recurring_contribution['is_error']) {
+      throw new RuntimeException('Error creating recurring contribution');
+    }
+    return $new_recurring_contribution;
+  }
+
 }
