@@ -70,7 +70,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     // check payemnt instrument for the new contract
     // TODO: Terminate mandate if payment instrument changed from SEPA to anything else.
     $payment_instrument_update = $this->getParameter('contract_updates.ch_payment_instrument');
-    if ($payment_instrument_update) {
+    if (NULL !== $payment_instrument_update) {
       if ($contract_before['membership_payment.payment_instrument'] != $payment_instrument_update) {
         $contract_update['membership_payment.payment_instrument'] = $payment_instrument_update;
       }
@@ -84,6 +84,8 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         CRM_Contract_SepaLogic::terminateSepaMandate(
           $contract_before['membership_payment.membership_recurring_contribution']
         );
+
+        // TODO: Create new recurring contribution for new payment method.
       }
       else {
         // adjust mandate/payment mode?
