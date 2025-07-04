@@ -68,15 +68,36 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     }
 
     // check payemnt instrument for the new contract
-    $membership_type_update = $this->getParameter('contract_updates.ch_membership_type');
+    // TODO: Terminate mandate if payment instrument changed from SEPA to anything else.
+    $payment_instrument_update = $this->getParameter('contract_updates.ch_payment_instrument');
+    if (NULL !== $payment_instrument_update) {
+      if ($contract_before['membership_payment.payment_instrument'] != $payment_instrument_update) {
+        $contract_update['membership_payment.payment_instrument'] = $payment_instrument_update;
+      }
+    }
+    $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
+    if (
+      isset($contract_update['membership_payment.payment_instrument'])
+      && $payment_types['RCUR'] === $contract_before['membership_payment.payment_instrument']
+    ) {
+      if ($payment_types['RCUR'] !== $contract_update['membership_payment.payment_instrument']) {
+        CRM_Contract_SepaLogic::terminateSepaMandate(
+          $contract_before['membership_payment.membership_recurring_contribution']
+        );
 
-    // adjust mandate/payment mode?
-    $new_payment_contract = CRM_Contract_SepaLogic::updateSepaMandate(
-        $this->getContractID(),
-        $contract_before,
-        $this->data,
-        $this->data,
-        $this->getActionName());
+        // TODO: Create new recurring contribution for new payment method.
+      }
+      else {
+        // adjust mandate/payment mode?
+        $new_payment_contract = CRM_Contract_SepaLogic::updateSepaMandate(
+          $this->getContractID(),
+          $contract_before,
+          $this->data,
+          $this->data,
+          $this->getActionName()
+        );
+      }
+    }
 
     if ($new_payment_contract) {
       // this means a new mandate has been created -> set
