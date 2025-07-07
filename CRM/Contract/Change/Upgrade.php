@@ -85,7 +85,51 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
           $contract_before['membership_payment.membership_recurring_contribution']
         );
 
-        // TODO: Create new recurring contribution for new payment method.
+        // Create new recurring contribution for new payment method.
+        $completeContractUpdate = $contract_update + $contract_before;
+
+        $frequency = $this->getParameter('contract_updates.ch_frequency')
+          ?? $contract_before['membership_payment.membership_frequency'];
+
+        $annual_amount = $this->getParameter('contract_updates.ch_annual')
+          ?? $contract_before['membership_payment.membership_annual'];
+
+        $frequencyInterval = 12 / $frequency;
+        $amount = CRM_Contract_SepaLogic::formatMoney(CRM_Contract_SepaLogic::formatMoney($annual_amount) / $frequency);
+        if ($amount < 0.01) {
+          // TODO: Exception being thrown does not invalidate the modify form.
+          throw new Exception('Installment amount too small');
+        }
+
+        $startDate = CRM_Contract_SepaLogic::getMandateUpdateStartDate($contract_before, $this->data, $this->data);
+
+        $accountHolder = $this->getParameter('contract_updates.ch_from_name')
+          ?? $contract_before['membership_payment.from_name'];
+
+        $cycleDay = (int) ($this->getParameter('contract_updates.ch_cycle_day')
+          ?? $contract_before['membership_payment.cycle_day']);
+
+        if (isset($contract_before['membership_payment.membership_recurring_contribution'])) {
+          $recurringContribution = civicrm_api3(
+            'ContributionRecur',
+            'getsingle',
+            ['id' => $contract_before['membership_payment.membership_recurring_contribution']]
+          );
+        }
+        $campaignId = $this->getParameter('campaign_id') ?? $recurringContribution['campaign_id'] ?? NULL;
+        $campaignId = is_numeric($campaignId) ? (int) $campaignId : NULL;
+
+        $new_payment_contract = CRM_Contract_RecurringContribution::createRecurringContribution(
+          (int) $completeContractUpdate['contact_id'],
+          $amount,
+          $startDate,
+          $accountHolder,
+          array_search($completeContractUpdate['membership_payment.payment_instrument'], $payment_types),
+          $cycleDay,
+          $frequencyInterval,
+          $campaignId
+        );
+        CRM_Contract_SepaLogic::setContractPaymentLink($this->getContractID(), (int) $new_payment_contract['id']);
       }
       else {
         // adjust mandate/payment mode?
