@@ -399,14 +399,14 @@ class CRM_Contract_RecurringContribution {
 
   public static function createRecurringContribution(
     int $contactId,
-    float $amount,
+    string $amount,
     string $startDate,
     string $accountHolder,
     string $paymentOption,
     int $cycleDay,
-    string $frequencyInterval,
+    int $frequencyInterval,
     ?int $campaignId
-  ) {
+  ): int {
     $payment_contract_params = [
       'contact_id' => $contactId,
       'amount' => $amount,
@@ -433,7 +433,7 @@ class CRM_Contract_RecurringContribution {
     if ((bool) $new_recurring_contribution['is_error']) {
       throw new RuntimeException('Error creating recurring contribution');
     }
-    return $new_recurring_contribution;
+    return $new_recurring_contribution['id'];
   }
 
 }
