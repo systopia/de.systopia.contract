@@ -158,7 +158,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'select',
       'membership_type_id',
       E::ts('Membership type'),
-      ['' => '- none -'] + $MembershipTypeOptions,
+      ['' => E::ts('- none -')] + $MembershipTypeOptions,
       TRUE,
       ['class' => 'crm-select2']
     );
@@ -175,7 +175,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'select',
       'activity_medium',
       E::ts('Source media'),
-      ['' => '- none -'] + $mediumOptions,
+      ['' => E::ts('- none -')] + $mediumOptions,
       FALSE,
       ['class' => 'crm-select2']
     );
@@ -216,7 +216,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'select',
       'membership_channel',
       E::ts('Membership channel'),
-      ['' => '- none -'] + $membershipChannelOptions,
+      ['' => E::ts('- none -')] + $membershipChannelOptions,
       FALSE,
       ['class' => 'crm-select2']);
 
@@ -333,7 +333,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       if (
         CRM_Utils_Date::processDate($submitted['start_date']) < CRM_Utils_Date::processDate($submitted['join_date'])
       ) {
-        $this->setElementError('join_date', ts('Join date cannot after the start date.'));
+        $this->setElementError('join_date', ts('Join date cannot be after the start date.'));
       }
     }
 
