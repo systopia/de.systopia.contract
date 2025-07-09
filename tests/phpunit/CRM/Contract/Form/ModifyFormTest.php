@@ -39,6 +39,7 @@ class ModifyFormTest extends ContractTestBase {
 
   public function setUp(): void {
     parent::setUp();
+    $this->createRequiredEntities();
   }
 
   private function createRequiredEntities(): void {
@@ -101,17 +102,20 @@ class ModifyFormTest extends ContractTestBase {
         ->execute()
         ->first();
 
-      $this->mandate = SepaMandate::create(TRUE)
-        ->addValue('contact_id', $contact['id'])
-        ->addValue('type', 'RCUR')
-        ->addValue('entity_table', 'civicrm_contribution_recur')
-        ->addValue('entity_id', $recurContriId)
-        ->addValue('reference', 'TEST-MANDATE-001')
-        ->addValue('date', '2025-05-01 13:00:00')
-        ->addValue('iban', 'DE12500105170648489890')
-        ->addValue('bic', 'INGDDEFFXXX')
-        ->addValue('creditor_id', $creditor['id'])
-        ->addValue('status', 'RCUR')
+      $this->mandate = SepaMandate::save(TRUE)
+        ->addRecord([
+          'contact_id' => $contact['id'],
+          'type' => 'RCUR',
+          'entity_table' => 'civicrm_contribution_recur',
+          'entity_id' => $recurContriId,
+          'reference' => 'TEST-MANDATE-001',
+          'date' => '2025-05-01 13:00:00',
+          'iban' => 'DE12500105170648489890',
+          'bic' => 'INGDDEFFXXX',
+          'creditor_id' => $creditor['id'],
+          'status' => 'RCUR',
+        ])
+        ->setMatch(['reference'])
         ->execute()
         ->first();
     }

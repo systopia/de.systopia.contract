@@ -68,7 +68,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     }
 
     // check payemnt instrument for the new contract
-    // TODO: Terminate mandate if payment instrument changed from SEPA to anything else.
+    // TODO: Account for changes of payment instrument when SEPA is not involved.
     $payment_instrument_update = $this->getParameter('contract_updates.ch_payment_instrument');
     if (NULL !== $payment_instrument_update) {
       if ($contract_before['membership_payment.payment_instrument'] != $payment_instrument_update) {
@@ -79,68 +79,68 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     if (
       isset($contract_update['membership_payment.payment_instrument'])
       && $payment_types['RCUR'] === $contract_before['membership_payment.payment_instrument']
+      && $payment_types['RCUR'] !== $contract_update['membership_payment.payment_instrument']
     ) {
-      if ($payment_types['RCUR'] !== $contract_update['membership_payment.payment_instrument']) {
-        CRM_Contract_SepaLogic::terminateSepaMandate(
-          $contract_before['membership_payment.membership_recurring_contribution']
-        );
+      // Terminate mandate if payment instrument changed from SEPA to anything else.
+      CRM_Contract_SepaLogic::terminateSepaMandate(
+        $contract_before['membership_payment.membership_recurring_contribution']
+      );
 
-        // Create new recurring contribution for new payment method.
-        $completeContractUpdate = $contract_update + $contract_before;
+      // Create new recurring contribution for new payment method.
+      $completeContractUpdate = $contract_update + $contract_before;
 
-        $frequency = $this->getParameter('contract_updates.ch_frequency')
-          ?? $contract_before['membership_payment.membership_frequency'];
+      $frequency = $this->getParameter('contract_updates.ch_frequency')
+        ?? $contract_before['membership_payment.membership_frequency'];
 
-        $annual_amount = $this->getParameter('contract_updates.ch_annual')
-          ?? $contract_before['membership_payment.membership_annual'];
+      $annual_amount = $this->getParameter('contract_updates.ch_annual')
+        ?? $contract_before['membership_payment.membership_annual'];
 
-        $frequencyInterval = 12 / $frequency;
-        $amount = CRM_Contract_SepaLogic::formatMoney(CRM_Contract_SepaLogic::formatMoney($annual_amount) / $frequency);
-        if ($amount < 0.01) {
-          // TODO: Exception being thrown does not invalidate the modify form.
-          throw new Exception('Installment amount too small');
-        }
-
-        $startDate = CRM_Contract_SepaLogic::getMandateUpdateStartDate($contract_before, $this->data, $this->data);
-
-        $accountHolder = $this->getParameter('contract_updates.ch_from_name')
-          ?? $contract_before['membership_payment.from_name'];
-
-        $cycleDay = (int) ($this->getParameter('contract_updates.ch_cycle_day')
-          ?? $contract_before['membership_payment.cycle_day']);
-
-        if (isset($contract_before['membership_payment.membership_recurring_contribution'])) {
-          $recurringContribution = civicrm_api3(
-            'ContributionRecur',
-            'getsingle',
-            ['id' => $contract_before['membership_payment.membership_recurring_contribution']]
-          );
-        }
-        $campaignId = $this->getParameter('campaign_id') ?? $recurringContribution['campaign_id'] ?? NULL;
-        $campaignId = is_numeric($campaignId) ? (int) $campaignId : NULL;
-
-        $new_payment_contract = CRM_Contract_RecurringContribution::createRecurringContribution(
-          (int) $completeContractUpdate['contact_id'],
-          $amount,
-          $startDate,
-          $accountHolder,
-          array_search($completeContractUpdate['membership_payment.payment_instrument'], $payment_types),
-          $cycleDay,
-          $frequencyInterval,
-          $campaignId
-        );
-        CRM_Contract_SepaLogic::setContractPaymentLink($this->getContractID(), (int) $new_payment_contract);
+      $frequencyInterval = 12 / $frequency;
+      $amount = CRM_Contract_SepaLogic::formatMoney(CRM_Contract_SepaLogic::formatMoney($annual_amount) / $frequency);
+      if ($amount < 0.01) {
+        // TODO: Exception being thrown does not invalidate the modify form.
+        throw new Exception('Installment amount too small');
       }
-      else {
-        // adjust mandate/payment mode?
-        $new_payment_contract = CRM_Contract_SepaLogic::updateSepaMandate(
-          $this->getContractID(),
-          $contract_before,
-          $this->data,
-          $this->data,
-          $this->getActionName()
+
+      $startDate = CRM_Contract_SepaLogic::getMandateUpdateStartDate($contract_before, $this->data, $this->data);
+
+      $accountHolder = $this->getParameter('contract_updates.ch_from_name')
+        ?? $contract_before['membership_payment.from_name'];
+
+      $cycleDay = (int) ($this->getParameter('contract_updates.ch_cycle_day')
+        ?? $contract_before['membership_payment.cycle_day']);
+
+      if (isset($contract_before['membership_payment.membership_recurring_contribution'])) {
+        $recurringContribution = civicrm_api3(
+          'ContributionRecur',
+          'getsingle',
+          ['id' => $contract_before['membership_payment.membership_recurring_contribution']]
         );
       }
+      $campaignId = $this->getParameter('campaign_id') ?? $recurringContribution['campaign_id'] ?? NULL;
+      $campaignId = is_numeric($campaignId) ? (int) $campaignId : NULL;
+
+      $new_payment_contract = CRM_Contract_RecurringContribution::createRecurringContribution(
+        (int) $completeContractUpdate['contact_id'],
+        $amount,
+        $startDate,
+        $accountHolder,
+        array_search($completeContractUpdate['membership_payment.payment_instrument'], $payment_types),
+        $cycleDay,
+        $frequencyInterval,
+        $campaignId
+      );
+      CRM_Contract_SepaLogic::setContractPaymentLink($this->getContractID(), (int) $new_payment_contract);
+    }
+    else {
+      // adjust mandate/payment mode?
+      $new_payment_contract = CRM_Contract_SepaLogic::updateSepaMandate(
+        $this->getContractID(),
+        $contract_before,
+        $this->data,
+        $this->data,
+        $this->getActionName()
+      );
     }
 
     if ($new_payment_contract) {
