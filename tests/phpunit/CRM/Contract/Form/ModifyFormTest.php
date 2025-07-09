@@ -365,7 +365,6 @@ class ModifyFormTest extends ContractTestBase {
       'update' => $base + [
         'join_date' => date('Y-m-d'),
         'end_date' => date('Y-m-d'),
-        'membership_dialoger' => '',
         'cycle_day' => '30',
         'payment_amount' => '120',
         'payment_frequency' => '6',

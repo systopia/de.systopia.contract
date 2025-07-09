@@ -24,7 +24,6 @@
       ts("Cancellation Date");
       ts("Cancel Reason");
       ts("Membership Channel");
-      ts("Dialoger");
       ts("Reference Number");
       ts("Contract Number");
       ts("Annual Membership Contribution");
