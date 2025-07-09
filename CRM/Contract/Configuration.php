@@ -114,9 +114,9 @@ class CRM_Contract_Configuration {
       $generally_supported_payment_types = [
         // todo: setting?
         'None' => E::ts('No Payment required'),
-        'RCUR' => E::ts('SEPA Lastschrift'),
-        'Cash' => E::ts('Barzahlung'),
-        'EFT' => E::ts('Überweisung'),
+        'RCUR' => E::ts('SEPA Direct Debit'),
+        'Cash' => E::ts('Cash'),
+        'EFT' => E::ts('EFT'),
       ];
 
       // make sure they're there and enabled
@@ -132,7 +132,7 @@ class CRM_Contract_Configuration {
       $eligible_payment_option_ids = [];
       foreach ($eligible_payment_options_query as $option) {
         if ($option['name'] == 'RCUR') {
-          $option['label'] = E::ts('SEPA Lastschrift');
+          $option['label'] = E::ts('SEPA Direct Debit');
         }
         $eligible_payment_option_labels[$option['name']] = $option['label'];
         $eligible_payment_option_ids[$option['name']] = $option['value'];

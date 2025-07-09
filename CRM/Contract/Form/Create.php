@@ -333,7 +333,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       if (
         CRM_Utils_Date::processDate($submitted['start_date']) < CRM_Utils_Date::processDate($submitted['join_date'])
       ) {
-        $this->setElementError('join_date', ts('Join date cannot after the start date.'));
+        $this->setElementError('join_date', ts('Join date cannot be after the start date.'));
       }
     }
 

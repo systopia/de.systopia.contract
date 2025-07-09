@@ -7,7 +7,7 @@
 
 {crmScope extensionKey='de.systopia.contract'}
 
-  <h3>{ts}Mitgliedschaftsdaten{/ts}</h3>
+  <h3>{ts}Membership data{/ts}</h3>
 
   <div class="crm-section">
     <div class="label">{$form.membership_type_id.label}</div>
@@ -34,7 +34,7 @@
   </div>
 
   <div class="crm-section">
-    <div class="label">{ts}Startdatum{/ts}</div>
+    <div class="label">{$form.start_date.label}</div>
     <div class="content">{$form.start_date.html}</div>
     <div class="clear"></div>
   </div>
@@ -46,7 +46,7 @@
   </div>
 
 
-  <h3>{ts}Zahlungsvertrag{/ts}</h3>
+  <h3>{ts}Payment Contract{/ts}</h3>
 
   <div class="crm-section">
     <div class="label">{ts}Contract Preview{/ts}</div>
@@ -99,7 +99,7 @@
     <div class="clear"></div>
   </div>
 
-  <h3 class="id-notes" onClick="cj('div.membership-create-notes').show();">Notiz hinzufügen (KLICK)</h3>
+  <h3 class="id-notes" onClick="cj('div.membership-create-notes').show();">{ts}Add Note{/ts}</h3>
 
   <div class="crm-section membership-create-notes" style="display:none;" >
     <div class="label">{$form.activity_details.label}</div>

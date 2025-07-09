@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-11-21 15:13+0100\n"
+"POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: CRM/Contract/BAO/ContractPaymentLink.php
 msgid "unknown"
@@ -70,9 +70,38 @@ msgstr "Vertrag aktualisieren"
 msgid "Update"
 msgstr "Ändern"
 
-#: CRM/Contract/Configuration.php
+#: CRM/Contract/Configuration.php CRM/Contract/Form/Create.php
+#: CRM/Contract/Form/Modify.php CRM/Contract/FormUtils.php
 msgid "- none -"
 msgstr "-keine-"
+
+#: CRM/Contract/Configuration.php
+msgid "No Payment required"
+msgstr "Keine Zahlung erforderlich"
+
+#: CRM/Contract/Configuration.php
+msgid "SEPA Direct Debit"
+msgstr "SEPA-Lastschrift"
+
+#: CRM/Contract/Configuration.php
+msgid "Cash"
+msgstr "Barzahlung"
+
+#: CRM/Contract/Configuration.php
+msgid "EFT"
+msgstr "Überweisung"
+
+#: CRM/Contract/Configuration.php
+msgid "select existing"
+msgstr "bestehenden Zahlungsvertrag wählen"
+
+#: CRM/Contract/Configuration.php
+msgid "no payment required"
+msgstr "Keine Zahlung erforderlich"
+
+#: CRM/Contract/Configuration.php
+msgid "no change"
+msgstr "keine Änderung"
 
 #: CRM/Contract/DAO/ContractPaymentLink.php
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
@@ -93,13 +122,13 @@ msgstr "Zahlungsvertrag ID"
 msgid "Creation Date"
 msgstr "Erstellungsdatum"
 
-#: CRM/Contract/DAO/ContractPaymentLink.php
+#: CRM/Contract/DAO/ContractPaymentLink.php CRM/Contract/Form/Create.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 msgid "Start Date"
 msgstr "Startdatum"
 
-#: CRM/Contract/DAO/ContractPaymentLink.php
+#: CRM/Contract/DAO/ContractPaymentLink.php CRM/Contract/Form/Create.php
 msgid "End Date"
 msgstr "Enddatum"
 
@@ -109,15 +138,7 @@ msgstr "Neuen Vertrag für %1 erstellen"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment"
-msgstr "Zahlung"
-
-#: CRM/Contract/Form/Create.php
-msgid "create new mandate"
-msgstr "neues SEPA-Mandat"
-
-#: CRM/Contract/Form/Create.php
-msgid "select existing contract"
-msgstr "bestehenden Zahlungsvertrag wählen"
+msgstr "Zahlungsart"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
@@ -127,6 +148,7 @@ msgstr "Einzugstag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "IBAN"
@@ -150,21 +172,22 @@ msgstr "Kontoinhaber"
 msgid "Installment amount"
 msgstr "Einzugsbetrag"
 
+#: CRM/Contract/Form/Create.php
+msgid "Installment"
+msgstr "Einzugsbetrag"
+
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment Frequency"
 msgstr "Turnus"
 
 #: CRM/Contract/Form/Create.php
-msgid "Member since"
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+msgid "Member Since"
 msgstr "Mitglied seit"
 
 #: CRM/Contract/Form/Create.php
-msgid "Membership start date"
-msgstr "Mitgliedschaftsstartdatum"
-
-#: CRM/Contract/Form/Create.php
-msgid "End date"
-msgstr "Enddatum"
+msgid "if already known"
+msgstr "Falls bereits bekannt"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: templates/CRM/Contract/Page/Review.tpl
@@ -184,12 +207,8 @@ msgid "Reference number"
 msgstr "Referenznummer"
 
 #: CRM/Contract/Form/Create.php
-msgid "Contract number"
-msgstr "Vertragsnummer"
-
-#: CRM/Contract/Form/Create.php
-msgid "DD-Fundraiser"
-msgstr "Akquise durch"
+msgid "Membership Number"
+msgstr "Mitgliedsnummer"
 
 #: CRM/Contract/Form/Create.php
 msgid "Membership channel"
@@ -206,6 +225,14 @@ msgstr "Erstellen"
 #: CRM/Contract/Form/Create.php
 msgid "Join date cannot be in the future."
 msgstr "Eintrittsdatum kann nicht in der Zukunft liegen."
+
+#: CRM/Contract/Form/Create.php
+msgid "Join date cannot be after the start date."
+msgstr "Eintrittsdatum kann nicht nach dem Startdatum liegen."
+
+#: CRM/Contract/Form/Modify.php
+msgid "Missing the contract ID"
+msgstr "Vertrags-ID fehlt"
 
 #: CRM/Contract/Form/Modify.php
 msgid ""
@@ -233,6 +260,10 @@ msgid "Schedule date"
 msgstr "Geplantes Ausführungsdatum"
 
 #: CRM/Contract/Form/Modify.php
+msgid "now"
+msgstr "jetzt"
+
+#: CRM/Contract/Form/Modify.php
 msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
@@ -243,10 +274,6 @@ msgstr "Zahlungsvertrag anpassen"
 #: CRM/Contract/Form/Modify.php
 msgid "select other"
 msgstr "bestehender Zahlungsvertrag"
-
-#: CRM/Contract/Form/Modify.php
-msgid "no change"
-msgstr "keine Änderung"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Account Holder"
@@ -325,6 +352,46 @@ msgid "Contract modification reviewers"
 msgstr "Vertrags Reviewer"
 
 #: CRM/Contract/Form/Settings.php
+msgid "Adjust Incoming Date"
+msgstr "Eingangsdatum anpassen"
+
+#: CRM/Contract/Form/Settings.php
+msgid "don't"
+msgstr "nicht anpassen"
+
+#: CRM/Contract/Form/Settings.php
+msgid "up to 1 hour"
+msgstr "bis zu 1 Stunde"
+
+#: CRM/Contract/Form/Settings.php
+msgid "up to 2 hours"
+msgstr "bis zu 2 Stunden"
+
+#: CRM/Contract/Form/Settings.php
+msgid "up to 6 hours"
+msgstr "bis zu 6 Stunden"
+
+#: CRM/Contract/Form/Settings.php
+msgid "up to 12 hours"
+msgstr "bis zu 12 Stunden"
+
+#: CRM/Contract/Form/Settings.php
+msgid "up to 1 day"
+msgstr "bis zu 1 Tag"
+
+#: CRM/Contract/Form/Settings.php
+msgid "up to 2 days"
+msgstr "bis zu 2 Tage"
+
+#: CRM/Contract/Form/Settings.php
+msgid "always"
+msgstr "immer"
+
+#: CRM/Contract/Form/Settings.php
+msgid "PaymentTypes used"
+msgstr "Verwendete Zahlungsarten"
+
+#: CRM/Contract/Form/Settings.php
 msgid "Back"
 msgstr "Zurück"
 
@@ -335,6 +402,12 @@ msgstr "Speichern"
 #: CRM/Contract/Form/Settings.php
 msgid "Contract settings updated."
 msgstr "Vertragseinstellungen aktualisiert."
+
+#: CRM/Contract/Form/Settings.php
+#: CRM/Contract/Form/Task/AssignContributions.php
+#: CRM/Contract/Form/Task/DetachContributions.php
+msgid "Success"
+msgstr "Erfolg"
 
 #: CRM/Contract/Form/Task/AssignContributions.php
 msgid "Assign %1 Contributions to:"
@@ -383,11 +456,6 @@ msgstr "Zuweisen"
 #: CRM/Contract/Form/Task/AssignContributions.php
 msgid "Assigned %1 contribution(s) to contract [%2]"
 msgstr "%1 Zuwendungen Vertrag [%2] zugewiesen."
-
-#: CRM/Contract/Form/Task/AssignContributions.php
-#: CRM/Contract/Form/Task/DetachContributions.php
-msgid "Success"
-msgstr ""
 
 #: CRM/Contract/Form/Task/AssignContributions.php
 msgid "Adjusted date range of recurring contribution [%1]"
@@ -488,11 +556,34 @@ msgstr "Zahlungsvertrag"
 msgid "NOT FOUND!"
 msgstr "NICHT GEFUNDEN!"
 
+#: CRM/Contract/FormUtils.php
+msgid "Referenced RecurringContribution [%1] couldn't be loaded/rendered."
+msgstr ""
+"Referenzierte wiederkehrende Zuwendung [%1] konnte nicht geladen/dargestellt "
+"werden."
+
+#: CRM/Contract/FormUtils.php
+msgid "Data Error"
+msgstr "Daten-Fehler"
+
 #: CRM/Contract/RecurringContribution.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+msgid "SEPA"
+msgstr "SEPA"
+
+#: CRM/Contract/RecurringContribution.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: js/contract_modify_tools.js resources/l10n.php
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr "Zahlungsart"
+
+#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+msgid "No payment required"
+msgstr "Keine Zahlung erforderlich"
+
+#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+msgid "Paid by"
+msgstr "Bezahlt von"
 
 #: CRM/Contract/RecurringContribution.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
@@ -521,10 +612,6 @@ msgstr "Bitte mindestens einen CiviSEPA Kreditor konfigurieren!"
 #: CRM/Contract/SepaLogic.php
 msgid "Serious Configuration Issue"
 msgstr "Konfigurationsproblem"
-
-#: CRM/Contract/Upgrader/Base.php
-msgid "Upgrade %1 to revision %2"
-msgstr ""
 
 #: CRM/Contract/Validation/ContractNumber.php
 msgid "Reference '%1' is already in use!"
@@ -631,10 +718,6 @@ msgid "Collection Day"
 msgstr "Einzugstag"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
-msgid "Member Since"
-msgstr "Mitglied seit"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Signature Date"
 msgstr "Unterschriftsdatum"
 
@@ -699,7 +782,9 @@ msgstr "Wiederkehrende Zuwendung / Mandat"
 msgid "Donor's Bank Account"
 msgstr "Konto der Spender_in"
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/ActionProvider/Action/ReviveContract.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
 msgid "Defer Payment Start"
 msgstr "Zahlungsbeginn aufschieben"
 
@@ -766,8 +851,8 @@ msgid ""
 "expert should you need such a form."
 msgstr ""
 "Es wurde kein Formular für die Schnellerfassung registriert, bitte verwenden "
-"Sie die \"Mitgliedschaft hinzufügen\" Funktion des Reiters \"Mitgliedschaften"
-"\" beim Kontakt."
+"Sie die \"Mitgliedschaft hinzufügen\" Funktion des Reiters "
+"\"Mitgliedschaften\" beim Kontakt."
 
 #: Civi/Contract/Event/RapidCreateFormEvent.php
 msgid "'Rapid Create' form not available"
@@ -810,12 +895,24 @@ msgid "Allow editing memberships using the core membership form"
 msgstr ""
 "Erlaubt das Bearbeiten von Mitgliedschaftern über die CiviCRM Kernfunktionen"
 
+#: js/contract_modify_tools.js
+msgid "Member name"
+msgstr "Mitgliedsname"
+
+#: js/contract_modify_tools.js
+msgid "Member account"
+msgstr "Kontoinhaber"
+
+#: js/contract_modify_tools.js
+msgid "Next collection"
+msgstr "Nächster Einzug"
+
 #: js/contract_modify_tools.js templates/CRM/Contract/Form/Create.tpl
 #: templates/CRM/Contract/Form/Modify.tpl
 msgid "None"
 msgstr "Keine"
 
-#: js/contract_modify_tools.js
+#: js/contract_modify_tools.js js/sepa_tools.js
 msgid "de.systopia.contract"
 msgstr "de.systopia.contract"
 
@@ -863,7 +960,7 @@ msgstr "Mitgliedschaftart"
 msgid "Increase"
 msgstr "Erhöhung"
 
-#: resources/l10n.php
+#: resources/l10n.php templates/CRM/Contract/Form/Create.tpl
 msgid "Payment Contract"
 msgstr "Vertrag pausieren"
 
@@ -972,6 +1069,17 @@ msgid "Contacts that will be notified of updates that need review."
 msgstr "Kontakte, die über zu prüfende updates informiert werden."
 
 #: templates/CRM/Contract/Form/Create.tpl
+msgid "Membership data"
+msgstr "Mitgliedschaftsdaten"
+
+#: templates/CRM/Contract/Form/Create.tpl
+msgid "Contract Preview"
+msgstr "Vertragsvorschau"
+
+#: templates/CRM/Contract/Form/Create.tpl
+msgid "Add Note"
+msgstr "Notiz hinzufügen"
+
 #: templates/CRM/Contract/Form/Modify.tpl
 msgid "Payment Preview"
 msgstr "Vorschau Zahlung"
@@ -979,6 +1087,61 @@ msgstr "Vorschau Zahlung"
 #: templates/CRM/Contract/Form/Modify.tpl
 msgid "(currently: %1)"
 msgstr "(aktuell: %1)"
+
+#: templates/CRM/Contract/Form/Settings.hlp
+msgid ""
+"The Contract extension allows you to define certain staff members as "
+"'reviewers', who would be asked to look into conflicts in the planned "
+"execution."
+msgstr ""
+"Die Contract-Erweiterung ermöglicht die Definition von Mitarbeitern als "
+"\"Gutachter\", die Einsicht in Konflikte bei der geplanten Ausführung von "
+"Vertragsänderungen erhalten."
+
+#: templates/CRM/Contract/Form/Settings.hlp
+msgid ""
+"The contract engine currently expects the API's <code>date</code> parameter "
+"(which is actually a datetime value) to be from the same day as the "
+"execution taking place."
+msgstr ""
+"Das Contract-System erwartet, dass der API-Parameter <code>date</code> (ein "
+"Datum-/Uhrzeitwert) den gleichen Tag bezeichnet, an dem die Ausführung "
+"stattfindet."
+
+#: templates/CRM/Contract/Form/Settings.hlp
+msgid ""
+"This was originally done, to make sure the created contract doesn't differ "
+"too much from the order, should it take a long time. Unfortunately this "
+"causes a break when, for example, some data is submitted shortly before a "
+"date change."
+msgstr ""
+
+#: templates/CRM/Contract/Form/Settings.hlp
+msgid ""
+"To mitigate this, you can use this option to adjust the incoming time to "
+"\"now\" when it's within the select time range."
+msgstr ""
+
+#: templates/CRM/Contract/Form/Settings.hlp
+msgid ""
+"Here you can select the payment instruments that are used with the contract "
+"extension."
+msgstr ""
+"Hier können die Zahlungsarten für die Verwendung mit der Contract-"
+"Erweiterung ausgewählt werden."
+
+#: templates/CRM/Contract/Form/Settings.hlp
+msgid "These will be used in the recurring contribution data structures"
+msgstr ""
+"Diese werden in der Datenstruktur der wiederkehrenden Zuwendungen verwendet"
+
+#: templates/CRM/Contract/Form/Settings.hlp
+msgid ""
+"The SEPA payment instrument allows you use SEPA Direct Debit mandates from "
+"the CiviSEPA Extension, if it is enable."
+msgstr ""
+"Die SEPA-Zahlungsart ermöglicht die Verwendung von SEPA-Lastschriftmandaten "
+"der CiviSEPA-Erweiterung, falls aktiviert."
 
 #: templates/CRM/Contract/Form/Settings.tpl
 msgid "Configuration Options for the Contract Extension"
@@ -1005,6 +1168,8 @@ msgid ""
 "Here you can select to assign the contributions not only to the membership "
 "but also to the recurring contribution (e.g. standing order)."
 msgstr ""
+"Hier kann die Zuweisung der Zuwendungen nicht nur zur Mitgliedschaft, "
+"sondern auch zur wiederkehrenden Zuwendung ausgewählt werden."
 
 #: templates/CRM/Contract/Form/Task/AssignContributions.hlp
 msgid ""
@@ -1066,9 +1231,23 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
 
-#: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
-msgid "new contract: %1"
-msgstr "Neuer %1 Vertrag"
+#~ msgid "create new mandate"
+#~ msgstr "neues SEPA-Mandat"
+
+#~ msgid "Membership start date"
+#~ msgstr "Mitgliedschaftsstartdatum"
+
+#~ msgid "End date"
+#~ msgstr "Enddatum"
+
+#~ msgid "Contract number"
+#~ msgstr "Vertragsnummer"
+
+#~ msgid "DD-Fundraiser"
+#~ msgstr "Akquise durch"
+
+#~ msgid "new contract: %1"
+#~ msgstr "Neuer %1 Vertrag"
 
 #~ msgid "modify"
 #~ msgstr "Ändern"
