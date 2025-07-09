@@ -129,7 +129,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
           $frequencyInterval,
           $campaignId
         );
-        CRM_Contract_SepaLogic::setContractPaymentLink($this->getContractID(), (int) $new_payment_contract['id']);
+        CRM_Contract_SepaLogic::setContractPaymentLink($this->getContractID(), (int) $new_payment_contract);
       }
       else {
         // adjust mandate/payment mode?
