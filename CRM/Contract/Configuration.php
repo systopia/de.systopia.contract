@@ -76,7 +76,7 @@ class CRM_Contract_Configuration {
     // default is all campaigns (pulled on first call)
     static $all_campaigns = NULL;
     if ($all_campaigns === NULL) {
-      $all_campaigns = ['' => ts('- none -')];
+      $all_campaigns = ['' => E::ts('- none -')];
       $campaign_query = civicrm_api3('Campaign', 'get', [
         'sequential'   => 1,
         'is_active'    => 1,
@@ -93,29 +93,11 @@ class CRM_Contract_Configuration {
   }
 
   /**
-   * Get a list of contract references that are excempt
-   * from the UNIQUE contraint.
+   * Get a list of contract references that are exempt from the UNIQUE contraint.
    */
   public static function getUniqueReferenceExceptions() {
-    // TODO: these are GP values,
-    //   create a setting to make more flexible
-    return [
-      'Einzug durch TAS',
-      'Vertrag durch TAS',
-      'Allgemeine Daueraufträge',
-      'Vertrag durch Directmail',
-      'Dauerauftrag neu',
-      'Vertrag durch Canvassing',
-      'Einzugsermächtigung',
-      'Frontline',
-      'Online-Spende',
-      'Greenpeace in Action',
-      'Online Spende',
-      'VOR',
-      'Internet',
-      'Onlinespende',
-      'Online-Spenden',
-    ];
+    // TODO: Create a setting to make more flexible.
+    return [];
   }
 
   /**

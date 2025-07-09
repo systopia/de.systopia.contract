@@ -127,7 +127,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       $mediumOptions[$key] = $value;
     }
     $this->add('select', 'activity_medium', E::ts('Source media'),
-      ['' => '- none -'] + $mediumOptions, FALSE, ['class' => 'crm-select2']);
+      ['' => E::ts('- none -')] + $mediumOptions, FALSE, ['class' => 'crm-select2']);
 
     // Add a note field
     $this->add('wysiwyg', 'activity_details', E::ts('Notes'));
@@ -242,7 +242,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     foreach (civicrm_api3(
       'MembershipType',
       'get',
-      ['options' => ['limit' => 0, 'sort' => 'weight']]
+      ['is_active' => 1, 'options' => ['limit' => 0, 'sort' => 'weight']]
     )['values'] as $MembershipType) {
       $MembershipTypeOptions[$MembershipType['id']] = $MembershipType['name'];
     }
@@ -250,7 +250,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       'select',
       'membership_type_id',
       E::ts('Membership type'),
-      ['' => '- none -'] + $MembershipTypeOptions,
+      ['' => E::ts('- none -')] + $MembershipTypeOptions,
       TRUE,
       ['class' => 'crm-select2']
     );
@@ -333,7 +333,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       'select',
       'cancel_reason',
       E::ts('Cancellation reason'),
-      ['' => '- none -'] + $cancelOptions,
+      ['' => E::ts('- none -')] + $cancelOptions,
       TRUE,
       ['class' => 'crm-select2 huge']
     );
