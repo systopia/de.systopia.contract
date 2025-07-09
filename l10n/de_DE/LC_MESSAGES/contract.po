@@ -993,10 +993,6 @@ msgid "Membership Channel"
 msgstr "Anwerbekanal"
 
 #: resources/l10n.php
-msgid "Dialoger"
-msgstr "Anwerber:in"
-
-#: resources/l10n.php
 msgid "Reference Number"
 msgstr "Referenznummer"
 
@@ -1242,9 +1238,6 @@ msgstr "Zahlte Vertrag"
 
 #~ msgid "Contract number"
 #~ msgstr "Vertragsnummer"
-
-#~ msgid "DD-Fundraiser"
-#~ msgstr "Akquise durch"
 
 #~ msgid "new contract: %1"
 #~ msgstr "Neuer %1 Vertrag"

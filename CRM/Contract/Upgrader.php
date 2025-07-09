@@ -27,15 +27,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   public function enable() {
-    // create sub-type 'Dialoger'
-    $dialoger_exists = civicrm_api3('ContactType', 'getcount', ['name' => 'Dialoger']);
-    if (!$dialoger_exists) {
-      civicrm_api3('ContactType', 'create', [
-        'name'      => 'Dialoger',
-        'parent_id' => 'Individual',
-      ]);
-    }
-
     require_once 'CRM/Contract/CustomData.php';
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
@@ -143,9 +134,16 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   public function upgrade_2001() {
-    $this->ctx->log->info('Add AWO contact types');
+    $this->ctx->log->info('Update contract types');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
+    return TRUE;
+  }
+
+  public function upgrade_2002() {
+    $this->ctx->log->info('Delete dialoger field on contract');
+    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
+    $customData->syncEntities(E::path('resources/custom_group_membership_general.json'));
     return TRUE;
   }
 

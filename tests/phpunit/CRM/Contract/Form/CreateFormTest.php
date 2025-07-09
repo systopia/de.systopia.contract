@@ -275,7 +275,6 @@ class CreateFormTest extends ContractTestBase {
       'payment_option' => $paymentOption,
       'join_date'      => date('Y-m-d'),
       'end_date'       => date('Y-m-d'),
-      'membership_dialoger' => '',
       'activity_details' => '',
       'payment_amount' => $paymentAmount,
       'payment_frequency' => '12',

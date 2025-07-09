@@ -321,7 +321,6 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
         // phpcs:disable Generic.Files.LineLength.TooLong
         'membership_payment.membership_recurring_contribution' => $params['membership_payment.membership_recurring_contribution'],
         // phpcs:enable
-        'membership_general.membership_dialoger' => $contact_id,
         'membership_payment.from_name' => 'Johannes',
         // membership_general.membership_contract   // Contract number
         // membership_general.membership_reference  // Reference number

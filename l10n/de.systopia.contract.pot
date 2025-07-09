@@ -863,10 +863,6 @@ msgid "Membership Channel"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Dialoger"
-msgstr ""
-
-#: resources/l10n.php
 msgid "Reference Number"
 msgstr ""
 
