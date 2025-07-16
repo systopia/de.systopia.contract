@@ -78,8 +78,12 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
     if (
       isset($contract_update['membership_payment.payment_instrument'])
-      && $payment_types['RCUR'] === $contract_before['membership_payment.payment_instrument']
-      && $payment_types['RCUR'] !== $contract_update['membership_payment.payment_instrument']
+      && CRM_Contract_RecurringContribution::isSepaPaymentInstrument(
+        $contract_before['membership_payment.payment_instrument']
+      )
+      && !CRM_Contract_RecurringContribution::isSepaPaymentInstrument(
+        $contract_update['membership_payment.payment_instrument']
+      )
     ) {
       // Terminate mandate if payment instrument changed from SEPA to anything else.
       CRM_Contract_SepaLogic::terminateSepaMandate(

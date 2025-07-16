@@ -17,8 +17,8 @@ class CRM_Contract_RecurringContribution {
   /**
    * cached variables */
   protected $paymentInstruments = NULL;
-  protected $sepaPaymentInstruments = NULL;
-  static protected $cached_results = [];
+  protected static $sepaPaymentInstruments = NULL;
+  protected static $cached_results = [];
 
   /**
    * Return a detailed list of recurring contribution
@@ -168,7 +168,7 @@ class CRM_Contract_RecurringContribution {
 
     $paymentInstruments = $this->getPaymentInstruments();
     $paymentInstrumentId = isset($cr['payment_instrument_id']) ? (int) $cr['payment_instrument_id'] : NULL;
-    if ($this->isSepaPaymentInstrument($paymentInstrumentId)) {
+    if (CRM_Contract_RecurringContribution::isSepaPaymentInstrument($paymentInstrumentId)) {
       // this is a SEPA contract
       $result['fields'] = [
         'display_name' => $contact['display_name'],
@@ -298,7 +298,9 @@ class CRM_Contract_RecurringContribution {
    */
   public function writePaymentContractLabel($contributionRecur) {
     $paymentInstruments = $this->getPaymentInstruments();
-    if (in_array($contributionRecur['payment_instrument_id'], $this->getSepaPaymentInstruments())) {
+    if (in_array($contributionRecur['payment_instrument_id'],
+      CRM_Contract_RecurringContribution::getSepaPaymentInstruments()
+    )) {
       $sepaMandate = civicrm_api3('SepaMandate', 'getsingle', [
         'entity_table' => 'civicrm_contribution_recur',
         'entity_id' => $contributionRecur['id'],
@@ -337,11 +339,13 @@ class CRM_Contract_RecurringContribution {
 
   /**
    * Get all CiviSEPA payment instruments(?)
+   *
+   * @return mixed
    * @author Michael
    */
-  public function getSepaPaymentInstruments() {
-    if (!isset($this->sepaPaymentInstruments)) {
-      $this->sepaPaymentInstruments = [];
+  public static function getSepaPaymentInstruments() {
+    if (!isset(static::$sepaPaymentInstruments)) {
+      static::$sepaPaymentInstruments = [];
       $result = civicrm_api3(
         'OptionValue',
         'get',
@@ -351,11 +355,11 @@ class CRM_Contract_RecurringContribution {
         ]
       );
       foreach ($result['values'] as $paymentInstrument) {
-        $this->sepaPaymentInstruments[] = $paymentInstrument['value'];
+        static::$sepaPaymentInstruments[] = $paymentInstrument['value'];
       }
     }
 
-    return $this->sepaPaymentInstruments;
+    return static::$sepaPaymentInstruments;
   }
 
   /**
@@ -367,8 +371,8 @@ class CRM_Contract_RecurringContribution {
    * @return bool
    *   is it SEPA?
    */
-  public function isSepaPaymentInstrument(?int $payment_instrument_id) {
-    return in_array($payment_instrument_id, $this->getSepaPaymentInstruments());
+  public static function isSepaPaymentInstrument(?int $payment_instrument_id) {
+    return in_array($payment_instrument_id, CRM_Contract_RecurringContribution::getSepaPaymentInstruments());
   }
 
   /**
