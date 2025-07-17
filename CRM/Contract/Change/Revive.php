@@ -61,6 +61,7 @@ class CRM_Contract_Change_Revive extends CRM_Contract_Change_Upgrade {
         'url'   => 'civicrm/contract/modify',
         'bit'   => CRM_Core_Action::UPDATE,
         'qs'    => 'modify_action=revive&id=%%id%%',
+        'weight' => 30,
       ];
     }
   }
