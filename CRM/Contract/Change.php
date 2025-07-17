@@ -67,6 +67,8 @@ abstract class CRM_Contract_Change {
    */
   protected static ?array $_type_id2class = NULL;
 
+  protected static ?array $_type_id2label = NULL;
+
   /**
    * Maps the contract fields to the change activity fields
    */
@@ -702,6 +704,18 @@ abstract class CRM_Contract_Change {
 
     // not found? not one of ours!
     return NULL;
+  }
+
+  public static function getActionLabels(): array {
+    if (!isset(self::$_type_id2label)) {
+      self::$_type_id2label = Civi\Api4\OptionValue::get(FALSE)
+        ->addSelect('value', 'label')
+        ->addWhere('name', 'IN', array_keys(\CRM_Contract_Change::TYPE2CLASS))
+        ->execute()
+        ->indexBy('value')
+        ->column('label');
+    }
+    return self::$_type_id2label;
   }
 
   /**
