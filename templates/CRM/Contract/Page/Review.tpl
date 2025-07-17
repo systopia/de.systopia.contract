@@ -48,7 +48,11 @@
       <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$a.source_contact_id`"}">{$contacts[$a.source_contact_id]}</a></td>
 
       <td>{$activityStatuses[$a.status_id]}</td>
-      <td>{if $activityStatuses[$a.status_id] neq 'Completed'} <a class="edit-activity" href="{crmURL p='civicrm/activity/add' q="action=update&reset=1&id=`$a.id`&context=activity&searchContext=activity&cid=`$a.target_contact_id.0`"}" class="create-mandate">edit</a> {/if}</td>
+      <td>
+        {if $activityStatuses[$a.status_id] neq 'Completed'}
+          <a class="edit-activity" href="{crmURL p='civicrm/activity/add' q="action=update&reset=1&id=`$a.id`&context=activity&searchContext=activity&cid=`$a.target_contact_id.0`"}">edit</a>
+        {/if}
+      </td>
     </tr>
   {/foreach}
 </table>

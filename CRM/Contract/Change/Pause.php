@@ -180,6 +180,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
         'url'   => 'civicrm/contract/modify',
         'bit'   => CRM_Core_Action::UPDATE,
         'qs'    => 'modify_action=pause&id=%%id%%',
+        'weight' => 20,
       ];
     }
   }
