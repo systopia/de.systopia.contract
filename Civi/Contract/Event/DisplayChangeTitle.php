@@ -106,10 +106,9 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
       return $this->change_activity_display_title;
     }
     else {
-      // Default is "id {change action}".
-      $activity_class = CRM_Contract_Change::getClassByActivityType($this->change_activity_type_id);
-      $activity_name = CRM_Contract_Change::getActionByClass($activity_class);
-      return "{$this->change_activity_id} {$activity_name}";
+      // Default is activity type label.
+      $type_id2label = \CRM_Contract_Change::getActionLabels();
+      return $type_id2label[$this->change_activity_type_id];
     }
   }
 
