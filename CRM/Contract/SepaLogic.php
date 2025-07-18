@@ -68,6 +68,7 @@ class CRM_Contract_SepaLogic {
       'contract_updates.ch_cycle_day'              => 'membership_payment.cycle_day',
       'contract_updates.ch_recurring_contribution' => 'membership_payment.membership_recurring_contribution',
       'contract_updates.ch_defer_payment_start'    => 'membership_payment.defer_payment_start',
+      'contract_updates.ch_payment_instrument' => 'membership_payment.payment_instrument',
     ];
 
     // calculate changes to see whether we have to act

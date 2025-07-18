@@ -373,6 +373,10 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
           'id' => (int) $defaults['recurring_contribution'],
           'return' => 'cycle_day',
         ]);
+        $defaults['payment_amount'] = \civicrm_api3('ContributionRecur', 'getvalue', [
+          'id' => (int) $defaults['recurring_contribution'],
+          'return' => 'amount',
+        ]);
       }
       $defaults['payment_frequency'] = $this->membership[CRM_Contract_Utils::getCustomFieldId(
         'membership_payment.membership_frequency'
