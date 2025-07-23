@@ -146,6 +146,10 @@ class CRM_Contract_Configuration {
     }
   }
 
+  public static function isCreateNewPaymentType(string $paymentTypeName): bool {
+    return in_array($paymentTypeName, ['RCUR', 'Cash', 'EFT']);
+  }
+
   /**
    * Retrieve the payment instrument ID for the given payment mode
    *

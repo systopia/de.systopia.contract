@@ -275,7 +275,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     }
 
     // check if all values for 'create new mandate' are there
-    if ($submitted['payment_option'] == 'create') {
+    if (CRM_Contract_Configuration::isCreateNewPaymentType($submitted['payment_option'])) {
       $amountRaw = (float) ($submitted['payment_amount'] ?? 0);
       $frequencyRaw = (int) ($submitted['payment_frequency'] ?? 0);
 
@@ -288,33 +288,35 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         $this->setElementError('payment_amount', 'Annual amount too small.');
       }
 
-      // format IBAN and BIC
-      if (isset($this->_submitValues['iban'])) {
-        $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
-        $this->_submitValues['iban'] = $submitted['iban'];
-      }
-      if (isset($this->_submitValues['bic'])) {
-        $submitted['bic'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['bic']);
-        $this->_submitValues['bic'] = $submitted['bic'];
-      }
+      if ('RCUR' === $submitted['payment_option']) {
+        // format IBAN and BIC
+        if (isset($this->_submitValues['iban'])) {
+          $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
+          $this->_submitValues['iban'] = $submitted['iban'];
+        }
+        if (isset($this->_submitValues['bic'])) {
+          $submitted['bic'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['bic']);
+          $this->_submitValues['bic'] = $submitted['bic'];
+        }
 
-      // SEPA validation
-      if (empty($submitted['iban'])) {
-        $this->setElementError('iban', 'Die IBAN wird benötigt');
-      }
+        // SEPA validation
+        if (empty($submitted['iban'])) {
+          $this->setElementError('iban', 'Die IBAN wird benötigt');
+        }
 
-      if (empty($submitted['bic'])) {
-        $submitted['bic'] = 'NOTPROVIDED';
-      }
+        if (empty($submitted['bic'])) {
+          $submitted['bic'] = 'NOTPROVIDED';
+        }
 
-      if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
-        $this->setElementError('iban', 'invalid IBAN');
-      }
-      if (!empty($submitted['iban']) && CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
-        $this->setElementError('iban', "Pleas don't use the organisation's IBAN");
-      }
-      if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
-        $this->setElementError('bic', 'Please enter a valid BIC.');
+        if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
+          $this->setElementError('iban', 'invalid IBAN');
+        }
+        if (!empty($submitted['iban']) && CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
+          $this->setElementError('iban', "Pleas don't use the organisation's IBAN");
+        }
+        if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
+          $this->setElementError('bic', 'Please enter a valid BIC.');
+        }
       }
     }
 

@@ -68,28 +68,34 @@
     <div class="clear"></div>
   </div>
 
-  <div class="crm-section payment-create">
+  <div class="crm-section payment-sepa">
     <div class="label">{$form.cycle_day.label}</div>
     <div class="content">{$form.cycle_day.html}</div>
     <div class="clear"></div>
   </div>
-  <div class="crm-section payment-create">
-    <div class="label">{$form.iban.label}</div>
+  <div class="crm-section payment-sepa">
+    <div class="label">
+      {$form.iban.label}
+      <span class="crm-marker" title="{ts}This field is required.{/ts}">*</span>
+    </div>
     <div class="content">{$form.iban.html}</div>
     <div class="clear"></div>
   </div>
-  <div class="crm-section payment-create">
+  <div class="crm-section payment-sepa">
     <div class="label">{$form.bic.label}</div>
     <div class="content">{$form.bic.html}</div>
     <div class="clear"></div>
   </div>
-  <div class="crm-section payment-create">
+  <div class="crm-section payment-sepa">
     <div class="label">{$form.account_holder.label}</div>
     <div class="content">{$form.account_holder.html}</div>
     <div class="clear"></div>
   </div>
   <div class="crm-section payment-create">
-    <div class="label">{$form.payment_amount.label}</div>
+    <div class="label">
+      {$form.payment_amount.label}
+      <span class="crm-marker" title="{ts}This field is required.{/ts}">*</span>
+    </div>
     <div class="content">{$form.payment_amount.html}&nbsp;<span id="payment_amount_currency"></span></div>
     <div class="clear"></div>
   </div>
