@@ -185,6 +185,11 @@ class CRM_Contract_RecurringContribution {
         );
         // phpcs:enable
       }
+      $mandateReference = '';
+      if (is_array($mandate) && isset($mandate['reference'])) {
+        $mandateReference = $mandate['reference'];
+      }
+
       $sepa_creditor_id = $mandate['creditor_id'] ?? NULL;
       $result['fields']['iban'] = $mandate['iban'] ?? '';
       $result['fields']['bic'] = $mandate['bic'] ?? '';
@@ -192,7 +197,7 @@ class CRM_Contract_RecurringContribution {
       $result['fields']['creditor_name'] = $sepa_creditor_id ? ($sepaCreditors[$sepa_creditor_id]['name']) : '';
       $result['fields']['next_debit'] = substr($cr['next_sched_contribution_date'] ?? '', 0, 10);
       $result['label'] =
-        "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandate['reference']})";
+        "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandateReference})";
       // todo: use template? consolidate with payment preview
       $result['text_summary'] =
         E::ts('Debitor name') . ": {$result['fields']['display_name']}<br /> " .
@@ -216,7 +221,7 @@ class CRM_Contract_RecurringContribution {
         'next_debit' => '?',
       ];
 
-      if (!$result['fields']['payment_instrument']) {
+      if ($result['fields']['payment_instrument'] == 'No payment required') {
         $result['text_summary'] = E::ts('No payment required');
         $result['label'] = E::ts('No payment required');
       }

@@ -43,122 +43,137 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       $this->data['subject'] = $this->getSubject($contract_after_execution, $contract);
     }
   }
+  private static $paymentTransitions = [
+    'SEPA' => [
+      'SEPA'    => 'terminate_create_sepa',
+      'non-SEPA'=> 'terminate_create_nonsepa',
+      'existing'=> 'terminate_assign_existing',
+      'None'    => 'terminate_create_zero',
+    ],
+    'non-SEPA' => [
+      'SEPA'    => 'end_create_sepa',
+      'non-SEPA'=> 'end_create_nonsepa',
+      'existing'=> 'end_assign_existing',
+      'None'    => 'end_create_zero',
+    ],
+    'existing' => [
+      'SEPA'    => 'end_create_sepa',
+      'non-SEPA'=> 'end_create_nonsepa',
+      'existing'=> 'end_assign_existing',
+      'None'    => 'end_create_zero',
+    ],
+    'None' => [
+      'SEPA'    => 'endzero_create_sepa',
+      'non-SEPA'=> 'endzero_create_nonsepa',
+      'existing'=> 'endzero_assign_existing',
+      'None'    => 'no_change',
+    ],
+  ];
 
-  /**
-   * Apply the given change to the contract
-   *
-   * @throws Exception should anything go wrong in the execution
-   */
+  private static function getPaymentTransitionActions()
+  {
+    return [
+      'terminate_create_sepa' => function ($self, $contract_before, $to, $types) {
+        $self->terminateSepaMandate($contract_before);
+        return $self->createSepaMandate($contract_before, $to, $types);
+      },
+      'terminate_create_nonsepa' => function ($self, $contract_before, $to, $types) {
+        $self->terminateSepaMandate($contract_before);
+        return $self->createNonSepaRecurring($contract_before, $to, $types);
+      },
+      'terminate_assign_existing' => function ($self, $contract_before, $to, $types) {
+        $self->terminateSepaMandate($contract_before);
+        $self->assignExistingRecurringContribution($contract_before, $to);
+        return null;
+      },
+      'terminate_create_zero' => function ($self, $contract_before, $to, $types) {
+        $self->terminateSepaMandate($contract_before);
+        return $self->createNonSepaRecurring($contract_before, $to, $types, 0);
+      },
+      'end_create_sepa' => function ($self, $contract_before, $to, $types) {
+        $self->endRecurringContribution($contract_before);
+        return $self->createSepaMandate($contract_before, $to, $types);
+      },
+      'end_create_nonsepa' => function ($self, $contract_before, $to, $types) {
+        $self->endRecurringContribution($contract_before);
+        return $self->createNonSepaRecurring($contract_before, $to, $types);
+      },
+      'end_assign_existing' => function ($self, $contract_before, $to, $types) {
+        $self->endRecurringContribution($contract_before);
+        $self->assignExistingRecurringContribution($contract_before, $to);
+        return null;
+      },
+      'end_create_zero' => function ($self, $contract_before, $to, $types) {
+        $self->endRecurringContribution($contract_before);
+        return $self->createNonSepaRecurring($contract_before, $to, $types, 0);
+      },
+      'endzero_create_sepa' => function ($self, $contract_before, $to, $types) {
+        $self->endRecurringContributionZero($contract_before);
+        return $self->createSepaMandate($contract_before, $to, $types);
+      },
+      'endzero_create_nonsepa' => function ($self, $contract_before, $to, $types) {
+        $self->endRecurringContributionZero($contract_before);
+        return $self->createNonSepaRecurring($contract_before, $to, $types);
+      },
+      'endzero_assign_existing' => function ($self, $contract_before, $to, $types) {
+        $self->endRecurringContributionZero($contract_before);
+        $self->assignExistingRecurringContribution($contract_before, $to);
+        return null;
+      },
+      'no_change' => function ($self, $contract_before, $to, $types) {
+        return null;
+      }
+    ];
+  }
+
   public function execute(): void {
     $contract_before = $this->getContract(TRUE);
-
-    // compile upgrade
     $contract_update = [];
 
-    // adjust membership type?
     $membership_type_update = $this->getParameter('contract_updates.ch_membership_type');
-    if ($membership_type_update) {
-      if ($contract_before['membership_type_id'] != $membership_type_update) {
-        $contract_update['membership_type_id'] = $membership_type_update;
-      }
-    }
-    else {
-      // FIXME: replicating weird behaviour by old engine
-      $this->setParameter('contract_updates.ch_membership_type', $contract_before['membership_type_id']);
-    }
 
-    // check payemnt instrument for the new contract
-    // TODO: Account for changes of payment instrument when SEPA is not involved.
-    $payment_instrument_update = $this->getParameter('contract_updates.ch_payment_instrument');
-    if (NULL !== $payment_instrument_update) {
-      if ($contract_before['membership_payment.payment_instrument'] != $payment_instrument_update) {
-        $contract_update['membership_payment.payment_instrument'] = $payment_instrument_update;
-      }
-    }
-    $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
-    if (
-      isset($contract_update['membership_payment.payment_instrument'])
-      && CRM_Contract_RecurringContribution::isSepaPaymentInstrument(
-        $contract_before['membership_payment.payment_instrument']
-      )
-      && !CRM_Contract_RecurringContribution::isSepaPaymentInstrument(
-        $contract_update['membership_payment.payment_instrument']
-      )
-    ) {
-      // Terminate mandate if payment instrument changed from SEPA to anything else.
-      CRM_Contract_SepaLogic::terminateSepaMandate(
-        $contract_before['membership_payment.membership_recurring_contribution']
-      );
+    if ($membership_type_update ) {
+      $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
 
-      // Create new recurring contribution for new payment method.
-      $completeContractUpdate = $contract_update + $contract_before;
+      $from = $contract_before['membership_payment.payment_instrument'] ?? null;
+      $to = $this->getParameter('contract_updates.ch_payment_instrument') ?? $from;
 
-      $frequency = $this->getParameter('contract_updates.ch_frequency')
-        ?? $contract_before['membership_payment.membership_frequency'];
+      $fromType = $this->classifyPaymentInstrument($from, $payment_types);
+      $toType = $this->classifyPaymentInstrument($to, $payment_types);
 
-      $annual_amount = $this->getParameter('contract_updates.ch_annual')
-        ?? $contract_before['membership_payment.membership_annual'];
+      $transition = self::$paymentTransitions[$fromType][$toType] ?? 'no_change';
 
-      $frequencyInterval = 12 / $frequency;
-      $amount = CRM_Contract_SepaLogic::formatMoney(CRM_Contract_SepaLogic::formatMoney($annual_amount) / $frequency);
-      if ($amount < 0.01) {
-        // TODO: Exception being thrown does not invalidate the modify form.
-        throw new Exception('Installment amount too small');
+      $actions = self::getPaymentTransitionActions();
+
+      $action = $actions[$transition] ?? $actions['no_change'];
+
+      $new_payment_contract = $action($this, $contract_before, $to, $payment_types);
+
+      if ($from !== $to) {
+        $contract_update['membership_payment.payment_instrument'] = $to;
       }
 
-      $startDate = CRM_Contract_SepaLogic::getMandateUpdateStartDate($contract_before, $this->data, $this->data);
-
-      $accountHolder = $this->getParameter('contract_updates.ch_from_name')
-        ?? $contract_before['membership_payment.from_name'];
-
-      $cycleDay = (int) ($this->getParameter('contract_updates.ch_cycle_day')
-        ?? $contract_before['membership_payment.cycle_day']);
-
-      if (isset($contract_before['membership_payment.membership_recurring_contribution'])) {
-        $recurringContribution = civicrm_api3(
-          'ContributionRecur',
-          'getsingle',
-          ['id' => $contract_before['membership_payment.membership_recurring_contribution']]
-        );
+      if ($new_payment_contract) {
+        $contract_update['membership_payment.membership_recurring_contribution'] = $new_payment_contract;
       }
-      $campaignId = $this->getParameter('campaign_id') ?? $recurringContribution['campaign_id'] ?? NULL;
-      $campaignId = is_numeric($campaignId) ? (int) $campaignId : NULL;
 
-      $new_payment_contract = CRM_Contract_RecurringContribution::createRecurringContribution(
-        (int) $completeContractUpdate['contact_id'],
-        $amount,
-        $startDate,
-        $accountHolder,
-        array_search($completeContractUpdate['membership_payment.payment_instrument'], $payment_types),
-        $cycleDay,
-        $frequencyInterval,
-        $campaignId
-      );
-      CRM_Contract_SepaLogic::setContractPaymentLink($this->getContractID(), (int) $new_payment_contract);
-    }
-    else {
-      // adjust mandate/payment mode?
+    } else {
       $new_payment_contract = CRM_Contract_SepaLogic::updateSepaMandate(
-        $this->getContractID(),
-        $contract_before,
-        $this->data,
-        $this->data,
-        $this->getActionName()
-      );
+          $this->getContractID(),
+          $contract_before,
+          $this->data,
+          $this->data,
+          $this->getActionName()
+        );
+      if ($new_payment_contract) {
+        $contract_update['membership_payment.membership_recurring_contribution'] = $new_payment_contract;
+      }
     }
 
-    if ($new_payment_contract) {
-      // this means a new mandate has been created -> set
-      $contract_update['membership_payment.membership_recurring_contribution'] = $new_payment_contract;
-    }
-
-    // perform the update
     $this->updateContract($contract_update);
 
-    // update change activity
     $contract_after = $this->getContract();
     foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $membership_field => $change_field) {
-      // copy fields
       if (isset($contract_after[$membership_field])) {
         $this->setParameter($change_field, $contract_after[$membership_field]);
       }
@@ -174,29 +189,91 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     $this->save();
   }
 
-  /**
-   * Check whether this change activity should actually be created
-   *
-   * CANCEL activities should not be created, if there is another one already there
-   *
-   * @throws Exception if the creation should be disallowed
-   */
-  public function shouldBeAccepted() {
-    parent::shouldBeAccepted();
 
-    // TODO:
+  private function classifyPaymentInstrument($id, $payment_types): string {
+    switch ($id) {
+      case $payment_types['RCUR']:
+        return 'SEPA';
+      case $payment_types['Cash']:
+      case $payment_types['EFT']:
+        return 'non-SEPA';
+      case isset($payment_types['None']) ? $payment_types['None'] : '9':
+      case '9':
+        return 'None';
+      default:
+        return 'other';
+    }
   }
 
-  /**
-   * Render the default subject
-   *
-   * @param $contract_after       array  data of the contract after
-   * @param $contract_before      array  data of the contract before
-   * @return                      string the subject line
-   */
+  private function terminateSepaMandate($contract) {
+    if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
+      CRM_Contract_SepaLogic::terminateSepaMandate($contract['membership_payment.membership_recurring_contribution']);
+    }
+  }
+
+  private function endRecurringContribution($contract) {
+    if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
+      try {
+        civicrm_api3('ContributionRecur', 'cancel', [
+          'id' => $contract['membership_payment.membership_recurring_contribution'],
+        ]);
+      } catch (\Exception $e) {
+        // Already cancelled or does not exist
+      }
+    }
+  }
+
+  private function endRecurringContributionZero($contract) {
+    if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
+      try {
+        civicrm_api3('ContributionRecur', 'cancel', [
+          'id' => $contract['membership_payment.membership_recurring_contribution'],
+          'amount' => 0,
+        ]);
+      } catch (\Exception $e) {
+        // Already cancelled or does not exist
+      }
+    }
+  }
+
+  private function createSepaMandate($contract, $paymentInstrumentId, $payment_types) {
+    return CRM_Contract_SepaLogic::updateSepaMandate(
+      $this->getContractID(),
+      $contract,
+      $this->data,
+      $this->data,
+      $this->getActionName()
+    );
+  }
+
+  private function createNonSepaRecurring($contract, $paymentInstrumentId, $payment_types, $amount = null) {
+    $finalAmount = $amount !== null
+      ? (float) $amount
+      : ((float) $contract['membership_payment.membership_annual'] / (float) $contract['membership_payment.membership_frequency']);
+    $cycleDay = isset($contract['membership_payment.cycle_day']) ? (int) $contract['membership_payment.cycle_day'] : 1;
+    $accountHolder = $contract['membership_payment.from_name'] ?? 'Holder';
+    $startDate = date('Y-m-d');
+    $frequency = (int) $contract['membership_payment.membership_frequency'];
+    $campaignId = $contract['campaign_id'] ?? null;
+
+    return CRM_Contract_RecurringContribution::createRecurringContribution(
+      (int) $contract['contact_id'],
+      (string) $finalAmount,
+      $startDate,
+      $accountHolder,
+      $paymentInstrumentId,
+      $cycleDay,
+      12 / $frequency,
+      $campaignId
+    );
+  }
+
+  private function assignExistingRecurringContribution($contract, $paymentInstrumentId) {
+
+  }
+
   public function renderDefaultSubject($contract_after, $contract_before = NULL) {
     if ($this->isNew()) {
-      // FIXME: replicating weird behaviour by old engine
       $contract_before = [];
       unset($contract_after['membership_type_id']);
       unset($contract_after['membership_payment.from_ba']);
@@ -273,7 +350,6 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         'url'   => 'civicrm/contract/modify',
         'bit'   => CRM_Core_Action::UPDATE,
         'qs'    => 'modify_action=update&id=%%id%%',
-        'weight' => 10,
       ];
     }
   }

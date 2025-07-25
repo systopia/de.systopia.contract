@@ -93,6 +93,32 @@ class CreateFormTest extends ContractTestBase {
       ])
       ->execute()
       ->single();
+    $paymentOptionGroup = OptionGroup::save(TRUE)
+      ->addRecord([
+        'name' => 'payment_instrument',
+        'title' => 'Payment Instrument',
+        'is_active' => 1,
+      ])
+      ->setMatch(['name'])
+      ->execute()
+      ->single();
+
+    $paymentOptionGroupId = $paymentOptionGroup['id'];
+
+    OptionValue::save(TRUE)
+      ->addRecord([
+        'option_group_id' => $paymentOptionGroupId,
+        'label' => 'No Payment required',
+        'name' => 'None',
+        'value' => 100,
+        'is_active' => 1,
+        'is_reserved' => 0,
+        'weight' => 99,
+      ])
+      ->setMatch(['option_group_id', 'name'])
+      ->execute()
+      ->single();
+
   }
 
   private function setupRecurContributionStatus(): void {
@@ -220,8 +246,8 @@ class CreateFormTest extends ContractTestBase {
       'create + 1' => ['create', 1],
       'RCUR + null' => ['RCUR', NULL],
       'RCUR + 1' => ['RCUR', 1],
-      'None + null' => ['none', NULL],
-      'None + 1' => ['none', 1],
+      'None + null' => ['None', NULL],
+      'None + 1' => ['None', 1],
       'empty + null' => ['', NULL],
       'empty + 1' => ['', 1],
     ];
@@ -232,7 +258,7 @@ class CreateFormTest extends ContractTestBase {
    */
   public function paymentOptionDataProvider(): array {
     return [
-      'none + 0' => ['none', 0],
+      'None + 0' => ['None', 0],
       'RCUR + 120' => ['RCUR', 120],
     ];
   }
@@ -304,7 +330,7 @@ class CreateFormTest extends ContractTestBase {
     self::assertEquals($this->membershipType['id'], $contract['membership_type_id']);
     self::assertEquals('TEST-001', $contract['membership_general.membership_contract']);
     self::assertEquals('REF-001', $contract['membership_general.membership_reference']);
-    if ($paymentOption == 'none') {
+    if ($paymentOption == 'None') {
       self::assertEquals('0.00', $contract['membership_payment.membership_annual']);
 
     }

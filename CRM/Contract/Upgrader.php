@@ -24,6 +24,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
    */
   public function install() {
     $this->executeSqlFile('sql/contract.sql');
+    $this->ensureNoPaymentRequiredPaymentInstrument();
   }
 
   public function enable() {
@@ -42,13 +43,13 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     $customData->syncEntities(E::path('resources/entities_membership_status.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
   }
 
   public function postInstall() {
   }
 
-  public function uninstall() {
-  }
+  public function uninstall() {}
 
   /**
    * Add custom field "defer_payment_start"
@@ -61,12 +62,14 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
   public function upgrade_1370() {
     $this->ctx->log->info('Applying update 1370');
     $this->executeSqlFile('sql/contract.sql');
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -74,6 +77,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Applying update 1390');
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -83,6 +87,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -91,6 +96,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncOptionGroup(E::path('resources/custom_group_membership_payment.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -108,6 +114,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -115,6 +122,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Hide/filter activity types');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -123,6 +131,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -130,6 +139,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Adjust filters for contract actions');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -137,6 +147,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Update contract types');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -144,7 +155,49 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Delete dialoger field on contract');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/custom_group_membership_general.json'));
+    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
+  }
+
+  protected function ensureNoPaymentRequiredPaymentInstrument() {
+    try {
+      $optionGroup = civicrm_api3('OptionGroup', 'getsingle', [
+        'name' => 'payment_instrument',
+      ]);
+    } catch (Exception $e) {
+      return;
+    }
+
+    $existing = civicrm_api3('OptionValue', 'get', [
+      'option_group_id' => $optionGroup['id'],
+      'name' => 'no_payment_required',
+      'return' => 'id',
+    ]);
+    if ($existing['count'] > 0) {
+      return;
+    }
+
+    civicrm_api3('OptionValue', 'create', [
+      'option_group_id' => $optionGroup['id'],
+      'label' => 'No payment required',
+      'name' => 'no_payment_required',
+      'value' => $this->findNextAvailablePaymentInstrumentValue($optionGroup['id']),
+      'is_active' => 1,
+      'is_reserved' => 0,
+      'weight' => 99,
+    ]);
+  }
+
+  protected function findNextAvailablePaymentInstrumentValue($optionGroupId) {
+    $values = civicrm_api3('OptionValue', 'get', [
+      'option_group_id' => $optionGroupId,
+      'options' => ['limit' => 0],
+      'return' => ['value'],
+    ]);
+    $used = array_map('intval', array_column($values['values'], 'value'));
+    $next = 1;
+    while (in_array($next, $used)) $next++;
+    return $next;
   }
 
 }

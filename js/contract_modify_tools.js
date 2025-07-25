@@ -20,7 +20,7 @@
       $('div.payment-select').show(300);
 
     }
-    else if (new_mode === 'none') {
+    else if (new_mode === 'None') {
       $('div.payment-select').hide(300);
       $('div.payment-create').hide(300);
       $('div.payment-sepa').hide(300);
@@ -141,7 +141,7 @@
       }
 
     }
-    else if (mode === 'none') {
+    else if (mode === 'None') {
       $('#payment_amount').attr('placeholder', 0);
       $('.recurring-contribution-summary-text').html(ts('No payment required'));
       // NO CHANGE TO CONTRACT
