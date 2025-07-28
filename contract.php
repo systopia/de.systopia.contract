@@ -75,11 +75,17 @@ function contract_civicrm_pageRun(&$page) {
   elseif ($page_name == 'CRM_Member_Page_Tab') {
     // thus is the membership summary tab
     $contractStatuses = [];
-    foreach (civicrm_api3('Membership', 'get', ['contact_id' => $page->_contactId])['values'] as $contract) {
+    foreach (
+      civicrm_api3(
+        'Membership',
+        'get',
+        ['contact_id' => $page->_contactId, 'options' => ['limit' => 0]]
+      )['values'] as $contract
+    ) {
       $contractStatuses[$contract['id']] = civicrm_api3(
         'Contract',
         'get_open_modification_counts',
-        ['id' => $contract['id']]
+        ['id' => $contract['id'], 'options' => ['limit' => 0]]
       )['values'];
     }
     CRM_Core_Resources::singleton()->addStyleFile(E::LONG_NAME, 'css/contract.css');

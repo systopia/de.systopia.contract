@@ -17,8 +17,8 @@ class CRM_Contract_RecurringContribution {
   /**
    * cached variables */
   protected $paymentInstruments = NULL;
-  protected $sepaPaymentInstruments = NULL;
-  static protected $cached_results = [];
+  protected static $sepaPaymentInstruments = NULL;
+  protected static $cached_results = [];
 
   /**
    * Return a detailed list of recurring contribution
@@ -168,7 +168,7 @@ class CRM_Contract_RecurringContribution {
 
     $paymentInstruments = $this->getPaymentInstruments();
     $paymentInstrumentId = isset($cr['payment_instrument_id']) ? (int) $cr['payment_instrument_id'] : NULL;
-    if ($this->isSepaPaymentInstrument($paymentInstrumentId)) {
+    if (CRM_Contract_RecurringContribution::isSepaPaymentInstrument($paymentInstrumentId)) {
       // this is a SEPA contract
       $result['fields'] = [
         'display_name' => $contact['display_name'],
@@ -185,6 +185,11 @@ class CRM_Contract_RecurringContribution {
         );
         // phpcs:enable
       }
+      $mandateReference = '';
+      if (is_array($mandate) && isset($mandate['reference'])) {
+        $mandateReference = $mandate['reference'];
+      }
+
       $sepa_creditor_id = $mandate['creditor_id'] ?? NULL;
       $result['fields']['iban'] = $mandate['iban'] ?? '';
       $result['fields']['bic'] = $mandate['bic'] ?? '';
@@ -192,7 +197,7 @@ class CRM_Contract_RecurringContribution {
       $result['fields']['creditor_name'] = $sepa_creditor_id ? ($sepaCreditors[$sepa_creditor_id]['name']) : '';
       $result['fields']['next_debit'] = substr($cr['next_sched_contribution_date'] ?? '', 0, 10);
       $result['label'] =
-        "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandate['reference']})";
+        "SEPA, {$result['fields']['amount']} {$result['fields']['frequency']} ({$mandateReference})";
       // todo: use template? consolidate with payment preview
       $result['text_summary'] =
         E::ts('Debitor name') . ": {$result['fields']['display_name']}<br /> " .
@@ -216,7 +221,7 @@ class CRM_Contract_RecurringContribution {
         'next_debit' => '?',
       ];
 
-      if (!$result['fields']['payment_instrument']) {
+      if ($result['fields']['payment_instrument'] == 'No payment required') {
         $result['text_summary'] = E::ts('No payment required');
         $result['label'] = E::ts('No payment required');
       }
@@ -298,7 +303,9 @@ class CRM_Contract_RecurringContribution {
    */
   public function writePaymentContractLabel($contributionRecur) {
     $paymentInstruments = $this->getPaymentInstruments();
-    if (in_array($contributionRecur['payment_instrument_id'], $this->getSepaPaymentInstruments())) {
+    if (in_array($contributionRecur['payment_instrument_id'],
+      CRM_Contract_RecurringContribution::getSepaPaymentInstruments()
+    )) {
       $sepaMandate = civicrm_api3('SepaMandate', 'getsingle', [
         'entity_table' => 'civicrm_contribution_recur',
         'entity_id' => $contributionRecur['id'],
@@ -337,11 +344,13 @@ class CRM_Contract_RecurringContribution {
 
   /**
    * Get all CiviSEPA payment instruments(?)
+   *
+   * @return mixed
    * @author Michael
    */
-  public function getSepaPaymentInstruments() {
-    if (!isset($this->sepaPaymentInstruments)) {
-      $this->sepaPaymentInstruments = [];
+  public static function getSepaPaymentInstruments() {
+    if (!isset(static::$sepaPaymentInstruments)) {
+      static::$sepaPaymentInstruments = [];
       $result = civicrm_api3(
         'OptionValue',
         'get',
@@ -351,11 +360,11 @@ class CRM_Contract_RecurringContribution {
         ]
       );
       foreach ($result['values'] as $paymentInstrument) {
-        $this->sepaPaymentInstruments[] = $paymentInstrument['value'];
+        static::$sepaPaymentInstruments[] = $paymentInstrument['value'];
       }
     }
 
-    return $this->sepaPaymentInstruments;
+    return static::$sepaPaymentInstruments;
   }
 
   /**
@@ -367,8 +376,8 @@ class CRM_Contract_RecurringContribution {
    * @return bool
    *   is it SEPA?
    */
-  public function isSepaPaymentInstrument(?int $payment_instrument_id) {
-    return in_array($payment_instrument_id, $this->getSepaPaymentInstruments());
+  public static function isSepaPaymentInstrument(?int $payment_instrument_id) {
+    return in_array($payment_instrument_id, CRM_Contract_RecurringContribution::getSepaPaymentInstruments());
   }
 
   /**
@@ -395,6 +404,45 @@ class CRM_Contract_RecurringContribution {
       }
     }
     return NULL;
+  }
+
+  public static function createRecurringContribution(
+    int $contactId,
+    string $amount,
+    string $startDate,
+    string $accountHolder,
+    string $paymentOption,
+    int $cycleDay,
+    int $frequencyInterval,
+    ?int $campaignId
+  ): int {
+    $payment_contract_params = [
+      'contact_id' => $contactId,
+      'amount' => $amount,
+      // TODO: Why use currency from SEPA creditor?
+      'currency' => CRM_Contract_SepaLogic::getCreditor()->currency,
+      'start_date' => CRM_Utils_Date::processDate($startDate, NULL, NULL, 'Y-m-d H:i:s'),
+      // NOW
+      'create_date' => date('YmdHis'),
+      'date' => CRM_Utils_Date::processDate($startDate, NULL, NULL, 'Y-m-d H:i:s'),
+      // NOW
+      'validation_date' => date('YmdHis'),
+      'account_holder' => $accountHolder,
+      'campaign_id' => $campaignId ?? '',
+      'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName($paymentOption),
+      // Membership Dues
+      'financial_type_id' => 2,
+      'frequency_unit' => 'month',
+      'cycle_day' => $cycleDay,
+      'frequency_interval' => $frequencyInterval,
+      'checkPermissions' => TRUE,
+    ];
+    CRM_Contract_CustomData::resolveCustomFields($payment_contract_params);
+    $new_recurring_contribution = civicrm_api3('ContributionRecur', 'create', $payment_contract_params);
+    if ((bool) $new_recurring_contribution['is_error']) {
+      throw new RuntimeException('Error creating recurring contribution');
+    }
+    return $new_recurring_contribution['id'];
   }
 
 }

@@ -16,46 +16,45 @@
     if (new_mode === 'select') {
       $('div.payment-modify').hide(300);
       $('div.payment-create').hide(300);
+      $('div.payment-sepa').hide(300);
       $('div.payment-select').show(300);
 
     }
-    else if (new_mode === 'none') {
+    else if (new_mode === 'None') {
       $('div.payment-select').hide(300);
       $('div.payment-create').hide(300);
+      $('div.payment-sepa').hide(300);
       $('div.payment-modify').hide(300);
 
     }
     else if (new_mode === 'modify') {
       $('div.payment-select').hide(300);
       $('div.payment-create').hide(300);
+      $('div.payment-sepa').hide(300);
       $('div.payment-modify').show(300);
 
     }
-    else if (new_mode === 'create') {
+    else if (new_mode === 'RCUR') {
       $('div.payment-select').hide(300);
       $('div.payment-modify').hide(300);
       $('div.payment-create').show(300);
+      $('div.payment-sepa').show(300);
 
     }
     else if (new_mode === 'nochange') {
       $('div.payment-select').hide(300);
       $('div.payment-modify').hide(300);
       $('div.payment-create').hide(300);
+      $('div.payment-sepa').hide(300);
 
     }
-    else { // new contract
+    else {
+      // new contract
       $('div.payment-select').hide(300);
       $('div.payment-modify').show(300);
       $('div.payment-show').hide(300);
       $('div.payment-create').show(300);
-      if (new_mode === 'Cash') {
-        $('#iban').parent().parent().hide(300);
-        $('#bic').parent().parent().hide(300);
-      }
-      else {
-        $('#iban').parent().parent().show(300);
-        $('#bic').parent().parent().show(300);
-      }
+      $('div.payment-sepa').hide(300);
     }
   }
 
@@ -94,7 +93,16 @@
       iban_account_line = ts('Member account', []) + ': ' + iban + '<br/>';
     }
 
-    return '<div>' + ts('Paid by', []) + ': \t' + debitor_name + '<br/>' + iban_account_line + ts('Creditor name', []) + ': ' + creditor.name + '<br/>' + ts('Creditor account', []) + ': ' + creditor.iban + '<br/>' + ts('Frequency', []) + ': ' + frequency_label + '<br/>' + ts('Payment method', []) + ': ' + mode + '<br/>' + ts('Annual amount', []) + ': ' + annual + '<br/>' + ts('Installment amount', []) + ': ' + installment.toFixed(2) + '<br/>' + ts('Next collection', []) + ': ' + next_collection + '<br/>' + '</div>';
+    return '<div>' +
+      ts('Paid by', []) + ': ' + debitor_name + '<br/>' +
+      iban_account_line + ts('Creditor name', []) + ': ' + creditor.name + '<br/>' +
+      ts('Creditor account', []) + ': ' + creditor.iban + '<br/>' +
+      ts('Frequency', []) + ': ' + frequency_label + '<br/>' +
+      ts('Payment method', []) + ': ' + mode + '<br/>' +
+      ts('Annual amount', []) + ': ' + annual + '<br/>' +
+      ts('Installment amount', []) + ': ' + installment.toFixed(2) + '<br/>' +
+      ts('Next collection', []) + ': ' + next_collection + '<br/>' +
+      '</div>';
 
     //     // TODO: use template?
     //     $('.recurring-contribution-summary-text').html(
@@ -133,7 +141,7 @@
       }
 
     }
-    else if (mode === 'none') {
+    else if (mode === 'None') {
       $('#payment_amount').attr('placeholder', 0);
       $('.recurring-contribution-summary-text').html(ts('No payment required'));
       // NO CHANGE TO CONTRACT
