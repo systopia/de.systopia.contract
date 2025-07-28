@@ -164,7 +164,8 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
       $optionGroup = civicrm_api3('OptionGroup', 'getsingle', [
         'name' => 'payment_instrument',
       ]);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       return;
     }
 
@@ -196,7 +197,9 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     ]);
     $used = array_map('intval', array_column($values['values'], 'value'));
     $next = 1;
-    while (in_array($next, $used)) $next++;
+    while (in_array($next, $used)) {
+      $next++;
+    }
     return $next;
   }
 

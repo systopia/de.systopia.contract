@@ -10,9 +10,7 @@ use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 use Civi\Api4\Campaign;
 use Civi\Api4\CustomGroup;
-use Civi\Api4\CustomField;
 use Civi\Api4\MembershipType;
-use Civi\Api4\ContributionRecur;
 
 /**
  * @group headless
@@ -335,8 +333,8 @@ class CreateFormTest extends ContractTestBase {
 
     }
     elseif ($paymentOption == 'RCUR') {
-        $this->assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
-   }
+      $this->assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
+    }
   }
 
   public function tearDown(): void {

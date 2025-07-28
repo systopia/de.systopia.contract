@@ -67,14 +67,13 @@ class ModifyFormTest extends ContractTestBase {
       ->execute()
       ->single();
 
-    /** @phpstan-ignore-next-line */
-    $campaign = civicrm_api3('Campaign', 'create', [
-      'title' => 'Test Campaign',
-      'name' => 'test_campaign_' . rand(1, 1000000),
-      'status_id' => 1,
-      'is_active' => 1,
-    ]);
-    $this->campaign = $campaign['values'][array_key_first($campaign['values'])];
+    $this->campaign = \Civi\Api4\Campaign::create(FALSE)
+      ->addValue('title', 'Test Campaign')
+      ->addValue('name', 'test_campaign_' . rand(1, 1000000))
+      ->addValue('status_id', 1)
+      ->addValue('is_active', TRUE)
+      ->execute()
+      ->single();
 
     $paymentOptionGroup = OptionGroup::save(TRUE)
       ->addRecord([
@@ -111,16 +110,17 @@ class ModifyFormTest extends ContractTestBase {
 
     if ($isExistingSepa || $isExistingNonSepa) {
       $paymentInstrumentId = $isExistingSepa ? $rcurId : $cashId;
-      $recurResult = civicrm_api3('ContributionRecur', 'create', [
-        'contact_id' => $contact['id'],
-        'amount' => '10.00',
-        'currency' => 'EUR',
-        'frequency_unit' => 'month',
-        'frequency_interval' => 1,
-        'installments' => NULL,
-        'contribution_status_id' => 'In Progress',
-        'payment_instrument_id' => $paymentInstrumentId,
-      ]);
+      $recurResult = \Civi\Api4\ContributionRecur::create(TRUE)
+        ->addValue('contact_id', $contact['id'])
+        ->addValue('amount', 10.00)
+        ->addValue('currency', 'EUR')
+        ->addValue('frequency_unit', 'month')
+        ->addValue('frequency_interval', 1)
+        ->addValue('installments', NULL)
+        ->addValue('contribution_status_id:name', 'In Progress')
+        ->addValue('payment_instrument_id', $paymentInstrumentId)
+        ->execute()
+        ->single();
       $recurringContributionId = $recurResult['id'];
       $this->contract = $this->createNewContract([
         'contact_id' => $contact['id'],
@@ -275,12 +275,19 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function getPaymentInstrumentIdByName(string $name): ?int {
-    $result = civicrm_api3('OptionValue', 'get', [
-      'option_group_id' => 'payment_instrument',
-      'name' => $name,
-      'is_active' => 1,
-    ]);
-    return !empty($result['values']) ? (int)reset($result['values'])['value'] : null;
+    try {
+      $result = OptionValue::get(TRUE)
+        ->addSelect('value')
+        ->addWhere('option_group_id:name', '=', 'payment_instrument')
+        ->addWhere('name', '=', $name)
+        ->addWhere('is_active', '=', TRUE)
+        ->execute()
+        ->single();
+      return (int) $result['value'];
+    }
+    catch (CRM_Core_Exception $exception) {
+      return NULL;
+    }
   }
 
   public function paymentInstrumentChangeProvider(): array {
@@ -328,7 +335,7 @@ class ModifyFormTest extends ContractTestBase {
       'type' => 'RCUR',
       'options' => ['sort' => 'id DESC', 'limit' => 1],
     ]);
-    return !empty($mandates['values']) ? reset($mandates['values']) : null;
+    return !empty($mandates['values']) ? reset($mandates['values']) : NULL;
   }
 
   private function assertNewMandateCreated($contactId): void {
@@ -354,16 +361,16 @@ class ModifyFormTest extends ContractTestBase {
     self::assertNotEmpty($recur['values'], 'Recurring contribution should be ended');
   }
 
-  private function assertNewRecurringContribution($contactId, $amount = null): void {
+  private function assertNewRecurringContribution($contactId, $amount = NULL): void {
     $recur = civicrm_api3('ContributionRecur', 'get', [
       'contact_id' => $contactId,
     ]);
     self::assertNotEmpty($recur['values'], 'New recurring contribution should be created');
-    if ($amount !== null) {
-      $found = false;
+    if ($amount !== NULL) {
+      $found = FALSE;
       foreach ($recur['values'] as $row) {
-        if (isset($row['amount']) && (float)$row['amount'] === (float)$amount) {
-          $found = true;
+        if (isset($row['amount']) && (float) $row['amount'] === (float) $amount) {
+          $found = TRUE;
         }
       }
       self::assertTrue($found, 'Recurring contribution with specified amount found');
@@ -381,29 +388,47 @@ class ModifyFormTest extends ContractTestBase {
   /**
    * @dataProvider paymentInstrumentChangeProvider
    */
-  public function testPaymentInstrumentChange(string $from, string $to, array $expectedActions, string $modifyAction): void {
+  public function testPaymentInstrumentChange(
+    string $from,
+    string $to,
+    array $expectedActions,
+    string $modifyAction
+  ): void {
     $this->initialPaymentMethod = $from;
     $this->createRequiredEntities();
 
     $form = new class() extends ModifyForm {
       public $_submitValues = [];
+
       public function exportValues($elementList = NULL, $filterInternal = FALSE): array {
         return $this->_submitValues;
       }
+
     };
     $form->controller = new class((int) $this->contact['id'], (int) $this->contract['id']) {
       public ?string $_destination = NULL;
-      private int $id, $cid, $contractId;
+      private int $id;
+      private int $cid;
+      private int $contractId;
+
       public function __construct(int $cid, int $contractId) {
-        $this->id = $contractId; $this->cid = $cid; $this->contractId = $contractId;
+        $this->id = $contractId;
+        $this->cid = $cid;
+        $this->contractId = $contractId;
       }
+
       public function set(string $k, mixed $v = NULL): void {}
+
       public function get(string $k): mixed {
         return match($k) {
           'id' => $this->id, 'cid' => $this->cid, 'contract_id' => $this->contractId, default => NULL,
         };
       }
-      public function setDestination(string $url): void { $this->_destination = $url; }
+
+      public function setDestination(string $url): void {
+        $this->_destination = $url;
+      }
+
     };
 
     $form->set('cid', $this->contact['id']);
@@ -422,8 +447,8 @@ class ModifyFormTest extends ContractTestBase {
     };
 
     $form->_submitValues += [
-      'payment_option' => (string)$paymentOptionValue,
-      'payment_instrument_id' => ($to === 'SEPA') ? 7 : (($to === 'non-SEPA') ? 3 : null),
+      'payment_option' => (string) $paymentOptionValue,
+      'payment_instrument_id' => ($to === 'SEPA') ? 7 : (($to === 'non-SEPA') ? 3 : NULL),
       'membership_type_id' => $this->membershipType['id'],
       'payment_amount' => $to === 'None' ? '0' : '10',
       'payment_frequency' => '6',
@@ -456,7 +481,7 @@ class ModifyFormTest extends ContractTestBase {
         'create_new_recurring_contribution' => $this->assertNewRecurringContribution($this->contact['id']),
         'create_new_recurring_contribution_zero' => $this->assertNewRecurringContribution($this->contact['id'], 0),
         'assign_existing_recurring' => $this->assertAssignedExistingRecurring($this->contact['id']),
-        'no_change' => self::assertTrue(true),
+        'no_change' => self::assertTrue(TRUE),
         default => throw new \RuntimeException("Unknown action: $action"),
       };
     }
@@ -465,29 +490,47 @@ class ModifyFormTest extends ContractTestBase {
   /**
    * @dataProvider contractStatusChangeProvider
    */
-  public function testContractStatusChange(string $from, string $to, array $expectedActions, string $modifyAction): void {
+  public function testContractStatusChange(
+    string $from,
+    string $to,
+    array $expectedActions,
+    string $modifyAction
+  ): void {
     $this->initialPaymentMethod = 'SEPA';
     $this->createRequiredEntities();
 
     $form = new class() extends ModifyForm {
       public $_submitValues = [];
+
       public function exportValues($elementList = NULL, $filterInternal = FALSE): array {
         return $this->_submitValues;
       }
+
     };
     $form->controller = new class((int) $this->contact['id'], (int) $this->contract['id']) {
       public ?string $_destination = NULL;
-      private int $id, $cid, $contractId;
+      private int $id;
+      private int $cid;
+      private int $contractId;
+
       public function __construct(int $cid, int $contractId) {
-        $this->id = $contractId; $this->cid = $cid; $this->contractId = $contractId;
+        $this->id = $contractId;
+        $this->cid = $cid;
+        $this->contractId = $contractId;
       }
+
       public function set(string $k, mixed $v = NULL): void {}
+
       public function get(string $k): mixed {
         return match($k) {
           'id' => $this->id, 'cid' => $this->cid, 'contract_id' => $this->contractId, default => NULL,
         };
       }
-      public function setDestination(string $url): void { $this->_destination = $url; }
+
+      public function setDestination(string $url): void {
+        $this->_destination = $url;
+      }
+
     };
 
     $form->set('cid', $this->contact['id']);
@@ -534,12 +577,12 @@ class ModifyFormTest extends ContractTestBase {
     foreach ($expectedActions as $action) {
       match ($action) {
         'create_recurring_contribution' => $this->assertNewRecurringContribution($this->contact['id']),
-        'maybe_create_paused' => self::assertTrue(true),
-        'maybe_create_ended' => self::assertTrue(true),
+        'maybe_create_paused' => self::assertTrue(TRUE),
+        'maybe_create_ended' => self::assertTrue(TRUE),
         'terminate_mandate_or_end_recurring' => $this->assertRecurringContributionEnded($this->contact['id']),
         'create_mandate_or_recurring' => $this->assertNewMandateCreated($this->contact['id']),
-        'no_change' => self::assertTrue(true),
-        'no_actions_needed' => self::assertTrue(true),
+        'no_change' => self::assertTrue(TRUE),
+        'no_actions_needed' => self::assertTrue(TRUE),
         default => throw new \RuntimeException("Unknown status action: $action"),
       };
     }
