@@ -69,7 +69,9 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
   /**
    * Execute the user's choice
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function postProcess() {
+  // phpcs:enable
     $values = $this->exportValues();
     $contribution_id_list = implode(',', $this->_contributionIds);
     $excluded_contribution_ids = [];

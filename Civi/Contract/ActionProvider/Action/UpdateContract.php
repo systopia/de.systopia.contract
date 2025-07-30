@@ -120,7 +120,9 @@ class UpdateContract extends AbstractAction {
    *      The parameters this action can send back
    * @return void
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
+  // phpcs-enable
     $contract_data = ['action' => 'update'];
     // add basic fields to contract_data
     foreach ([

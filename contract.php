@@ -108,7 +108,9 @@ function contract_civicrm_pageRun(&$page) {
  *
  * @todo shorten this function call - move into an 1 or more alter functions
  */
+// phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
 function contract_civicrm_buildForm($formName, &$form) {
+// phpcs:enable
   switch ($formName) {
     // Membership form in view mode
     case 'CRM_Member_Form_MembershipView':

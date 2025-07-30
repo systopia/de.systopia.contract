@@ -254,7 +254,9 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   /**
    * form validation
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function validate() {
+  // phpcs:enable
     $submitted = $this->exportValues();
 
     // check if the reference is not in use
@@ -335,7 +337,9 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     return parent::validate();
   }
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function postProcess() {
+  // phpcs:enable
     $submitted = $this->exportValues();
 
     // a payment contract (recurring contribution) should be created - calculate some generic stuff

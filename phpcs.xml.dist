@@ -10,6 +10,7 @@
     <file>contract.php</file>
 
     <exclude-pattern>/CRM/Contract/DAO/.*\.php$</exclude-pattern>
+    <exclude-pattern>/CRM/Contract/CustomData\.php$</exclude-pattern>
 
     <arg name="extensions" value="php"/>
     <arg name="cache" value=".phpcs.cache"/>

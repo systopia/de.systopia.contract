@@ -407,7 +407,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     parent::setDefaults($defaults);
   }
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function validate() {
+  // phpcs:enable
     $submitted = $this->exportValues();
     if (empty($submitted['activity_date'])) {
       $submitted['activity_date'] = date('Y-m-d');
@@ -464,7 +466,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     return parent::validate();
   }
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function postProcess() {
+  // phpcs:enable
 
     // Construct a call to contract.modify
     // The following fields to be submitted in all cases

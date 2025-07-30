@@ -229,7 +229,9 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    * @param $params  array specs
    * @param $is_sepa bool  if true, a SEPA mandate will be generated
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function createPaymentContract($params, $is_sepa) {
+  // phpcs:enable
     // fill common parameters
     if (empty($params['contact_id'])) {
       $contact = $this->createContactWithRandomEmail();

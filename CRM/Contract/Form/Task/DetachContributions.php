@@ -51,7 +51,9 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     CRM_Core_Form::addDefaultButtons(ts('Detach'));
   }
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function postProcess() {
+  // phpcs:enable
     // get the count
     $count = $this->getAssignedCount();
 

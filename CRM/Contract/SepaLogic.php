@@ -46,7 +46,9 @@ class CRM_Contract_SepaLogic {
    * Adjust or update the given SEPA mandate according to the
    * requested change
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public static function updateSepaMandate($membership_id, $current_state, $desired_state, $activity, $action = NULL) {
+  // phpcs:enable
     // desired_state (from activity) hasn't resolved the numeric custom_ fields yet
     foreach ($desired_state as $key => $value) {
       if (preg_match('#^custom_\d+$#', $key)) {
@@ -461,7 +463,9 @@ class CRM_Contract_SepaLogic {
    * @return string date ('Y-m-d H:i:s')
    *
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public static function getNextInstallmentDate($contribution_recur_id, $now = NULL) {
+  // phpcs:enable
     if (!$now) {
       $now = date('Y-m-d H:i:s');
     }

@@ -126,7 +126,9 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     ];
   }
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function execute(): void {
+  // phpcs:enable
     $contract_before = $this->getContract(TRUE);
     $contract_update = [];
 
