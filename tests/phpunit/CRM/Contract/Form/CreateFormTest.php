@@ -2,69 +2,83 @@
 
 declare(strict_types = 1);
 
-use CRM_Contract_ContractTestBase as ContractTestBase;
-use CRM_Contract_Form_Create as CreateForm;
-
+use Civi\Api4\Campaign;
 use Civi\Api4\Contact;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\MembershipType;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
-use Civi\Api4\Campaign;
-use Civi\Api4\CustomGroup;
-use Civi\Api4\CustomField;
-use Civi\Api4\MembershipType;
-use Civi\Api4\ContributionRecur;
+use CRM_Contract_ContractTestBase as ContractTestBase;
+use CRM_Contract_Form_Create as CreateForm;
 
 /**
  * @group headless
  */
 class CreateFormTest extends ContractTestBase {
 
+  protected static ?int $sharedOwnerOrgId = NULL;
+
+  protected static array $sharedMembershipType = [];
+
+  protected static array $sharedCampaign = [];
+
+  protected static ?int $sharedPaymentGroupId = NULL;
+
+  protected static bool $sharedContribStatusReady = FALSE;
+
+  protected static ?string $sharedCampaignTypeName = NULL;
+
   /**
-   * @var array<string, mixed> */
+   * @phpstan-var array<string, mixed>
+   */
   protected array $contact;
 
   /**
-   * @var array<string, mixed> */
+   * @phpstan-var array<string, mixed>
+   */
   protected array $campaign = [];
 
   /**
-   * @var array<string, mixed> */
+   * @phpstan-var array<string, mixed>
+   */
   protected array $membershipType = [];
-  protected ?int $recurContributionStatusId = NULL;
 
-  protected static ?int $sharedOwnerOrgId = null;
-  protected static array $sharedMembershipType = [];
-  protected static array $sharedCampaign = [];
-  protected static ?int $sharedPaymentGroupId = null;
-  protected static bool $sharedContribStatusReady = false;
-  protected static ?string $sharedCampaignTypeName = null;
+  protected ?int $recurContributionStatusId = NULL;
 
   public static function setUpBeforeClass(): void {
     /** @phpstan-ignore-next-line */
-    $org = civicrm_api3('Contact', 'create', [
-      'contact_type' => 'Organization',
-      'organization_name' => 'CreateFormTest Owner Org ' . rand(1, 1000000),
-    ]);
+    $org = civicrm_api3(
+      'Contact',
+      'create',
+      [
+        'contact_type' => 'Organization',
+        'organization_name' => 'CreateFormTest Owner Org ' . rand(1, 1000000),
+      ]
+    );
     self::$sharedOwnerOrgId = (int) $org['id'];
 
     CustomGroup::save(FALSE)
-      ->addRecord([
-        'title' => 'Membership General',
-        'name' => 'membership_general',
-        'extends' => 'Membership',
-        'is_active' => 1,
-        'style' => 'Inline',
-      ])
+      ->addRecord(
+        [
+          'title' => 'Membership General',
+          'name' => 'membership_general',
+          'extends' => 'Membership',
+          'is_active' => 1,
+          'style' => 'Inline',
+        ]
+      )
       ->setMatch(['name'])
       ->execute()
       ->single();
 
     $paymentOptionGroup = OptionGroup::save(TRUE)
-      ->addRecord([
-        'name' => 'payment_instrument',
-        'title' => 'Payment Instrument',
-        'is_active' => 1,
-      ])
+      ->addRecord(
+        [
+          'name' => 'payment_instrument',
+          'title' => 'Payment Instrument',
+          'is_active' => 1,
+        ]
+      )
       ->setMatch(['name'])
       ->execute()
       ->single();
@@ -72,25 +86,29 @@ class CreateFormTest extends ContractTestBase {
     self::$sharedPaymentGroupId = (int) $paymentOptionGroup['id'];
 
     OptionValue::save(TRUE)
-      ->addRecord([
-        'option_group_id' => self::$sharedPaymentGroupId,
-        'label' => 'No Payment required',
-        'name' => 'None',
-        'value' => 100,
-        'is_active' => 1,
-        'is_reserved' => 0,
-        'weight' => 99,
-      ])
+      ->addRecord(
+        [
+          'option_group_id' => self::$sharedPaymentGroupId,
+          'label' => 'No Payment required',
+          'name' => 'None',
+          'value' => 100,
+          'is_active' => 1,
+          'is_reserved' => 0,
+          'weight' => 99,
+        ]
+      )
       ->setMatch(['option_group_id', 'name'])
       ->execute()
       ->single();
 
     $optionGroup = OptionGroup::save(TRUE)
-      ->addRecord([
-        'name' => 'contribution_status',
-        'title' => 'Contribution Status',
-        'is_active' => 1,
-      ])
+      ->addRecord(
+        [
+          'name' => 'contribution_status',
+          'title' => 'Contribution Status',
+          'is_active' => 1,
+        ]
+      )
       ->setMatch(['name'])
       ->execute()
       ->single();
@@ -98,66 +116,76 @@ class CreateFormTest extends ContractTestBase {
     $optionGroupId = $optionGroup['id'];
 
     OptionValue::save(TRUE)
-      ->addRecord([
-        'option_group_id' => $optionGroupId,
-        'label' => 'In Progress',
-        'name' => 'In Progress',
-        'value' => 5,
-        'is_active' => 1,
-        'is_reserved' => 1,
-      ])
+      ->addRecord(
+        [
+          'option_group_id' => $optionGroupId,
+          'label' => 'In Progress',
+          'name' => 'In Progress',
+          'value' => 5,
+          'is_active' => 1,
+          'is_reserved' => 1,
+        ]
+      )
       ->setMatch(['option_group_id', 'name'])
       ->execute()
       ->single();
 
     OptionValue::save(TRUE)
-      ->addRecord([
-        'option_group_id' => $optionGroupId,
-        'label' => 'Completed',
-        'name' => 'Completed',
-        'value' => 1,
-        'is_active' => 1,
-        'is_default' => 1,
-      ])
+      ->addRecord(
+        [
+          'option_group_id' => $optionGroupId,
+          'label' => 'Completed',
+          'name' => 'Completed',
+          'value' => 1,
+          'is_active' => 1,
+          'is_default' => 1,
+        ]
+      )
       ->setMatch(['option_group_id', 'name'])
       ->execute();
 
-    self::$sharedContribStatusReady = true;
+    self::$sharedContribStatusReady = TRUE;
 
     $campaignType = OptionValue::save(FALSE)
-      ->addRecord([
-        'option_group_id:name' => 'campaign_type',
-        'name' => 'test_campaign_type_shared',
-        'label' => 'Test Campaign Type (shared)',
-        'value' => '',
-        'is_active' => 1,
-      ])
+      ->addRecord(
+        [
+          'option_group_id:name' => 'campaign_type',
+          'name' => 'test_campaign_type_shared',
+          'label' => 'Test Campaign Type (shared)',
+          'value' => '',
+          'is_active' => 1,
+        ]
+      )
       ->setMatch(['option_group_id', 'name'])
       ->execute()
       ->single();
     self::$sharedCampaignTypeName = $campaignType['name'];
 
     self::$sharedCampaign = Campaign::save(FALSE)
-      ->addRecord([
-        'title' => 'Test Campaign (shared)',
-        'campaign_type_id:name' => self::$sharedCampaignTypeName,
-        'status_id' => 1,
-        'is_active' => 1,
-      ])
+      ->addRecord(
+        [
+          'title' => 'Test Campaign (shared)',
+          'campaign_type_id:name' => self::$sharedCampaignTypeName,
+          'status_id' => 1,
+          'is_active' => 1,
+        ]
+      )
       ->setMatch(['title', 'campaign_type_id'])
       ->execute()
       ->single();
 
     self::$sharedMembershipType = MembershipType::create(FALSE)
-      ->setValues([
-        'name' => 'Test Membership Type (shared)',
-        'member_of_contact_id' => self::$sharedOwnerOrgId,
-        'financial_type_id' => 2,
-        'duration_unit' => 'year',
-        'duration_interval' => 1,
-        'period_type' => 'rolling',
-        'is_active' => 1,
-      ])
+      ->setValues(
+        [
+          'name' => 'Test Membership Type (shared)',
+          'member_of_contact_id' => self::$sharedOwnerOrgId,
+          'financial_type_id' => 2,
+          'duration_unit' => 'year',
+          'duration_interval' => 1,
+          'period_type' => 'rolling',
+          'is_active' => 1,
+        ]
+      )
       ->execute()
       ->single();
   }
@@ -168,7 +196,9 @@ class CreateFormTest extends ContractTestBase {
         /** @phpstan-ignore-next-line */
         civicrm_api3('Campaign', 'delete', ['id' => self::$sharedCampaign['id']]);
       }
-    } catch (\Throwable $e) {}
+    }
+    catch (\Throwable $e) {
+    }
 
     try {
       if (!empty(self::$sharedMembershipType['id'])) {
@@ -176,20 +206,82 @@ class CreateFormTest extends ContractTestBase {
           ->addWhere('id', '=', self::$sharedMembershipType['id'])
           ->execute();
       }
-    } catch (\Throwable $e) {}
+    }
+    catch (\Throwable $e) {
+    }
 
     try {
       if (!empty(self::$sharedOwnerOrgId)) {
         /** @phpstan-ignore-next-line */
         civicrm_api3('Contact', 'delete', ['id' => self::$sharedOwnerOrgId]);
       }
-    } catch (\Throwable $e) {}
+    }
+    catch (\Throwable $e) {
+    }
   }
 
   public function setUp(): void {
     parent::setUp();
     $this->setupRecurContributionStatus();
     $this->createRequiredEntities();
+  }
+
+  private function setupRecurContributionStatus(): void {
+    if (self::$sharedContribStatusReady) {
+      return;
+    }
+    try {
+      $optionGroup = OptionGroup::save(TRUE)
+        ->addRecord(
+          [
+            'name' => 'contribution_status',
+            'title' => 'Contribution Status',
+            'is_active' => 1,
+          ]
+        )
+        ->setMatch(['name'])
+        ->execute()
+        ->single();
+
+      $optionGroupId = $optionGroup['id'];
+
+      $inProgress = OptionValue::save(TRUE)
+        ->addRecord(
+          [
+            'option_group_id' => $optionGroupId,
+            'label' => 'In Progress',
+            'name' => 'In Progress',
+            'value' => 5,
+            'is_active' => 1,
+            'is_reserved' => 1,
+          ]
+        )
+        ->setMatch(['option_group_id', 'name'])
+        ->execute()
+        ->single();
+
+      $this->recurContributionStatusId = $inProgress['value'];
+
+      OptionValue::save(TRUE)
+        ->addRecord(
+          [
+            'option_group_id' => $optionGroupId,
+            'label' => 'Completed',
+            'name' => 'Completed',
+            'value' => 1,
+            'is_active' => 1,
+            'is_default' => 1,
+          ]
+        )
+        ->setMatch(['option_group_id', 'name'])
+        ->execute();
+
+      self::$sharedContribStatusReady = TRUE;
+    }
+    catch (\Exception $e) {
+      /** @phpstan-ignore-next-line */
+      throw new \CRM_Core_Exception($e->getMessage(), 0, $e);
+    }
   }
 
   private function createRequiredEntities(): void {
@@ -204,56 +296,8 @@ class CreateFormTest extends ContractTestBase {
     $this->membershipType = self::$sharedMembershipType;
   }
 
-  private function setupRecurContributionStatus(): void {
-    if (self::$sharedContribStatusReady) {
-      return;
-    }
-    try {
-      $optionGroup = OptionGroup::save(TRUE)
-        ->addRecord([
-          'name' => 'contribution_status',
-          'title' => 'Contribution Status',
-          'is_active' => 1,
-        ])
-        ->setMatch(['name'])
-        ->execute()
-        ->single();
-
-      $optionGroupId = $optionGroup['id'];
-
-      $inProgress = OptionValue::save(TRUE)
-        ->addRecord([
-          'option_group_id' => $optionGroupId,
-          'label' => 'In Progress',
-          'name' => 'In Progress',
-          'value' => 5,
-          'is_active' => 1,
-          'is_reserved' => 1,
-        ])
-        ->setMatch(['option_group_id', 'name'])
-        ->execute()
-        ->single();
-
-      $this->recurContributionStatusId = $inProgress['value'];
-
-      OptionValue::save(TRUE)
-        ->addRecord([
-          'option_group_id' => $optionGroupId,
-          'label' => 'Completed',
-          'name' => 'Completed',
-          'value' => 1,
-          'is_active' => 1,
-          'is_default' => 1,
-        ])
-        ->setMatch(['option_group_id', 'name'])
-        ->execute();
-
-      self::$sharedContribStatusReady = true;
-    }
-    catch (\Exception $e) {
-      /** @phpstan-ignore-next-line */
-      throw new \CRM_Core_Exception($e->getMessage(), 0, $e);
-    }
+  public function testFormValidationWithValidData_create_null(): void {
+    $this->runFormValidationWithValidData('create', NULL);
   }
 
   private function runFormValidationWithValidData(string $paymentOption, mixed $membershipContract): void {
@@ -289,13 +333,25 @@ class CreateFormTest extends ContractTestBase {
 
     /** @phpstan-ignore-next-line */
     $form->controller = new class($cid) {
+
       public ?string $_destination = NULL;
+
       private int $cid;
 
-      public function __construct(int $cid) { $this->cid = $cid; }
+      public function __construct(int $cid) {
+        $this->cid = $cid;
+      }
+
       public function set(string $k, mixed $v = NULL): void {}
-      public function get(string $k): mixed { return $k === 'cid' ? $this->cid : NULL; }
-      public function setDestination(string $url): void { $this->_destination = $url; }
+
+      public function get(string $k): mixed {
+        return $k === 'cid' ? $this->cid : NULL;
+      }
+
+      public function setDestination(string $url): void {
+        $this->_destination = $url;
+      }
+
     };
 
     $refl = new ReflectionClass($form);
@@ -310,71 +366,6 @@ class CreateFormTest extends ContractTestBase {
     $form->setDefaults($validValues);
 
     self::assertTrue($form->validate());
-  }
-
-  private function runFormSubmissionCreatesContract(string $paymentOption, mixed $paymentAmount): void {
-    $cid = $this->contact['id'];
-    $form = new CreateForm();
-
-    /** @phpstan-ignore-next-line */
-    $form->controller = new class($cid) {
-      public ?string $_destination = NULL;
-      private int $cid;
-      public function __construct(int $cid) { $this->cid = $cid; }
-      public function set(string $k, mixed $v = NULL): void {}
-      public function get(string $k): mixed { return $k === 'cid' ? $this->cid : NULL; }
-      public function setDestination(string $url): void { $this->_destination = $url; }
-    };
-
-    /** @phpstan-ignore-next-line */
-    $form->set('cid', $this->contact['id']);
-    /** @phpstan-ignore-next-line */
-    $form->preProcess();
-    $form->buildQuickForm();
-
-    $submissionValues = [
-      'payment_option' => $paymentOption,
-      'join_date'      => date('Y-m-d'),
-      'end_date'       => date('Y-m-d'),
-      'activity_details' => '',
-      'payment_amount' => $paymentAmount,
-      'payment_frequency' => '12',
-      'iban' => 'DE89370400440532013000',
-      'bic' => 'DEUTDEFF',
-      'start_date' => date('Y-m-d'),
-      'membership_type_id' => $this->membershipType['id'],
-      'campaign_id' => $this->campaign['id'] ?? NULL,
-      'account_holder' => $this->contact['display_name'],
-      'membership_contract' => 'TEST-001',
-      'membership_reference' => 'REF-001',
-    ];
-
-    /** @phpstan-ignore-next-line */
-    $form->_submitValues = $submissionValues;
-    $form->setDefaults($submissionValues);
-    $form->postProcess();
-
-    /** @phpstan-ignore-next-line */
-    $result = civicrm_api3('Contract', 'getsingle', [
-      'contact_id' => $this->contact['id'],
-    ]);
-
-    $contract = $this->getContract($result['id']);
-
-    self::assertEquals($this->contact['id'], $contract['contact_id']);
-    self::assertEquals($this->membershipType['id'], $contract['membership_type_id']);
-    self::assertEquals('TEST-001', $contract['membership_general.membership_contract']);
-    self::assertEquals('REF-001', $contract['membership_general.membership_reference']);
-    if ($paymentOption == 'None') {
-      self::assertEquals('0.00', $contract['membership_payment.membership_annual']);
-    }
-    elseif ($paymentOption == 'RCUR') {
-      $this->assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
-    }
-  }
-
-  public function testFormValidationWithValidData_create_null(): void {
-    $this->runFormValidationWithValidData('create', NULL);
   }
 
   public function testFormValidationWithValidData_create_1(): void {
@@ -409,6 +400,84 @@ class CreateFormTest extends ContractTestBase {
     $this->runFormSubmissionCreatesContract('None', 0);
   }
 
+  private function runFormSubmissionCreatesContract(string $paymentOption, mixed $paymentAmount): void {
+    $cid = $this->contact['id'];
+    $form = new CreateForm();
+
+    /** @phpstan-ignore-next-line */
+    $form->controller = new class($cid) {
+
+      public ?string $_destination = NULL;
+
+      private int $cid;
+
+      public function __construct(int $cid) {
+        $this->cid = $cid;
+      }
+
+      public function set(string $k, mixed $v = NULL): void {}
+
+      public function get(string $k): mixed {
+        return $k === 'cid' ? $this->cid : NULL;
+      }
+
+      public function setDestination(string $url): void {
+        $this->_destination = $url;
+      }
+
+    };
+
+    /** @phpstan-ignore-next-line */
+    $form->set('cid', $this->contact['id']);
+    /** @phpstan-ignore-next-line */
+    $form->preProcess();
+    $form->buildQuickForm();
+
+    $submissionValues = [
+      'payment_option' => $paymentOption,
+      'join_date' => date('Y-m-d'),
+      'end_date' => date('Y-m-d'),
+      'activity_details' => '',
+      'payment_amount' => $paymentAmount,
+      'payment_frequency' => '12',
+      'iban' => 'DE89370400440532013000',
+      'bic' => 'DEUTDEFF',
+      'start_date' => date('Y-m-d'),
+      'membership_type_id' => $this->membershipType['id'],
+      'campaign_id' => $this->campaign['id'] ?? NULL,
+      'account_holder' => $this->contact['display_name'],
+      'membership_contract' => 'TEST-001',
+      'membership_reference' => 'REF-001',
+    ];
+
+    /** @phpstan-ignore-next-line */
+    $form->_submitValues = $submissionValues;
+    $form->setDefaults($submissionValues);
+    $form->postProcess();
+
+    /** @phpstan-ignore-next-line */
+    $result = civicrm_api3(
+      'Contract',
+      'getsingle',
+      [
+        'contact_id' => $this->contact['id'],
+      ]
+    );
+
+    $contract = $this->getContract($result['id']);
+
+    self::assertEquals($this->contact['id'], $contract['contact_id']);
+    self::assertEquals($this->membershipType['id'], $contract['membership_type_id']);
+    self::assertEquals('TEST-001', $contract['membership_general.membership_contract']);
+    self::assertEquals('REF-001', $contract['membership_general.membership_reference']);
+    if ($paymentOption == 'None') {
+      self::assertEquals('0.00', $contract['membership_payment.membership_annual']);
+    }
+    elseif ($paymentOption == 'RCUR') {
+      $this->assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
+    }
+  }
+
   public function testFormSubmissionCreatesContract_RCUR_120(): void {
     $this->runFormSubmissionCreatesContract('RCUR', 120);
   }
@@ -424,12 +493,20 @@ class CreateFormTest extends ContractTestBase {
       throw $e;
     }
 
-    if (isset($this->campaign['id']) && !empty(self::$sharedCampaign['id']) && $this->campaign['id'] !== self::$sharedCampaign['id']) {
+    if (
+      isset($this->campaign['id'])
+      && !empty(self::$sharedCampaign['id'])
+      && $this->campaign['id'] !== self::$sharedCampaign['id']
+    ) {
       /** @phpstan-ignore-next-line */
       civicrm_api3('Campaign', 'delete', ['id' => $this->campaign['id']]);
     }
 
-    if (isset($this->membershipType['id']) && !empty(self::$sharedMembershipType['id']) && $this->membershipType['id'] !== self::$sharedMembershipType['id']) {
+    if (
+      isset($this->membershipType['id'])
+      && !empty(self::$sharedMembershipType['id'])
+      && $this->membershipType['id'] !== self::$sharedMembershipType['id']
+    ) {
       MembershipType::delete(TRUE)
         ->addWhere('id', '=', $this->membershipType['id'])
         ->execute();

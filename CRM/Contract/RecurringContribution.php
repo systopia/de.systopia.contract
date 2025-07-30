@@ -163,7 +163,9 @@ class CRM_Contract_RecurringContribution {
    * @param $cr array
    *   recurring contribution data
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   protected function renderRecurringContribution($cr, $contact, $sepaMandates, $sepaCreditors) {
+  // phpcs:enable
     $result = [];
 
     $paymentInstruments = $this->getPaymentInstruments();

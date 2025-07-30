@@ -14,7 +14,9 @@ use Civi\Contract\Event\DisplayChangeTitle as DisplayChangeTitle;
 
 class CRM_Contract_Page_Review extends CRM_Core_Page {
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function run() {
+  // phpcs:enable
     // get the adjustments
     $adjustments = \Civi\Contract\Event\AdjustContractReviewEvent::getContractReviewAdjustments();
 

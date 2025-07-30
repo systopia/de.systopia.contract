@@ -509,7 +509,9 @@ abstract class CRM_Contract_Change {
    * @param $field_name  string field this value is from
    * @return string      string labelled value
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function labelValue($value, $field_name) {
+  // phpcs:enable
     switch ($field_name) {
       case 'membership_type_id':
       case 'contract_updates.ch_membership_type':
@@ -582,7 +584,9 @@ abstract class CRM_Contract_Change {
    * @param $field_name  string field this value is from
    * @return string      string labelled value
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   protected function resolveValue($value, $field_name) {
+  // phpcs:enable
     switch ($field_name) {
       case 'membership_type_id':
       case 'contract_updates.ch_membership_type':
