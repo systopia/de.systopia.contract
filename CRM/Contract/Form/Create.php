@@ -240,9 +240,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $defaults['start_date'] = date('Y-m-d');
 
     // sepa defaults
-    // monthly
-    $defaults['payment_frequency'] = '12';
-    $defaults['payment_option'] = 'create';
+    $defaults['payment_option'] = 'RCUR';
     $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
     $defaults['contact_id'] = $this->cid;
 
