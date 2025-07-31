@@ -65,18 +65,21 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    *        start_date NULL or in the past
    *
    *
-   * @param int $contract_id            the contract to link
-   * @param int $contribution_recur_id  ID of the linked entity
-   * @param string $date                what timestamp does the "active" refer to? Default is: now
+   * @param $contract_id            the contract to link
+   * @param $contribution_recur_id  ID of the linked entity
+   * @param $date                what timestamp does the "active" refer to? Default is: now
    *
    * @todo: add limit
    *
-   * @return array<string,mixed>
+   * @phpstan-return array<int, array<string, mixed>>
    *   Link data.
    * @throws Exception
    *   When contract_id is invalid.
    */
-  public static function getActiveLinks($contract_id = NULL, $contribution_recur_id = NULL, $date = 'now'): array {
+  public static function getActiveLinks(?int $contract_id = NULL,
+    ?int $contribution_recur_id = NULL,
+    string $date = 'now'
+  ): array {
     // build where clause
     $WHERE_CLAUSES = [];
 
@@ -87,20 +90,19 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
     $WHERE_CLAUSES[] = "end_date   IS NULL OR end_date   >  '{$now}'";
 
     // process contract_id
-    if (!empty($contract_id)) {
-      $contract_id = (int) $contract_id;
+    if (isset($contract_id)) {
       $WHERE_CLAUSES[] = "contract_id = {$contract_id}";
     }
 
     // process entity restrictions
-    if (!empty($contribution_recur_id)) {
-      $contribution_recur_id = (int) $contribution_recur_id;
+    if (isset($contribution_recur_id)) {
       $WHERE_CLAUSES[] = "contribution_recur_id = {$contribution_recur_id}";
     }
 
     // build and run query
     $WHERE_CLAUSE = '(' . implode(') AND (', $WHERE_CLAUSES) . ')';
     $query_sql = "SELECT * FROM civicrm_contract_payment WHERE {$WHERE_CLAUSE}";
+    /** @phpstan-var \CRM_Core_DAO $query */
     $query = CRM_Core_DAO::executeQuery($query_sql);
     $results = [];
     while ($query->fetch()) {
@@ -114,46 +116,40 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    *
    * @param int $link_id               ID of the link
    * @param string $date               at what timestamp should the link be ended - default is "now"
-   *
-   * @return object CRM_Contract_BAO_ContractPaymentLink resulting object
-   * @throws Exception if mandatory fields aren't set
    */
-  public static function endPaymentLink($link_id, $date = 'now') {
-    $link_id = (int) $link_id;
-    if ($link_id) {
-      $link = new CRM_Contract_BAO_ContractPaymentLink();
-      $link->id = $link_id;
-      $link->is_active = 0;
-      $link->end_date = date('YmdHis', strtotime($date));
-      $link->save();
-    }
+  public static function endPaymentLink(int $link_id, string $date = 'now'): void {
+    $link = new CRM_Contract_BAO_ContractPaymentLink();
+    $link->id = $link_id;
+    $link->is_active = 0;
+    $link->end_date = date('YmdHis', strtotime($date));
+    $link->save();
   }
 
   /**
    * Create/edit a ContractPaymentLink entry
    *
    * @param array $params
-   * @return object CRM_Contract_BAO_ContractPaymentLink object on success, null otherwise
+   * @return CRM_Contract_BAO_ContractPaymentLink object on success, null otherwise
    * @access public
    * @static
    * @throws Exception if mandatory parameters not set
    */
-  public static function add(&$params) {
-    $hook = empty($params['id']) ? 'create' : 'edit';
+  public static function add(&$params): CRM_Contract_BAO_ContractPaymentLink {
+    $hook = !isset($params['id']) ? 'create' : 'edit';
     if ($hook == 'create') {
       // check mandatory fields
-      if (empty($params['contract_id'])) {
-        throw new Exception('Field contract_id is mandatory.');
+      if (!isset($params['contract_id']) || !is_numeric($params['contract_id'])) {
+        throw new RuntimeException('Field contract_id is mandatory.');
       }
-      if (empty($params['contribution_recur_id'])) {
-        throw new Exception('Field contribution_recur_id is mandatory.');
+      if (!isset($params['contribution_recur_id']) || !is_numeric($params['contribution_recur_id'])) {
+        throw new RuntimeException('Field contribution_recur_id is mandatory.');
       }
 
       // set create date
       $params['creation_date'] = date('YmdHis');
     }
 
-    CRM_Utils_Hook::pre($hook, 'ContractPaymentLink', CRM_Utils_Array::value('id', $params), $params);
+    CRM_Utils_Hook::pre($hook, 'ContractPaymentLink', $params['id'] ?? NULL, $params);
 
     $dao = new CRM_Contract_BAO_ContractPaymentLink();
     $dao->copyValues($params);
@@ -168,11 +164,12 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    *
    * @param $page
    */
-  public static function injectLinks(&$page) {
-    $contribution_recur = $page->getTemplate()->get_template_vars('recur');
-    if (!empty($contribution_recur['id'])) {
+  public static function injectLinks(CRM_Core_Page &$page): void {
+    $contribution_recur = CRM_Core_Page::getTemplate()->getTemplateVars('recur');
+    if (isset($contribution_recur['id']) && is_numeric($contribution_recur['id'])) {
       // gather some data
       $contribution_recur_id = (int) $contribution_recur['id'];
+      // @phpstan-ignore offsetAccess.nonOffsetAccessible
       $all_links = civicrm_api3('ContractPaymentLink', 'get', [
         'contribution_recur_id' => $contribution_recur_id,
         'sequential'            => 1,
@@ -192,7 +189,7 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
         }
       }
 
-      if (!empty($active_links) || !empty($inactive_links)) {
+      if ([] !== $active_links || [] !== $inactive_links) {
         $page->assign('contract_payment_links_active', $active_links);
         $page->assign('contract_payment_links_inactive', $inactive_links);
 
@@ -206,12 +203,13 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
   /**
    * Render a textual description of the link data
    *
-   * @param array $link_data
-   * @return array description, containing [text, link, active]
+   * @param array<string, mixed> $link_data
+   * @return array<string, mixed> description, containing [text, link, active]
    */
-  public static function renderLink($link_data) {
+  public static function renderLink(array $link_data): array {
     try {
       // load contract
+      /** @phpstan-var array{"id": int, "contact_id": int} $contract */
       $contract = civicrm_api3('Membership', 'getsingle', [
         'id'     => $link_data['contract_id'],
         'return' => 'contact_id,membership_type_id,id',
@@ -268,7 +266,7 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
       }
 
     }
-    catch (Exception $ex) {
+    catch (CRM_Core_Exception $ex) {
       return [
         'text'   => 'RENDER ERROR',
         'link'   => $ex->getMessage(),

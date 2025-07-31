@@ -183,7 +183,7 @@ class UpdateContract extends AbstractAction {
       // update bank account if new iban is set
       if ((!empty($parameters->getParameter('iban'))) or (!empty($parameters->getParameter('bic')))) {
         $contract_data['membership_payment_from_ba'] = B::getOrCreateBankAccount(
-          $parameters->getParameter('contact_id'),
+          (int) $parameters->getParameter('contact_id'),
           $parameters->getParameter('iban'),
           $parameters->getParameter('bic')
         );

@@ -46,7 +46,7 @@ class CRM_Contract_EngineStressTest extends CRM_Contract_ContractTestBase {
         ];
         if (0 === $is_sepa) {
           // FIXME: if this is not a SEPA contract, we need to pass the bank account
-          $update['membership_payment.from_ba'] = $this->getBankAccountID($contract['contact_id']);
+          $update['membership_payment.from_ba'] = $this->getBankAccountID((int) $contract['contact_id']);
         }
         $this->modifyContract($contract['id'], 'update', date('YmdHis', strtotime("now + {$i} days")), $update);
       }
