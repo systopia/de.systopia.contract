@@ -170,11 +170,11 @@ msgstr "Kontoinhaber"
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
 msgid "Installment amount"
-msgstr "Einzugsbetrag"
+msgstr "Betrag"
 
 #: CRM/Contract/Form/Create.php
 msgid "Installment"
-msgstr "Einzugsbetrag"
+msgstr "Betrag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment Frequency"
@@ -281,7 +281,7 @@ msgstr "Kontoinhaber"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Installment Amount"
-msgstr "Einzugsbetrag"
+msgstr "Betrag"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Start Collection"
