@@ -591,7 +591,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
           $amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']);
           $annual = CRM_Contract_SepaLogic::formatMoney($submitted['payment_frequency'] * $amount);
           $from_ba = CRM_Contract_BankingLogic::getOrCreateBankAccount(
-            $this->membership['contact_id'],
+            (int) $this->membership['contact_id'],
             $submitted['iban'],
             $submitted['bic'] ?: 'NOTPROVIDED'
           );
@@ -624,7 +624,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
           $params['membership_payment.cycle_day'] = $submitted['cycle_day'];
           $params['membership_payment.to_ba'] = CRM_Contract_BankingLogic::getCreditorBankAccount();
           $params['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount(
-            $this->membership['contact_id'],
+            (int) $this->membership['contact_id'],
             $submitted['iban'],
             $submitted['bic']
           );

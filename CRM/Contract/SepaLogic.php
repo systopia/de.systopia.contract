@@ -98,51 +98,45 @@ class CRM_Contract_SepaLogic {
       //  on the parameters. See GP-669 / GP-789
 
       // get the right values (desired first, else from current)
-      $from_ba = CRM_Utils_Array::value(
-        'contract_updates.ch_from_ba',
-        $desired_state,
-        // fallback: membership
-        CRM_Utils_Array::value('membership_payment.from_ba', $current_state)
-      );
-      $cycle_day = (int) CRM_Utils_Array::value(
-        'contract_updates.ch_cycle_day',
-        $desired_state,
-        // fallback: membership
-        CRM_Utils_Array::value('membership_payment.cycle_day', $current_state)
-      );
-      $annual_amount = CRM_Utils_Array::value(
-        'contract_updates.ch_annual',
-        $desired_state,
-        // fallback: membership
-        CRM_Utils_Array::value('membership_payment.membership_annual', $current_state)
-      );
-      $frequency = (int) CRM_Utils_Array::value(
-        'contract_updates.ch_frequency',
-        $desired_state,
-        // fallback: membership
-        CRM_Utils_Array::value('membership_payment.membership_frequency', $current_state)
-      );
-      $account_holder = CRM_Utils_Array::value(
-        'contract_updates.ch_from_name',
-        $desired_state,
-        // fallback: membership
-        CRM_Utils_Array::value('membership_payment.from_name', $current_state)
-      );
+      $from_ba = $desired_state['contract_updates.ch_from_ba']
+        ?? $current_state['membership_payment.from_ba']
+        ?? NULL;
+      $from_ba = isset($from_ba) ? (int) $from_ba : NULL;
+
+      $cycle_day = $desired_state['contract_updates.ch_cycle_day']
+        ?? $current_state['membership_payment.cycle_day']
+        ?? NULL;
+      $cycle_day = isset($cycle_day) ? (int) $cycle_day : NULL;
+
+      $annual_amount = $desired_state['contract_updates.ch_annual']
+        ?? $current_state['membership_payment.annual']
+        ?? NULL;
+
+      $frequency = $desired_state['contract_updates.ch_frequency']
+        ?? $current_state['membership_payment.membership_frequency']
+        ?? NULL;
+      $frequency = isset($frequency) ? (int) $frequency : NULL;
+
+      $account_holder = $desired_state['contract_updates.ch_from_name']
+        ?? $current_state['membership_payment.from_name']
+        ?? NULL;
 
       $recurring_contribution = NULL;
-      $recurring_contribution_id = (int) CRM_Utils_Array::value(
-        'membership_payment.membership_recurring_contribution',
-        $current_state
-      );
-      if ($recurring_contribution_id) {
-        $recurring_contribution = civicrm_api3('ContributionRecur', 'getsingle', ['id' => $recurring_contribution_id]);
+      $recurring_contribution_id = $current_state['membership_payment.membership_recurring_contribution'] ?? NULL;
+      $recurring_contribution_id = isset($recurring_contribution_id) ? (int) $recurring_contribution_id : NULL;
+      if (isset($recurring_contribution_id)) {
+        $recurring_contribution = civicrm_api3(
+          'ContributionRecur',
+          'getsingle',
+          ['id' => $recurring_contribution_id]
+        );
       }
 
       $campaign_id = CRM_Utils_Array::value('campaign_id', $activity,
           /* fallback: r. contrib. */ CRM_Utils_Array::value('campaign_id', $recurring_contribution));
 
       // fallback 2: take (still) missing from connected recurring contribution
-      if (empty($cycle_day) || empty($frequency) || empty($annual_amount) || empty($from_ba)) {
+      if (empty($cycle_day) || empty($frequency) || empty($annual_amount) || !isset($from_ba)) {
 
         if (NULL !== $recurring_contribution) {
           if (empty($cycle_day)) {
@@ -158,11 +152,11 @@ class CRM_Contract_SepaLogic {
           if (empty($annual_amount)) {
             $annual_amount = self::formatMoney(self::formatMoney($recurring_contribution['amount']) * $frequency);
           }
-          if (empty($from_ba)) {
+          if (!isset($from_ba)) {
             $mandate = self::getMandateForRecurringContributionID($recurring_contribution_id);
             if ($mandate) {
               $from_ba = CRM_Contract_BankingLogic::getOrCreateBankAccount(
-                $current_state['contact_id'],
+                (int) $current_state['contact_id'],
                 $mandate['iban'],
                 $mandate['bic']
               );
@@ -375,7 +369,7 @@ class CRM_Contract_SepaLogic {
 
       // then: end any old links
       foreach ($current_links as $current_link) {
-        CRM_Contract_BAO_ContractPaymentLink::endPaymentLink($current_link['id'], $date);
+        CRM_Contract_BAO_ContractPaymentLink::endPaymentLink((int) $current_link['id'], $date);
       }
 
       // then: create a new link
@@ -677,11 +671,9 @@ class CRM_Contract_SepaLogic {
   }
 
   /**
-   * Get the creditor to be used for Contracts
-   *
-   * @return object creditor (BAO)
+   * Get the creditor to be used for Contracts.
    */
-  public static function getCreditor() {
+  public static function getCreditor(): ?CRM_Sepa_DAO_SEPACreditor {
     // currently we're just using the default creditor
     return CRM_Sepa_Logic_Settings::defaultCreditor();
   }
