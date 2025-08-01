@@ -117,7 +117,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
    *
    * @throws Exception if the creation should be disallowed
    */
-  public function shouldBeAccepted() {
+  public function shouldBeAccepted(): void {
     // TODO: any restrictions?
     parent::shouldBeAccepted();
   }

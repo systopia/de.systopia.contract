@@ -56,7 +56,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
    *
    * @throws Exception if the creation should be disallowed
    */
-  public function shouldBeAccepted() {
+  public function shouldBeAccepted(): void {
     parent::shouldBeAccepted();
 
     // TODO: check if the parameters are good
