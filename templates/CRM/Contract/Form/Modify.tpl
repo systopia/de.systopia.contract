@@ -47,37 +47,37 @@
       <div class="clear"></div>
     </div>
 
-    <div class="crm-section payment-modify">
+    <div class="crm-section payment-sepa">
       <div class="label">{$form.cycle_day.label}</div>
       <div class="content">{$form.cycle_day.html}&nbsp;&nbsp;{if $current_cycle_day}{ts 1=$current_cycle_day}(currently: %1){/ts}{/if}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-modify">
+    <div class="crm-section payment-sepa">
       <div class="label">{$form.iban.label}</div>
       <div class="content">{$form.iban.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-modify">
+    <div class="crm-section payment-sepa">
       <div class="label">{$form.bic.label}</div>
       <div class="content">{$form.bic.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-modify">
+    <div class="crm-section payment-sepa">
       <div class="label">{$form.account_holder.label}</div>
       <div class="content">{$form.account_holder.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-modify payment-create">
+    <div class="crm-section payment-sepa payment-modify payment-create">
       <div class="label">{$form.payment_amount.label}</div>
       <div class="content">{$form.payment_amount.html}&nbsp;<span id="payment_amount_currency"></span></div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-modify">
+    <div class="crm-section payment-sepa payment-modify">
       <div class="label">{$form.payment_frequency.label}</div>
       <div class="content">{$form.payment_frequency.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-modify">
+    <div class="crm-section payment-sepa payment-modify">
       <div class="label">{$form.defer_payment_start.label}</div>
       <div class="content">{$form.defer_payment_start.html}</div>
       <div class="clear"></div>
