@@ -116,43 +116,31 @@
       $('div.payment-create').hide(300);
       $('div.payment-sepa').hide(300);
       $('div.payment-select').show(300);
-
     }
     else if (new_mode === 'None') {
       $('div.payment-select').hide(300);
       $('div.payment-create').hide(300);
       $('div.payment-sepa').hide(300);
       $('div.payment-modify').hide(300);
-
-    }
-    else if (new_mode === 'modify') {
-      $('div.payment-select').hide(300);
-      $('div.payment-create').hide(300);
-      $('div.payment-sepa').hide(300);
-      $('div.payment-modify').show(300);
-
     }
     else if (new_mode === 'RCUR') {
       $('div.payment-select').hide(300);
       $('div.payment-modify').hide(300);
       $('div.payment-create').show(300);
       $('div.payment-sepa').show(300);
-
     }
     else if (new_mode === 'nochange') {
       $('div.payment-select').hide(300);
       $('div.payment-modify').hide(300);
       $('div.payment-create').hide(300);
       $('div.payment-sepa').hide(300);
-
     }
     else {
       // new contract
       $('div.payment-select').hide(300);
-      $('div.payment-modify').show(300);
-      $('div.payment-show').hide(300);
-      $('div.payment-create').show(300);
       $('div.payment-sepa').hide(300);
+      $('div.payment-modify').show(300);
+      $('div.payment-create').show(300);
     }
   }
 
