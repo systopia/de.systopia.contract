@@ -24,9 +24,12 @@ class CRM_Contract_RecurringContribution {
    * Return a detailed list of recurring contribution
    * for the given contact
    */
-  public static function getAllForContact($cid, $thatAreNotAssignedToOtherContracts = TRUE, $contractId = NULL) {
+  public static function getAllForContact ($cid,
+    $thatAreNotAssignedToOtherContracts = TRUE,
+    $contractId = NULL,
+    $onlySupportedPaymentTypes = NULL) {
     $object = new CRM_Contract_RecurringContribution();
-    return $object->getAll($cid, $thatAreNotAssignedToOtherContracts, $contractId);
+    return $object->getAll($cid, $thatAreNotAssignedToOtherContracts, $contractId, $onlySupportedPaymentTypes);
   }
 
   /**
@@ -90,12 +93,15 @@ class CRM_Contract_RecurringContribution {
   /**
    * Render all recurring contributions for that contact
    */
-  public function getAll($cid, $thatAreNotAssignedToOtherContracts = TRUE, $contractId = NULL) {
+  public function getAll($cid,
+                         $thatAreNotAssignedToOtherContracts = TRUE,
+                         $contractId = NULL,
+                         $onlySupportedPaymentTypes = FALSE) {
     $return = [];
 
     // see if we have that cached (it's getting called multiple times)
     $cache_key = "{$cid}-{$thatAreNotAssignedToOtherContracts}-{$contractId}";
-    if (isset(self::$cached_results[$cache_key])) {
+    if (isset(self::$cached_results[$cache_key]) && !$onlySupportedPaymentTypes) {
       return self::$cached_results[$cache_key];
     }
 
@@ -105,15 +111,25 @@ class CRM_Contract_RecurringContribution {
       'return' => 'display_name',
     ]);
 
-    // load contribution
-    $contributionRecurs = civicrm_api3('ContributionRecur', 'get', [
+    $params = [
       'contact_id'             => $cid,
       'sequential'             => 0,
       'contribution_status_id' => ['IN' => $this->getValidRcurStatusIds()],
       'option.limit'           => 0,
-    ])['values'];
+    ];
 
-    // load attached mandates
+    if ($onlySupportedPaymentTypes) {
+      $types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
+      $allowedIds = array_values(array_filter(array_map('intval', $types)));
+      if (empty($allowedIds)) {
+        self::$cached_results[$cache_key] = [];
+        return [];
+      }
+      $params['payment_instrument_id'] = ['IN' => $allowedIds];
+    }
+
+    $contributionRecurs = civicrm_api3('ContributionRecur', 'get', $params)['values'];
+
     if (!empty($contributionRecurs)) {
       $sepaMandates = civicrm_api3('SepaMandate', 'get', [
         'type'         => 'RCUR',
@@ -163,7 +179,7 @@ class CRM_Contract_RecurringContribution {
    * @param $cr array
    *   recurring contribution data
    */
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   protected function renderRecurringContribution($cr, $contact, $sepaMandates, $sepaCreditors) {
   // phpcs:enable
     $result = [];
@@ -223,22 +239,49 @@ class CRM_Contract_RecurringContribution {
         'next_debit' => '?',
       ];
 
-      if ($result['fields']['payment_instrument'] == 'No payment required') {
+      $pi = $result['fields']['payment_instrument'] ?? NULL;
+
+      if ($pi === 'No payment required') {
         $result['text_summary'] = E::ts('No payment required');
         $result['label'] = E::ts('No payment required');
       }
       else {
-        // this is a non-SEPA recurring contribution
-        $result['text_summary'] =
-          E::ts('Paid by') . ": {$result['fields']['display_name']}<br />" .
-          E::ts('Payment method') . ": {$result['fields']['payment_instrument']}<br />" .
-          E::ts('Frequency') . ": {$result['fields']['frequency']}<br />" .
-          E::ts('Annual amount') . ": {$result['fields']['annual_amount']}&nbsp;{$cr['currency']}<br />" .
-          E::ts('Installment amount') . ": {$result['fields']['amount']}&nbsp;{$cr['currency']}<br />";
-        $result['label'] =
-          "{$result['fields']['payment_instrument']}, {$result['fields']['amount']} {$result['fields']['frequency']}";
+        $displayName = $result['fields']['display_name'] ?? '';
+        $frequency   = $result['fields']['frequency'] ?? '';
+        $annual      = $result['fields']['annual_amount'] ?? NULL;
+        $amount      = $result['fields']['amount'] ?? NULL;
+        $currency    = $cr['currency'] ?? '';
 
+        $parts = [];
+        $parts[] = E::ts('Paid by') . ': ' . $displayName;
+        if ($pi !== NULL && $pi !== '') {
+          $parts[] = E::ts('Payment method') . ': ' . $pi;
+        }
+        if ($frequency !== '') {
+          $parts[] = E::ts('Frequency') . ': ' . $frequency;
+        }
+        if ($annual !== NULL && $annual !== '') {
+          $parts[] = E::ts('Annual amount') . ': ' . $annual . ($currency ? '&nbsp;' . $currency : '');
+        }
+        if ($amount !== NULL && $amount !== '') {
+          $parts[] = E::ts('Installment amount') . ': ' . $amount . ($currency ? '&nbsp;' . $currency : '');
+        }
+
+        $result['text_summary'] = implode('<br />', $parts) . '<br />';
+
+        $labelParts = [];
+        if ($pi !== NULL && $pi !== '') {
+          $labelParts[] = (string) $pi;
+        }
+        if ($amount !== NULL && $amount !== '') {
+          $labelParts[] = (string) $amount;
+        }
+        if ($frequency !== '') {
+          $labelParts[] = (string) $frequency;
+        }
+        $result['label'] = implode(', ', $labelParts);
       }
+
     }
 
     return $result;

@@ -74,6 +74,7 @@ abstract class CRM_Contract_Change {
    */
   protected const FIELD_MAPPING_CHANGE_CONTRACT = [
     'membership_type_id'                                   => 'contract_updates.ch_membership_type',
+    'campaign_id'                                          => 'contract_updates.ch_campaign_id',
     'membership_payment.membership_recurring_contribution' => 'contract_updates.ch_recurring_contribution',
     'membership_payment.payment_instrument'                => 'contract_updates.ch_payment_instrument',
     'membership_payment.membership_annual'                 => 'contract_updates.ch_annual',

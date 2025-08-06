@@ -113,7 +113,7 @@ class CRM_Contract_Configuration {
     if ($eligible_payment_option_labels === NULL) {
       $generally_supported_payment_types = [
         // todo: setting?
-        'None' => E::ts('No Payment required'),
+        'None' => E::ts('No payment required'),
         'RCUR' => E::ts('SEPA Direct Debit'),
         'Cash' => E::ts('Cash'),
         'EFT' => E::ts('EFT'),

@@ -212,13 +212,6 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     // add the JS tools
     CRM_Contract_SepaLogic::addJsSepaTools();
 
-    // add a generic switch to clean up form
-    $payment_options = [
-      'modify'   => E::ts('modify contract'),
-      'select'   => E::ts('select other'),
-    ];
-
-    // add 'new contract' options
     $payment_options = CRM_Contract_Configuration::getPaymentOptions(TRUE, TRUE);
 
     $this->add(
@@ -386,6 +379,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     }
 
     $defaults['membership_type_id'] = $this->membership['membership_type_id'];
+    $defaults['campaign_id'] = $this->membership['campaign_id'] ?? '';
 
     if ($this->modify_action == 'cancel') {
       [$defaults['activity_date'], $defaults['activity_date_time']] = CRM_Utils_Date::setDateDefaults(
@@ -407,66 +401,122 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     parent::setDefaults($defaults);
   }
 
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded
   public function validate() {
   // phpcs:enable
     $submitted = $this->exportValues();
     if (empty($submitted['activity_date'])) {
       $submitted['activity_date'] = date('Y-m-d');
     }
-    $activityDate = CRM_Utils_Date::processDate($submitted['activity_date'], $submitted['activity_date_time']);
+    $activityDate = CRM_Utils_Date::processDate($submitted['activity_date'], $submitted['activity_date_time'] ?? NULL);
     $midnightThisMorning = date('Ymd000000');
     if ($activityDate < $midnightThisMorning) {
-      HTML_QuickForm::setElementError(
-        'activity_date',
-        'Activity date must be either today (which will execute the change now) or in the future'
-      );
+      HTML_QuickForm::setElementError('activity_date',
+        'Activity date must be either today (which will execute the change now) or in the future');
     }
     if ($this->modify_action == 'pause') {
       $resumeDate = CRM_Utils_Date::processDate($submitted['resume_date']);
-
       if ($activityDate > $resumeDate) {
         HTML_QuickForm::setElementError('resume_date', 'Resume date must be after the scheduled pause date');
       }
     }
 
-    if (isset($submitted['payment_option']) && $submitted['payment_option'] == 'modify') {
-      if ($submitted['payment_amount'] && !$submitted['payment_frequency']) {
-        HTML_QuickForm::setElementError('payment_frequency', 'Please specify a frequency when specifying an amount');
-      }
-      if ($submitted['payment_frequency'] && !$submitted['payment_amount']) {
-        // empty values are ok, will later be filled with previous values
-        if ('' !== trim($submitted['payment_amount'])) {
+    if (!in_array($this->modify_action, ['update', 'revive'], TRUE)) {
+      return parent::validate();
+    }
+
+    $mode = $submitted['payment_option'] ?? '';
+
+    switch ($mode) {
+      case 'modify':
+        $amount = $submitted['payment_amount'] ?? '';
+        $freq = $submitted['payment_frequency'] ?? '';
+        if ($amount && !$freq) {
+          HTML_QuickForm::setElementError('payment_frequency', 'Please specify a frequency when specifying an amount');
+        }
+        if ($freq && ('' !== trim((string) $amount)) && !$amount) {
           HTML_QuickForm::setElementError('payment_amount', 'Please specify an amount when specifying a frequency');
         }
-      }
+        if (isset($this->_submitValues['iban'])) {
+          $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
+          $this->_submitValues['iban'] = $submitted['iban'];
+        }
+        if (isset($this->_submitValues['bic'])) {
+          $submitted['bic'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['bic']);
+          $this->_submitValues['bic'] = $submitted['bic'];
+        }
+        if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
+          HTML_QuickForm::setElementError('iban', 'Please enter a valid IBAN');
+        }
+        if (!empty($submitted['iban']) && CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
+          HTML_QuickForm::setElementError('iban', "Do not use any of the organisation's own IBANs");
+        }
+        if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
+          HTML_QuickForm::setElementError('bic', 'Please enter a valid BIC');
+        }
+        break;
 
-      // format IBAN and BIC
-      if (isset($this->_submitValues['iban'])) {
-        $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
-        $this->_submitValues['iban'] = $submitted['iban'];
-      }
-      if (isset($this->_submitValues['bic'])) {
-        $submitted['bic'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['bic']);
-        $this->_submitValues['bic'] = $submitted['bic'];
-      }
+      case 'select':
+        if (empty($submitted['recurring_contribution'])) {
+          HTML_QuickForm::setElementError('recurring_contribution', 'Please select a recurring contribution');
+        }
+        break;
 
-      // SEPA validation
-      if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
-        HTML_QuickForm::setElementError('iban', 'Please enter a valid IBAN');
-      }
-      if (!empty($submitted['iban']) && CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
-        HTML_QuickForm::setElementError('iban', "Do not use any of the organisation's own IBANs");
-      }
-      if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
-        HTML_QuickForm::setElementError('bic', 'Please enter a valid BIC');
-      }
+      case 'RCUR':
+        if (empty($submitted['payment_amount'])) {
+          HTML_QuickForm::setElementError('payment_amount', 'Please enter an amount');
+        }
+        if (empty($submitted['payment_frequency'])) {
+          HTML_QuickForm::setElementError('payment_frequency', 'Please enter a frequency');
+        }
+        if (empty($submitted['cycle_day'])) {
+          HTML_QuickForm::setElementError('cycle_day', 'Please select a cycle day');
+        }
+        if (isset($this->_submitValues['iban'])) {
+          $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
+          $this->_submitValues['iban'] = $submitted['iban'];
+        }
+        if (isset($this->_submitValues['bic'])) {
+          $submitted['bic'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['bic']);
+          $this->_submitValues['bic'] = $submitted['bic'];
+        }
+        if (empty($submitted['iban'])) {
+          HTML_QuickForm::setElementError('iban', 'Please enter an IBAN');
+        }
+        elseif (!CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
+          HTML_QuickForm::setElementError('iban', 'Please enter a valid IBAN');
+        }
+        elseif (CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
+          HTML_QuickForm::setElementError('iban', "Do not use any of the organisation's own IBANs");
+        }
+        if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
+          HTML_QuickForm::setElementError('bic', 'Please enter a valid BIC');
+        }
+        $amountNum = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount'] ?? 0);
+        if ($amountNum <= 0) {
+          HTML_QuickForm::setElementError('payment_amount', 'Amount must be greater than 0 for SEPA');
+        }
+        break;
+
+      case 'None':
+      case 'nochange':
+      case '':
+        break;
+
+      default:
+        if (empty($submitted['payment_amount'])) {
+          HTML_QuickForm::setElementError('payment_amount', 'Please enter an amount');
+        }
+        if (empty($submitted['payment_frequency'])) {
+          HTML_QuickForm::setElementError('payment_frequency', 'Please enter a frequency');
+        }
+        break;
     }
 
     return parent::validate();
   }
 
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function postProcess() {
   // phpcs:enable
 
@@ -490,25 +540,80 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
     // If this is an update or a revival
     if (in_array($this->modify_action, ['update', 'revive'])) {
+      $types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
 
       // now add the payment
       switch ($submitted['payment_option']) {
         // select a new recurring contribution
         case 'select':
-          $params['membership_payment.membership_recurring_contribution'] = (int) $submitted['recurring_contribution'];
+          $rcId = (int) $submitted['recurring_contribution'];
+          $params['membership_payment.membership_recurring_contribution'] = $rcId;
+
+          // Sincronizar datos del RC → contrato
+          $rc = civicrm_api3('ContributionRecur', 'getsingle', [
+            'id' => $rcId,
+            'return' => [
+              'amount',
+              'frequency_unit',
+              'frequency_interval',
+              'cycle_day',
+              'payment_instrument_id',
+            ],
+          ]);
+
+          $freq = ($rc['frequency_unit'] === 'month')
+            ? (int) (12 / max(1, (int) $rc['frequency_interval']))
+          // por si fuera anual
+            : (int) (1 / max(1, (int) $rc['frequency_interval']));
+
+          $annual = CRM_Contract_SepaLogic::formatMoney(
+            ((float) $rc['amount']) * $freq
+          );
+
+          $params['membership_payment.membership_annual']    = $annual;
+          $params['membership_payment.membership_frequency'] = $freq;
+          $params['membership_payment.cycle_day']            = (int) ($rc['cycle_day'] ?? 0);
+          $params['membership_payment.payment_instrument']   = (int) ($rc['payment_instrument_id'] ?? 0);
           break;
 
         case 'nochange':
-          // anything to do here?
+          break;
+
+        case 'None':
+          $pi = $types['None'] ?? CRM_Contract_Configuration::getPaymentInstrumentIdByName('None');
+          if ($pi) {
+            $params['membership_payment.payment_instrument'] = $pi;
+            $params['contract_updates.ch_payment_instrument'] = $pi;
+          }
+          break;
+
+        case 'RCUR':
+          $amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']);
+          $annual = CRM_Contract_SepaLogic::formatMoney($submitted['payment_frequency'] * $amount);
+          $from_ba = CRM_Contract_BankingLogic::getOrCreateBankAccount(
+            $this->membership['contact_id'],
+            $submitted['iban'],
+            $submitted['bic'] ?: 'NOTPROVIDED'
+          );
+          $pi = $types['RCUR'] ?? CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR');
+          if ($pi) {
+            $params['contract_updates.ch_payment_instrument'] = $pi;
+          }
+          $params['contract_updates.ch_annual'] = $annual;
+          $params['contract_updates.ch_frequency'] = $submitted['payment_frequency'];
+          $params['contract_updates.ch_cycle_day'] = $submitted['cycle_day'];
+          $params['contract_updates.ch_from_ba'] = $from_ba;
+          $params['contract_updates.ch_from_name'] = $submitted['account_holder'];
+          $params['contract_updates.ch_defer_payment_start'] = empty($submitted['defer_payment_start']) ? '0' : '1';
           break;
 
         default:
           // a new payment option is picked
           $new_payment_option = $submitted['payment_option'];
-          $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
-          $payment_instrument_id = $payment_types[$new_payment_option] ?? '';
+          $payment_instrument_id = $types[$new_payment_option] ?? '';
           if ($payment_instrument_id) {
             $params['membership_payment.payment_instrument'] = $payment_instrument_id;
+            $params['contract_updates.ch_payment_instrument'] = $payment_instrument_id;
           }
 
           // compile other change data

@@ -53,7 +53,9 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         'creditor' => CRM_Contract_SepaLogic::getCreditor(),
         'frequencies' => CRM_Contract_SepaLogic::getPaymentFrequencies(),
         'grace_end' => NULL,
-        'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact($this->get('cid')),
+        'recurring_contributions' => CRM_Contract_RecurringContribution::getAllForContact(
+          $this->get('cid'), TRUE, NULL, TRUE
+        ),
       ]
     );
 
@@ -73,7 +75,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'cycle_day',
       E::ts('Cycle day'),
       CRM_Contract_SepaLogic::getCycleDays(),
-      TRUE,
+      FALSE,
       ['class' => 'crm-select2']
     );
     $this->add(
@@ -106,7 +108,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       'payment_frequency',
       E::ts('Payment Frequency'),
       CRM_Contract_SepaLogic::getPaymentFrequencies(),
-      TRUE,
+      FALSE,
       ['class' => 'crm-select2']
     );
     $this->assign('bic_lookup_accessible', CRM_Contract_SepaLogic::isLittleBicExtensionAccessible());
@@ -218,6 +220,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     // add the JS file for the payment preview
     CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/contract_modify_tools.js');
+ //   CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'js/sepa_tools.js');
 
     $this->addButtons([
       ['type' => 'cancel', 'name' => E::ts('Cancel'), 'submitOnce' => TRUE],
@@ -240,7 +243,8 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $defaults['start_date'] = date('Y-m-d');
 
     // sepa defaults
-    $defaults['payment_option'] = 'RCUR';
+    $defaults['payment_frequency'] = '12';
+    $defaults['payment_option'] = 'create';
     $defaults['cycle_day'] = CRM_Contract_SepaLogic::nextCycleDay();
     $defaults['contact_id'] = $this->cid;
 
@@ -267,29 +271,24 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       }
     }
 
-    // check if an amount is necessary
-    if (!in_array($submitted['payment_option'], ['existing', 'nochange', 'select', 'None'])) {
-      if (empty($submitted['payment_amount'])) {
+    $mode = $submitted['payment_option'] ?? '';
+
+    if (!in_array($mode, ['existing', 'nochange', 'select', 'None'], TRUE)) {
+      if (!array_key_exists('payment_amount', $submitted) || trim((string) $submitted['payment_amount']) === '') {
         $this->setElementError('payment_amount', 'Please enter an amount');
       }
     }
 
-    // check if all values for 'create new mandate' are there
-    if (CRM_Contract_Configuration::isCreateNewPaymentType($submitted['payment_option'])) {
-      $amountRaw = (float) ($submitted['payment_amount'] ?? 0);
-      $frequencyRaw = (int) ($submitted['payment_frequency'] ?? 0);
-
-      if (empty($submitted['payment_frequency'])) {
-        $this->setElementError('payment_frequency', 'Please enter a frequency');
-      }
-
-      $amount = CRM_Contract_SepaLogic::formatMoney($amountRaw / $frequencyRaw);
-      if ($amount < 0.01) {
-        $this->setElementError('payment_amount', 'Annual amount too small.');
-      }
-
-      if ('RCUR' === $submitted['payment_option']) {
-        // format IBAN and BIC
+    switch ($mode) {
+      case 'RCUR':
+        if (empty($submitted['payment_frequency'])) {
+          $this->setElementError('payment_frequency', 'Please enter a frequency');
+        }
+        $cycle = (int) ($submitted['cycle_day'] ?? 0);
+        if ($cycle < 1 || $cycle > 30) {
+          $cycle = CRM_Contract_SepaLogic::nextCycleDay();
+          $this->_submitValues['cycle_day'] = $cycle;
+        }
         if (isset($this->_submitValues['iban'])) {
           $submitted['iban'] = CRM_Contract_SepaLogic::formatIBAN($this->_submitValues['iban']);
           $this->_submitValues['iban'] = $submitted['iban'];
@@ -301,26 +300,39 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
         // SEPA validation
         if (empty($submitted['iban'])) {
-          $this->setElementError('iban', 'Die IBAN wird benötigt');
+          $this->setElementError('iban', 'Please enter an IBAN');
         }
-
-        if (empty($submitted['bic'])) {
-          $submitted['bic'] = 'NOTPROVIDED';
+        elseif (!CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
+          $this->setElementError('iban', 'Please enter a valid IBAN');
         }
-
-        if (!empty($submitted['iban']) && !CRM_Contract_SepaLogic::validateIBAN($submitted['iban'])) {
-          $this->setElementError('iban', 'invalid IBAN');
-        }
-        if (!empty($submitted['iban']) && CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
-          $this->setElementError('iban', "Pleas don't use the organisation's IBAN");
+        elseif (CRM_Contract_SepaLogic::isOrganisationIBAN($submitted['iban'])) {
+          $this->setElementError('iban', "Do not use any of the organisation's own IBANs");
         }
         if (!empty($submitted['bic']) && !CRM_Contract_SepaLogic::validateBIC($submitted['bic'])) {
-          $this->setElementError('bic', 'Please enter a valid BIC.');
+          $this->setElementError('bic', 'Please enter a valid BIC');
         }
-      }
+        $amountNum = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount'] ?? 0);
+        if ($amountNum <= 0) {
+          $this->setElementError('payment_amount', 'Amount must be greater than 0 for SEPA');
+        }
+        break;
+
+      case 'select':
+        if (empty($submitted['recurring_contribution'])) {
+          $this->setElementError('recurring_contribution', 'Please select a recurring contribution');
+        }
+        break;
+
+      case 'None':
+        break;
+
+      default:
+        if (empty($submitted['payment_frequency'])) {
+          $this->setElementError('payment_frequency', 'Please enter a frequency');
+        }
+        break;
     }
 
-    // check times
     if (!empty($submitted['join_date'])) {
       if (CRM_Utils_Date::processDate(date('Ymd')) < CRM_Utils_Date::processDate($submitted['join_date'])) {
         $this->setElementError('join_date', ts('Join date cannot be in the future.'));
@@ -351,9 +363,6 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       $submitted['bic'] = 'NOTPROVIDED';
     }
 
-    // calculate amount
-    $frequency_interval = (int) (12 / $submitted['payment_frequency']);
-    $amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']);
     $payment_contract = [];
 
     // SWITCH: contract creation/selection differs on the slected option
@@ -363,23 +372,20 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         $sepaMandate = CRM_Contract_SepaLogic::createNewMandate([
           'type'               => 'RCUR',
           'contact_id'         => $this->get('cid'),
-          'amount'             => $amount,
+          'amount'             => CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']),
           'currency'           => CRM_Contract_SepaLogic::getCreditor()->currency,
           'start_date'         => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
-        // NOW
           'creation_date'      => date('YmdHis'),
           'date'               => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
-        // NOW
           'validation_date'    => date('YmdHis'),
           'iban'               => $submitted['iban'],
           'bic'                => $submitted['bic'],
           'account_holder'     => $submitted['account_holder'],
           'campaign_id'        => $submitted['campaign_id'] ?? NULL,
-        // Membership Dues
           'financial_type_id'  => 2,
           'frequency_unit'     => 'month',
           'cycle_day'          => $submitted['cycle_day'],
-          'frequency_interval' => $frequency_interval,
+          'frequency_interval' => (int) (12 / $submitted['payment_frequency']),
         ]);
         $payment_contract['id'] = (int) $sepaMandate['entity_id'];
         break;
@@ -391,21 +397,18 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           'amount' => 0,
           'currency' => CRM_Contract_SepaLogic::getCreditor()->currency,
           'start_date' => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
-          // NOW
           'create_date' => date('YmdHis'),
           'date' => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
-          // NOW
           'validation_date' => date('YmdHis'),
           'account_holder' => $submitted['account_holder'],
           'campaign_id' => $submitted['campaign_id'] ?? '',
           'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName(
             $submitted['payment_option']
           ),
-          // Membership Dues
           'financial_type_id' => 2,
           'frequency_unit' => 'month',
           'cycle_day' => $submitted['cycle_day'],
-          'frequency_interval' => $frequency_interval,
+          'frequency_interval' => 1,
           'checkPermissions' => TRUE,
         ];
         CRM_Contract_CustomData::resolveCustomFields($payment_contract_params);
@@ -428,7 +431,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         // new contract
         $payment_contract_params = [
           'contact_id' => $this->get('cid'),
-          'amount' => $amount,
+          'amount' => CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']),
           'currency' => CRM_Contract_SepaLogic::getCreditor()->currency,
           'start_date' => CRM_Utils_Date::processDate($submitted['start_date'], NULL, NULL, 'Y-m-d H:i:s'),
           // NOW
@@ -445,7 +448,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           'financial_type_id' => 2,
           'frequency_unit' => 'month',
           'cycle_day' => $submitted['cycle_day'],
-          'frequency_interval' => $frequency_interval,
+          'frequency_interval' => (int) (12 / $submitted['payment_frequency']),
           'checkPermissions' => TRUE,
         ];
         CRM_Contract_CustomData::resolveCustomFields($payment_contract_params);

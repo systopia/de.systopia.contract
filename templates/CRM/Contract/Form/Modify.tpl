@@ -67,17 +67,17 @@
       <div class="content">{$form.account_holder.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-sepa payment-modify payment-create">
+    <div class="crm-section payment-create">
       <div class="label">{$form.payment_amount.label}</div>
       <div class="content">{$form.payment_amount.html}&nbsp;<span id="payment_amount_currency"></span></div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-sepa payment-modify">
+    <div class="crm-section payment-create">
       <div class="label">{$form.payment_frequency.label}</div>
       <div class="content">{$form.payment_frequency.html}</div>
       <div class="clear"></div>
     </div>
-    <div class="crm-section payment-sepa payment-modify">
+    <div class="crm-section payment-modify">
       <div class="label">{$form.defer_payment_start.label}</div>
       <div class="content">{$form.defer_payment_start.html}</div>
       <div class="clear"></div>
@@ -117,7 +117,7 @@
     </div>
   {/if}
   <hr />
-  <div class="crm-section">
+  <div class="crm-section payment-schedule">
     <div class="label">{$form.activity_date.label} {help id="scheduling" file="CRM/Contract/Form/Scheduling.hlp"}</div>
     <div class="content">{$form.activity_date.html}</div>
     <div class="clear"></div>
