@@ -156,8 +156,12 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     $contract_before = $this->getContract(TRUE);
     $contract_update = [];
 
-    $campaignId = $this->getParameter('campaign_id');
-    if ($contract_before['campaign_id'] != $campaignId) {
+    $campaignId = $this->getParameter('contract_updates.ch_campaign_id')
+      ?? ($this->data['campaign_id'] ?? NULL);
+
+    $beforeCampaign = $contract_before['campaign_id'] ?? NULL;
+
+    if ($beforeCampaign !== $campaignId) {
       $contract_update['campaign_id'] = empty($campaignId) ? NULL : (int) $campaignId;
     }
 
@@ -271,9 +275,9 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     );
   }
 
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded
   private function createNonSepaRecurring($contract, $paymentInstrumentIdOrName, $payment_types, $amount = NULL) {
-   // phpcs:enable
+  // phpcs:enable
     $instrumentName = is_numeric($paymentInstrumentIdOrName)
       ? array_search((string) $paymentInstrumentIdOrName, $payment_types, TRUE)
       : (string) $paymentInstrumentIdOrName;
@@ -281,33 +285,55 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       $instrumentName = (string) $paymentInstrumentIdOrName;
     }
 
-    $annual = $this->getParameter('contract_updates.ch_annual') ?? (
-      $this->data['membership_payment.membership_annual'] ??
-      $contract['membership_payment.membership_annual'] ?? 0
+    $freq = (int) (
+      $this->getParameter('contract_updates.ch_frequency')
+      ?? $this->data['membership_payment.membership_frequency']
+      ?? $contract['membership_payment.membership_frequency']
+      ?? 12
     );
-    $annual = CRM_Contract_SepaLogic::formatMoney($annual);
-    $freq = (int) ($this->getParameter('contract_updates.ch_frequency') ?? (
-    $this->data['membership_payment.membership_frequency'] ??
-    $contract['membership_payment.membership_frequency'] ?? 12
-    ));
-    $finalAmount = $amount !== NULL ? (float) $amount : ((float) $annual / max(1, (float) $freq));
+    $freq = $freq > 0 ? $freq : 12;
 
-    $cycleDay = (int) ($this->getParameter('contract_updates.ch_cycle_day')
-    ?? ($this->data['membership_payment.cycle_day'] ?? $contract['membership_payment.cycle_day'] ?? 1));
+    if ($amount === NULL) {
+      $annual = $this->getParameter('contract_updates.ch_annual')
+        ?? $this->data['membership_payment.membership_annual']
+        ?? $contract['membership_payment.membership_annual']
+        ?? 0;
+      $annual = CRM_Contract_SepaLogic::formatMoney($annual);
+      $amount = $freq ? (float) $annual / $freq : 0;
+    }
+    $amount = CRM_Contract_SepaLogic::formatMoney($amount);
+
+    $cycleDay = (int) (
+      $this->getParameter('contract_updates.ch_cycle_day')
+      ?? $this->data['membership_payment.cycle_day']
+      ?? $contract['membership_payment.cycle_day']
+      ?? 1
+    );
+    if ($cycleDay < 1 || $cycleDay > 30) {
+      $cycleDay = CRM_Contract_SepaLogic::nextCycleDay();
+    }
+
     $accountHolder = $this->getParameter('contract_updates.ch_from_name')
-      ?? ($this->data['membership_payment.from_name'] ?? $contract['membership_payment.from_name'] ?? 'Holder');
-    $startDate = date('Y-m-d');
-    $campaignId = (int) $contract['campaign_id'] ?? NULL;
+      ?? $this->data['membership_payment.from_name']
+      ?? $contract['membership_payment.from_name']
+      ?? 'Holder';
+
+    $campaignId = $this->getParameter('contract_updates.ch_campaign_id')
+      ?? $this->data['campaign_id']
+      ?? $contract['campaign_id']
+      ?? NULL;
+
+    $interval = $freq ? 12 / $freq : 0;
 
     return CRM_Contract_RecurringContribution::createRecurringContribution(
-    (int) $contract['contact_id'],
-    (string) $finalAmount,
-    $startDate,
-    $accountHolder,
-    $instrumentName,
-    $cycleDay,
-    12 / max(1, $freq),
-    $campaignId
+      (int) $contract['contact_id'],
+      (string) $amount,
+      date('Y-m-d'),
+      $accountHolder,
+      $instrumentName,
+      $cycleDay,
+      $interval,
+      $campaignId
     );
   }
 

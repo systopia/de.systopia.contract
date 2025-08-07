@@ -351,7 +351,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   public function postProcess() {
   // phpcs:enable
     $submitted = $this->exportValues();
-
+    $mode      = $submitted['payment_option'] ?? '';
     // a payment contract (recurring contribution) should be created - calculate some generic stuff
     if (empty($submitted['cycle_day']) || $submitted['cycle_day'] < 1 || $submitted['cycle_day'] > 30) {
       // invalid cycle day
@@ -366,7 +366,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $payment_contract = [];
 
     // SWITCH: contract creation/selection differs on the slected option
-    switch ($submitted['payment_option']) {
+    switch ($mode) {
       // CREATE NEW SEPA MANDATE
       case 'RCUR':
         $sepaMandate = CRM_Contract_SepaLogic::createNewMandate([
@@ -403,7 +403,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           'account_holder' => $submitted['account_holder'],
           'campaign_id' => $submitted['campaign_id'] ?? '',
           'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName(
-            $submitted['payment_option']
+            $mode
           ),
           'financial_type_id' => 2,
           'frequency_unit' => 'month',
@@ -442,7 +442,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           'account_holder' => $submitted['account_holder'],
           'campaign_id' => $submitted['campaign_id'] ?? '',
           'payment_instrument_id' => CRM_Contract_Configuration::getPaymentInstrumentIdByName(
-            $submitted['payment_option']
+            $mode
           ),
           // Membership Dues
           'financial_type_id' => 2,
