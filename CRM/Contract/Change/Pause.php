@@ -130,21 +130,15 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
    * @return                      string the subject line
    */
   public function renderDefaultSubject($contract_after, $contract_before = NULL) {
-    $contract_id = $this->getContractID();
+    $resume = $this->getParameter('resume_date');
     if ($this->isNew()) {
-      return "id{$contract_id}: resume scheduled " . date('d/m/Y', strtotime($this->getParameter('resume_date')));
+      return $resume
+        ? E::ts('Pause contract until %1', [1 => date('Y-m-d', strtotime($resume))])
+        : E::ts('Pause contract');
     }
-    else {
-      $subject = "id{$contract_id}:";
-      if (!empty($this->data['contract_cancellation.contact_history_cancel_reason'])) {
-        // FIXME: replicating weird behaviour by old engine
-        $subject .= ' cancel reason ' . $this->resolveValue(
-            $this->data['contract_cancellation.contact_history_cancel_reason'],
-            'contract_cancellation.contact_history_cancel_reason'
-          );
-      }
-      return $subject;
-    }
+    return $resume
+      ? E::ts('Contract paused until %1', [1 => date('Y-m-d', strtotime($resume))])
+      : E::ts('Contract paused');
   }
 
   /**

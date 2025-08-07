@@ -99,6 +99,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       $this->modifyContract($contract['id'], 'update', 'tomorrow', [
         'membership_payment.membership_annual'             => '240.00',
         'membership_cancellation.membership_cancel_reason' => $this->getRandomOptionValue('contract_cancel_reason'),
+        'contract_updates.ch_payment_instrument' => CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR'),
       ]);
 
       // run engine see if anything changed
@@ -186,6 +187,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       $this->modifyContract($contract['id'], 'revive', '+2 days', [
         'membership_payment.membership_annual'             => '240.00',
         'membership_cancellation.membership_cancel_reason' => $this->getRandomOptionValue('contract_cancel_reason'),
+        'contract_updates.ch_payment_instrument' => CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR'),
       ]);
 
       $this->runContractEngine($contract['id'], '+2 days');
@@ -211,12 +213,13 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
    */
   public function testUpdateFailure() {
     // create a new contract
-    $contract = $this->createNewContract();
+    $contract = $this->createNewContract(['is_sepa' => 1]);
 
     // schedule and update with an invalid from_ba
     $this->modifyContract($contract['id'], 'update', 'tomorrow', [
       'membership_payment.from_ba'           => 12345,
       'membership_payment.membership_annual' => '123.00',
+      'contract_updates.ch_payment_instrument' => CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR'),
     ]);
     // run engine for tomorrow
     $result = $this->callEngineFailure(

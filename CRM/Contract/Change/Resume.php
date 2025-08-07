@@ -54,23 +54,10 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
    * @return                      string the subject line
    */
   public function renderDefaultSubject($contract_after, $contract_before = NULL) {
-    $contract_id = $this->getContractID();
     if ($this->isNew()) {
-      // FIXME: replicating weird behaviour by old engine
-      return "id{$contract_id}:";
+      return E::ts('Resume contract');
     }
-    else {
-
-      $subject = "id{$contract_id}:";
-      if (!empty($this->data['contract_cancellation.contact_history_cancel_reason'])) {
-        // FIXME: replicating weird behaviour by old engine
-        $subject .= ' cancel reason ' . $this->resolveValue(
-            $this->data['contract_cancellation.contact_history_cancel_reason'],
-            'contract_cancellation.contact_history_cancel_reason'
-          );
-      }
-      return $subject;
-    }
+    return E::ts('Contract resumed');
   }
 
   /**
