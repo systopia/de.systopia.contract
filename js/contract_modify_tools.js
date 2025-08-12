@@ -56,8 +56,8 @@
         // earliest contribution date is: max(now+notice, start_date, grace_end)
 
         // first: calculate the earliest possible collection date
-        let notice = parseInt(CRM.contract.sepaTools.sepaCreditorParameters[creditor_id]['notice']);
-        let grace = parseInt(CRM.contract.sepaTools.sepaCreditorParameters[creditor_id]['grace']);
+        let notice = parseInt(CRM.contract.sepaTools.sepaCreditorParameters[creditor_id].notice);
+        let grace = parseInt(CRM.contract.sepaTools.sepaCreditorParameters[creditor_id].grace);
         let earliest_date = new Date();
         // see https://stackoverflow.com/questions/6963311/add-days-to-a-date-object
         earliest_date = new Date(earliest_date.setTime(earliest_date.getTime() + (notice - grace) * 86400000));
@@ -107,29 +107,38 @@
   };
 
   function getPaymentMode() {
-    var $el = $('#payment_option');
-    if (!$el.length) $el = $('select[name=payment_option]');
-    var val = $el.length ? $el.val() : '';
+    let $el = $('#payment_option');
+    if (!$el.length) {
+      $el = $('select[name=payment_option]');
+    }
+    let val = $el.length ? $el.val() : '';
     return (val || '').toString();
   }
 
   function setRequired($els, isRequired) {
     $els.each(function () {
-      var $f = $(this);
+      let $f = $(this);
       if (isRequired) {
-        if ($f.data('wasRequired')) $f.attr('required', 'required');
+        if ($f.data('wasRequired')) {
+          $f.attr('required', 'required');
+        }
         $f.removeData('wasRequired');
-      } else {
-        if ($f.is('[required]')) $f.data('wasRequired', true);
+      }
+      else {
+        if ($f.is('[required]')) {
+          $f.data('wasRequired', true);
+        }
         $f.removeAttr('required').removeAttr('aria-required');
       }
     });
   }
 
   function toggleSection(selector, visible) {
-    var $sec = $(selector);
-    if (!$sec.length) return;
-    var $fields = $sec.find('input, select, textarea');
+    let $sec = $(selector);
+    if (!$sec.length) {
+      return;
+    }
+    let $fields = $sec.find('input, select, textarea');
     if (visible) {
       $sec.show(300);
       $fields.prop('disabled', false);
@@ -142,13 +151,16 @@
   }
 
   function clearAmountAndFrequency() {
-    var $amount = $('[name=payment_amount]');
-    var $freq = $('[name=payment_frequency]');
+    let $amount = $('[name=payment_amount]');
+    let $freq = $('[name=payment_frequency]');
     $amount.val('').trigger('input').trigger('change');
     if ($freq.is('select')) {
       $freq.val('');
-      if (!$freq.val()) { $freq.prop('selectedIndex', 0).trigger('change'); }
-    } else {
+      if (!$freq.val()) {
+        $freq.prop('selectedIndex', 0).trigger('change');
+      }
+    }
+    else {
       $freq.val('').trigger('change');
     }
   }
@@ -157,7 +169,7 @@
    * Adjust the visibility of the various elements
    */
   function showHidePaymentElements() {
-    var new_mode = getPaymentMode();
+    let new_mode = getPaymentMode();
 
     toggleSection('div.payment-select', false);
     toggleSection('div.payment-create', false);
@@ -169,19 +181,24 @@
       case 'select':
         toggleSection('div.payment-select', true);
         break;
+
       case 'modify':
         toggleSection('div.payment-modify', true);
         break;
+
       case 'nochange':
       case 'NoChange':
         break;
+
       case 'None':
         clearAmountAndFrequency();
         break;
+
       case 'RCUR':
         toggleSection('div.payment-create', true);
         toggleSection('div.payment-sepa',   true);
         break;
+
       default:
         toggleSection('div.payment-create', true);
         break;
@@ -235,15 +252,17 @@
       // NO CHANGE TO CONTRACT
     }
     else if (mode === 'nochange') {
-      var current = (CRM.vars.contract && CRM.vars.contract.current_contract) || null;
+      let current = CRM.vars.contract && CRM.vars.contract.current_contract || null;
       if (current && current.text_summary) {
         $('.recurring-contribution-summary-text').html(current.text_summary);
-      } else {
-        var list = (CRM.vars.contract && CRM.vars.contract.recurring_contributions) || {};
-        var key  = (CRM.vars.contract && CRM.vars.contract.current_recurring) || null;
+      }
+      else {
+        let list = CRM.vars.contract && CRM.vars.contract.recurring_contributions || {};
+        let key  = CRM.vars.contract && CRM.vars.contract.current_recurring || null;
         if (key && list[key] && list[key].text_summary) {
           $('.recurring-contribution-summary-text').html(list[key].text_summary);
-        } else {
+        }
+        else {
           $('.recurring-contribution-summary-text').html(ts('None'));
         }
       }
@@ -319,23 +338,29 @@
 
   // trigger the JS updates
   $(document).ready(function () {
-    var _busy = false;
+    let _busy = false;
     function updatePreview(){
-      if (_busy) return;
+      if (_busy) {
+        return;
+      }
       _busy = true;
       updatePaymentSummaryText();
       _busy = false;
     }
     function updateAll(){
-      if (_busy) return;
+      if (_busy) {
+        return;
+      }
       _busy = true;
       showHidePaymentElements();
       updatePaymentSummaryText();
       _busy = false;
     }
 
-    var $paymentOption = $('#payment_option');
-    if (!$paymentOption.length) { $paymentOption = $('select[name=payment_option]'); }
+    let $paymentOption = $('#payment_option');
+    if (!$paymentOption.length) {
+      $paymentOption = $('select[name=payment_option]');
+    }
 
     $paymentOption
       .off('change.contract select2:select.contract select2:clear.contract')
@@ -352,6 +377,5 @@
 
     updateAll();
   });
-
 
 })(CRM.$ || cj, CRM.ts('de.systopia.contract'));
