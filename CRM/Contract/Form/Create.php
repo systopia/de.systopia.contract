@@ -488,9 +488,10 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $membershipResult = civicrm_api3('Contract', 'create', $params);
 
     // update and redirect
-    $this->ajaxResponse['updateTabs']['#tab_sepa'] = 1;
-    $this->ajaxResponse['updateTabs']['#tab_member'] = 1;
-    $this->controller->setDestination(CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->get('cid')}"));
+    CRM_Contract_FormUtils::updateContactSummaryTabs($this);
+    $this->controller->setDestination(
+      CRM_Utils_System::url('civicrm/contact/view', "reset=1&cid={$this->get('cid')}")
+    );
   }
 
   /**

@@ -26,7 +26,6 @@ class CRM_Contract_FormUtils {
     $this->entity = $entity;
     $this->form = $form;
     $this->recurringContribution = new CRM_Contract_RecurringContribution();
-
   }
 
   public function addPaymentContractSelect2($elementName, $contactId, $required = TRUE, $contractId = NULL) {
@@ -249,6 +248,13 @@ class CRM_Contract_FormUtils {
       echo 'File does not exist';
       CRM_Utils_System::civiExit();
     }
+  }
+
+  public static function updateContactSummaryTabs(CRM_Core_Form $form): void {
+    $form->ajaxResponse['updateTabs']['#tab_member'] = 1;
+    $form->ajaxResponse['updateTabs']['#tab_sepa'] = 1;
+    $form->ajaxResponse['updateTabs']['#tab_activity'] = 1;
+    $form->ajaxResponse['updateTabs']['#tab_contribute'] = 1;
   }
 
 }
