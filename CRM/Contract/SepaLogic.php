@@ -849,7 +849,6 @@ class CRM_Contract_SepaLogic {
 
     // prep script and inject
     Civi::resources()->addVars('contract', ['sepa_creditor_parameters' => $creditor_parameters]);
-    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/sepa_tools.js');
   }
 
 }
