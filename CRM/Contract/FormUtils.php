@@ -72,7 +72,7 @@ class CRM_Contract_FormUtils {
         }
         elseif ($entity == 'BankAccountReference') {
           $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
-            CRM_Contract_BankingLogic::getIBANforBankAccount($entityId);
+            CRM_Contract_BankingLogic::getIBANforBankAccount((int) $entityId);
         }
         elseif ($entity == 'PaymentInstrument') {
           $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
