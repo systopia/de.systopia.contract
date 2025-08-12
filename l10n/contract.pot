@@ -10,6 +10,18 @@ msgstr ""
 msgid "%2 [%1] from %3 to %4"
 msgstr ""
 
+#: CRM/Contract/Change/Cancel.php
+msgid "Contract cancellation scheduled"
+msgstr ""
+
+#: CRM/Contract/Change/Cancel.php
+msgid "Contract cancelled (%1)"
+msgstr ""
+
+#: CRM/Contract/Change/Cancel.php
+msgid "Contract cancelled"
+msgstr ""
+
 #: CRM/Contract/Change/Cancel.php resources/l10n.php
 msgid "Cancel Contract"
 msgstr ""
@@ -22,12 +34,36 @@ msgstr ""
 msgid "Resume date cannot be before or on the same day as the pause."
 msgstr ""
 
+#: CRM/Contract/Change/Pause.php
+msgid "Pause contract until %1"
+msgstr ""
+
+#: CRM/Contract/Change/Pause.php
+msgid "Pause contract"
+msgstr ""
+
+#: CRM/Contract/Change/Pause.php
+msgid "Contract paused until %1"
+msgstr ""
+
+#: CRM/Contract/Change/Pause.php
+msgid "Contract paused"
+msgstr ""
+
 #: CRM/Contract/Change/Pause.php resources/l10n.php
 msgid "Pause Contract"
 msgstr ""
 
 #: CRM/Contract/Change/Pause.php
 msgid "Pause"
+msgstr ""
+
+#: CRM/Contract/Change/Resume.php
+msgid "Resume contract"
+msgstr ""
+
+#: CRM/Contract/Change/Resume.php
+msgid "Contract resumed"
 msgstr ""
 
 #: CRM/Contract/Change/Resume.php resources/l10n.php
@@ -42,8 +78,56 @@ msgstr ""
 msgid "Revive"
 msgstr ""
 
+#: CRM/Contract/Change/Sign.php
+msgid "Annual %1"
+msgstr ""
+
+#: CRM/Contract/Change/Sign.php
+msgid "Cycle day %1"
+msgstr ""
+
+#: CRM/Contract/Change/Sign.php
+msgid "New membership contract"
+msgstr ""
+
 #: CRM/Contract/Change/Sign.php resources/l10n.php
 msgid "Sign Contract"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Update contract scheduled"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php templates/CRM/Contract/Page/Review.tpl
+msgid "Type"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+msgid "Annual amount"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Payment frequency"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php templates/CRM/Contract/Page/Review.tpl
+msgid "Cycle day"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js resources/l10n.php templates/CRM/Contract/Page/Review.tpl
+msgid "Payment method"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Defer payment start"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "none"
+msgstr ""
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Contract updated"
 msgstr ""
 
 #: CRM/Contract/Change/Upgrade.php resources/l10n.php
@@ -58,8 +142,8 @@ msgstr ""
 msgid "- none -"
 msgstr ""
 
-#: CRM/Contract/Configuration.php
-msgid "No Payment required"
+#: CRM/Contract/Configuration.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+msgid "No payment required"
 msgstr ""
 
 #: CRM/Contract/Configuration.php
@@ -76,10 +160,6 @@ msgstr ""
 
 #: CRM/Contract/Configuration.php
 msgid "select existing"
-msgstr ""
-
-#: CRM/Contract/Configuration.php
-msgid "no payment required"
 msgstr ""
 
 #: CRM/Contract/Configuration.php
@@ -112,10 +192,6 @@ msgstr ""
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment"
-msgstr ""
-
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php templates/CRM/Contract/Page/Review.tpl
-msgid "Cycle day"
 msgstr ""
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/GetSepaRcur.php Civi/Contract/ActionProvider/Action/UpdateContract.php
@@ -223,14 +299,6 @@ msgid "Discard changes"
 msgstr ""
 
 #: CRM/Contract/Form/Modify.php
-msgid "modify contract"
-msgstr ""
-
-#: CRM/Contract/Form/Modify.php
-msgid "select other"
-msgstr ""
-
-#: CRM/Contract/Form/Modify.php
 msgid "Account Holder"
 msgstr ""
 
@@ -258,11 +326,11 @@ msgstr ""
 msgid "Resume Date"
 msgstr ""
 
-#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
 msgid "Debitor name"
 msgstr ""
 
-#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
 msgid "Debitor account"
 msgstr ""
 
@@ -274,7 +342,7 @@ msgstr ""
 msgid "Creditor account"
 msgstr ""
 
-#: CRM/Contract/Form/Modify.php js/contract_modify_tools.js
+#: CRM/Contract/Form/Modify.php
 msgid "Payment method: SEPA Direct Debit"
 msgstr ""
 
@@ -282,11 +350,7 @@ msgstr ""
 msgid "Frequency"
 msgstr ""
 
-#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
-msgid "Annual amount"
-msgstr ""
-
-#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
 msgid "Next debit"
 msgstr ""
 
@@ -492,14 +556,6 @@ msgstr ""
 
 #: CRM/Contract/RecurringContribution.php
 msgid "SEPA"
-msgstr ""
-
-#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js resources/l10n.php templates/CRM/Contract/Page/Review.tpl
-msgid "Payment method"
-msgstr ""
-
-#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
-msgid "No payment required"
 msgstr ""
 
 #: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
@@ -767,10 +823,6 @@ msgid "Allow editing memberships using the core membership form"
 msgstr ""
 
 #: js/contract_modify_tools.js
-msgid "Member name"
-msgstr ""
-
-#: js/contract_modify_tools.js
 msgid "Member account"
 msgstr ""
 
@@ -782,7 +834,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: js/contract_modify_tools.js js/sepa_tools.js
+#: js/contract_modify_tools.js
 msgid "de.systopia.contract"
 msgstr ""
 
@@ -943,6 +995,10 @@ msgid "Contract Preview"
 msgstr ""
 
 #: templates/CRM/Contract/Form/Create.tpl
+msgid "This field is required."
+msgstr ""
+
+#: templates/CRM/Contract/Form/Create.tpl
 msgid "Add Note"
 msgstr ""
 
@@ -1019,10 +1075,6 @@ msgid "Modification"
 msgstr ""
 
 #: templates/CRM/Contract/Page/Review.tpl
-msgid "Type"
-msgstr ""
-
-#: templates/CRM/Contract/Page/Review.tpl
 msgid "Medium"
 msgstr ""
 
@@ -1040,6 +1092,10 @@ msgstr ""
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Status"
+msgstr ""
+
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Actions"
 msgstr ""
 
 #: templates/CRM/Contract/Page/Review.tpl

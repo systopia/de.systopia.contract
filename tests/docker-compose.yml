@@ -1,6 +1,6 @@
 services:
   civicrm:
-    image: michaelmcandrew/civicrm:${CIVICRM_IMAGE_TAG:-5-drupal}
+    image: michaelmcandrew/civicrm:${CIVICRM_IMAGE_TAG:-drupal}
     environment:
       - PROJECT_NAME=test
       - BASE_URL=http://localhost
@@ -9,6 +9,8 @@ services:
       - CIVICRM_DB_PASS=secret
       - CIVICRM_DB_HOST=mysql
       - CIVICRM_DB_PORT=3306
+      - CIVICRM_CRED_KEYS=aes-cbc::test
+      - CIVICRM_SIGN_KEYS=jwt-hs256::test
       - CIVICRM_SITE_KEY=TEST_KEY
       - DRUPAL_DB_NAME=test
       - DRUPAL_DB_USER=root

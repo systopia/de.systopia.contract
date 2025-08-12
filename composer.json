@@ -1,5 +1,6 @@
 {
     "name": "systopia/de.systopia.contract",
+    "description": "Extends CiviMember to support European style Contracts",
     "type": "civicrm-ext",
     "license": "AGPL-3.0-or-later",
     "authors": [
@@ -13,9 +14,12 @@
     "prefer-stable": true,
     "config": {
         "prepend-autoloader": false,
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+        }
     },
     "require": {
+        "php": "^8.1"
     },
     "scripts": {
         "composer-phpcs": [
