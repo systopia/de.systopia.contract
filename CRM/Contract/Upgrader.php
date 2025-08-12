@@ -177,7 +177,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
     $existing = civicrm_api3('OptionValue', 'get', [
       'option_group_id' => $optionGroup['id'],
-      'name' => 'no_payment_required',
+      'name' => 'None',
       'return' => 'id',
     ]);
     if ($existing['count'] > 0) {
@@ -187,7 +187,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     civicrm_api3('OptionValue', 'create', [
       'option_group_id' => $optionGroup['id'],
       'label' => 'No payment required',
-      'name' => 'no_payment_required',
+      'name' => 'None',
       'value' => $this->findNextAvailablePaymentInstrumentValue($optionGroup['id']),
       'is_active' => 1,
       'is_reserved' => 0,
