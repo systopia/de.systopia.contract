@@ -147,7 +147,6 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     return $reason ? E::ts('Contract cancelled (%1)', [1 => $reason]) : E::ts('Contract cancelled');
   }
 
-
   /**
    * Get a list of the status names that this change can be applied to
    *

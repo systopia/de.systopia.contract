@@ -79,7 +79,10 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
       $parts[] = $type;
     }
     if (!empty($c['membership_payment.membership_frequency'])) {
-      $freq = $this->labelValue($c['membership_payment.membership_frequency'], 'membership_payment.membership_frequency');
+      $freq = $this->labelValue(
+        $c['membership_payment.membership_frequency'],
+        'membership_payment.membership_frequency'
+      );
       if ($freq) {
         $parts[] = $freq;
       }
