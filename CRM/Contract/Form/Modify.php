@@ -651,6 +651,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     CRM_Contract_CustomData::resolveCustomFields($params);
     civicrm_api3('Contract', 'modify', $params);
     civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
+
+    CRM_Contract_FormUtils::updateContactSummaryTabs($this);
   }
 
   /**
