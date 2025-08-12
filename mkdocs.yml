@@ -1,21 +1,29 @@
-site_name: Contracts
+site_name: Membership Contracts
+site_description: Extends CiviMember to support European style Contracts
+site_author: SYSTOPIA GmbH
 repo_url: https://github.com/systopia/de.systopia.contract
-theme: material
+
+theme:
+  name: material
 
 nav:
-- Home: index.md
+- 'Introduction': index.md
 - 'Contract types': contract-types.md
 - 'Contract modifications': contract-modifications.md
 
 markdown_extensions:
-- attr_list
-- admonition
-- def_list
-- codehilite
-- toc:
-    permalink: true
-- pymdownx.superfences
-- pymdownx.inlinehilite
-- pymdownx.tilde
-- pymdownx.betterem
-- pymdownx.mark
+  - attr_list
+  - admonition
+  - def_list
+  - codehilite
+  - toc:
+      permalink: True
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tilde
+  - pymdownx.betterem
+  - pymdownx.mark
+
+plugins:
+  - search:
+      lang: en
