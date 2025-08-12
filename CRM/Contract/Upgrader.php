@@ -159,6 +159,12 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
+  public function upgrade_2003() {
+    $this->ctx->log->info('Add "No Payment required" payment instrument.');
+    $this->ensureNoPaymentRequiredPaymentInstrument();
+    return TRUE;
+  }
+
   protected function ensureNoPaymentRequiredPaymentInstrument() {
     try {
       $optionGroup = civicrm_api3('OptionGroup', 'getsingle', [
