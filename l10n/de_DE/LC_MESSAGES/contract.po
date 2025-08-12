@@ -24,6 +24,18 @@ msgstr "%2 [%1] seit %3"
 msgid "%2 [%1] from %3 to %4"
 msgstr "%2 [%1] von %3 bis %4"
 
+#: CRM/Contract/Change/Cancel.php
+msgid "Contract cancellation scheduled"
+msgstr "Vertrag beenden geplant"
+
+#: CRM/Contract/Change/Cancel.php
+msgid "Contract cancelled (%1)"
+msgstr "Vertrag beendet (%1)"
+
+#: CRM/Contract/Change/Cancel.php
+msgid "Contract cancelled"
+msgstr "Vertrag beendet"
+
 #: CRM/Contract/Change/Cancel.php resources/l10n.php
 msgid "Cancel Contract"
 msgstr "Vertrag beenden"
@@ -38,6 +50,22 @@ msgstr ""
 "Wiederaufnahmedatum kann nicht vor oder am selben Tag sein wie die "
 "Pausierung."
 
+#: CRM/Contract/Change/Pause.php
+msgid "Pause contract until %1"
+msgstr "Vertrag pausieren bis %1"
+
+#: CRM/Contract/Change/Pause.php
+msgid "Pause contract"
+msgstr "Vertrag pausieren"
+
+#: CRM/Contract/Change/Pause.php
+msgid "Contract paused until %1"
+msgstr "Vertrag pausiert bis %1"
+
+#: CRM/Contract/Change/Pause.php
+msgid "Contract paused"
+msgstr "Vertrag pausiert"
+
 #: CRM/Contract/Change/Pause.php resources/l10n.php
 msgid "Pause Contract"
 msgstr "Vertrag pausieren"
@@ -45,6 +73,14 @@ msgstr "Vertrag pausieren"
 #: CRM/Contract/Change/Pause.php
 msgid "Pause"
 msgstr "Pausieren"
+
+#: CRM/Contract/Change/Resume.php
+msgid "Resume contract"
+msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
+
+#: CRM/Contract/Change/Resume.php
+msgid "Contract resumed"
+msgstr "Vertrag wiederaufgenommen (nach Pausierung)"
 
 #: CRM/Contract/Change/Resume.php resources/l10n.php
 msgid "Resume Contract"
@@ -58,9 +94,64 @@ msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
 msgid "Revive"
 msgstr "Wiederaufnehmen (nach Beendigung)"
 
+#: CRM/Contract/Change/Sign.php
+msgid "Annual %1"
+msgstr "Jährlich %1"
+
+#: CRM/Contract/Change/Sign.php
+msgid "Cycle day %1"
+msgstr "Einzugstag %1"
+
+#: CRM/Contract/Change/Sign.php
+msgid "New membership contract"
+msgstr "Neuer Mitgliedschaftsvertrag"
+
 #: CRM/Contract/Change/Sign.php resources/l10n.php
 msgid "Sign Contract"
 msgstr "Vertrag unterschreiben"
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Update contract scheduled"
+msgstr "Vertrag aktualisieren geplant"
+
+#: CRM/Contract/Change/Upgrade.php templates/CRM/Contract/Page/Review.tpl
+msgid "Type"
+msgstr "Typ"
+
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Modify.php
+#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+msgid "Annual amount"
+msgstr "Jahresbetrag"
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Payment frequency"
+msgstr "Zahlungsturnus"
+
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php
+#: CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Cycle day"
+msgstr "Einzugstag"
+
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: js/contract_modify_tools.js resources/l10n.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Payment method"
+msgstr "Zahlungsart"
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Defer payment start"
+msgstr "Zahlungsbeginn aufschieben"
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "none"
+msgstr "keine"
+
+#: CRM/Contract/Change/Upgrade.php
+msgid "Contract updated"
+msgstr "Vertrag aktualisiert"
 
 #: CRM/Contract/Change/Upgrade.php resources/l10n.php
 msgid "Update Contract"
@@ -75,8 +166,9 @@ msgstr "Ändern"
 msgid "- none -"
 msgstr "-keine-"
 
-#: CRM/Contract/Configuration.php
-msgid "No Payment required"
+#: CRM/Contract/Configuration.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+msgid "No payment required"
 msgstr "Keine Zahlung erforderlich"
 
 #: CRM/Contract/Configuration.php
@@ -94,10 +186,6 @@ msgstr "Überweisung"
 #: CRM/Contract/Configuration.php
 msgid "select existing"
 msgstr "bestehenden Zahlungsvertrag wählen"
-
-#: CRM/Contract/Configuration.php
-msgid "no payment required"
-msgstr "Keine Zahlung erforderlich"
 
 #: CRM/Contract/Configuration.php
 msgid "no change"
@@ -139,12 +227,6 @@ msgstr "Neuen Vertrag für %1 erstellen"
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment"
 msgstr "Zahlungsart"
-
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Cycle day"
-msgstr "Einzugstag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
@@ -268,14 +350,6 @@ msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
-msgid "modify contract"
-msgstr "Zahlungsvertrag anpassen"
-
-#: CRM/Contract/Form/Modify.php
-msgid "select other"
-msgstr "bestehender Zahlungsvertrag"
-
-#: CRM/Contract/Form/Modify.php
 msgid "Account Holder"
 msgstr "Kontoinhaber"
 
@@ -307,12 +381,10 @@ msgid "Resume Date"
 msgstr "Wiederaufnahmedatum"
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
-#: js/contract_modify_tools.js
 msgid "Debitor name"
 msgstr "Name der Spender_in"
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
-#: js/contract_modify_tools.js
 msgid "Debitor account"
 msgstr "Konto der Spender_in"
 
@@ -326,7 +398,7 @@ msgstr "Kreditor"
 msgid "Creditor account"
 msgstr "Kreditor Konto"
 
-#: CRM/Contract/Form/Modify.php js/contract_modify_tools.js
+#: CRM/Contract/Form/Modify.php
 msgid "Payment method: SEPA Direct Debit"
 msgstr "Zahlungsart: SEPA Direct Debit"
 
@@ -338,12 +410,6 @@ msgid "Frequency"
 msgstr "Zahlungsrhytmus"
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
-#: js/contract_modify_tools.js
-msgid "Annual amount"
-msgstr "Jahresbetrag"
-
-#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
-#: js/contract_modify_tools.js
 msgid "Next debit"
 msgstr "Nächster Einzug"
 
@@ -569,17 +635,6 @@ msgstr "Daten-Fehler"
 #: CRM/Contract/RecurringContribution.php
 msgid "SEPA"
 msgstr "SEPA"
-
-#: CRM/Contract/RecurringContribution.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php
-#: js/contract_modify_tools.js resources/l10n.php
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Payment method"
-msgstr "Zahlungsart"
-
-#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
-msgid "No payment required"
-msgstr "Keine Zahlung erforderlich"
 
 #: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
 msgid "Paid by"
@@ -896,10 +951,6 @@ msgstr ""
 "Erlaubt das Bearbeiten von Mitgliedschaftern über die CiviCRM Kernfunktionen"
 
 #: js/contract_modify_tools.js
-msgid "Member name"
-msgstr "Mitgliedsname"
-
-#: js/contract_modify_tools.js
 msgid "Member account"
 msgstr "Kontoinhaber"
 
@@ -912,7 +963,7 @@ msgstr "Nächster Einzug"
 msgid "None"
 msgstr "Keine"
 
-#: js/contract_modify_tools.js js/sepa_tools.js
+#: js/contract_modify_tools.js
 msgid "de.systopia.contract"
 msgstr "de.systopia.contract"
 
@@ -1073,6 +1124,10 @@ msgid "Contract Preview"
 msgstr "Vertragsvorschau"
 
 #: templates/CRM/Contract/Form/Create.tpl
+msgid "This field is required."
+msgstr "Dieses Feld wird benötigt."
+
+#: templates/CRM/Contract/Form/Create.tpl
 msgid "Add Note"
 msgstr "Notiz hinzufügen"
 
@@ -1192,10 +1247,6 @@ msgid "Modification"
 msgstr "Änderung"
 
 #: templates/CRM/Contract/Page/Review.tpl
-msgid "Type"
-msgstr "Typ"
-
-#: templates/CRM/Contract/Page/Review.tpl
 msgid "Medium"
 msgstr "Kanal"
 
@@ -1216,6 +1267,10 @@ msgid "Status"
 msgstr "Status"
 
 #: templates/CRM/Contract/Page/Review.tpl
+msgid "Actions"
+msgstr "Aktionen"
+
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -1227,11 +1282,23 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
 
+#~ msgid "No Payment required"
+#~ msgstr "Keine Zahlung erforderlich"
+
+#~ msgid "no payment required"
+#~ msgstr "Keine Zahlung erforderlich"
+
+#~ msgid "modify contract"
+#~ msgstr "Zahlungsvertrag anpassen"
+
+#~ msgid "select other"
+#~ msgstr "bestehender Zahlungsvertrag"
+
+#~ msgid "Member name"
+#~ msgstr "Mitgliedsname"
+
 #~ msgid "create new mandate"
 #~ msgstr "neues SEPA-Mandat"
-
-#~ msgid "Membership start date"
-#~ msgstr "Mitgliedschaftsstartdatum"
 
 #~ msgid "End date"
 #~ msgstr "Enddatum"
