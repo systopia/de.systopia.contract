@@ -42,6 +42,7 @@ class CRM_Contract_EngineStressTest extends CRM_Contract_ContractTestBase {
       for ($i = 1; $i <= $ITERATION_COUNT; $i++) {
         $update = [
           'membership_payment.membership_annual' => (1 * $i),
+          'contract_updates.ch_payment_instrument' => CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR'),
         ];
         if (0 === $is_sepa) {
           // FIXME: if this is not a SEPA contract, we need to pass the bank account

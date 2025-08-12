@@ -46,6 +46,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
     $this->modifyContract($contract['id'], 'update', 'tomorrow', [
       'membership_payment.membership_annual' => '168.00',
       'membership_payment.cycle_day'         => '3',
+      'contract_updates.ch_payment_instrument' => CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR'),
     ]);
 
     // get the resulting change activity
@@ -67,12 +68,12 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
     }
     else {
       $this->assertStringContainsOtherString(
-        'cycle day 25 to 3',
+        'Cycle day: 25 → 3',
         $change_activity['subject'],
         'Activity subject should contain the changed cycle day'
       );
       $this->assertStringContainsOtherString(
-        'amt. 144.00 to 168.00',
+        'Annual amount: 144.00 → 168.00',
         $change_activity['subject'],
         'Activity subject should contain the changed amount'
       );

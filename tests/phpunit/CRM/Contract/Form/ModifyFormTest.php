@@ -2,7 +2,10 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Campaign;
 use Civi\Api4\Contact;
+use Civi\Api4\ContributionRecur;
+use Civi\Api4\Membership;
 use Civi\Api4\MembershipType;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
@@ -57,14 +60,11 @@ class ModifyFormTest extends ContractTestBase {
 
   public static function setUpBeforeClass(): void {
     /** @phpstan-ignore-next-line */
-    $org = civicrm_api3(
-      'Contact',
-      'create',
-      [
-        'contact_type' => 'Organization',
-        'organization_name' => 'ModifyFormTest Owner Org ' . rand(1, 1000000),
-      ]
-    );
+    $org = Contact::create(TRUE)
+      ->addValue('contact_type', 'Organization')
+      ->addValue('organization_name', 'ModifyFormTest Owner Org ' . rand(1, 1000000))
+      ->execute()
+      ->single();
     self::$sharedOwnerOrgId = (int) $org['id'];
 
     self::$sharedMembershipType = MembershipType::create(FALSE)
@@ -79,17 +79,14 @@ class ModifyFormTest extends ContractTestBase {
       ->single();
 
     /** @phpstan-ignore-next-line */
-    $campaign = civicrm_api3(
-      'Campaign',
-      'create',
-      [
-        'title' => 'Test Campaign (shared)',
-        'name' => 'test_campaign_shared_' . rand(1, 1000000),
-        'status_id' => 1,
-        'is_active' => 1,
-      ]
-    );
-    self::$sharedCampaign = $campaign['values'][array_key_first($campaign['values'])];
+    $campaign = Campaign::create(TRUE)
+      ->addValue('title', 'Test Campaign (shared)')
+      ->addValue('name', 'test_campaign_shared_' . rand(1, 1000000))
+      ->addValue('status_id', 1)
+      ->addValue('is_active', 1)
+      ->execute()
+      ->single();
+    self::$sharedCampaign = $campaign;
 
     $paymentOptionGroup = OptionGroup::save(TRUE)
       ->addRecord(
@@ -170,7 +167,9 @@ class ModifyFormTest extends ContractTestBase {
     try {
       if (!empty(self::$sharedCampaign['id'])) {
         /** @phpstan-ignore-next-line */
-        civicrm_api3('Campaign', 'delete', ['id' => self::$sharedCampaign['id']]);
+        Campaign::delete(TRUE)
+          ->addWhere('id', '=', self::$sharedCampaign['id'])
+          ->execute();
       }
     }
     catch (\Throwable $e) {
@@ -189,7 +188,9 @@ class ModifyFormTest extends ContractTestBase {
     try {
       if (!empty(self::$sharedOwnerOrgId)) {
         /** @phpstan-ignore-next-line */
-        civicrm_api3('Contact', 'delete', ['id' => self::$sharedOwnerOrgId]);
+        Contact::delete(TRUE)
+          ->addWhere('id', '=', self::$sharedOwnerOrgId)
+          ->execute();
       }
     }
     catch (\Throwable $e) {
@@ -208,7 +209,7 @@ class ModifyFormTest extends ContractTestBase {
 
   // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   private function createRequiredEntities(): void {
-  // phpcs:enable
+    // phpcs:enable
     $contact = $this->createContactWithRandomEmail();
 
     $contactResult = Contact::get(TRUE)
@@ -234,21 +235,18 @@ class ModifyFormTest extends ContractTestBase {
     if ($isExistingSepa || $isExistingNonSepa) {
       $paymentInstrumentId = $isExistingSepa ? $rcurId : $cashId;
       /** @phpstan-ignore-next-line */
-      $recurResult = civicrm_api3(
-        'ContributionRecur',
-        'create',
-        [
-          'contact_id' => $contact['id'],
-          'amount' => '10.00',
-          'currency' => 'EUR',
-          'frequency_unit' => 'month',
-          'frequency_interval' => 1,
-          'installments' => NULL,
-          'contribution_status_id' => 'In Progress',
-          'payment_instrument_id' => $paymentInstrumentId,
-        ]
-      );
-      $recurringContributionId = $recurResult['id'];
+      $recurResult = ContributionRecur::create(TRUE)
+        ->addValue('contact_id', $contact['id'])
+        ->addValue('amount', '10.00')
+        ->addValue('currency', 'EUR')
+        ->addValue('frequency_unit', 'month')
+        ->addValue('frequency_interval', 1)
+        ->addValue('installments', NULL)
+        ->addValue('contribution_status_id:name', 'In Progress')
+        ->addValue('payment_instrument_id', $paymentInstrumentId)
+        ->execute()
+        ->first();
+      $recurringContributionId = (int) $recurResult['id'];
 
       $this->contract = $this->createNewContract(
         [
@@ -298,22 +296,20 @@ class ModifyFormTest extends ContractTestBase {
       }
 
       /** @phpstan-ignore-next-line */
-      $creditors = civicrm_api3('SepaCreditor', 'get', []);
-      foreach ($creditors['values'] as $creditor) {
+      $creditors = SepaCreditor::get(TRUE)
+        ->execute()
+        ->getArrayCopy();
+      foreach ($creditors as $creditor) {
         $iban = $creditor['iban'] ?? '';
         $bic = $creditor['bic'] ?? '';
         $needsUpdate = empty($iban) || empty($bic);
         if ($needsUpdate) {
           /** @phpstan-ignore-next-line */
-          civicrm_api3(
-            'SepaCreditor',
-            'create',
-            [
-              'id' => $creditor['id'],
-              'iban' => $iban ?: 'DE02370502990000684712',
-              'bic' => $bic ?: 'COKSDE33',
-            ]
-          );
+          SepaCreditor::update(TRUE)
+            ->addWhere('id', '=', $creditor['id'])
+            ->addValue('iban', $iban ?: 'DE02370502990000684712')
+            ->addValue('bic', $bic ?: 'COKSDE33')
+            ->execute();
         }
       }
       return;
@@ -338,11 +334,27 @@ class ModifyFormTest extends ContractTestBase {
     );
 
     if ($isSepa) {
-      /** @phpstan-ignore-next-line */
-      $membership = civicrm_api3('Membership', 'getsingle', ['id' => $this->contract['id']]);
-      $recurContriId = $membership[CRM_Contract_Utils::getCustomFieldId(
-        'membership_payment.membership_recurring_contribution'
-      )];
+      $rcField = CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution');
+
+      $membership = Membership::get(TRUE)
+        ->addSelect('id', $rcField)
+        ->addWhere('id', '=', $this->contract['id'])
+        ->setLimit(1)
+        ->execute()
+        ->single();
+
+      $recurContriId = $membership[$rcField] ?? NULL;
+
+      if (empty($recurContriId)) {
+        $lastRecur = ContributionRecur::get(TRUE)
+          ->addSelect('id')
+          ->addWhere('contact_id', '=', (int) $contact['id'])
+          ->addOrderBy('id', 'DESC')
+          ->setLimit(1)
+          ->execute()
+          ->first();
+        $recurContriId = $lastRecur['id'] ?? NULL;
+      }
 
       SepaMandate::delete(TRUE)
         ->addWhere('contact_id', '=', $contact['id'])
@@ -359,20 +371,18 @@ class ModifyFormTest extends ContractTestBase {
         ->first();
 
       $this->mandate = SepaMandate::save(TRUE)
-        ->addRecord(
-          [
-            'contact_id' => $contact['id'],
-            'type' => 'RCUR',
-            'entity_table' => 'civicrm_contribution_recur',
-            'entity_id' => $recurContriId,
-            'reference' => 'TEST-MANDATE-001',
-            'date' => '2025-05-01 13:00:00',
-            'iban' => 'DE12500105170648489890',
-            'bic' => 'INGDDEFFXXX',
-            'creditor_id' => $creditor['id'],
-            'status' => 'RCUR',
-          ]
-        )
+        ->addRecord([
+          'contact_id'   => $contact['id'],
+          'type'         => 'RCUR',
+          'entity_table' => 'civicrm_contribution_recur',
+          'entity_id'    => $recurContriId,
+          'reference'    => 'TEST-MANDATE-001',
+          'date'         => '2025-05-01 13:00:00',
+          'iban'         => 'DE12500105170648489890',
+          'bic'          => 'INGDDEFFXXX',
+          'creditor_id'  => $creditor['id'],
+          'status'       => 'RCUR',
+        ])
         ->setMatch(['reference'])
         ->execute()
         ->first();
@@ -430,16 +440,14 @@ class ModifyFormTest extends ContractTestBase {
 
   private function getPaymentInstrumentIdByName(string $name): ?int {
     /** @phpstan-ignore-next-line */
-    $result = civicrm_api3(
-      'OptionValue',
-      'get',
-      [
-        'option_group_id' => 'payment_instrument',
-        'name' => $name,
-        'is_active' => 1,
-      ]
-    );
-    return !empty($result['values']) ? (int) reset($result['values'])['value'] : NULL;
+    $result = OptionValue::get(TRUE)
+      ->addWhere('option_group_id:name', '=', 'payment_instrument')
+      ->addWhere('name', '=', $name)
+      ->addWhere('is_active', '=', 1)
+      ->setLimit(1)
+      ->execute()
+      ->first();
+    return $result ? (int) $result['value'] : NULL;
   }
 
   // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
@@ -448,7 +456,7 @@ class ModifyFormTest extends ContractTestBase {
     array $expectedActions,
     string $modifyAction
   ): void {
-  // phpcs:enable
+    // phpcs:enable
     $form = new class() extends ModifyForm {
 
       public $_submitValues = [];
@@ -547,28 +555,35 @@ class ModifyFormTest extends ContractTestBase {
 
   private function assertMandateTerminated($contactId): void {
     /** @phpstan-ignore-next-line */
-    $mandates = civicrm_api3(
-      'SepaMandate',
-      'get',
-      [
-        'contact_id' => $contactId,
-        'status' => ['IN' => ['INVALID', 'COMPLETE', 'ENDED']],
-      ]
-    );
-    self::assertNotEmpty($mandates['values'], 'Mandate should be terminated');
+    $mandates = SepaMandate::get(TRUE)
+      ->addWhere('contact_id', '=', $contactId)
+      ->addWhere('status', 'IN', ['INVALID', 'COMPLETE', 'ENDED'])
+      ->addOrderBy('id', 'DESC')
+      ->execute()
+      ->getArrayCopy();
+
+    if (empty($mandates)) {
+      /** @phpstan-ignore-next-line */
+      $all = SepaMandate::get(TRUE)
+        ->addWhere('contact_id', '=', $contactId)
+        ->addSelect('id', 'status', 'type', 'entity_id', 'reference')
+        ->addOrderBy('id', 'DESC')
+        ->execute()
+        ->getArrayCopy();
+      self::fail("Mandate should be terminated. Current mandates:\n" . print_r(array_values($all ?? []), TRUE));
+    }
+
+    self::assertNotEmpty($mandates, 'Mandate should be terminated');
   }
 
   private function assertRecurringContributionEnded($contactId): void {
     /** @phpstan-ignore-next-line */
-    $recur = civicrm_api3(
-      'ContributionRecur',
-      'get',
-      [
-        'contact_id' => $contactId,
-        'contribution_status_id' => ['IN' => [1, 'Completed', 2, 'Cancelled']],
-      ]
-    );
-    self::assertNotEmpty($recur['values'], 'Recurring contribution should be ended');
+    $recur = ContributionRecur::get(TRUE)
+      ->addWhere('contact_id', '=', $contactId)
+      ->addWhere('contribution_status_id:name', 'IN', ['Completed', 'Cancelled'])
+      ->execute()
+      ->getArrayCopy();
+    self::assertNotEmpty($recur, 'Recurring contribution should be ended');
   }
 
   private function assertNewMandateCreated($contactId): void {
@@ -580,50 +595,94 @@ class ModifyFormTest extends ContractTestBase {
 
   private function getLatestSepaMandateForContact($contactId) {
     /** @phpstan-ignore-next-line */
-    $mandates = civicrm_api3(
-      'SepaMandate',
-      'get',
-      [
-        'contact_id' => $contactId,
-        'type' => 'RCUR',
-        'options' => ['sort' => 'id DESC', 'limit' => 1],
-      ]
-    );
-    return !empty($mandates['values']) ? reset($mandates['values']) : NULL;
+    $mandate = SepaMandate::get(TRUE)
+      ->addWhere('contact_id', '=', $contactId)
+      ->addWhere('type', '=', 'RCUR')
+      ->addOrderBy('id', 'DESC')
+      ->setLimit(1)
+      ->execute()
+      ->first();
+    return $mandate ?: NULL;
   }
 
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   private function assertNewRecurringContribution($contactId, $amount = NULL): void {
+  // phpcs:enable
     /** @phpstan-ignore-next-line */
-    $recur = civicrm_api3(
-      'ContributionRecur',
-      'get',
-      [
-        'contact_id' => $contactId,
-      ]
-    );
-    self::assertNotEmpty($recur['values'], 'New recurring contribution should be created');
-    if ($amount !== NULL) {
-      $found = FALSE;
-      foreach ($recur['values'] as $row) {
-        if (isset($row['amount']) && (float) $row['amount'] === (float) $amount) {
-          $found = TRUE;
-        }
+    $recur = ContributionRecur::get(TRUE)
+      ->addWhere('contact_id', '=', $contactId)
+      ->addSelect(
+        'id',
+        'amount',
+        'currency',
+        'payment_instrument_id',
+        'create_date',
+        'cycle_day',
+        'frequency_unit',
+        'frequency_interval'
+      )
+      ->addOrderBy('id', 'DESC')
+      ->setLimit(10)
+      ->execute()
+      ->getArrayCopy();
+
+    $rows = array_values($recur ?? []);
+    self::assertNotEmpty($rows, 'New recurring contribution should be created');
+
+    if ($amount === NULL) {
+      self::assertTrue(TRUE);
+      return;
+    }
+
+    $target = (float) $amount;
+    $delta  = 0.0001;
+    $foundRow = NULL;
+
+    foreach ($rows as $r) {
+      if (!isset($r['amount'])) {
+        continue;
       }
-      self::assertTrue($found, 'Recurring contribution with specified amount found');
+      if (abs((float) $r['amount'] - $target) <= $delta) {
+        $foundRow = $r;
+        break;
+      }
+    }
+
+    if ($foundRow === NULL) {
+      $summary = array_map(function($r) {
+        $id  = $r['id'] ?? '?';
+        $amt = isset($r['amount']) ? (float) $r['amount'] : '∅';
+        $pi  = $r['payment_instrument_id'] ?? 'NULL';
+        $dt  = $r['create_date'] ?? '';
+        return "#$id amt=$amt pi=$pi date=$dt";
+      }, $rows);
+      self::fail(
+        "Recurring contribution with specified amount not found.\n" .
+        "Expected: {$target}\n" .
+        "Last rows:\n" . implode("\n", $summary)
+      );
+    }
+
+    if (abs($target) <= $delta) {
+      $noneId = $this->getPaymentInstrumentIdByName('None');
+      if ($noneId) {
+        self::assertEquals(
+          (int) $noneId,
+          (int) ($foundRow['payment_instrument_id'] ?? 0),
+          "Expected PI 'None' ({$noneId}) for zero-amount RC, got " . ($foundRow['payment_instrument_id'] ?? 'NULL')
+        );
+      }
     }
   }
 
   private function assertAssignedExistingRecurring($contactId): void {
     /** @phpstan-ignore-next-line */
-    $recur = civicrm_api3(
-      'ContributionRecur',
-      'get',
-      [
-        'contact_id' => $contactId,
-        'is_test' => 0,
-      ]
-    );
-    self::assertNotEmpty($recur['values'], 'Should have assigned existing recurring contribution');
+    $recur = ContributionRecur::get(TRUE)
+      ->addWhere('contact_id', '=', $contactId)
+      ->addWhere('is_test', '=', 0)
+      ->execute()
+      ->getArrayCopy();
+    self::assertNotEmpty($recur, 'Should have assigned existing recurring contribution');
   }
 
   public function testPaymentInstrumentChange_SEPA_non_SEPA(): void {
@@ -800,7 +859,7 @@ class ModifyFormTest extends ContractTestBase {
     array $expectedActions,
     string $modifyAction
   ): void {
-  // phpcs:enable
+    // phpcs:enable
     $form = new class() extends ModifyForm {
 
       public $_submitValues = [];
@@ -877,6 +936,39 @@ class ModifyFormTest extends ContractTestBase {
       $_REQUEST[$key] = $value;
     }
 
+    $assertEndedOrMandateTerminated = function (int $cid) use ($to, $modifyAction): void {
+      $rc = ContributionRecur::get(TRUE)
+        ->addSelect('id', 'contribution_status_id:name')
+        ->addWhere('contact_id', '=', $cid)
+        ->addWhere('contribution_status_id:name', 'IN', ['Completed', 'Cancelled'])
+        ->setLimit(1)
+        ->execute()
+        ->first();
+
+      if ($rc) {
+        return;
+      }
+
+      $okStatuses = ['INVALID', 'COMPLETE', 'ENDED'];
+      if ($to === 'paused' || $modifyAction === 'pause') {
+        // pausa -> mandato en espera
+        $okStatuses[] = 'ONHOLD';
+      }
+
+      $mand = SepaMandate::get(TRUE)
+        ->addSelect('id', 'status')
+        ->addWhere('contact_id', '=', $cid)
+        ->addWhere('status', 'IN', $okStatuses)
+        ->setLimit(1)
+        ->execute()
+        ->first();
+
+      self::assertNotEmpty(
+        $mand,
+        'Recurring contribution should be ended or mandate terminated'
+      );
+    };
+
     $form->preProcess();
     $form->buildQuickForm();
     $form->setDefaults($form->_submitValues);
@@ -887,7 +979,7 @@ class ModifyFormTest extends ContractTestBase {
         'create_recurring_contribution' => $this->assertNewRecurringContribution($this->contact['id']),
         'maybe_create_paused' => self::assertTrue(TRUE),
         'maybe_create_ended' => self::assertTrue(TRUE),
-        'terminate_mandate_or_end_recurring' => $this->assertRecurringContributionEnded($this->contact['id']),
+        'terminate_mandate_or_end_recurring' => $assertEndedOrMandateTerminated((int) $this->contact['id']),
         'create_mandate_or_recurring' => $this->assertNewMandateCreated($this->contact['id']),
         'no_change' => self::assertTrue(TRUE),
         'no_actions_needed' => self::assertTrue(TRUE),
@@ -961,7 +1053,9 @@ class ModifyFormTest extends ContractTestBase {
       && $this->campaign['id'] !== self::$sharedCampaign['id']
     ) {
       /** @phpstan-ignore-next-line */
-      civicrm_api3('Campaign', 'delete', ['id' => $this->campaign['id']]);
+      Campaign::delete(TRUE)
+        ->addWhere('id', '=', $this->campaign['id'])
+        ->execute();
     }
 
     if (

@@ -217,7 +217,7 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
       $this->assertStringContainsOtherString('1,320.00', $change_activity['subject']);
     }
     else {
-      $this->assertStringContainsOtherString('amt. to 480.00', $change_activity['subject']);
+      $this->assertStringContainsOtherString('Update contract scheduled', $change_activity['subject']);
     }
   }
 

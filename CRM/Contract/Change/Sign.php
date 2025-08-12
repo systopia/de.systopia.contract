@@ -70,45 +70,34 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
    * @return                      string the subject line
    */
   public function renderDefaultSubject($contract_after, $contract_before = NULL) {
-    $attributes = [];
-    $contract = $contract_after;
-
-    // collect values
-    if (isset($contract['membership_type_id'])) {
-      $membership_type = $this->labelValue($contract['membership_type_id'], 'membership_type_id');
-      $attributes[] = "type {$membership_type}";
+    $c = (array) $contract_after;
+    $parts = [];
+    $type = isset($c['membership_type_id'])
+      ? $this->labelValue($c['membership_type_id'], 'membership_type_id')
+      : NULL;
+    if ($type) {
+      $parts[] = $type;
     }
-    if (isset($contract['membership_payment.membership_annual'])) {
-      $attributes[] = 'amt. ' . $contract['membership_payment.membership_annual'];
+    if (!empty($c['membership_payment.membership_frequency'])) {
+      $freq = $this->labelValue($c['membership_payment.membership_frequency'], 'membership_payment.membership_frequency');
+      if ($freq) {
+        $parts[] = $freq;
+      }
     }
-    if (isset($contract['membership_payment.membership_frequency'])) {
-      // FIXME: replicating weird behaviour by old engine
-      $attributes[] = 'freq. ' . $contract['membership_payment.membership_frequency'];
+    if (!empty($c['membership_payment.membership_annual'])) {
+      $parts[] = E::ts('Annual %1', [1 => $c['membership_payment.membership_annual']]);
     }
-    if (isset($contract['membership_payment.to_ba'])) {
-      $attributes[] = 'gp iban ' . $this->labelValue($contract['membership_payment.to_ba'], 'membership_payment.to_ba');
+    if (!empty($c['membership_payment.payment_instrument'])) {
+      $pi = $this->labelValue($c['membership_payment.payment_instrument'], 'membership_payment.payment_instrument');
+      if ($pi) {
+        $parts[] = $pi;
+      }
     }
-    if (isset($contract['membership_payment.from_ba'])) {
-      $attributes[] = 'member iban ' . $this->labelValue(
-          $contract['membership_payment.from_ba'],
-          'membership_payment.from_ba'
-        );
+    if (!empty($c['membership_payment.cycle_day'])) {
+      $parts[] = E::ts('Cycle day %1', [1 => $c['membership_payment.cycle_day']]);
     }
-    if (isset($contract['membership_payment.cycle_day'])) {
-      $attributes[] = 'cycle day ' . $contract['membership_payment.cycle_day'];
-    }
-    if (isset($contract['membership_payment.payment_instrument'])) {
-      // FIXME: replicating weird behaviour by old engine
-      $attributes[] = 'payment method ' . $this->labelValue(
-          $contract['membership_payment.payment_instrument'],
-          'membership_payment.payment_instrument'
-        );
-    }
-    if (isset($contract['membership_payment.defer_payment_start'])) {
-      $attributes[] = 'defer ' . $contract['membership_payment.defer_payment_start'];
-    }
-
-    return "id{$contract['id']}: " . implode(' AND ', $attributes);
+    $suffix = $parts ? (' — ' . implode(' • ', $parts)) : '';
+    return E::ts('New membership contract') . $suffix;
   }
 
   /**
