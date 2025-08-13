@@ -10,6 +10,8 @@
 
 declare(strict_types = 1);
 
+use CRM_Contract_ExtensionUtil as E;
+
 /**
  * A wrapper around Membership.create with appropriate fields passed.
  * You cannot schedule Contract.create for the future.
@@ -17,6 +19,11 @@ declare(strict_types = 1);
 function _civicrm_api3_Contract_create_spec(&$params) {
   include_once 'api/v3/Membership.php';
   _civicrm_api3_membership_create_spec($params);
+  $params['activity_date_time'] = [
+    'name' => 'activity_date_time',
+    'title' => E::ts('Date/Time of "Sign" activity'),
+    'description' => E::ts('Leave empty for date/time of execution.'),
+  ];
 }
 
 /**
@@ -48,6 +55,9 @@ function civicrm_api3_Contract_create($params) {
   // create 'sign' activity
   $params['activity_type_id'] = 'sign';
   $change = CRM_Contract_Change::getChangeForData($params);
+  if (isset($params['activity_date_time'])) {
+    $change->setParameter('activity_date_time', $params['activity_date_time']);
+  }
   $change->setParameter('source_contact_id', CRM_Contract_Configuration::getUserID());
   $change->setParameter('source_record_id', $membership['id']);
   $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
