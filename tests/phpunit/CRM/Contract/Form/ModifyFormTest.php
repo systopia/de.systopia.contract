@@ -5,6 +5,7 @@ declare(strict_types = 1);
 use Civi\Api4\Campaign;
 use Civi\Api4\Contact;
 use Civi\Api4\ContributionRecur;
+use Civi\Api4\FinancialType;
 use Civi\Api4\Membership;
 use Civi\Api4\MembershipType;
 use Civi\Api4\OptionGroup;
@@ -70,7 +71,7 @@ class ModifyFormTest extends ContractTestBase {
     self::$sharedMembershipType = MembershipType::create(FALSE)
       ->addValue('name', 'Modify Membership Type')
       ->addValue('member_of_contact_id', self::$sharedOwnerOrgId)
-      ->addValue('financial_type_id', 2)
+      ->addValue('financial_type_id', (int) (new self())->ensureFinancialTypeId())
       ->addValue('duration_unit', 'year')
       ->addValue('duration_interval', 1)
       ->addValue('period_type', 'rolling')
@@ -78,89 +79,174 @@ class ModifyFormTest extends ContractTestBase {
       ->execute()
       ->single();
 
-    /** @phpstan-ignore-next-line */
-    $campaign = Campaign::create(TRUE)
-      ->addValue('title', 'Test Campaign (shared)')
-      ->addValue('name', 'test_campaign_shared_' . rand(1, 1000000))
-      ->addValue('status_id', 1)
-      ->addValue('is_active', 1)
-      ->execute()
-      ->single();
-    self::$sharedCampaign = $campaign;
+    $campaignCreate = civicrm_api3('Campaign', 'create', [
+      'title' => 'Test Campaign (shared)',
+      'name' => 'test_campaign_shared_' . rand(1, 1000000),
+      'status_id' => 1,
+      'is_active' => 1,
+    ]);
+    self::$sharedCampaign = ['id' => (int) $campaignCreate['id']];
 
     $paymentOptionGroup = OptionGroup::save(TRUE)
-      ->addRecord(
-        [
-          'name' => 'payment_instrument',
-          'title' => 'Payment Instrument',
-          'is_active' => 1,
-        ]
-      )
+      ->addRecord(['name' => 'payment_instrument', 'title' => 'Payment Instrument', 'is_active' => 1])
       ->setMatch(['name'])
       ->execute()
       ->single();
     self::$sharedPaymentGroupId = (int) $paymentOptionGroup['id'];
 
-    OptionValue::save(TRUE)
-      ->addRecord(
-        [
-          'option_group_id' => self::$sharedPaymentGroupId,
-          'label' => 'No Payment required',
-          'name' => 'None',
-          'value' => 100,
-          'is_active' => 1,
-          'is_reserved' => 0,
-          'weight' => 99,
-        ]
-      )
-      ->setMatch(['option_group_id', 'name'])
-      ->execute()
-      ->single();
+    self::ensurePaymentInstrumentNone(self::$sharedPaymentGroupId);
 
-    $optionGroup = OptionGroup::save(TRUE)
-      ->addRecord(
-        [
-          'name' => 'contribution_status',
-          'title' => 'Contribution Status',
-          'is_active' => 1,
-        ]
-      )
+    $statusGroup = OptionGroup::save(TRUE)
+      ->addRecord(['name' => 'contribution_status', 'title' => 'Contribution Status', 'is_active' => 1])
       ->setMatch(['name'])
       ->execute()
       ->single();
 
-    $optionGroupId = $optionGroup['id'];
+    self::ensureContributionStatuses((int) $statusGroup['id']);
 
-    OptionValue::save(TRUE)
-      ->addRecord(
-        [
-          'option_group_id' => $optionGroupId,
-          'label' => 'In Progress',
-          'name' => 'In Progress',
-          'value' => 5,
-          'is_active' => 1,
-          'is_reserved' => 1,
-        ]
-      )
-      ->setMatch(['option_group_id', 'name'])
+    \CRM_Core_PseudoConstant::flush();
+    self::$sharedContribStatusReady = TRUE;
+  }
+
+  private static function ensurePaymentInstrumentNone(int $groupId): void {
+    $none = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $groupId)
+      ->addWhere('name', '=', 'None')
+      ->setSelect(['id'])
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    $legacy = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $groupId)
+      ->addWhere('name', '=', 'no_payment_required')
+      ->setSelect(['id'])
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    if (!$none && $legacy) {
+      OptionValue::update(TRUE)
+        ->addWhere('id', '=', $legacy['id'])
+        ->addValue('name', 'None')
+        ->addValue('label', 'No Payment required')
+        ->execute()
+        ->single();
+      \CRM_Core_PseudoConstant::flush();
+      $none = ['id' => $legacy['id']];
+    }
+    elseif ($none && $legacy) {
+      OptionValue::delete(TRUE)->addWhere('id', '=', $legacy['id'])->execute();
+      \CRM_Core_PseudoConstant::flush();
+    }
+
+    if ($none) {
+      return;
+    }
+
+    $row = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $groupId)
+      ->setSelect(['value'])
+      ->addOrderBy('value', 'DESC')
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    $next = isset($row['value']) && is_numeric($row['value']) ? ((int) $row['value']) + 1 : 1;
+
+    OptionValue::create(TRUE)
+      ->addValue('option_group_id', $groupId)
+      ->addValue('label', 'No Payment required')
+      ->addValue('name', 'None')
+      ->addValue('value', $next)
+      ->addValue('is_active', 1)
+      ->addValue('is_reserved', 0)
+      ->addValue('weight', 99)
       ->execute()
       ->single();
 
+    \CRM_Core_PseudoConstant::flush();
+  }
+
+  private static function ensureContributionStatuses(int $groupId): void {
     OptionValue::save(TRUE)
-      ->addRecord(
-        [
-          'option_group_id' => $optionGroupId,
-          'label' => 'Completed',
-          'name' => 'Completed',
-          'value' => 1,
-          'is_active' => 1,
-          'is_default' => 1,
-        ]
-      )
+      ->addRecord([
+        'option_group_id' => $groupId,
+        'label' => 'In Progress',
+        'name' => 'In Progress',
+        'value' => 5,
+        'is_active' => 1,
+        'is_reserved' => 1,
+      ])
       ->setMatch(['option_group_id', 'name'])
       ->execute();
 
-    self::$sharedContribStatusReady = TRUE;
+    OptionValue::save(TRUE)
+      ->addRecord([
+        'option_group_id' => $groupId,
+        'label' => 'Completed',
+        'name' => 'Completed',
+        'value' => 1,
+        'is_active' => 1,
+        'is_default' => 1,
+      ])
+      ->setMatch(['option_group_id', 'name'])
+      ->execute();
+  }
+
+  private function ensureFinancialTypeId(): int {
+    $row = FinancialType::get(TRUE)
+      ->addWhere('name', '=', 'Member Dues')
+      ->setSelect(['id'])
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    if (!$row) {
+      $row = FinancialType::create(TRUE)
+        ->addValue('name', 'Member Dues')
+        ->addValue('is_active', 1)
+        ->execute()
+        ->single();
+    }
+
+    return (int) $row['id'];
+  }
+
+  private function ensureBaseOptionData(): void {
+    $paymentGroup = OptionGroup::save(TRUE)
+      ->addRecord(['name' => 'payment_instrument', 'title' => 'Payment Instrument', 'is_active' => 1])
+      ->setMatch(['name'])
+      ->execute()
+      ->single();
+    self::$sharedPaymentGroupId = (int) $paymentGroup['id'];
+
+    self::ensurePaymentInstrumentNone(self::$sharedPaymentGroupId);
+
+    $statusGroup = OptionGroup::save(TRUE)
+      ->addRecord(['name' => 'contribution_status', 'title' => 'Contribution Status', 'is_active' => 1])
+      ->setMatch(['name'])
+      ->execute()
+      ->single();
+
+    self::ensureContributionStatuses((int) $statusGroup['id']);
+
+    \CRM_Core_PseudoConstant::flush();
+  }
+
+  private function getRecurStatusId(string $name = 'In Progress'): int {
+    /** @phpstan-ignore-next-line */
+    $row = OptionValue::get(TRUE)
+      ->addWhere('option_group_id:name', '=', 'contribution_status')
+      ->addWhere('name', '=', $name)
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    if (!$row || !isset($row['value'])) {
+      throw new \RuntimeException("No se encontró contribution_status '$name'");
+    }
+    return (int) $row['value'];
   }
 
   public static function tearDownAfterClass(): void {
@@ -199,6 +285,162 @@ class ModifyFormTest extends ContractTestBase {
 
   public function setUp(): void {
     parent::setUp();
+    $this->ensureBaseOptionData();
+
+    $ownerId = $this->ensureOwnerOrgId();
+    self::$sharedOwnerOrgId = $ownerId;
+
+    $this->membershipType = $this->ensureMembershipType();
+    $this->campaign = $this->ensureCampaign();
+  }
+
+  private function ensureOwnerOrgId(): int {
+    $name = 'ModifyFormTest Owner Org ENSURE';
+    $row = Contact::get(TRUE)
+      ->addWhere('contact_type', '=', 'Organization')
+      ->addWhere('organization_name', '=', $name)
+      ->setSelect(['id', 'is_deleted'])
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    if ($row) {
+      if (!empty($row['is_deleted'])) {
+        Contact::update(TRUE)->addValue('id', $row['id'])->addValue('is_deleted', 0)->execute();
+      }
+      return (int) $row['id'];
+    }
+
+    $row = Contact::create(TRUE)
+      ->addValue('contact_type', 'Organization')
+      ->addValue('organization_name', $name)
+      ->execute()
+      ->single();
+
+    return (int) $row['id'];
+  }
+
+  private function ensureMembershipType(): array {
+    $ownerId = $this->ensureOwnerOrgId();
+    $ftId = $this->ensureFinancialTypeId();
+    $name = 'Modify Membership Type (ensured)';
+
+    $row = MembershipType::get(TRUE)
+      ->addWhere('name', '=', $name)
+      ->setSelect(['id', 'member_of_contact_id', 'financial_type_id'])
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    if (!$row) {
+      return MembershipType::create(FALSE)
+        ->addValue('name', $name)
+        ->addValue('member_of_contact_id', $ownerId)
+        ->addValue('financial_type_id', $ftId)
+        ->addValue('duration_unit', 'year')
+        ->addValue('duration_interval', 1)
+        ->addValue('period_type', 'rolling')
+        ->addValue('is_active', 1)
+        ->execute()
+        ->single();
+    }
+
+    $needsUpdate = ((int) $row['member_of_contact_id'] !== $ownerId) || ((int) $row['financial_type_id'] !== $ftId);
+    if ($needsUpdate) {
+      $row = MembershipType::update(FALSE)
+        ->addWhere('id', '=', $row['id'])
+        ->addValue('member_of_contact_id', $ownerId)
+        ->addValue('financial_type_id', $ftId)
+        ->execute()
+        ->single();
+    }
+
+    return $row;
+  }
+
+  private function ensureCampaign(): array {
+    $name = 'test_campaign_shared_ensured';
+    $row = Campaign::get(TRUE)
+      ->addWhere('name', '=', $name)
+      ->setLimit(1)
+      ->execute()
+      ->first();
+    if (!$row) {
+      $row = Campaign::create(FALSE)
+        ->addValue('title', 'Test Campaign (ensured)')
+        ->addValue('name', $name)
+        ->addValue('status_id', 1)
+        ->addValue('is_active', 1)
+        ->execute()
+        ->single();
+    }
+    return $row;
+  }
+
+// phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  private function purgeDataForContact(int $cid): void {
+ // phpcs:enable
+    try {
+      $mandates = \Civi\Api4\SepaMandate::get(TRUE)
+        ->addWhere('contact_id', '=', $cid)
+        ->setSelect(['id'])
+        ->execute()
+        ->getArrayCopy();
+      $mandateIds = array_column($mandates, 'id');
+      if ($mandateIds) {
+        \Civi\Api4\SepaMandate::delete(TRUE)
+          ->addWhere('id', 'IN', $mandateIds)
+          ->execute();
+      }
+    }
+    catch (\Throwable $e) {
+    }
+
+    try {
+      $recurs = \Civi\Api4\ContributionRecur::get(TRUE)
+        ->addWhere('contact_id', '=', $cid)
+        ->setSelect(['id'])
+        ->execute()
+        ->getArrayCopy();
+      foreach ($recurs as $r) {
+        if (!empty($r['id'])) {
+          civicrm_api3('ContributionRecur', 'delete', ['id' => (int) $r['id']]);
+        }
+      }
+    }
+    catch (\Throwable $e) {
+    }
+
+    try {
+      $contribs = \Civi\Api4\Contribution::get(TRUE)
+        ->addWhere('contact_id', '=', $cid)
+        ->setSelect(['id'])
+        ->execute()
+        ->getArrayCopy();
+      foreach ($contribs as $c) {
+        if (!empty($c['id'])) {
+          civicrm_api3('Contribution', 'delete', ['id' => (int) $c['id']]);
+        }
+      }
+    }
+    catch (\Throwable $e) {
+    }
+
+    try {
+      $mems = \Civi\Api4\Membership::get(TRUE)
+        ->addWhere('contact_id', '=', $cid)
+        ->setSelect(['id'])
+        ->execute()
+        ->getArrayCopy();
+      $memIds = array_column($mems, 'id');
+      if ($memIds) {
+        \Civi\Api4\Membership::delete(TRUE)
+          ->addWhere('id', 'IN', $memIds)
+          ->execute();
+      }
+    }
+    catch (\Throwable $e) {
+    }
   }
 
   public function testPaymentInstrumentChange_SEPA_SEPA(): void {
@@ -207,7 +449,7 @@ class ModifyFormTest extends ContractTestBase {
     $this->runPaymentInstrumentChange('SEPA', ['terminate_mandate', 'create_new_mandate'], 'update');
   }
 
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   private function createRequiredEntities(): void {
     // phpcs:enable
     $contact = $this->createContactWithRandomEmail();
@@ -222,8 +464,8 @@ class ModifyFormTest extends ContractTestBase {
     }
     $this->contact = $contactResult->first();
 
-    $this->membershipType = self::$sharedMembershipType;
-    $this->campaign = self::$sharedCampaign;
+    $this->membershipType = $this->membershipType ?: $this->ensureMembershipType();
+    $this->campaign = $this->campaign ?: $this->ensureCampaign();
 
     $rcurId = $this->getPaymentInstrumentIdByName('RCUR');
     $cashId = $this->getPaymentInstrumentIdByName('Cash');
@@ -248,21 +490,19 @@ class ModifyFormTest extends ContractTestBase {
         ->first();
       $recurringContributionId = (int) $recurResult['id'];
 
-      $this->contract = $this->createNewContract(
-        [
-          'contact_id' => $contact['id'],
-          'is_sepa' => $isExistingSepa ? 1 : 0,
-          'payment_instrument_id' => $paymentInstrumentId,
-          'amount' => '10.00',
-          'frequency_unit' => 'month',
-          'frequency_interval' => '1',
-          'membership_contract' => 'TEST-001',
-          'membership_reference' => 'REF-001',
-          'membership_recurring_contribution' => $recurringContributionId,
-          'iban' => 'DE02370502990000684712',
-          'bic' => 'COKSDE33',
-        ]
-      );
+      $this->contract = $this->createNewContract([
+        'contact_id' => $contact['id'],
+        'is_sepa' => $isExistingSepa ? 1 : 0,
+        'payment_instrument_id' => $paymentInstrumentId,
+        'amount' => '10.00',
+        'frequency_unit' => 'month',
+        'frequency_interval' => '1',
+        'membership_contract' => 'TEST-001',
+        'membership_reference' => 'REF-001',
+        'membership_recurring_contribution' => $recurringContributionId,
+        'iban' => 'DE02370502990000684712',
+        'bic' => 'COKSDE33',
+      ]);
 
       if ($isExistingSepa) {
         $creditor = SepaCreditor::create(TRUE)
@@ -276,20 +516,18 @@ class ModifyFormTest extends ContractTestBase {
           ->first();
 
         SepaMandate::save(TRUE)
-          ->addRecord(
-            [
-              'contact_id' => $contact['id'],
-              'type' => 'RCUR',
-              'entity_table' => 'civicrm_contribution_recur',
-              'entity_id' => $recurringContributionId,
-              'reference' => 'TEST-MANDATE-001',
-              'date' => '2025-05-01 13:00:00',
-              'iban' => 'DE12500105170648489890',
-              'bic' => 'INGDDEFFXXX',
-              'creditor_id' => $creditor['id'],
-              'status' => 'RCUR',
-            ]
-          )
+          ->addRecord([
+            'contact_id' => $contact['id'],
+            'type' => 'RCUR',
+            'entity_table' => 'civicrm_contribution_recur',
+            'entity_id' => $recurringContributionId,
+            'reference' => 'TEST-MANDATE-001',
+            'date' => '2025-05-01 13:00:00',
+            'iban' => 'DE12500105170648489890',
+            'bic' => 'INGDDEFFXXX',
+            'creditor_id' => $creditor['id'],
+            'status' => 'RCUR',
+          ])
           ->setMatch(['reference'])
           ->execute()
           ->first();
@@ -320,18 +558,16 @@ class ModifyFormTest extends ContractTestBase {
 
     $paymentInstrumentId = $isSepa ? $rcurId : ($isNonSepa ? $cashId : $noneId);
 
-    $this->contract = $this->createNewContract(
-      [
-        'contact_id' => $this->contact['id'],
-        'is_sepa' => $isSepa ? 1 : 0,
-        'payment_instrument_id' => $paymentInstrumentId,
-        'amount' => '10.00',
-        'frequency_unit' => 'month',
-        'frequency_interval' => '1',
-        'membership_contract' => 'TEST-001',
-        'membership_reference' => 'REF-001',
-      ]
-    );
+    $this->contract = $this->createNewContract([
+      'contact_id' => $this->contact['id'],
+      'is_sepa' => $isSepa ? 1 : 0,
+      'payment_instrument_id' => $paymentInstrumentId,
+      'amount' => '10.00',
+      'frequency_unit' => 'month',
+      'frequency_interval' => '1',
+      'membership_contract' => 'TEST-001',
+      'membership_reference' => 'REF-001',
+    ]);
 
     if ($isSepa) {
       $rcField = CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution');
@@ -372,16 +608,16 @@ class ModifyFormTest extends ContractTestBase {
 
       $this->mandate = SepaMandate::save(TRUE)
         ->addRecord([
-          'contact_id'   => $contact['id'],
-          'type'         => 'RCUR',
+          'contact_id' => $contact['id'],
+          'type' => 'RCUR',
           'entity_table' => 'civicrm_contribution_recur',
-          'entity_id'    => $recurContriId,
-          'reference'    => 'TEST-MANDATE-001',
-          'date'         => '2025-05-01 13:00:00',
-          'iban'         => 'DE12500105170648489890',
-          'bic'          => 'INGDDEFFXXX',
-          'creditor_id'  => $creditor['id'],
-          'status'       => 'RCUR',
+          'entity_id' => $recurContriId,
+          'reference' => 'TEST-MANDATE-001',
+          'date' => '2025-05-01 13:00:00',
+          'iban' => 'DE12500105170648489890',
+          'bic' => 'INGDDEFFXXX',
+          'creditor_id' => $creditor['id'],
+          'status' => 'RCUR',
         ])
         ->setMatch(['reference'])
         ->execute()
@@ -390,47 +626,38 @@ class ModifyFormTest extends ContractTestBase {
 
     if (!self::$sharedContribStatusReady) {
       $optionGroup = OptionGroup::save(TRUE)
-        ->addRecord(
-          [
-            'name' => 'contribution_status',
-            'title' => 'Contribution Status',
-            'is_active' => 1,
-          ]
-        )
+        ->addRecord([
+          'name' => 'contribution_status',
+          'title' => 'Contribution Status',
+          'is_active' => 1,
+        ])
         ->setMatch(['name'])
         ->execute()
         ->single();
 
-      $optionGroupId = $optionGroup['id'];
-
-      $inProgress = OptionValue::save(TRUE)
-        ->addRecord(
-          [
-            'option_group_id' => $optionGroupId,
-            'label' => 'In Progress',
-            'name' => 'In Progress',
-            'value' => 5,
-            'is_active' => 1,
-            'is_reserved' => 1,
-          ]
-        )
-        ->setMatch(['option_group_id', 'name'])
-        ->execute()
-        ->single();
-
-      $this->recurContributionStatusId = $inProgress['value'];
+      $this->recurContributionStatusId = 5;
 
       OptionValue::save(TRUE)
-        ->addRecord(
-          [
-            'option_group_id' => $optionGroupId,
-            'label' => 'Completed',
-            'name' => 'Completed',
-            'value' => 1,
-            'is_active' => 1,
-            'is_default' => 1,
-          ]
-        )
+        ->addRecord([
+          'option_group_id' => $optionGroup['id'],
+          'label' => 'In Progress',
+          'name' => 'In Progress',
+          'value' => 5,
+          'is_active' => 1,
+          'is_reserved' => 1,
+        ])
+        ->setMatch(['option_group_id', 'name'])
+        ->execute();
+
+      OptionValue::save(TRUE)
+        ->addRecord([
+          'option_group_id' => $optionGroup['id'],
+          'label' => 'Completed',
+          'name' => 'Completed',
+          'value' => 1,
+          'is_active' => 1,
+          'is_default' => 1,
+        ])
         ->setMatch(['option_group_id', 'name'])
         ->execute();
 
@@ -456,9 +683,7 @@ class ModifyFormTest extends ContractTestBase {
     array $expectedActions,
     string $modifyAction
   ): void {
-    // phpcs:enable
     $form = new class() extends ModifyForm {
-
       public $_submitValues = [];
 
       public function exportValues($elementList = NULL, $filterInternal = FALSE): array {
@@ -467,9 +692,7 @@ class ModifyFormTest extends ContractTestBase {
 
     };
     $form->controller = new class((int) $this->contact['id'], (int) $this->contract['id']) {
-
       public ?string $_destination = NULL;
-
       private int $id;
       private int $cid;
       private int $contractId;
@@ -509,12 +732,18 @@ class ModifyFormTest extends ContractTestBase {
       'non-SEPA' => 'Cash',
       'existing' => 'Cash',
       'None' => 'None',
-      default => 'none'
+      default => 'none',
     };
+
+    $piNameByTarget = [
+      'SEPA' => 'RCUR',
+      'non-SEPA' => 'Cash',
+      'None' => 'None',
+      'existing' => NULL,
+    ];
 
     $form->_submitValues += [
       'payment_option' => (string) $paymentOptionValue,
-      'payment_instrument_id' => ($to === 'SEPA') ? 7 : (($to === 'non-SEPA') ? 3 : NULL),
       'membership_type_id' => $this->membershipType['id'],
       'payment_amount' => $to === 'None' ? '0' : '10',
       'payment_frequency' => '6',
@@ -528,6 +757,21 @@ class ModifyFormTest extends ContractTestBase {
       'account_holder' => $this->contact['display_name'],
       'campaign_id' => $this->campaign['id'],
     ];
+
+    if (array_key_exists($to, $piNameByTarget) && $piNameByTarget[$to]) {
+      $piName = $piNameByTarget[$to];
+      $piId = $this->getPaymentInstrumentIdByName($piName);
+      if (!$piId) {
+        \CRM_Core_PseudoConstant::flush();
+        $piId = $this->getPaymentInstrumentIdByName($piName);
+      }
+      if (!$piId) {
+        throw new \RuntimeException("Payment Instrument '{$piName}' no encontrado o inactivo.");
+      }
+      $form->_submitValues['payment_instrument_id'] = $piId;
+    }
+
+    $form->_submitValues['contribution_recur_contribution_status_id'] = $this->getRecurStatusId('In Progress');
 
     foreach ($form->_submitValues as $key => $value) {
       $_REQUEST[$key] = $value;
@@ -545,7 +789,9 @@ class ModifyFormTest extends ContractTestBase {
         'end_recurring_contribution_zero' => $this->assertRecurringContributionEnded($this->contact['id']),
         'create_new_mandate' => $this->assertNewMandateCreated($this->contact['id']),
         'create_new_recurring_contribution' => $this->assertNewRecurringContribution($this->contact['id']),
-        'create_new_recurring_contribution_zero' => $this->assertNewRecurringContribution($this->contact['id'], 0),
+        'create_new_recurring_contribution_zero' => $this->assertNewRecurringContribution($this->contact['id'], 0, [
+          'membership_id' => (int) $this->contract['id'],
+        ]),
         'assign_existing_recurring' => $this->assertAssignedExistingRecurring($this->contact['id']),
         'no_change' => self::assertTrue(TRUE),
         default => throw new \RuntimeException("Unknown action: $action"),
@@ -606,11 +852,16 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
-  private function assertNewRecurringContribution($contactId, $amount = NULL): void {
-  // phpcs:enable
+  private function assertNewRecurringContribution($contactId, $amount = NULL, array $opts = []): void {
+    // phpcs:enable
+    $onlyActive = $opts['only_active'] ?? TRUE;
+    $membershipId = isset($opts['membership_id']) ? (int) $opts['membership_id'] : NULL;
+    $activeStatuses = $opts['active_statuses'] ?? ['In Progress', 'Pending'];
+
     /** @phpstan-ignore-next-line */
-    $recur = ContributionRecur::get(TRUE)
-      ->addWhere('contact_id', '=', $contactId)
+    $q = ContributionRecur::get(TRUE)
+      ->addWhere('contact_id', '=', (int) $contactId)
+      ->addWhere('is_test', '=', 0)
       ->addSelect(
         'id',
         'amount',
@@ -619,57 +870,101 @@ class ModifyFormTest extends ContractTestBase {
         'create_date',
         'cycle_day',
         'frequency_unit',
-        'frequency_interval'
+        'frequency_interval',
+        'contribution_status_id:name'
       )
       ->addOrderBy('id', 'DESC')
-      ->setLimit(10)
-      ->execute()
-      ->getArrayCopy();
+      ->setLimit(25);
 
-    $rows = array_values($recur ?? []);
-    self::assertNotEmpty($rows, 'New recurring contribution should be created');
-
-    if ($amount === NULL) {
-      self::assertTrue(TRUE);
-      return;
+    if ($onlyActive) {
+      $q->addWhere('contribution_status_id:name', 'IN', $activeStatuses);
     }
 
-    $target = (float) $amount;
-    $delta  = 0.0001;
-    $foundRow = NULL;
+    $rows = $q->execute()->getArrayCopy();
+    $rows = array_values($rows ?? []);
+    self::assertNotEmpty($rows, 'New recurring contribution should be created (no rows).');
 
-    foreach ($rows as $r) {
-      if (!isset($r['amount'])) {
-        continue;
+    $linkedRcId = NULL;
+    if ($membershipId) {
+      try {
+        $rcField = \CRM_Contract_Utils::getCustomFieldId('membership_payment.membership_recurring_contribution');
+        if ($rcField) {
+          $mem = \Civi\Api4\Membership::get(TRUE)
+            ->addSelect('id', $rcField)
+            ->addWhere('id', '=', $membershipId)
+            ->setLimit(1)
+            ->execute()
+            ->first();
+          if ($mem && !empty($mem[$rcField])) {
+            $linkedRcId = (int) $mem[$rcField];
+          }
+        }
       }
-      if (abs((float) $r['amount'] - $target) <= $delta) {
-        $foundRow = $r;
-        break;
+      catch (\Throwable $e) {
       }
     }
 
-    if ($foundRow === NULL) {
-      $summary = array_map(function($r) {
-        $id  = $r['id'] ?? '?';
-        $amt = isset($r['amount']) ? (float) $r['amount'] : '∅';
-        $pi  = $r['payment_instrument_id'] ?? 'NULL';
-        $dt  = $r['create_date'] ?? '';
-        return "#$id amt=$amt pi=$pi date=$dt";
-      }, $rows);
-      self::fail(
-        "Recurring contribution with specified amount not found.\n" .
-        "Expected: {$target}\n" .
-        "Last rows:\n" . implode("\n", $summary)
+    $candidate = NULL;
+
+    if ($linkedRcId) {
+      foreach ($rows as $r) {
+        if ((int) ($r['id'] ?? 0) === $linkedRcId) {
+          $candidate = $r;
+          break;
+        }
+      }
+    }
+
+    if (!$candidate && $amount !== NULL) {
+      $target = (float) $amount;
+      $delta = 0.0001;
+      foreach ($rows as $r) {
+        if (!isset($r['amount'])) {
+          continue;
+        }
+        if (abs((float) $r['amount'] - $target) <= $delta) {
+          $candidate = $r;
+          break;
+        }
+      }
+    }
+
+    if (!$candidate) {
+      $candidate = $rows[0];
+    }
+
+    if ($amount !== NULL) {
+      $target = (float) $amount;
+      $gotAmt = isset($candidate['amount']) ? (float) $candidate['amount'] : NULL;
+      self::assertNotNull($gotAmt, 'New recurring contribution should have amount.');
+      self::assertTrue(
+        abs($gotAmt - $target) <= 0.0001,
+        sprintf(
+          'Unexpected amount on new recurring contribution. Expected: %.4f, got: %s (RC id #%s, status=%s)',
+          $target,
+          $gotAmt === NULL ? '∅' : (string) $gotAmt,
+          $candidate['id'] ?? '?',
+          $candidate['contribution_status_id:name'] ?? '?'
+        )
       );
-    }
 
-    if (abs($target) <= $delta) {
-      $noneId = $this->getPaymentInstrumentIdByName('None');
-      if ($noneId) {
-        self::assertEquals(
-          (int) $noneId,
-          (int) ($foundRow['payment_instrument_id'] ?? 0),
-          "Expected PI 'None' ({$noneId}) for zero-amount RC, got " . ($foundRow['payment_instrument_id'] ?? 'NULL')
+      if (abs($target) <= 0.0001) {
+        $noneId = $this->getPaymentInstrumentIdByName('None');
+        if ($noneId) {
+          self::assertEquals(
+            (int) $noneId,
+            (int) ($candidate['payment_instrument_id'] ?? 0),
+            "Expected PI 'None' ({$noneId}) for zero-amount RC, got " . ($candidate['payment_instrument_id'] ?? 'NULL')
+          );
+        }
+      }
+    }
+    else {
+      if ($onlyActive) {
+        $st = $candidate['contribution_status_id:name'] ?? NULL;
+        self::assertTrue(
+          in_array($st, $activeStatuses, TRUE),
+          'New recurring contribution should be active. Got status: ' . ($st ?? 'NULL')
         );
       }
     }
@@ -951,7 +1246,6 @@ class ModifyFormTest extends ContractTestBase {
 
       $okStatuses = ['INVALID', 'COMPLETE', 'ENDED'];
       if ($to === 'paused' || $modifyAction === 'pause') {
-        // pausa -> mandato en espera
         $okStatuses[] = 'ONHOLD';
       }
 

@@ -47,145 +47,84 @@ class CreateFormTest extends ContractTestBase {
 
   public static function setUpBeforeClass(): void {
     /** @phpstan-ignore-next-line */
-    $org = civicrm_api3(
-      'Contact',
-      'create',
-      [
-        'contact_type' => 'Organization',
-        'organization_name' => 'CreateFormTest Owner Org ' . rand(1, 1000000),
-      ]
-    );
+    $org = civicrm_api3('Contact', 'create', [
+      'contact_type' => 'Organization',
+      'organization_name' => 'CreateFormTest Owner Org ' . rand(1, 1000000),
+    ]);
     self::$sharedOwnerOrgId = (int) $org['id'];
 
     CustomGroup::save(FALSE)
-      ->addRecord(
-        [
-          'title' => 'Membership General',
-          'name' => 'membership_general',
-          'extends' => 'Membership',
-          'is_active' => 1,
-          'style' => 'Inline',
-        ]
-      )
+      ->addRecord([
+        'title' => 'Membership General',
+        'name' => 'membership_general',
+        'extends' => 'Membership',
+        'is_active' => 1,
+        'style' => 'Inline',
+      ])
       ->setMatch(['name'])
       ->execute()
       ->single();
 
-    $paymentOptionGroup = OptionGroup::save(TRUE)
-      ->addRecord(
-        [
-          'name' => 'payment_instrument',
-          'title' => 'Payment Instrument',
-          'is_active' => 1,
-        ]
-      )
+    $paymentGroup = OptionGroup::save(TRUE)
+      ->addRecord([
+        'name' => 'payment_instrument',
+        'title' => 'Payment Instrument',
+        'is_active' => 1,
+      ])
+      ->setMatch(['name'])
+      ->execute()
+      ->single();
+    self::$sharedPaymentGroupId = (int) $paymentGroup['id'];
+
+    self::ensurePaymentInstrumentNone(self::$sharedPaymentGroupId);
+
+    $statusGroup = OptionGroup::save(TRUE)
+      ->addRecord([
+        'name' => 'contribution_status',
+        'title' => 'Contribution Status',
+        'is_active' => 1,
+      ])
       ->setMatch(['name'])
       ->execute()
       ->single();
 
-    self::$sharedPaymentGroupId = (int) $paymentOptionGroup['id'];
-
-    OptionValue::save(TRUE)
-      ->addRecord(
-        [
-          'option_group_id' => self::$sharedPaymentGroupId,
-          'label' => 'No Payment required',
-          'name' => 'None',
-          'value' => 100,
-          'is_active' => 1,
-          'is_reserved' => 0,
-          'weight' => 99,
-        ]
-      )
-      ->setMatch(['option_group_id', 'name'])
-      ->execute()
-      ->single();
-
-    $optionGroup = OptionGroup::save(TRUE)
-      ->addRecord(
-        [
-          'name' => 'contribution_status',
-          'title' => 'Contribution Status',
-          'is_active' => 1,
-        ]
-      )
-      ->setMatch(['name'])
-      ->execute()
-      ->single();
-
-    $optionGroupId = $optionGroup['id'];
-
-    OptionValue::save(TRUE)
-      ->addRecord(
-        [
-          'option_group_id' => $optionGroupId,
-          'label' => 'In Progress',
-          'name' => 'In Progress',
-          'value' => 5,
-          'is_active' => 1,
-          'is_reserved' => 1,
-        ]
-      )
-      ->setMatch(['option_group_id', 'name'])
-      ->execute()
-      ->single();
-
-    OptionValue::save(TRUE)
-      ->addRecord(
-        [
-          'option_group_id' => $optionGroupId,
-          'label' => 'Completed',
-          'name' => 'Completed',
-          'value' => 1,
-          'is_active' => 1,
-          'is_default' => 1,
-        ]
-      )
-      ->setMatch(['option_group_id', 'name'])
-      ->execute();
-
+    self::ensureContributionStatuses((int) $statusGroup['id']);
     self::$sharedContribStatusReady = TRUE;
 
     $campaignType = OptionValue::save(FALSE)
-      ->addRecord(
-        [
-          'option_group_id:name' => 'campaign_type',
-          'name' => 'test_campaign_type_shared',
-          'label' => 'Test Campaign Type (shared)',
-          'value' => '',
-          'is_active' => 1,
-        ]
-      )
+      ->addRecord([
+        'option_group_id:name' => 'campaign_type',
+        'name' => 'test_campaign_type_shared',
+        'label' => 'Test Campaign Type (shared)',
+        'value' => '',
+        'is_active' => 1,
+      ])
       ->setMatch(['option_group_id', 'name'])
       ->execute()
       ->single();
     self::$sharedCampaignTypeName = $campaignType['name'];
 
     self::$sharedCampaign = Campaign::save(FALSE)
-      ->addRecord(
-        [
-          'title' => 'Test Campaign (shared)',
-          'campaign_type_id:name' => self::$sharedCampaignTypeName,
-          'status_id' => 1,
-          'is_active' => 1,
-        ]
-      )
+      ->addRecord([
+        'title' => 'Test Campaign (shared)',
+        'campaign_type_id:name' => self::$sharedCampaignTypeName,
+        'status_id' => 1,
+        'is_active' => 1,
+      ])
       ->setMatch(['title', 'campaign_type_id'])
       ->execute()
       ->single();
 
     self::$sharedMembershipType = MembershipType::create(FALSE)
-      ->setValues(
-        [
-          'name' => 'Test Membership Type (shared)',
-          'member_of_contact_id' => self::$sharedOwnerOrgId,
-          'financial_type_id' => 2,
-          'duration_unit' => 'year',
-          'duration_interval' => 1,
-          'period_type' => 'rolling',
-          'is_active' => 1,
-        ]
-      )
+      ->setValues([
+        'name' => 'Test Membership Type (shared)',
+        'member_of_contact_id' => self::$sharedOwnerOrgId,
+        'financial_type_id' => 2,
+        'duration_unit' => 'year',
+        'duration_interval' => 1,
+        'period_type' => 'rolling',
+        'is_active' => 1,
+      ])
       ->execute()
       ->single();
   }
@@ -226,62 +165,126 @@ class CreateFormTest extends ContractTestBase {
     $this->createRequiredEntities();
   }
 
-  private function setupRecurContributionStatus(): void {
-    if (self::$sharedContribStatusReady) {
+  private static function ensurePaymentInstrumentNone(int $groupId): void {
+    $none = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $groupId)
+      ->addWhere('name', '=', 'None')
+      ->setSelect(['id'])
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    $legacy = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $groupId)
+      ->addWhere('name', '=', 'no_payment_required')
+      ->setSelect(['id'])
+      ->setLimit(1)
+      ->execute()
+      ->first();
+
+    if (!$none && $legacy) {
+      OptionValue::update(TRUE)
+        ->addWhere('id', '=', $legacy['id'])
+        ->addValue('name', 'None')
+        ->addValue('label', 'No Payment required')
+        ->execute()
+        ->single();
+      \CRM_Core_PseudoConstant::flush();
+      $none = ['id' => $legacy['id']];
+    }
+    elseif ($none && $legacy) {
+      OptionValue::delete(TRUE)->addWhere('id', '=', $legacy['id'])->execute();
+      \CRM_Core_PseudoConstant::flush();
+    }
+
+    if ($none) {
       return;
     }
-    try {
-      $optionGroup = OptionGroup::save(TRUE)
-        ->addRecord(
-          [
-            'name' => 'contribution_status',
-            'title' => 'Contribution Status',
-            'is_active' => 1,
-          ]
-        )
+
+    $row = OptionValue::get(TRUE)
+      ->addWhere('option_group_id', '=', $groupId)
+      ->setSelect(['value'])
+      ->addOrderBy('value', 'DESC')
+      ->setLimit(1)
+      ->execute()
+      ->first();
+    $next = isset($row['value']) && is_numeric($row['value']) ? ((int) $row['value']) + 1 : 1;
+
+    OptionValue::create(TRUE)
+      ->addValue('option_group_id', $groupId)
+      ->addValue('label', 'No Payment required')
+      ->addValue('name', 'None')
+      ->addValue('value', $next)
+      ->addValue('is_active', 1)
+      ->addValue('is_reserved', 0)
+      ->addValue('weight', 99)
+      ->execute()
+      ->single();
+
+    \CRM_Core_PseudoConstant::flush();
+  }
+
+  private static function ensureContributionStatuses(int $groupId): void {
+    OptionValue::save(TRUE)
+      ->addRecord([
+        'option_group_id' => $groupId,
+        'label' => 'In Progress',
+        'name' => 'In Progress',
+        'value' => 5,
+        'is_active' => 1,
+        'is_reserved' => 1,
+      ])
+      ->setMatch(['option_group_id', 'name'])
+      ->execute();
+
+    OptionValue::save(TRUE)
+      ->addRecord([
+        'option_group_id' => $groupId,
+        'label' => 'Completed',
+        'name' => 'Completed',
+        'value' => 1,
+        'is_active' => 1,
+        'is_default' => 1,
+      ])
+      ->setMatch(['option_group_id', 'name'])
+      ->execute();
+  }
+
+  private function setupRecurContributionStatus(): void {
+    if (self::$sharedContribStatusReady) {
+      $row = OptionValue::get(TRUE)
+        ->addWhere('option_group_id:name', '=', 'contribution_status')
+        ->addWhere('name', '=', 'In Progress')
+        ->setSelect(['value'])
+        ->setLimit(1)
+        ->execute()
+        ->first();
+    }
+    else {
+      $statusGroup = OptionGroup::save(TRUE)
+        ->addRecord([
+          'name' => 'contribution_status',
+          'title' => 'Contribution Status',
+          'is_active' => 1,
+        ])
         ->setMatch(['name'])
         ->execute()
         ->single();
 
-      $optionGroupId = $optionGroup['id'];
+      self::ensureContributionStatuses((int) $statusGroup['id']);
 
-      $inProgress = OptionValue::save(TRUE)
-        ->addRecord(
-          [
-            'option_group_id' => $optionGroupId,
-            'label' => 'In Progress',
-            'name' => 'In Progress',
-            'value' => 5,
-            'is_active' => 1,
-            'is_reserved' => 1,
-          ]
-        )
-        ->setMatch(['option_group_id', 'name'])
+      $row = OptionValue::get(TRUE)
+        ->addWhere('option_group_id:name', '=', 'contribution_status')
+        ->addWhere('name', '=', 'In Progress')
+        ->setSelect(['value'])
+        ->setLimit(1)
         ->execute()
-        ->single();
-
-      $this->recurContributionStatusId = $inProgress['value'];
-
-      OptionValue::save(TRUE)
-        ->addRecord(
-          [
-            'option_group_id' => $optionGroupId,
-            'label' => 'Completed',
-            'name' => 'Completed',
-            'value' => 1,
-            'is_active' => 1,
-            'is_default' => 1,
-          ]
-        )
-        ->setMatch(['option_group_id', 'name'])
-        ->execute();
+        ->first();
 
       self::$sharedContribStatusReady = TRUE;
     }
-    catch (\Exception $e) {
-      /** @phpstan-ignore-next-line */
-      throw new \CRM_Core_Exception($e->getMessage(), 0, $e);
-    }
+
+    $this->recurContributionStatusId = $row ? (int) $row['value'] : NULL;
   }
 
   private function createRequiredEntities(): void {
@@ -456,13 +459,9 @@ class CreateFormTest extends ContractTestBase {
     $form->postProcess();
 
     /** @phpstan-ignore-next-line */
-    $result = civicrm_api3(
-      'Contract',
-      'getsingle',
-      [
-        'contact_id' => $this->contact['id'],
-      ]
-    );
+    $result = civicrm_api3('Contract', 'getsingle', [
+      'contact_id' => $this->contact['id'],
+    ]);
 
     $contract = $this->getContract($result['id']);
 
