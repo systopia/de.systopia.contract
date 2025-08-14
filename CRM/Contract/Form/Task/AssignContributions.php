@@ -251,7 +251,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
     if (empty($contract['sepa_mandate_id']) && $values['assign_mode'] != 'no') {
       // something might have changed, check the accounts
       [$from_ba, $to_ba] = CRM_Contract_BankingLogic::getAccountsFromRecurringContribution(
-        $contract['contribution_recur_id']
+        (int) $contract['contribution_recur_id']
       );
 
       if ($from_ba != $contract['from_ba'] || $to_ba != $contract['to_ba']) {
