@@ -17,24 +17,33 @@ class CRM_Contract_BankingLogic {
 
   /**
    * cached value for self::getCreditorBankAccount() */
-  protected static $_creditorBankAccount = NULL;
-  protected static $_ibanReferenceType = NULL;
+  protected static ?int $_creditorBankAccount = NULL;
+  protected static ?int $_ibanReferenceType = NULL;
 
   /**
    * get bank account information
+   *
+   * @phpstan-return array<string, mixed>
    */
-  public static function getBankAccount($account_id) {
-    if (empty($account_id)) {
+  public static function getBankAccount(?int $account_id): ?array {
+    if (NULL === $account_id) {
       return NULL;
     }
 
     $data = [];
+    /**
+     * @phpstan-var array{
+     *   "id": int,
+     *   "contact_id": int,
+     *   "data_parsed"?: string
+     * } $account
+     */
     $account = civicrm_api3('BankingAccount', 'getsingle', ['id' => $account_id]);
     $data['contact_id'] = $account['contact_id'];
     $data['id'] = $account['id'];
-    if (!empty($account['data_parsed'])) {
+    if (isset($account['data_parsed'])) {
       $data_parsed = json_decode($account['data_parsed'], TRUE);
-      if ($data_parsed) {
+      if (is_array($data_parsed)) {
         foreach ($data_parsed as $key => $value) {
           $data[$key] = $value;
           // also add in lower case to avoid stuff like bic/BIC confusion
@@ -44,6 +53,7 @@ class CRM_Contract_BankingLogic {
     }
 
     // load IBAN reference
+    /** @phpstan-var array<string, mixed> $reference */
     $reference = civicrm_api3('BankingAccountReference', 'getsingle', [
       'ba_id'             => $account_id,
       'reference_type_id' => self::getIbanReferenceTypeID(),
@@ -59,15 +69,15 @@ class CRM_Contract_BankingLogic {
    * The account will be created if it doesn't exist yet
    *
    * @todo cache results?
-   * @return int account ID
    */
-  public static function getOrCreateBankAccount($contact_id, $iban, $bic) {
-    if (empty($iban)) {
-      return '';
+  public static function getOrCreateBankAccount(int $contact_id, ?string $iban, ?string $bic): ?int {
+    if (!isset($iban) || '' === $iban) {
+      return NULL;
     }
 
     try {
       // find existing references
+      /** @phpstan-var array{"values": array<string, mixed>} $existing_references */
       $existing_references = civicrm_api3('BankingAccountReference', 'get', [
         'reference'         => $iban,
         'reference_type_id' => self::getIbanReferenceTypeID(),
@@ -79,22 +89,25 @@ class CRM_Contract_BankingLogic {
       foreach ($existing_references['values'] as $account_reference) {
         $bank_account_ids[] = $account_reference['ba_id'];
       }
-      if (!empty($bank_account_ids)) {
+      if ([] !== $bank_account_ids) {
+        /** @phpstan-var array{"count": int, "values": array<int, array<string, mixed>>} $contact_bank_accounts */
         $contact_bank_accounts = civicrm_api3('BankingAccount', 'get', [
           'id'           => ['IN' => $bank_account_ids],
           'contact_id'   => $contact_id,
           'option.limit' => 1,
         ]);
-        if ($contact_bank_accounts['count']) {
+        if ($contact_bank_accounts['count'] > 0) {
           // bank account already exists with the contact
+          /** @phpstan-var array{"id": int} $account */
           $account = reset($contact_bank_accounts['values']);
-          return $account['id'];
+          return (int) $account['id'];
         }
       }
 
       // if we get here, that means that there is no such bank account
       //  => create one
       $data = ['BIC' => $bic, 'country' => substr($iban, 0, 2)];
+      /** @phpstan-var array{"id": int} $bank_account */
       $bank_account = civicrm_api3('BankingAccount', 'create', [
         'contact_id'  => $contact_id,
         'description' => 'Bulk Importer',
@@ -106,24 +119,27 @@ class CRM_Contract_BankingLogic {
         'reference_type_id' => self::getIbanReferenceTypeID(),
         'ba_id'             => $bank_account['id'],
       ]);
-      return $bank_account['id'];
+      return (int) $bank_account['id'];
     }
-    catch (Exception $e) {
+    catch (CRM_Core_Exception $e) {
       error_log("Couldn't add bank account '{$iban}' [{$contact_id}]");
+      return NULL;
     }
   }
 
   /**
    * Get the (target) bank account of the creditor
    */
-  public static function getCreditorBankAccount() {
+  public static function getCreditorBankAccount(): ?int {
     if (self::$_creditorBankAccount === NULL) {
       $creditor = CRM_Contract_SepaLogic::getCreditor();
-      self::$_creditorBankAccount = self::getOrCreateBankAccount(
-        $creditor->creditor_id,
-        $creditor->iban,
-        $creditor->bic
-      );
+      if (NULL !== $creditor) {
+        self::$_creditorBankAccount = self::getOrCreateBankAccount(
+          (int) $creditor->creditor_id,
+          $creditor->iban,
+          $creditor->bic
+        );
+      }
     }
     return self::$_creditorBankAccount;
   }
@@ -131,13 +147,15 @@ class CRM_Contract_BankingLogic {
   /**
    * return the IBAN for the given bank account id if there is one
    */
-  public static function getIBANforBankAccount($bank_account_id) {
+  public static function getIBANforBankAccount(int $bank_account_id): string {
+    /** @phpstan-var array{"count": int, "values": array<string, mixed>} $iban_references */
     $iban_references = civicrm_api3('BankingAccountReference', 'get', [
       'ba_id'             => $bank_account_id,
       'reference_type_id' => self::getIbanReferenceTypeID(),
       'return'            => 'reference',
     ]);
     if ($iban_references['count'] > 0) {
+      /** @phpstan-var array{"reference": string} $reference */
       $reference = reset($iban_references['values']);
       return $reference['reference'];
     }
@@ -149,7 +167,7 @@ class CRM_Contract_BankingLogic {
   /**
    * Get the reference type ID for IBAN references (cached)
    */
-  public static function getIbanReferenceTypeID() {
+  public static function getIbanReferenceTypeID(): int {
     if (self::$_ibanReferenceType === NULL) {
       $reference_type_value = civicrm_api3('OptionValue', 'getsingle', [
         'value'           => 'IBAN',
@@ -157,7 +175,8 @@ class CRM_Contract_BankingLogic {
         'option_group_id' => 'civicrm_banking.reference_types',
         'is_active'       => 1,
       ]);
-      self::$_ibanReferenceType = $reference_type_value['id'];
+      /** @phpstan-var array{"id": int} $reference_type_value */
+      self::$_ibanReferenceType = (int) $reference_type_value['id'];
     }
     return self::$_ibanReferenceType;
   }
@@ -167,12 +186,10 @@ class CRM_Contract_BankingLogic {
    * contribution
    *
    * @param $contribution_recur_id ID of an recurring contribution entity
-   * @return array (from_ba_id, to_ba_id)
+   * @phpstan-return list<int> (from_ba_id, to_ba_id)
    */
-  public static function getAccountsFromRecurringContribution($contribution_recur_id) {
-    $contribution_recur_id = (int) $contribution_recur_id;
-
-    if (empty($contribution_recur_id)) {
+  public static function getAccountsFromRecurringContribution(?int $contribution_recur_id): ?array {
+    if (!isset($contribution_recur_id)) {
       return NULL;
     }
 
