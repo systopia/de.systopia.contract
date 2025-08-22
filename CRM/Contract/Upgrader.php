@@ -11,7 +11,6 @@
 declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
-use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
 
 /**
@@ -96,8 +95,8 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   public function upgrade_1403() {
     $this->ctx->log->info('Applying updates for 14xx');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_contract_updates.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_membership_payment.json'));
+    $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
+    $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
@@ -168,45 +167,37 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   protected function ensureNoPaymentRequiredPaymentInstrument() {
+
     try {
-      $og = OptionGroup::get(FALSE)
-        ->addWhere('name', '=', 'payment_instrument')
-        ->setSelect(['id'])
-        ->setLimit(1)
+      $currentNone = OptionValue::get(FALSE)
+        ->addWhere('option_group_id.name', '=', 'payment_instrument')
+        ->addWhere('name', '=', 'None')
+        ->setSelect(['id', 'value'])
         ->execute()
-        ->first();
+        ->single();
     }
     catch (\Throwable $e) {
-      return;
+      $currentNone = NULL;
     }
-    if (!$og || empty($og['id'])) {
-      return;
+
+    try {
+      $legacy = OptionValue::get(FALSE)
+        ->addWhere('option_group_id.name', '=', 'payment_instrument')
+        ->addWhere('name', '=', 'no_payment_required')
+        ->setSelect(['id', 'value'])
+        ->execute()
+        ->single();
     }
-    $gid = (int) $og['id'];
-
-    $currentNone = OptionValue::get(FALSE)
-      ->addWhere('option_group_id', '=', $gid)
-      ->addWhere('name', '=', 'None')
-      ->setSelect(['id', 'value'])
-      ->setLimit(1)
-      ->execute()
-      ->first();
-
-    $legacy = OptionValue::get(FALSE)
-      ->addWhere('option_group_id', '=', $gid)
-      ->addWhere('name', '=', 'no_payment_required')
-      ->setSelect(['id', 'value'])
-      ->setLimit(1)
-      ->execute()
-      ->first();
+    catch (\Throwable $e) {
+      $legacy = NULL;
+    }
 
     if ($legacy && !$currentNone) {
       OptionValue::update(FALSE)
         ->addWhere('id', '=', $legacy['id'])
         ->addValue('name', 'None')
-        ->addValue('label', 'No payment required')
-        ->execute()
-        ->single();
+        ->addValue('label', 'None')
+        ->execute();
       CRM_Core_PseudoConstant::flush();
       return;
     }
@@ -221,27 +212,24 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
     if (!$currentNone) {
       OptionValue::create(FALSE)
-        ->addValue('option_group_id', $gid)
-        ->addValue('label', 'No payment required')
+        ->addValue('option_group_id:name', 'payment_instrument')
+        ->addValue('label', 'None')
         ->addValue('name', 'None')
-        ->addValue('value', $this->findNextAvailablePaymentInstrumentValue($gid))
+        ->addValue('value', $this->findNextAvailablePaymentInstrumentValueByGroupName('payment_instrument'))
         ->addValue('is_active', 1)
         ->addValue('is_reserved', 0)
         ->addValue('weight', 99)
-        ->execute()
-        ->single();
+        ->execute();
       CRM_Core_PseudoConstant::flush();
     }
   }
 
-  protected function findNextAvailablePaymentInstrumentValue($optionGroupId) {
+  protected function findNextAvailablePaymentInstrumentValueByGroupName(string $groupName) {
     $rows = OptionValue::get(FALSE)
-      ->addWhere('option_group_id', '=', (int) $optionGroupId)
+      ->addWhere('option_group_id.name', '=', $groupName)
       ->setSelect(['value'])
-      ->setLimit(0)
       ->execute()
       ->getArrayCopy();
-
     $used = array_map('intval', array_column($rows, 'value'));
     $next = 1;
     while (in_array($next, $used, TRUE)) {

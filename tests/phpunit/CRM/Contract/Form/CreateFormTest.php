@@ -22,7 +22,6 @@ class CreateFormTest extends ContractTestBase {
 
   protected static array $sharedCampaign = [];
 
-  protected static ?int $sharedPaymentGroupId = NULL;
 
   protected static bool $sharedContribStatusReady = FALSE;
 
@@ -47,10 +46,11 @@ class CreateFormTest extends ContractTestBase {
 
   public static function setUpBeforeClass(): void {
     /** @phpstan-ignore-next-line */
-    $org = civicrm_api3('Contact', 'create', [
-      'contact_type' => 'Organization',
-      'organization_name' => 'CreateFormTest Owner Org ' . rand(1, 1000000),
-    ]);
+    $org = Contact::create(FALSE)
+      ->addValue('contact_type', 'Organization')
+      ->addValue('organization_name', 'CreateFormTest Owner Org ' . rand(1, 1000000))
+      ->execute()
+      ->single();
     self::$sharedOwnerOrgId = (int) $org['id'];
 
     CustomGroup::save(FALSE)
@@ -65,18 +65,7 @@ class CreateFormTest extends ContractTestBase {
       ->execute()
       ->single();
 
-    $paymentGroup = OptionGroup::save(TRUE)
-      ->addRecord([
-        'name' => 'payment_instrument',
-        'title' => 'Payment Instrument',
-        'is_active' => 1,
-      ])
-      ->setMatch(['name'])
-      ->execute()
-      ->single();
-    self::$sharedPaymentGroupId = (int) $paymentGroup['id'];
-
-    self::ensurePaymentInstrumentNone(self::$sharedPaymentGroupId);
+    self::ensurePaymentInstrumentNone();
 
     $statusGroup = OptionGroup::save(TRUE)
       ->addRecord([
@@ -152,7 +141,9 @@ class CreateFormTest extends ContractTestBase {
     try {
       if (!empty(self::$sharedOwnerOrgId)) {
         /** @phpstan-ignore-next-line */
-        civicrm_api3('Contact', 'delete', ['id' => self::$sharedOwnerOrgId]);
+        Contact::delete(TRUE)
+          ->addWhere('id', '=', self::$sharedOwnerOrgId)
+          ->execute();
       }
     }
     catch (\Throwable $e) {
@@ -165,30 +156,40 @@ class CreateFormTest extends ContractTestBase {
     $this->createRequiredEntities();
   }
 
-  private static function ensurePaymentInstrumentNone(int $groupId): void {
-    $none = OptionValue::get(TRUE)
-      ->addWhere('option_group_id', '=', $groupId)
-      ->addWhere('name', '=', 'None')
-      ->setSelect(['id'])
-      ->setLimit(1)
-      ->execute()
-      ->first();
+  private static function ensurePaymentInstrumentNone(): void {
+    try {
+      $none = OptionValue::get(TRUE)
+        ->addWhere('option_group_id.name', '=', 'payment_instrument')
+        ->addWhere('option_group_id.is_active', '=', 1)
+        ->addWhere('name', '=', 'None')
+        ->setSelect(['id'])
+        ->execute()
+        ->single();
 
-    $legacy = OptionValue::get(TRUE)
-      ->addWhere('option_group_id', '=', $groupId)
-      ->addWhere('name', '=', 'no_payment_required')
-      ->setSelect(['id'])
-      ->setLimit(1)
-      ->execute()
-      ->first();
+    }
+    catch (\Throwable $e) {
+      $none = NULL;
+    }
+
+    try {
+      $legacy = OptionValue::get(TRUE)
+        ->addWhere('option_group_id.name', '=', 'payment_instrument')
+        ->addWhere('option_group_id.is_active', '=', 1)
+        ->addWhere('name', '=', 'no_payment_required')
+        ->setSelect(['id'])
+        ->execute()
+        ->single();
+    }
+    catch (\Throwable $e) {
+      $legacy = NULL;
+    }
 
     if (!$none && $legacy) {
       OptionValue::update(TRUE)
         ->addWhere('id', '=', $legacy['id'])
         ->addValue('name', 'None')
         ->addValue('label', 'No Payment required')
-        ->execute()
-        ->single();
+        ->execute();
       \CRM_Core_PseudoConstant::flush();
       $none = ['id' => $legacy['id']];
     }
@@ -202,24 +203,25 @@ class CreateFormTest extends ContractTestBase {
     }
 
     $row = OptionValue::get(TRUE)
-      ->addWhere('option_group_id', '=', $groupId)
+      ->addWhere('option_group_id.name', '=', 'payment_instrument')
+      ->addWhere('option_group_id.is_active', '=', 1)
       ->setSelect(['value'])
       ->addOrderBy('value', 'DESC')
       ->setLimit(1)
       ->execute()
       ->first();
+
     $next = isset($row['value']) && is_numeric($row['value']) ? ((int) $row['value']) + 1 : 1;
 
     OptionValue::create(TRUE)
-      ->addValue('option_group_id', $groupId)
+      ->addValue('option_group_id.name', 'payment_instrument')
       ->addValue('label', 'No Payment required')
       ->addValue('name', 'None')
       ->addValue('value', $next)
       ->addValue('is_active', 1)
       ->addValue('is_reserved', 0)
       ->addValue('weight', 99)
-      ->execute()
-      ->single();
+      ->execute();
 
     \CRM_Core_PseudoConstant::flush();
   }
@@ -268,8 +270,7 @@ class CreateFormTest extends ContractTestBase {
           'is_active' => 1,
         ])
         ->setMatch(['name'])
-        ->execute()
-        ->single();
+        ->execute();
 
       self::ensureContributionStatuses((int) $statusGroup['id']);
 
