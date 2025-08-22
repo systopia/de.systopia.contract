@@ -11,6 +11,7 @@
 declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
+use Civi\Api4\OptionValue;
 
 /**
  * Collection of upgrade steps.
@@ -94,8 +95,8 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   public function upgrade_1403() {
     $this->ctx->log->info('Applying updates for 14xx');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/custom_group_contract_updates.json'));
-    $customData->syncOptionGroup(E::path('resources/custom_group_membership_payment.json'));
+    $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
+    $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
@@ -166,44 +167,72 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   protected function ensureNoPaymentRequiredPaymentInstrument() {
+
     try {
-      $optionGroup = civicrm_api3('OptionGroup', 'getsingle', [
-        'name' => 'payment_instrument',
-      ]);
+      $currentNone = OptionValue::get(FALSE)
+        ->addWhere('option_group_id.name', '=', 'payment_instrument')
+        ->addWhere('name', '=', 'None')
+        ->setSelect(['id', 'value'])
+        ->execute()
+        ->single();
     }
-    catch (Exception $e) {
+    catch (\Throwable $e) {
+      $currentNone = NULL;
+    }
+
+    try {
+      $legacy = OptionValue::get(FALSE)
+        ->addWhere('option_group_id.name', '=', 'payment_instrument')
+        ->addWhere('name', '=', 'no_payment_required')
+        ->setSelect(['id', 'value'])
+        ->execute()
+        ->single();
+    }
+    catch (\Throwable $e) {
+      $legacy = NULL;
+    }
+
+    if ($legacy && !$currentNone) {
+      OptionValue::update(FALSE)
+        ->addWhere('id', '=', $legacy['id'])
+        ->addValue('name', 'None')
+        ->addValue('label', 'None')
+        ->execute();
+      CRM_Core_PseudoConstant::flush();
       return;
     }
 
-    $existing = civicrm_api3('OptionValue', 'get', [
-      'option_group_id' => $optionGroup['id'],
-      'name' => 'None',
-      'return' => 'id',
-    ]);
-    if ($existing['count'] > 0) {
+    if ($legacy && $currentNone) {
+      OptionValue::delete(FALSE)
+        ->addWhere('id', '=', $legacy['id'])
+        ->execute();
+      CRM_Core_PseudoConstant::flush();
       return;
     }
 
-    civicrm_api3('OptionValue', 'create', [
-      'option_group_id' => $optionGroup['id'],
-      'label' => 'No payment required',
-      'name' => 'None',
-      'value' => $this->findNextAvailablePaymentInstrumentValue($optionGroup['id']),
-      'is_active' => 1,
-      'is_reserved' => 0,
-      'weight' => 99,
-    ]);
+    if (!$currentNone) {
+      OptionValue::create(FALSE)
+        ->addValue('option_group_id:name', 'payment_instrument')
+        ->addValue('label', 'None')
+        ->addValue('name', 'None')
+        ->addValue('value', $this->findNextAvailablePaymentInstrumentValueByGroupName('payment_instrument'))
+        ->addValue('is_active', 1)
+        ->addValue('is_reserved', 0)
+        ->addValue('weight', 99)
+        ->execute();
+      CRM_Core_PseudoConstant::flush();
+    }
   }
 
-  protected function findNextAvailablePaymentInstrumentValue($optionGroupId) {
-    $values = civicrm_api3('OptionValue', 'get', [
-      'option_group_id' => $optionGroupId,
-      'options' => ['limit' => 0],
-      'return' => ['value'],
-    ]);
-    $used = array_map('intval', array_column($values['values'], 'value'));
+  protected function findNextAvailablePaymentInstrumentValueByGroupName(string $groupName) {
+    $rows = OptionValue::get(FALSE)
+      ->addWhere('option_group_id.name', '=', $groupName)
+      ->setSelect(['value'])
+      ->execute()
+      ->getArrayCopy();
+    $used = array_map('intval', array_column($rows, 'value'));
     $next = 1;
-    while (in_array($next, $used)) {
+    while (in_array($next, $used, TRUE)) {
       $next++;
     }
     return $next;
