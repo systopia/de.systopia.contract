@@ -89,7 +89,11 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         $this->setParameter($change_field, $contract_after[$membership_field]);
       }
     }
-    $this->setParameter('contract_updates.ch_annual_diff', (float) $contract_after['membership_payment.membership_annual'] - (float) $contract_before['membership_payment.membership_annual']);
+
+    // calculate and set the annual difference
+    $this->setParameter('contract_updates.ch_annual_diff',
+      (float) CRM_Utils_Rule::cleanMoney($contract_after['membership_payment.membership_annual'])
+      - (float) CRM_Utils_Rule::cleanMoney($contract_before['membership_payment.membership_annual']));
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
     $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name']);
     $this->setStatus('Completed');
@@ -104,7 +108,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
    * @throws Exception if the creation should be disallowed
    */
   public function shouldBeAccepted() {
-    parent::shouldBeAccepted();
+    CRM_Contract_Change::shouldBeAccepted();
 
     // TODO:
   }
