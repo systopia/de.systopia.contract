@@ -24,7 +24,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
    * upgrade tasks. They are executed in order (like Drupal's hook_update_N).
    */
   public function install() {
-    $this->executeSqlFile('sql/contract.sql');
     $this->ensureNoPaymentRequiredPaymentInstrument();
   }
 
@@ -69,7 +68,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_1370() {
     $this->ctx->log->info('Applying update 1370');
-    $this->executeSqlFile('sql/contract.sql');
     $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
