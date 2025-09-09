@@ -1,16 +1,10 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2018 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
 
-require_once 'CRM/Core/DAO.php';
-require_once 'CRM/Utils/Type.php';
+use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_DAO_ContractPaymentLink extends CRM_Core_DAO
 {
+  const EXT = E::LONG_NAME;
   /**
    * static instance to hold the table name
    *
