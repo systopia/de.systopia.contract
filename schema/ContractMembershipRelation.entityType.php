@@ -70,7 +70,18 @@ return [
       'sql_type' => 'varchar(3)',
       'input_type' => 'Text',
       'required' => TRUE,
-      'description' => E::ts('Direction of relationship in which to derive memvership (either "a_b" or "b_a").'),
+      'description' => E::ts('Direction of relationship in which to derive membership (either "a_b" or "b_a").'),
+    ],
+    'related_membership_type_id' => [
+      'title' => E::ts('Related membership type'),
+      'sql_type' => 'int unsigned',
+      'input_type' => 'EntityRef',
+      'description' => E::ts('Allowed type of related membership for this relation.'),
+      'entity_reference' => [
+        'entity' => 'MembershipType',
+        'key' => 'id',
+        'on_delete' => 'SET NULL',
+      ],
     ],
     'related_max_memberships' => [
       'title' => E::ts('Maximum Related Memberships'),
