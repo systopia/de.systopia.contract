@@ -32,7 +32,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   /**
    * Derive/populate additional data
    */
-  public function populateData() {
+  public function populateData(): void {
     if ($this->isNew()) {
       $this->setParameter(
         'contract_cancellation.contact_history_cancel_reason',
@@ -60,6 +60,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     // cancel the contract by setting the end date
     $contract_update = [
       'end_date'                     => date('YmdHis'),
+      // @phpstan-ignore offsetAccess.notFound
       self::MEMBERSHIP_CANCEL_REASON => $this->data[self::MEMBERSHIP_CANCEL_REASON],
       self::MEMBERSHIP_CANCEL_DATE   => date('YmdHis'),
       'status_id'                    => 'Cancelled',
@@ -71,6 +72,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     // also: cancel the mandate/recurring contribution
     CRM_Contract_SepaLogic::terminateSepaMandate(
         $contract['membership_payment.membership_recurring_contribution'],
+      // @phpstan-ignore offsetAccess.notFound
         $this->data[self::MEMBERSHIP_CANCEL_REASON]);
 
     // update change activity
@@ -87,12 +89,14 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    *
    * @throws Exception if the creation should be disallowed
    */
-  public function shouldBeAccepted() {
+  public function shouldBeAccepted(): void {
     parent::shouldBeAccepted();
 
     // check for OTHER CANCELLATION REQUEST for the same day
     //  @see https://redmine.greenpeace.at/issues/1190
+    // @phpstan-ignore offsetAccess.notFound
     $requested_day = date('Y-m-d', strtotime($this->data['activity_date_time']));
+    /** @phpstan-var array{"values": array<int, array<string, mixed>>} $scheduled_activities */
     $scheduled_activities = civicrm_api3('Activity', 'get', [
       'source_record_id' => $this->getContractID(),
       'activity_type_id' => $this->getActvityTypeID(),
@@ -105,7 +109,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       $scheduled_for_day = date('Y-m-d', strtotime($scheduled_activity['activity_date_time']));
       if ($scheduled_for_day == $requested_day) {
         // there's already a scheduled 'cancel' activity for the same day
-        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
+        throw new RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
 
@@ -113,7 +117,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     //  when there are other scheduled (or 'needs review') changes
     //  @see https://redmine.greenpeace.at/issues/1190
     $contract = $this->getContract();
-
+    /** @phpstan-var array{"id": int, "values": array<int, array<string, mixed>>} $contract_cancelled_status */
     $contract_cancelled_status = civicrm_api3('MembershipStatus', 'get', [
       'name'   => 'Cancelled',
       'return' => 'id',
@@ -126,7 +130,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
         'status_id'        => ['IN' => ['Scheduled', 'Needs Review']],
       ]);
       if ($pending_activity_count == 0) {
-        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
+        throw new RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
   }
@@ -134,8 +138,8 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   /**
    * Render the default subject
    *
-   * @param $contract_after       array  data of the contract after
-   * @param $contract_before      array  data of the contract before
+   * @param $contract_after       array<string, mixed>  data of the contract after
+   * @param $contract_before      array<string, mixed>  data of the contract before
    * @return                      string the subject line
    */
   public function renderDefaultSubject($contract_after, $contract_before = NULL) {
@@ -150,30 +154,35 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   /**
    * Get a list of the status names that this change can be applied to
    *
-   * @return array list of membership status names
+   * @return list<string> list of membership status names
    */
-  public static function getStartStatusList() {
+  public static function getStartStatusList(): array {
     return ['New', 'Grace', 'Current', 'Pending'];
   }
 
   /**
    * Get a (human readable) title of this change
-   *
-   * @return string title
    */
-  public static function getChangeTitle() {
+  public static function getChangeTitle(): string {
     return E::ts('Cancel Contract');
   }
 
   /**
    * Modify action links provided to the user for a given membership
    *
-   * @param $links                array  currently given links
-   * @param $current_status_name  string membership status as a string
-   * @param $membership_data      array  all known information on the membership in question
+   * @param list<array<string, mixed>> $links
+   *   Currently given links.
+   * @param string $current_status_name
+   *   Membership status as a string.
+   * @param array<string, mixed> $membership_data
+   *   All known information on the membership in question.
    */
-  public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
-    if (in_array($current_status_name, self::getStartStatusList())) {
+  public static function modifyMembershipActionLinks(
+    array &$links,
+    string $current_status_name,
+    array $membership_data
+  ): void {
+    if (in_array($current_status_name, self::getStartStatusList(), TRUE)) {
       $links[] = [
         'name'  => E::ts('Cancel'),
         'title' => self::getChangeTitle(),
