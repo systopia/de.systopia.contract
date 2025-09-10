@@ -18,15 +18,6 @@ use Civi\Api4\OptionValue;
  */
 class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
-  // By convention, functions that look like "function upgrade_NNNN()" are
-
-  /**
-   * upgrade tasks. They are executed in order (like Drupal's hook_update_N).
-   */
-  public function install() {
-    $this->ensureNoPaymentRequiredPaymentInstrument();
-  }
-
   public function enable() {
     require_once 'CRM/Contract/CustomData.php';
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
@@ -46,11 +37,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ensureNoPaymentRequiredPaymentInstrument();
   }
 
-  public function postInstall() {
-  }
-
-  public function uninstall() {}
-
   /**
    * Add custom field "defer_payment_start"
    *
@@ -62,13 +48,11 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
   public function upgrade_1370() {
     $this->ctx->log->info('Applying update 1370');
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -76,7 +60,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Applying update 1390');
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -86,7 +69,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -95,7 +77,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -113,7 +94,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -121,7 +101,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Hide/filter activity types');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -130,7 +109,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -138,7 +116,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Adjust filters for contract actions');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -146,7 +123,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Update contract types');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -154,7 +130,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Delete dialoger field on contract');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/custom_group_membership_general.json'));
-    $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
@@ -164,8 +139,13 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  protected function ensureNoPaymentRequiredPaymentInstrument() {
+  public function upgrade_2004() {
+    $this->ctx->log->info('Add ContractMembershipRelation entity schema.');
+    E::schema()->createEntityTable('schema/ContractMembershipRelation.entityType.php');
+    return TRUE;
+  }
 
+  protected function ensureNoPaymentRequiredPaymentInstrument() {
     try {
       $currentNone = OptionValue::get(FALSE)
         ->addWhere('option_group_id.name', '=', 'payment_instrument')
