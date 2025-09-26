@@ -39,7 +39,7 @@ more to come...
 
 Diese Weiterentwicklung von CiviCRM wurde durch vom **AWO Bundesverband e.V.** beauftragt und durch die **SYSTOPIA GmbH** entwickelt. Besonderer Dank gilt dem Förderprogramm **„Zukunftssicherung der Freien Wohlfahrtspflege durch Digitalisierung“** des **Bundesministeriums für Bildung, Familie, Senioren und Jugend**.
 
-This extension of CiviCRM was commissioned by the **AWO Bundesverband e.V. (Federal Association of Workers' Welfare)** and developed by **SYSTOPIA GmbH**. Special thanks go to the funding program **“Securing the Future of Independent Welfare Services through Digitization”** of the **Federal Ministry of Education, Family, Seniors, and Youth**.
+This extension of CiviCRM was commissioned by the **AWO Bundesverband e.V. (Federal Association of Workers' Welfare)** and developed by **SYSTOPIA GmbH**. Special thanks go to the funding program **“Securing the Future of Independent Welfare Services through Digitization”** of the **Federal Ministry for Education, Family Affairs, Senior Citizens, Women an Youth**.
 
 ### Für Entwicklungen 2024 bis Mai 2025 (alter Ministeriums Zuschnitt)
 
