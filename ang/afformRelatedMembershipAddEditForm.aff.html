@@ -1,0 +1,8 @@
+<af-form ctrl="afform">
+  <af-entity actions="{create: true, update: true}" type="Membership" name="Membership1" label="Mitgliedschaft 1" security="RBAC" data="{membership_type_id: 1, status_id: 2}" url-autofill="1" />
+  <fieldset af-fieldset="Membership1" class="af-container" af-title="Mitgliedschaft 1">
+    <af-field name="contact_id" defn="{input_attrs: {quickAdd: ['civicrm/quick-add/Individual']}}" />
+    <af-field name="owner_membership_id" defn="{input_type: 'Hidden', input_attrs: {}}" />
+  </fieldset>
+  <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Bestätigen</button>
+</af-form>
