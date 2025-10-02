@@ -523,10 +523,32 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     // Construct a call to contract.modify
     // The following fields to be submitted in all cases
     $submitted = $this->exportValues();
-    $params['id'] = $this->get('id');
-    $params['action'] = $this->modify_action;
-    $params['medium_id'] = $submitted['activity_medium'];
-    $params['note'] = $submitted['activity_details'];
+    $params = [
+        'id' => $this->get('id'),
+        'action' => $this->modify_action,
+        'medium_id' => $submitted['activity_medium'],
+        'note' => $submitted['activity_details'],
+      ]
+      + array_intersect_key(
+        $submitted,
+        array_flip(
+          [
+            'membership_type_id',
+            'payment_option',
+            'recurring_contribution',
+            'iban',
+            'bic',
+            'payment_amount',
+            'payment_frequency',
+            'cycle_day',
+            'account_holder',
+            'defer_payment_start',
+            'campaign_id',
+            'cancel_reason',
+            'resume_date',
+          ]
+        )
+      );
 
     //If the date was set, convert it to the necessary format
     if ($submitted['activity_date']) {
@@ -538,119 +560,9 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       );
     }
 
-    // If this is an update or a revival
-    if (in_array($this->modify_action, ['update', 'revive'])) {
-      $types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
-
-      // now add the payment
-      switch ($submitted['payment_option']) {
-        // select a new recurring contribution
-        case 'select':
-          $rcId = (int) $submitted['recurring_contribution'];
-          $params['membership_payment.membership_recurring_contribution'] = $rcId;
-
-          // Sincronizar datos del RC → contrato
-          $rc = civicrm_api3('ContributionRecur', 'getsingle', [
-            'id' => $rcId,
-            'return' => [
-              'amount',
-              'frequency_unit',
-              'frequency_interval',
-              'cycle_day',
-              'payment_instrument_id',
-            ],
-          ]);
-
-          $freq = ($rc['frequency_unit'] === 'month')
-            ? (int) (12 / max(1, (int) $rc['frequency_interval']))
-          // por si fuera anual
-            : (int) (1 / max(1, (int) $rc['frequency_interval']));
-
-          $annual = CRM_Contract_SepaLogic::formatMoney(
-            ((float) $rc['amount']) * $freq
-          );
-
-          $params['membership_payment.membership_annual']    = $annual;
-          $params['membership_payment.membership_frequency'] = $freq;
-          $params['membership_payment.cycle_day']            = (int) ($rc['cycle_day'] ?? 0);
-          $params['membership_payment.payment_instrument']   = (int) ($rc['payment_instrument_id'] ?? 0);
-          break;
-
-        case 'nochange':
-          break;
-
-        case 'None':
-          $pi = $types['None'] ?? CRM_Contract_Configuration::getPaymentInstrumentIdByName('None');
-          if ($pi) {
-            $params['membership_payment.payment_instrument'] = $pi;
-            $params['contract_updates.ch_payment_instrument'] = $pi;
-          }
-          break;
-
-        case 'RCUR':
-          $amount = CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount']);
-          $annual = CRM_Contract_SepaLogic::formatMoney($submitted['payment_frequency'] * $amount);
-          $from_ba = CRM_Contract_BankingLogic::getOrCreateBankAccount(
-            $this->membership['contact_id'],
-            $submitted['iban'],
-            $submitted['bic'] ?: 'NOTPROVIDED'
-          );
-          $pi = $types['RCUR'] ?? CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR');
-          if ($pi) {
-            $params['contract_updates.ch_payment_instrument'] = $pi;
-          }
-          $params['contract_updates.ch_annual'] = $annual;
-          $params['contract_updates.ch_frequency'] = $submitted['payment_frequency'];
-          $params['contract_updates.ch_cycle_day'] = $submitted['cycle_day'];
-          $params['contract_updates.ch_from_ba'] = $from_ba;
-          $params['contract_updates.ch_from_name'] = $submitted['account_holder'];
-          $params['contract_updates.ch_defer_payment_start'] = empty($submitted['defer_payment_start']) ? '0' : '1';
-          break;
-
-        default:
-          // a new payment option is picked
-          $new_payment_option = $submitted['payment_option'];
-          $payment_instrument_id = $types[$new_payment_option] ?? '';
-          if ($payment_instrument_id) {
-            $params['membership_payment.payment_instrument'] = $payment_instrument_id;
-            $params['contract_updates.ch_payment_instrument'] = $payment_instrument_id;
-          }
-
-          // compile other change data
-          $params['membership_payment.membership_annual'] = CRM_Contract_SepaLogic::formatMoney(
-            $submitted['payment_frequency'] * CRM_Contract_SepaLogic::formatMoney($submitted['payment_amount'])
-          );
-          $params['membership_payment.membership_frequency'] = $submitted['payment_frequency'];
-          $params['membership_payment.cycle_day'] = $submitted['cycle_day'];
-          $params['membership_payment.to_ba'] = CRM_Contract_BankingLogic::getCreditorBankAccount();
-          $params['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount(
-            $this->membership['contact_id'],
-            $submitted['iban'],
-            $submitted['bic']
-          );
-          $params['membership_payment.from_name'] = $submitted['account_holder'];
-          $params['membership_payment.defer_payment_start'] = empty($submitted['defer_payment_start']) ? '0' : '1';
-          break;
-      }
-
-      // add other changes
-      $params['membership_type_id'] = $submitted['membership_type_id'];
-      $params['campaign_id'] = $submitted['campaign_id'];
-
-      // If this is a cancellation
-    }
-    elseif ($this->modify_action == 'cancel') {
-      $params['membership_cancellation.membership_cancel_reason'] = $submitted['cancel_reason'];
-
-      // If this is a pause
-    }
-    elseif ($this->modify_action == 'pause') {
-      $params['resume_date'] = CRM_Utils_Date::processDate($submitted['resume_date'], FALSE, FALSE, 'Y-m-d');
-    }
-
-    CRM_Contract_CustomData::resolveCustomFields($params);
-    civicrm_api3('Contract', 'modify', $params);
-    civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
+    \Civi\Api4\Contract::modifyFull()
+      ->setValues($params)
+      ->execute();
 
     CRM_Contract_FormUtils::updateContactSummaryTabs($this);
   }
