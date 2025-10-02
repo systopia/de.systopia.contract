@@ -675,10 +675,8 @@ class CRM_Contract_SepaLogic {
 
   /**
    * Get the creditor to be used for Contracts
-   *
-   * @return object creditor (BAO)
    */
-  public static function getCreditor() {
+  public static function getCreditor(): ?CRM_Sepa_DAO_SEPACreditor {
     // currently we're just using the default creditor
     return CRM_Sepa_Logic_Settings::defaultCreditor();
   }
