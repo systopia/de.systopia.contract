@@ -131,7 +131,7 @@ abstract class CRM_Contract_Change {
    *
    * @throws Exception if the creation should be disallowed
    */
-  public function shouldBeAccepted() {}
+  public function shouldBeAccepted(): void {}
 
   /**
    * Make sure that the data for this change is valid
@@ -259,7 +259,7 @@ abstract class CRM_Contract_Change {
         if ($sepaMandateResult['count'] == 1) {
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
           $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount(
-            $sepaMandate['contact_id'],
+            (int) $sepaMandate['contact_id'],
             $sepaMandate['iban'],
             $sepaMandate['bic']
           );
@@ -273,7 +273,7 @@ abstract class CRM_Contract_Change {
             $from_ba,
             $to_ba,
           ] = CRM_Contract_BankingLogic::getAccountsFromRecurringContribution(
-            $contributionRecur['id']
+            (int) $contributionRecur['id']
           );
           $contract['membership_payment.from_ba'] = $from_ba;
           $contract['membership_payment.to_ba']   = $to_ba;
@@ -541,7 +541,7 @@ abstract class CRM_Contract_Change {
       case 'membership_payment.to_ba':
       case 'contract_updates.ch_to_ba':
         if (is_numeric($value)) {
-          return CRM_Contract_BankingLogic::getIBANforBankAccount($value);
+          return CRM_Contract_BankingLogic::getIBANforBankAccount((int) $value);
         }
         else {
           return $value;
