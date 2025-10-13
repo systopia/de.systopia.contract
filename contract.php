@@ -14,6 +14,7 @@ declare(strict_types = 1);
 require_once 'contract.civix.php';
 // phpcs:enable
 
+use Civi\Contract\ContractManager;
 use CRM_Contract_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -26,6 +27,11 @@ function contract_civicrm_container(ContainerBuilder $container) {
   if (class_exists('\Civi\Contract\ContainerSpecs')) {
     $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
   }
+
+  $container->autowire(ContractManager::class);
+  $container
+    ->autowire(\Civi\Contract\Api4\Action\Contract\AddRelatedMemberAction::class)
+    ->setPublic(TRUE);
 }
 
 /**
