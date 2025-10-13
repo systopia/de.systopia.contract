@@ -20,6 +20,7 @@ declare(strict_types = 1);
 namespace Civi\Api4;
 
 use Civi\Api4\Generic\AbstractEntity;
+use Civi\Contract\Api4\Action\Contract\AddRelatedMemberAction;
 use Civi\Contract\Api4\Action\Contract\CreateFullAction;
 use Civi\Contract\Api4\Action\Contract\GetFieldsAction;
 use Civi\Contract\Api4\Action\Contract\ModifyFullAction;
@@ -43,12 +44,16 @@ class Contract extends AbstractEntity {
     ];
   }
 
-  public static function createfull(): CreateFullAction {
-    return new CreateFullAction();
+  public static function createfull(bool $checkPermissions = TRUE): CreateFullAction {
+    return (new CreateFullAction())->setCheckPermissions($checkPermissions);
   }
 
-  public static function modifyFull(): ModifyFullAction {
-    return new ModifyFullAction();
+  public static function modifyFull(bool $checkPermissions = TRUE): ModifyFullAction {
+    return (new ModifyFullAction())->setCheckPermissions($checkPermissions);
+  }
+
+  public static function addRelatedMember(bool $checkPermissions = TRUE): AddRelatedMemberAction {
+    return \Civi::service(AddRelatedMemberAction::class)->setCheckPermissions($checkPermissions);
   }
 
 }
