@@ -21,7 +21,7 @@ namespace Civi\Contract;
 
 use Civi\Api4\Membership;
 
-class Contract {
+final class Contract {
 
   private int $membershipId;
 
@@ -48,6 +48,19 @@ class Contract {
     }
   }
 
+  public static function create(int $membershipId): Contract {
+    return new static($membershipId);
+  }
+
+  /**
+   * @phpstan-param array{id: int} $result
+   */
+  public static function createFromApiResult(array $result): Contract {
+    $contract = new Contract($result['id']);
+    $contract->membership = $result;
+    return $contract;
+  }
+
   public function addRelatedMembership(int $contactId): int {
     $relatedMembership = Membership::create(FALSE)
       ->addValue('owner_membership_id', $this->membershipId)
@@ -57,6 +70,13 @@ class Contract {
       ->execute()
       ->single();
     return $relatedMembership['id'];
+  }
+
+  public function endRelatedMembership(int $relatedMembershipId): void {
+    Membership::update(FALSE)
+      ->addWhere('id', '=', $relatedMembershipId)
+      ->addValue('status_id.name', 'Cancelled')
+      ->execute();
   }
 
 }

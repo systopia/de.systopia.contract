@@ -19,6 +19,8 @@ declare(strict_types = 1);
 
 namespace Civi\Contract;
 
+use Civi\Api4\Membership;
+
 class ContractManager {
 
   /**
@@ -26,19 +28,45 @@ class ContractManager {
    */
   private array $contracts = [];
 
-  public function get(int $membershipId): ?Contract {
+  public function get(int $membershipId): Contract {
     if (!isset($this->contracts[$membershipId])) {
       $this->contracts[$membershipId] = new Contract($membershipId);
     }
-    return $this->contracts[$membershipId] ?? NULL;
-  }
-
-  public function addRelatedMembership(int $membershipId, int $contactId): int {
-    $contract = $this->get($membershipId);
-    if (NULL === $contract) {
+    if (!isset($this->contracts[$membershipId])) {
       throw new \RuntimeException('Could not retrieve contract for membership with ID ' . $membershipId);
     }
+    return $this->contracts[$membershipId];
+  }
+
+  public function getOwnerByRelated(int $relatedMembershipId): Contract {
+    $relatedMembership = Membership::get(FALSE)
+      ->addSelect('owner_membership_id')
+      ->addWhere('id', '=', $relatedMembershipId)
+      ->execute()
+      ->single();
+    if (!isset($relatedMembership['owner_membership_id'])) {
+      throw new \RuntimeException('Membership with ID ' . $relatedMembershipId . ' is not a related membership');
+    }
+    return $this->get($relatedMembership['owner_membership_id']);
+  }
+
+  /**
+   * @param int $membershipId
+   *   The ID of the membership which to add a realted membership to.
+   * @param int $contactId
+   *   The ID of the contact which to add a related membership for.
+   *
+   * @return int
+   *   The ID of the new related membership.
+   */
+  public function addRelatedMembership(int $membershipId, int $contactId): int {
+    $contract = $this->get($membershipId);
     return $contract->addRelatedMembership($contactId);
+  }
+
+  public function endRelatedMembership(int $membershipId): void {
+    $contract = $this->getOwnerByRelated($membershipId);
+    $contract->endRelatedMembership($membershipId);
   }
 
 }
