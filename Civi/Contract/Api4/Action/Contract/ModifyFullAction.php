@@ -23,7 +23,6 @@ use Civi\Api4\Contract;
 use Civi\Api4\ContributionRecur;
 use Civi\Api4\Generic\BasicUpdateAction;
 use Civi\Api4\Membership;
-use Civi\Contract\PaymentContract;
 
 class ModifyFullAction extends BasicUpdateAction {
 
@@ -40,7 +39,9 @@ class ModifyFullAction extends BasicUpdateAction {
   /**
    * @inheritDoc
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   protected function writeRecord($item) {
+  // phpcs:enable
     $membership = Membership::get(FALSE)
       ->addSelect('contact_id')
       ->addWhere('id', '=', $item['id'])

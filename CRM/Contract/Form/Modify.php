@@ -524,31 +524,31 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     // The following fields to be submitted in all cases
     $submitted = $this->exportValues();
     $params = [
-        'id' => $this->get('id'),
-        'action' => $this->modify_action,
-        'medium_id' => $submitted['activity_medium'],
-        'note' => $submitted['activity_details'],
-      ]
-      + array_intersect_key(
-        $submitted,
-        array_flip(
-          [
-            'membership_type_id',
-            'payment_option',
-            'recurring_contribution',
-            'iban',
-            'bic',
-            'payment_amount',
-            'payment_frequency',
-            'cycle_day',
-            'account_holder',
-            'defer_payment_start',
-            'campaign_id',
-            'cancel_reason',
-            'resume_date',
-          ]
-        )
-      );
+      'id' => $this->get('id'),
+      'action' => $this->modify_action,
+      'medium_id' => $submitted['activity_medium'],
+      'note' => $submitted['activity_details'],
+    ]
+    + array_intersect_key(
+      $submitted,
+      array_flip(
+        [
+          'membership_type_id',
+          'payment_option',
+          'recurring_contribution',
+          'iban',
+          'bic',
+          'payment_amount',
+          'payment_frequency',
+          'cycle_day',
+          'account_holder',
+          'defer_payment_start',
+          'campaign_id',
+          'cancel_reason',
+          'resume_date',
+        ]
+      )
+    );
 
     //If the date was set, convert it to the necessary format
     if ($submitted['activity_date']) {
