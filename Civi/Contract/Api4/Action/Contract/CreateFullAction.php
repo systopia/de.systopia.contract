@@ -29,7 +29,7 @@ class CreateFullAction extends BasicCreateAction {
     parent::__construct(Contract::getEntityName(), 'createFull');
   }
 
-  protected function validateValues() {
+  protected function validateValues(): void {
     parent::validateValues();
 
     // TODO: Validate required parameters per payment option
@@ -38,7 +38,7 @@ class CreateFullAction extends BasicCreateAction {
   /**
    * @inheritDoc
    */
-  protected function writeRecord($item) {
+  protected function writeRecord($item): array {
     $params = [];
 
     // Add core membership fields.
@@ -67,8 +67,11 @@ class CreateFullAction extends BasicCreateAction {
 
     \CRM_Contract_CustomData::resolveCustomFields($params);
     // TODO: Implement with API4.
+    /** @phpstan-var array{values: list<array<string, mixed>>} $contractResult */
     $contractResult = civicrm_api3('Contract', 'create', $params);
-    return reset($contractResult['values']);
+    /** @phpstan-var array<string, mixed> $result */
+    $result = reset($contractResult['values']);
+    return $result;
   }
 
   private static function formatDate(?string $date): string {

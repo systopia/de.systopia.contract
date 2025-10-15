@@ -109,7 +109,7 @@ class ModifyFullAction extends BasicUpdateAction {
           $from_ba = \CRM_Contract_BankingLogic::getOrCreateBankAccount(
             $membership['contact_id'],
             $item['iban'],
-            $item['bic'] ?: 'NOTPROVIDED'
+            isset($item['bic']) && '' !== $item['bic'] ? $item['bic'] : 'NOTPROVIDED'
           );
           $pi = $types['RCUR'] ?? \CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR');
           if ($pi) {
@@ -120,7 +120,8 @@ class ModifyFullAction extends BasicUpdateAction {
           $params['contract_updates.ch_cycle_day'] = $item['cycle_day'];
           $params['contract_updates.ch_from_ba'] = $from_ba;
           $params['contract_updates.ch_from_name'] = $item['account_holder'];
-          $params['contract_updates.ch_defer_payment_start'] = empty($item['defer_payment_start']) ? '0' : '1';
+          $params['contract_updates.ch_defer_payment_start']
+            = isset($item['defer_payment_start']) && '' !== $item['defer_payment_start'] ? '1' : '0';
           break;
 
         default:
@@ -145,7 +146,8 @@ class ModifyFullAction extends BasicUpdateAction {
             $item['bic']
           );
           $params['membership_payment.from_name'] = $item['account_holder'];
-          $params['membership_payment.defer_payment_start'] = empty($item['defer_payment_start']) ? '0' : '1';
+          $params['membership_payment.defer_payment_start']
+            = isset($item['defer_payment_start']) && '' !== $item['defer_payment_start'] ? '1' : '0';
           break;
       }
 
@@ -161,12 +163,14 @@ class ModifyFullAction extends BasicUpdateAction {
       // If this is a pause
     }
     elseif ($item['action'] == 'pause') {
-      $params['resume_date'] = \CRM_Utils_Date::processDate($item['resume_date'], FALSE, FALSE, 'Y-m-d');
+      $params['resume_date'] = \CRM_Utils_Date::processDate($item['resume_date'], NULL, FALSE, 'Y-m-d');
     }
 
     \CRM_Contract_CustomData::resolveCustomFields($params);
-    civicrm_api3('Contract', 'modify', $params);
+    /** @phpstan-var array<string, mixed> $result */
+    $result = civicrm_api3('Contract', 'modify', $params);
     civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
+    return $result;
   }
 
 }
