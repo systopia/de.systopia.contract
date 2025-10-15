@@ -21,6 +21,7 @@ namespace Civi\Api4;
 
 use Civi\Api4\Generic\AbstractEntity;
 use Civi\Contract\Api4\Action\Contract\AddRelatedMemberAction;
+use Civi\Contract\Api4\Action\Contract\EndRelatedMemberAction;
 use Civi\Contract\Api4\Action\Contract\CreateFullAction;
 use Civi\Contract\Api4\Action\Contract\GetFieldsAction;
 use Civi\Contract\Api4\Action\Contract\ModifyFullAction;
@@ -54,6 +55,10 @@ class Contract extends AbstractEntity {
 
   public static function addRelatedMember(bool $checkPermissions = TRUE): AddRelatedMemberAction {
     return \Civi::service(AddRelatedMemberAction::class)->setCheckPermissions($checkPermissions);
+  }
+
+  public static function endRelatedMember(bool $checkPermissions = TRUE): AddRelatedMemberAction {
+    return \Civi::service(EndRelatedMemberAction::class)->setCheckPermissions($checkPermissions);
   }
 
 }
