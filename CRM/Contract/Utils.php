@@ -43,7 +43,7 @@ class CRM_Contract_Utils {
         $status_names[$status['id']] = $status['name'];
       }
     }
-    return CRM_Utils_Array::value($status_id, $status_names);
+    return $status_names[$status_id] ?? NULL;
   }
 
   public static function getCustomFieldId($customField) {

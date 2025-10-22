@@ -77,7 +77,7 @@ class CRM_Contract_SepaLogic {
     $mandate_relevant_changes = [];
     foreach ($mandate_relevant_fields as $desired_field_name => $current_field_name) {
       if (isset($desired_state[$desired_field_name])
-          && $desired_state[$desired_field_name] != CRM_Utils_Array::value($current_field_name, $current_state)) {
+          && $desired_state[$desired_field_name] != ($current_state[$current_field_name] ?? NULL)) {
         $mandate_relevant_changes[] = $desired_field_name;
       }
     }
@@ -252,7 +252,7 @@ class CRM_Contract_SepaLogic {
       $new_recurring_contribution = (int) CRM_Utils_Array::value(
         'contract_updates.ch_recurring_contribution',
         $desired_state,
-        CRM_Utils_Array::value('membership_payment.membership_recurring_contribution', $current_state)
+        $current_state['membership_payment.membership_recurring_contribution'] ?? NULL
       );
     }
 
@@ -429,10 +429,7 @@ class CRM_Contract_SepaLogic {
         'activity_type_id',
         'Contract_Updated'
     );
-    $contribution_recur_id = CRM_Utils_Array::value(
-      'membership_payment.membership_recurring_contribution',
-      $current_state
-    );
+    $contribution_recur_id = $current_state['membership_payment.membership_recurring_contribution'] ?? NULL;
 
     // check if it is a proper update and if we should defer the start date to respect already paid periods
     if (

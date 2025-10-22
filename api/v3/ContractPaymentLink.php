@@ -138,7 +138,7 @@ function civicrm_api3_contract_payment_link_getactive($params) {
   try {
     $result = CRM_Contract_BAO_ContractPaymentLink::getActiveLinks(
         CRM_Utils_Array::value('contract_id', $params, NULL),
-        CRM_Utils_Array::value('contribution_recur_id', $params, NULL),
+        $params['contribution_recur_id'] ?? NULL,
         CRM_Utils_Array::value('date', $params, 'now'));
     return civicrm_api3_create_success($result);
   }

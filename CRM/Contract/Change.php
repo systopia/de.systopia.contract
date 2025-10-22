@@ -730,7 +730,7 @@ abstract class CRM_Contract_Change {
    * @return string class name
    */
   public static function getClassByAction($action) {
-    return CRM_Utils_Array::value(strtolower($action), self::ACTION2CLASS);
+    return self::ACTION2CLASS[strtolower($action)] ?? NULL;
   }
 
   /**
@@ -784,7 +784,7 @@ abstract class CRM_Contract_Change {
    */
   public static function getActivityIdForClass($change_class) {
     $class2id = array_flip(self::getActivityTypeId2Class());
-    return CRM_Utils_Array::value($change_class, $class2id);
+    return $class2id[$change_class] ?? NULL;
   }
 
   /**

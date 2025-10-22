@@ -413,7 +413,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
     $params['return'] = 'id';
 
     $search = $this->callAPISuccess('Activity', 'get', $params);
-    return CRM_Utils_Array::value('id', $search);
+    return $search['id'] ?? NULL;
   }
 
   /**
@@ -485,8 +485,8 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       if (in_array($attribute, $exception_list)) {
         continue;
       }
-      $expected_value = CRM_Utils_Array::value($attribute, $expected_data);
-      $current_value  = CRM_Utils_Array::value($attribute, $current_data);
+      $expected_value = $expected_data[$attribute] ?? NULL;
+      $current_value  = $current_data[$attribute] ?? NULL;
       $this->assertEquals($expected_value, $current_value, "Attribute '{$attribute}' differs. ({$source})");
     }
   }
@@ -519,7 +519,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       }
     }
 
-    return CRM_Utils_Array::value($status_name, $membership_status2id);
+    return $membership_status2id[$status_name] ?? NULL;
   }
 
   /**
