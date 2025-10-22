@@ -142,7 +142,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     if ($this->isNew()) {
       return E::ts('Contract cancellation scheduled');
     }
-    $reasonVal = CRM_Utils_Array::value('contract_cancellation.contact_history_cancel_reason', $this->data);
+    $reasonVal = $this->data['contract_cancellation.contact_history_cancel_reason'] ?? NULL;
     $reason = $reasonVal ? $this->labelValue($reasonVal, 'contract_cancellation.contact_history_cancel_reason') : NULL;
     return $reason ? E::ts('Contract cancelled (%1)', [1 => $reason]) : E::ts('Contract cancelled');
   }

@@ -153,7 +153,7 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
       $params['creation_date'] = date('YmdHis');
     }
 
-    CRM_Utils_Hook::pre($hook, 'ContractPaymentLink', CRM_Utils_Array::value('id', $params), $params);
+    CRM_Utils_Hook::pre($hook, 'ContractPaymentLink', $params['id'] ?? NULL, $params);
 
     $dao = new CRM_Contract_BAO_ContractPaymentLink();
     $dao->copyValues($params);

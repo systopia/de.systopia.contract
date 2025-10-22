@@ -390,8 +390,8 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
 
     $changes = [];
     foreach ($map as $field => $label) {
-      $rawBefore = CRM_Utils_Array::value($field, $before);
-      $rawAfter  = CRM_Utils_Array::value($field, $after);
+      $rawBefore = $before[$field] ?? NULL;
+      $rawAfter  = $after[$field] ?? NULL;
       $valBefore = $this->labelValue($rawBefore, $field);
       $valAfter  = $this->labelValue($rawAfter, $field);
       if ($valBefore !== $valAfter) {
