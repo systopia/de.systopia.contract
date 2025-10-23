@@ -93,7 +93,7 @@ class CRM_Contract_FormUtils {
    * and manually formats it with the currency obtained from the recurring
    * contribution.
    *
-   * @throws \CiviCRM_API3_Exception
+   * @throws \CRM_Core_Exception
    */
   public function setPaymentAmountCurrency() {
     $rcur_field = civicrm_api3(

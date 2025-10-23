@@ -68,7 +68,7 @@ function _civicrm_api3_contract_payment_link_create_spec(&$spec) {
  *
  * @param array $params
  * @return array API result descriptor
- * @throws API_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_contract_payment_link_create($params) {
   return _civicrm_api3_basic_create('CRM_Contract_BAO_ContractPaymentLink', $params);
@@ -79,7 +79,7 @@ function civicrm_api3_contract_payment_link_create($params) {
  *
  * @param array $params
  * @return array API result descriptor
- * @throws API_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_contract_payment_link_delete($params) {
   return _civicrm_api3_basic_delete('CRM_Contract_BAO_ContractPaymentLink', $params);
@@ -90,7 +90,7 @@ function civicrm_api3_contract_payment_link_delete($params) {
  *
  * @param array $params
  * @return array API result descriptor
- * @throws API_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_contract_payment_link_get($params) {
   return _civicrm_api3_basic_get('CRM_Contract_BAO_ContractPaymentLink', $params);
@@ -132,7 +132,7 @@ function _civicrm_api3_contract_payment_link_getactive_spec(&$spec) {
  *
  * @param array $params
  * @return array API result descriptor
- * @throws API_Exception
+ * @throws CRM_Core_Exception
  */
 function civicrm_api3_contract_payment_link_getactive($params) {
   try {
@@ -143,6 +143,6 @@ function civicrm_api3_contract_payment_link_getactive($params) {
     return civicrm_api3_create_success($result);
   }
   catch (Exception $ex) {
-    throw new API_Exception($ex->getMessage());
+    throw new CRM_Core_Exception($ex->getMessage());
   }
 }

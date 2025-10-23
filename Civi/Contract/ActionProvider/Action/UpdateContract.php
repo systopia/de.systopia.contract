@@ -174,7 +174,7 @@ class UpdateContract extends AbstractAction {
         ]);
         $contract_data['contract_updates_ch_cycle_day'] = $current_cycle_day;
       }
-      catch (\CiviCRM_API3_Exception $ex) {
+      catch (\CRM_Core_Exception $ex) {
         \Civi::log()->debug("Couldn't extract current cycle day from contract [{$contract_data['contract_id']}].");
       }
     }
