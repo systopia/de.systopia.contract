@@ -33,7 +33,7 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
     $contract = $this->getContract(TRUE);
 
     // pause the mandate
-    $payment_contract_id = CRM_Utils_Array::value('membership_payment.membership_recurring_contribution', $contract);
+    $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
     if ($payment_contract_id) {
       CRM_Contract_SepaLogic::resumeSepaMandate($payment_contract_id);
       $this->updateContract(['status_id' => 'Current']);

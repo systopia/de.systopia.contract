@@ -31,7 +31,7 @@ class CRM_Contract_Handler_MembershipAPI implements API_Wrapper {
         // validate contact number
         $validation_error = CRM_Contract_Validation_ContractNumber::verifyContractNumber(
           $params['membership_general.membership_contract'],
-          CRM_Utils_Array::value('id', $params)
+          $params['id'] ?? NULL
         );
         if ($validation_error) {
           throw new Exception($validation_error, 1);
