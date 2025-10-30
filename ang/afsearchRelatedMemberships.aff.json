@@ -1,0 +1,13 @@
+{
+    "type": "search",
+    "title": "Related Memberships",
+    "placement": [],
+    "placement_filters": [],
+    "icon": "fa-list-alt",
+    "server_route": "civicrm/membership/related",
+    "permission": [
+        "access CiviCRM"
+    ],
+    "permission_operator": "AND",
+    "confirmation_type": "redirect_to_url"
+}
