@@ -38,3 +38,9 @@ parameters:
 	ignoreErrors:
 		# Note paths are prefixed with "*/" to work with inspections in PHPStorm because of:
 		# https://youtrack.jetbrains.com/issue/WI-63891/PHPStan-ignoreErrors-configuration-isnt-working-with-inspections
+
+		# For actions that are fetched from container
+		-
+			message: '#^Cannot call method setCheckPermissions\(\) on mixed.$#'
+			path: */Civi/Api4/*.php
+		- '#^Method Civi\\Api4\\[^\\]+::[^(]+\(\) should return Civi\\[^\s]+\\[^\s]+Action but returns mixed.$#'
