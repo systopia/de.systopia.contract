@@ -17,6 +17,10 @@ use Civi\Contract\Event\RenderChangeSubjectEvent;
  * Basic Contract Engine Tests
  *
  * @group headless
+ *
+ * @covers ::civicrm_api3_Contract_create
+ * @covers ::civicrm_api3_Contract_modify
+ * @covers ::civicrm_api3_Contract_process_scheduled_modifications
  */
 class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
 

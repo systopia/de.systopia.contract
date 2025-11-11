@@ -13,6 +13,8 @@ use CRM_Contract_Form_Create as CreateForm;
 
 /**
  * @group headless
+ *
+ * @covers \CRM_Contract_Form_Create
  */
 class CreateFormTest extends ContractTestBase {
 

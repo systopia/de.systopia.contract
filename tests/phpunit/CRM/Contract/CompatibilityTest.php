@@ -13,10 +13,14 @@ declare(strict_types = 1);
 use CRM_Contract_ExtensionUtil as E;
 
 /**
- * Compatibility Tests: Make sure the the engine refactoring
- *  is still compatible with the old behaviour where wanted
+ * Compatibility Tests: Make sure the engine refactoring is still compatible
+ * with the old behavior where wanted
  *
  * @group headless
+ *
+ * @covers ::civicrm_api3_Contract_create
+ * @covers ::civicrm_api3_Contract_modify
+ * @covers ::civicrm_api3_Contract_process_scheduled_modifications
  */
 class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
 

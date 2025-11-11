@@ -16,6 +16,10 @@ use CRM_Contract_ExtensionUtil as E;
  * Bug reproduction and follow-up tests
  *
  * @group headless
+ *
+ * @covers ::civicrm_api3_Contract_create
+ * @covers ::civicrm_api3_Contract_modify
+ * @covers ::civicrm_api3_Contract_process_scheduled_modifications
  */
 class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
 

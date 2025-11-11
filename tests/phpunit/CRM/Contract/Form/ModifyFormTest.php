@@ -17,6 +17,8 @@ use CRM_Contract_Form_Modify as ModifyForm;
 
 /**
  * @group headless
+ *
+ * @covers \CRM_Contract_Form_Modify
  */
 class ModifyFormTest extends ContractTestBase {
 
