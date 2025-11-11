@@ -24,7 +24,7 @@ use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Contract\ContractManager;
 
-class EndRelatedMemberAction extends AbstractAction {
+class EndRelatedMembershipAction extends AbstractAction {
 
   private ContractManager $contractManager;
 
@@ -37,7 +37,7 @@ class EndRelatedMemberAction extends AbstractAction {
   protected $membershipId;
 
   public function __construct(ContractManager $contractManager) {
-    parent::__construct(Contract::getEntityName(), 'endRelatedMember');
+    parent::__construct(Contract::getEntityName(), 'endRelatedMembership');
     $this->contractManager = $contractManager;
   }
 
@@ -45,7 +45,7 @@ class EndRelatedMemberAction extends AbstractAction {
    * @inheritDoc
    */
   public function _run(Result $result): void {
-    $this->contractManager->getOwnerByRelated($this->membershipId)->endRelatedMembership($this->membershipId);
+    $this->contractManager->endRelatedMembership($this->membershipId);
     $result->exchangeArray(['id' => $this->membershipId]);
   }
 

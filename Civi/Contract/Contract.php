@@ -26,7 +26,9 @@ final class Contract {
   private int $membershipId;
 
   /**
-   * @phpstan-var array<string, mixed>
+   * @phpstan-var array{
+   *   membership_type_id?: int,
+   * }
    */
   private array $membership = [];
 
@@ -61,22 +63,21 @@ final class Contract {
     return $contract;
   }
 
-  public function addRelatedMembership(int $contactId): int {
-    $relatedMembership = Membership::create(FALSE)
-      ->addValue('owner_membership_id', $this->membershipId)
-      ->addValue('contact_id', $contactId)
-      ->addValue('membership_type_id', $this->membership['membership_type_id'])
-      // TODO: Set more values?
-      ->execute()
-      ->single();
-    return $relatedMembership['id'];
+  public function getMembershipId(): int {
+    return $this->membershipId;
   }
 
-  public function endRelatedMembership(int $relatedMembershipId): void {
-    Membership::update(FALSE)
-      ->addWhere('id', '=', $relatedMembershipId)
-      ->addValue('status_id.name', 'Cancelled')
-      ->execute();
+  /**
+   * @phpstan-return array{
+   *    membership_type_id?: int,
+   *  }
+   */
+  public function getMembership(): array {
+    return $this->membership;
+  }
+
+  public function getMembershipTypeId(): ?int {
+    return $this->membership['membership_type_id'] ?? NULL;
   }
 
 }
