@@ -15,6 +15,7 @@ require_once 'contract.civix.php';
 // phpcs:enable
 
 use CRM_Contract_ExtensionUtil as E;
+use Civi\Core\CiviEventDispatcherInterface;
 use Civi\Contract\ContractManager;
 use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
@@ -30,6 +31,7 @@ function contract_civicrm_container(ContainerBuilder $container): void {
     $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
   }
 
+  $container->autowire(CiviEventDispatcherInterface::class);
   $container->autowire(ContractManager::class);
   $container
     ->autowire(AddRelatedMembershipAction::class)
