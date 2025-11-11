@@ -14,6 +14,7 @@ declare(strict_types = 1);
 require_once 'contract.civix.php';
 // phpcs:enable
 
+use Civi\Contract\ContractManager;
 use CRM_Contract_ExtensionUtil as E;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -22,10 +23,18 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
  */
-function contract_civicrm_container(ContainerBuilder $container) {
+function contract_civicrm_container(ContainerBuilder $container): void {
   if (class_exists('\Civi\Contract\ContainerSpecs')) {
     $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
   }
+
+  $container->autowire(ContractManager::class);
+  $container
+    ->autowire(\Civi\Contract\Api4\Action\Contract\AddRelatedMemberAction::class)
+    ->setPublic(TRUE);
+  $container
+    ->autowire(\Civi\Contract\Api4\Action\Contract\EndRelatedMemberAction::class)
+    ->setPublic(TRUE);
 }
 
 /**
@@ -33,7 +42,7 @@ function contract_civicrm_container(ContainerBuilder $container) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function contract_civicrm_config(&$config) {
+function contract_civicrm_config(&$config): void {
   _contract_civix_civicrm_config($config);
 }
 
@@ -42,7 +51,7 @@ function contract_civicrm_config(&$config) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
-function contract_civicrm_install() {
+function contract_civicrm_install(): void {
   _contract_civix_civicrm_install();
 }
 
@@ -51,14 +60,15 @@ function contract_civicrm_install() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
-function contract_civicrm_enable() {
+function contract_civicrm_enable(): void {
   _contract_civix_civicrm_enable();
 }
 
 /**
  * UI Adjustements for membership forms
  */
-function contract_civicrm_pageRun(&$page) {
+function contract_civicrm_pageRun(CRM_Core_Page &$page): void {
+  /** @var string $page_name */
   $page_name = $page->getVar('_name');
   if ($page_name == 'CRM_Contribute_Page_ContributionRecur') {
     // this is a contribution view
@@ -66,6 +76,7 @@ function contract_civicrm_pageRun(&$page) {
 
   }
   elseif ($page_name == 'CRM_Contact_Page_View_Summary') {
+    /** @var CRM_Contact_Page_View_Summary $page */
     // this is the contact summary page
     Civi::resources()
       ->addVars('contract', ['ce_activity_types' => CRM_Contract_Change::getActivityTypeIds()])
@@ -73,6 +84,7 @@ function contract_civicrm_pageRun(&$page) {
 
   }
   elseif ($page_name == 'CRM_Member_Page_Tab') {
+    /** @var CRM_Member_Page_Tab $page */
     // thus is the membership summary tab
     $contractStatuses = [];
     foreach (
@@ -109,7 +121,7 @@ function contract_civicrm_pageRun(&$page) {
  * @todo shorten this function call - move into an 1 or more alter functions
  */
 // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
-function contract_civicrm_buildForm($formName, &$form) {
+function contract_civicrm_buildForm(string $formName, CRM_Core_Form &$form): void {
 // phpcs:enable
   switch ($formName) {
     // Membership form in view mode
@@ -140,7 +152,7 @@ function contract_civicrm_buildForm($formName, &$form) {
       $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', $form);
       $id = CRM_Utils_Request::retrieve('id', 'Positive', $form);
 
-      if (in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD])) {
+      if (in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD], TRUE)) {
         // Use JS to hide form elements
         CRM_Core_Resources::singleton()
           ->addScriptFile(E::LONG_NAME, 'templates/CRM/Member/Form/Membership.js');
@@ -180,6 +192,7 @@ function contract_civicrm_buildForm($formName, &$form) {
 
           // Custom data version
 
+          /** @phpstan-var array{id: int, custom_group_id: int} $result */
           $result = civicrm_api3('CustomField', 'GetSingle', [
             'custom_group_id' => 'membership_payment',
             'name' => 'membership_recurring_contribution',
@@ -197,9 +210,10 @@ function contract_civicrm_buildForm($formName, &$form) {
 
       if ($form->getAction() === CRM_Core_Action::ADD) {
         if ($cid = CRM_Utils_Request::retrieve('cid', 'Integer')) {
+          /** @var int $cid */
           // if the cid is given, it's the "add membership" for an existing contract
           $contract_create_form_url = \Civi\Contract\Event\ContractCreateFormEvent::getUrl($cid);
-          if ($contract_create_form_url) {
+          if (is_string($contract_create_form_url)) {
             CRM_Utils_System::redirect($contract_create_form_url);
           }
         }
@@ -207,7 +221,7 @@ function contract_civicrm_buildForm($formName, &$form) {
           // no id - this is a 'create new membership':
           //   check if somebody registered a rapid create form and redirect
           $rapid_create_form_url = \Civi\Contract\Event\RapidCreateFormEvent::getUrl();
-          if ($rapid_create_form_url) {
+          if (is_string($rapid_create_form_url)) {
             CRM_Utils_System::redirect($rapid_create_form_url);
           }
         }
