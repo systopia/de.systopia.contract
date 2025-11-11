@@ -30,10 +30,10 @@ function contract_civicrm_container(ContainerBuilder $container): void {
 
   $container->autowire(ContractManager::class);
   $container
-    ->autowire(\Civi\Contract\Api4\Action\Contract\AddRelatedMemberAction::class)
+    ->autowire(\Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction::class)
     ->setPublic(TRUE);
   $container
-    ->autowire(\Civi\Contract\Api4\Action\Contract\EndRelatedMemberAction::class)
+    ->autowire(\Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction::class)
     ->setPublic(TRUE);
 }
 

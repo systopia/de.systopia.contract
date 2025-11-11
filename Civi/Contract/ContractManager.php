@@ -30,7 +30,7 @@ class ContractManager {
 
   public function get(int $membershipId): Contract {
     if (!isset($this->contracts[$membershipId])) {
-      $this->contracts[$membershipId] = new Contract($membershipId);
+      $this->contracts[$membershipId] = Contract::create($membershipId);
     }
     if (!isset($this->contracts[$membershipId])) {
       throw new \RuntimeException('Could not retrieve contract for membership with ID ' . $membershipId);
@@ -61,12 +61,21 @@ class ContractManager {
    */
   public function addRelatedMembership(int $membershipId, int $contactId): int {
     $contract = $this->get($membershipId);
-    return $contract->addRelatedMembership($contactId);
+    $relatedMembership = Membership::create(FALSE)
+      ->addValue('owner_membership_id', $contract->getMembershipId())
+      ->addValue('contact_id', $contactId)
+      ->addValue('membership_type_id', $contract->getMembershipTypeId())
+      // TODO: Set more values?
+      ->execute()
+      ->single();
+    return $relatedMembership['id'];
   }
 
-  public function endRelatedMembership(int $membershipId): void {
-    $contract = $this->getOwnerByRelated($membershipId);
-    $contract->endRelatedMembership($membershipId);
+  public function endRelatedMembership(int $relatedMembershipId): void {
+    Membership::update(FALSE)
+      ->addWhere('id', '=', $relatedMembershipId)
+      ->addValue('status_id.name', 'Cancelled')
+      ->execute();
   }
 
 }

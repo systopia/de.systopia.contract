@@ -24,7 +24,7 @@ use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Contract\ContractManager;
 
-class AddRelatedMemberAction extends AbstractAction {
+class AddRelatedMembershipAction extends AbstractAction {
 
   private ContractManager $contractManager;
 
@@ -45,7 +45,7 @@ class AddRelatedMemberAction extends AbstractAction {
   protected $contactId;
 
   public function __construct(ContractManager $contractManager) {
-    parent::__construct(Contract::getEntityName(), 'addRelatedMember');
+    parent::__construct(Contract::getEntityName(), 'addRelatedMembership');
     $this->contractManager = $contractManager;
   }
 
@@ -53,7 +53,7 @@ class AddRelatedMemberAction extends AbstractAction {
    * @inheritDoc
    */
   public function _run(Result $result): void {
-    $relatedMembershipId = $this->contractManager->get($this->membershipId)->addRelatedMembership($this->contactId);
+    $relatedMembershipId = $this->contractManager->addRelatedMembership($this->membershipId, $this->contactId);
     $result->exchangeArray(['id' => $relatedMembershipId]);
   }
 
