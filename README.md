@@ -59,4 +59,3 @@ Digitalization,”** which made these developments possible.
 ### Logos
 
 ![Förderlogo](docs/logos/foerderlogo_052025.png)
-![Gefördert vom](docs/logos/gefoerdert_vom.jpg)
