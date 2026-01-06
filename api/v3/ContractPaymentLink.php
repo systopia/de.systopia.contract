@@ -90,7 +90,6 @@ function civicrm_api3_contract_payment_link_delete($params) {
  *
  * @param array $params
  * @return array API result descriptor
- * @throws CRM_Core_Exception
  */
 function civicrm_api3_contract_payment_link_get($params) {
   return _civicrm_api3_basic_get('CRM_Contract_BAO_ContractPaymentLink', $params);
@@ -137,12 +136,13 @@ function _civicrm_api3_contract_payment_link_getactive_spec(&$spec) {
 function civicrm_api3_contract_payment_link_getactive($params) {
   try {
     $result = CRM_Contract_BAO_ContractPaymentLink::getActiveLinks(
-        CRM_Utils_Array::value('contract_id', $params, NULL),
-        $params['contribution_recur_id'] ?? NULL,
-        CRM_Utils_Array::value('date', $params, 'now'));
+      $params['contract_id'] ?? NULL,
+      $params['contribution_recur_id'] ?? NULL,
+      $params['date'] ?? 'now'
+    );
     return civicrm_api3_create_success($result);
   }
   catch (Exception $ex) {
-    throw new CRM_Core_Exception($ex->getMessage());
+    throw new CRM_Core_Exception($ex->getMessage(), $ex->getCode(), [], $ex);
   }
 }

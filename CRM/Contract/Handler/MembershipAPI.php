@@ -34,7 +34,7 @@ class CRM_Contract_Handler_MembershipAPI implements API_Wrapper {
           $params['id'] ?? NULL
         );
         if ($validation_error) {
-          throw new Exception($validation_error, 1);
+          throw new \RuntimeException($validation_error, 1);
         }
       }
     }

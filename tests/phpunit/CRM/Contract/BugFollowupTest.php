@@ -50,21 +50,21 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $contract_after_cancellation = $this->getContract($contract['id']);
 
     // things should not have changed
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'membership_cancellation.membership_cancel_reason',
       $contract_after_cancellation,
       "the cancel reason wasn't saved."
     );
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $contract_after_cancellation['membership_cancellation.membership_cancel_reason'],
       "the cancel reason wasn't saved."
     );
-    $this->assertArrayHasKey(
+    self::assertArrayHasKey(
       'membership_cancellation.membership_cancel_date',
       $contract_after_cancellation,
       "the cancel date wasn't saved."
     );
-    $this->assertNotEmpty(
+    self::assertNotEmpty(
       $contract_after_cancellation['membership_cancellation.membership_cancel_date'],
       "the cancel date wasn't saved."
     );
@@ -93,11 +93,11 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate(
       $contract['membership_payment.membership_recurring_contribution']
     );
-    $this->assertTrue(
+    self::assertTrue(
       strtotime($next_installment) > strtotime('now + 5 months'),
       'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
     );
-    $this->assertTrue(
+    self::assertTrue(
       strtotime($next_installment) < strtotime('now + 7 months'),
       'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
     );
@@ -117,11 +117,11 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate(
       $contract['membership_payment.membership_recurring_contribution']
     );
-    $this->assertTrue(
+    self::assertTrue(
       strtotime($next_installment) > strtotime('+5 month'),
       'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
     );
-    $this->assertTrue(
+    self::assertTrue(
       strtotime($next_installment) < strtotime('+7 month'),
       'The next installment for this yearly contract should be in 6 months, since it started 6 months ago.'
     );
@@ -141,11 +141,11 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $next_installment = CRM_Contract_SepaLogic::getNextInstallmentDate(
       $contract['membership_payment.membership_recurring_contribution']
     );
-    $this->assertTrue(
+    self::assertTrue(
       strtotime($next_installment) > strtotime('+1 month + 2 weeks'),
       'The next installment for this yearly contract should be in 2 months, since it started 1 month ago.'
     );
-    $this->assertTrue(
+    self::assertTrue(
       strtotime($next_installment) < strtotime('+3 month'),
       'The next installment for this yearly contract should be in 2 months, since it started 1 month ago.'
     );
@@ -215,13 +215,13 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
 
     // reload contract
     $updated_contract = $this->getContract($contract['id']);
-    $this->assertNotEmpty($change_activity, 'There should be a change activity.');
-    $this->assertNotEmpty($change_activity['subject'], 'There should be a change activity subject.');
+    self::assertNotEmpty($change_activity, 'There should be a change activity.');
+    self::assertNotEmpty($change_activity['subject'], 'There should be a change activity subject.');
     if ($this->isExtensionActive('tazcontract')) {
       $this->assertStringContainsOtherString('1,320.00', $change_activity['subject']);
     }
     else {
-      $this->assertStringContainsOtherString('Update contract scheduled', $change_activity['subject']);
+      self::assertStringContainsOtherString('Update contract scheduled', $change_activity['subject']);
     }
   }
 

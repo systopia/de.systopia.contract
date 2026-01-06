@@ -65,7 +65,7 @@ function civicrm_api3_Contract_modify($params) {
   $requested_execution_time = CRM_Contract_Form_Settings::adjustRequestedExecutionTime($requested_execution_time);
   if ($requested_execution_time < strtotime('today')) {
     // phpcs:disable Generic.Files.LineLength.TooLong
-    throw new Exception(
+    throw new \RuntimeException(
       "Parameter 'date' ('{$params['date']}') rejected because it's too far in the past, see the 'date_adjustment' setting."
     );
     // phpcs:enable

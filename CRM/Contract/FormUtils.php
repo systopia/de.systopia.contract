@@ -29,6 +29,7 @@ class CRM_Contract_FormUtils {
   }
 
   public function addPaymentContractSelect2($elementName, $contactId, $required = TRUE, $contractId = NULL) {
+    $recurringContributionOptions = [];
     $recurringContributionOptions[''] = E::ts('- none -');
     foreach ($this->recurringContribution->getAll($contactId, TRUE, $contractId, TRUE) as $key => $rc) {
       $recurringContributionOptions[$key] = $rc['label'];
@@ -182,6 +183,7 @@ class CRM_Contract_FormUtils {
 
   public function removeMembershipEditDisallowedCustomFields() {
     $customGroupsToRemove = [];
+    $customFieldsToRemove = [];
     $customFieldsToRemove['membership_payment'] = [];
 
     foreach ($this->form->_groupTree as $groupKey => $group) {
@@ -237,7 +239,7 @@ class CRM_Contract_FormUtils {
    */
   public function downloadMembershipContract() {
     // If we requested a contract file download
-    $download = CRM_Utils_Request::retrieve('contract', 'String', CRM_Core_DAO::$_nullObject, FALSE, '', 'GET');
+    $download = CRM_Utils_Request::retrieve('contract', 'String', $null = NULL, FALSE, '', 'GET');
     if (!empty($download)) {
       // FIXME: Could use CRM_Utils_System::download but it still requires you to do all the work (load file to stream
       //        etc) before calling.

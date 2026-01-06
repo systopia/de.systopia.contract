@@ -54,18 +54,24 @@ class CRM_Contract_Utils {
     if (!isset(self::$customFieldCache[$customField])) {
       $parts = explode('.', $customField);
       try {
-        self::$customFieldCache[$customField] = 'custom_' . civicrm_api3(
-            'CustomField',
-            'getvalue',
-            [
-              'return' => 'id',
-              'custom_group_id' => $parts[0],
-              'name' => $parts[1],
-            ]
-          );
+        /** @var string $customFieldId */
+        $customFieldId = civicrm_api3(
+          'CustomField',
+          'getvalue',
+          [
+            'return' => 'id',
+            'custom_group_id' => $parts[0],
+            'name' => $parts[1],
+          ]
+        );
+        self::$customFieldCache[$customField] = 'custom_' . $customFieldId;
       }
       catch (Exception $e) {
-        throw new Exception("Could not find custom field '{$parts[1]}' in custom field set '{$parts[0]}'");
+        throw new \RuntimeException(
+          "Could not find custom field '{$parts[1]}' in custom field set '{$parts[0]}'",
+          $e->getCode(),
+          $e
+        );
       }
     }
 
@@ -74,7 +80,7 @@ class CRM_Contract_Utils {
       return self::$customFieldCache[$customField];
     }
     else {
-      throw new Exception('Could not find custom field id for ' . $customField);
+      throw new \RuntimeException('Could not find custom field id for ' . $customField);
     }
   }
 
@@ -100,7 +106,7 @@ class CRM_Contract_Utils {
       return $name;
     }
     else {
-      throw new Exception('Could not find custom field for id' . $customFieldId);
+      throw new \RuntimeException('Could not find custom field for id' . $customFieldId);
     }
   }
 
@@ -274,7 +280,7 @@ class CRM_Contract_Utils {
     if (!empty($config->customFileUploadDir)) {
       $fullPath = $config->customFileUploadDir . '/contracts/';
       if (!is_dir($fullPath)) {
-        CRM_Core_Error::debug_log_message(
+        Civi::log()->debug(
           'Warning: Contract file path does not exist.  It should be at: ' . $fullPath
         );
       }
@@ -282,7 +288,7 @@ class CRM_Contract_Utils {
       return $fullPathWithFilename;
     }
     else {
-      CRM_Core_Error::debug_log_message(
+      Civi::log()->debug(
         'Warning: Contract file path undefined! Did you set customFileUploadDir?'
       );
       return FALSE;

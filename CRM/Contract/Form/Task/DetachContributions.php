@@ -31,7 +31,7 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
     $this->assign('infotext', $infotext);
 
     // additional options
-    $this->addCheckbox(
+    $this->addCheckBox(
         'detach_recur',
         E::ts('Detach from %1 recurring contributions', [1 => $this->getRecurringCount()]),
         ['' => TRUE]);
@@ -42,7 +42,7 @@ class CRM_Contract_Form_Task_DetachContributions extends CRM_Contribute_Form_Tas
         $this->getFinancialTypesList(),
         ['class' => 'crm-select2']);
 
-    $this->addCheckbox(
+    $this->addCheckBox(
         'change_recur_financial_type',
         E::ts('Update recurring contributions\' financial type, too.'),
         ['' => TRUE]);

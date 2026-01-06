@@ -28,7 +28,7 @@ class CRM_Contract_Handler_ModificationConflicts {
 
   public function checkForConflicts($contractId) {
     if (empty($contractId)) {
-      throw new Exception('Missing contract ID, cannot check for conflicts');
+      throw new \RuntimeException('Missing contract ID, cannot check for conflicts');
     }
 
     $this->contractId = $contractId;

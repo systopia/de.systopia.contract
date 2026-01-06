@@ -106,7 +106,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
     $pause_date  = date('Y-m-d', strtotime($this->getParameter('activity_date_time')));
     $resume_date = date('Y-m-d', strtotime($this->getParameter('resume_date')));
     if ($pause_date >= $resume_date) {
-      throw new Exception(E::ts('Resume date cannot be before or on the same day as the pause.'));
+      throw new \RuntimeException(E::ts('Resume date cannot be before or on the same day as the pause.'));
     }
   }
 

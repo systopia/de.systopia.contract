@@ -78,8 +78,8 @@ class CRM_Contract_Form_Settings extends CRM_Core_Form {
   /**
    * Set the given execution time to "today"
    *
-   * @param string $requested_execution_time
-   * @return string adjusted execution time
+   * @param int $requested_execution_time
+   * @return int adjusted execution time
    */
   public static function adjustRequestedExecutionTime($requested_execution_time) {
     // first check, if the date is before midnight today:

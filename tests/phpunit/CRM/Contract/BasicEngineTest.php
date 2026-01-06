@@ -50,10 +50,10 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       ]);
 
       // annual amount
-      $this->assertEquals('120.00', $contract['membership_payment.membership_annual']);
-      $this->assertEquals('2', $contract['status_id']);
-      $this->assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
-      $this->assertNotEmpty($contract['membership_payment.cycle_day']);
+      self::assertEquals('120.00', $contract['membership_payment.membership_annual']);
+      self::assertEquals('2', $contract['status_id']);
+      self::assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
+      self::assertNotEmpty($contract['membership_payment.cycle_day']);
     }
   }
 
@@ -75,15 +75,15 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // things should not have changed
       $contract_changed1 = $this->getContract($contract['id']);
-      $this->assertEquals($contract, $contract_changed1, "This shouldn't have changed");
+      self::assertEquals($contract, $contract_changed1, "This shouldn't have changed");
 
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+2 days');
       $contract_changed2 = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract, $contract_changed2, 'This should have changed');
+      self::assertNotEquals($contract, $contract_changed2, 'This should have changed');
 
       // make sure status is cancelled
-      $this->assertEquals(
+      self::assertEquals(
         $this->getMembershipStatusID('Cancelled'),
         $contract_changed2['status_id'],
         "The contract wasn't cancelled"
@@ -111,20 +111,20 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // things should not have changed
       $contract_changed1 = $this->getContract($contract['id']);
-      $this->assertEquals($contract, $contract_changed1, "This shouldn't have changed");
+      self::assertEquals($contract, $contract_changed1, "This shouldn't have changed");
 
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+2 days');
       $contract_changed2 = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract, $contract_changed2, 'This should have changed');
+      self::assertNotEquals($contract, $contract_changed2, 'This should have changed');
 
       // make sure status is current
-      $this->assertEquals(
+      self::assertEquals(
         $this->getMembershipStatusID('Current'),
         $contract_changed2['status_id'],
         "The contract isn't active"
       );
-      $this->assertEquals(
+      self::assertEquals(
         240.00,
         $contract_changed2['membership_payment.membership_annual'],
         'The contract has the wrong amount'
@@ -149,12 +149,12 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // things should not have changed
       $contract_changed1 = $this->getContract($contract['id']);
-      $this->assertEquals($contract, $contract_changed1, "This shouldn't have changed");
+      self::assertEquals($contract, $contract_changed1, "This shouldn't have changed");
 
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+1 day');
       $contract_changed2 = $this->getContract($contract['id']);
-      $this->assertEquals(
+      self::assertEquals(
         $this->getMembershipStatusID('Paused'),
         $contract_changed2['status_id'],
         "The contract isn't paused"
@@ -178,10 +178,10 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       // run engine again for tomorrow
       $this->runContractEngine($contract['id'], '+1 days');
       $contract_cancelled = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract, $contract_cancelled, 'This should have changed');
+      self::assertNotEquals($contract, $contract_cancelled, 'This should have changed');
 
       // make sure status is cancelled
-      $this->assertEquals(
+      self::assertEquals(
         $this->getMembershipStatusID('Cancelled'),
         $contract_cancelled['status_id'],
         "The contract wasn't cancelled"
@@ -196,15 +196,15 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       $this->runContractEngine($contract['id'], '+2 days');
       $contract_revived = $this->getContract($contract['id']);
-      $this->assertNotEquals($contract_cancelled, $contract_revived, 'This should have changed');
+      self::assertNotEquals($contract_cancelled, $contract_revived, 'This should have changed');
 
       // make sure status is cancelled
-      $this->assertEquals(
+      self::assertEquals(
         $this->getMembershipStatusID('Current'),
         $contract_revived['status_id'],
         "The contract wasn't revived"
       );
-      $this->assertEquals(
+      self::assertEquals(
         240.00,
         $contract_revived['membership_payment.membership_annual'],
         'The contract has the wrong amount'
@@ -239,7 +239,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       'details'   => ['LIKE' => '%Expected one BankingAccount%'],
     ]);
     $contract_changed = $this->getContract($contract['id']);
-    $this->assertEquals(
+    self::assertEquals(
       $contract,
       $contract_changed,
       'Contract shouldn\'t have changed after failure'
@@ -269,7 +269,7 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
     $this->runContractEngine($contract['id'], '+2 days');
 
     $contract_changed = $this->getContract($contract['id']);
-    $this->assertEquals(
+    self::assertEquals(
       'Cancelled',
       CRM_Contract_Utils::getMembershipStatusName($contract_changed['status_id']),
       'Membership should be cancelled'

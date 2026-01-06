@@ -105,7 +105,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       $scheduled_for_day = date('Y-m-d', strtotime($scheduled_activity['activity_date_time']));
       if ($scheduled_for_day == $requested_day) {
         // there's already a scheduled 'cancel' activity for the same day
-        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
+        throw new \RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
 
@@ -126,7 +126,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
         'status_id'        => ['IN' => ['Scheduled', 'Needs Review']],
       ]);
       if ($pending_activity_count == 0) {
-        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
+        throw new \RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
   }
@@ -143,7 +143,9 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       return E::ts('Contract cancellation scheduled');
     }
     $reasonVal = $this->data['contract_cancellation.contact_history_cancel_reason'] ?? NULL;
-    $reason = $reasonVal ? $this->labelValue($reasonVal, 'contract_cancellation.contact_history_cancel_reason') : NULL;
+    $reason = NULL !== $reasonVal
+      ? $this->labelValue($reasonVal, 'contract_cancellation.contact_history_cancel_reason')
+      : NULL;
     return $reason ? E::ts('Contract cancelled (%1)', [1 => $reason]) : E::ts('Contract cancelled');
   }
 

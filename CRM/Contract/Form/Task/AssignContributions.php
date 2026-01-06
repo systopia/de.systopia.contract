@@ -39,14 +39,14 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
         ['class' => 'crm-select2 huge']);
 
     // option: adjust financial type?
-    $this->addCheckbox(
+    $this->addCheckBox(
         'adjust_financial_type',
         E::ts('Adjust Financial Type'),
         ['' => TRUE]);
     $this->setDefaults(['adjust_financial_type' => 'checked']);
 
     // option: re-assign
-    $this->addCheckbox(
+    $this->addCheckBox(
         'reassign',
         E::ts('Re-Assign'),
         ['' => TRUE]);
@@ -82,7 +82,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
     $contribution_recur = NULL;
 
     if (empty($contract)) {
-      throw new Exception('No contract selected!');
+      throw new \RuntimeException('No contract selected!');
     }
 
     if (empty($values['reassign'])) {

@@ -21,7 +21,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     $adjustments = \Civi\Contract\Event\AdjustContractReviewEvent::getContractReviewAdjustments();
 
     if (!$id = CRM_Utils_Request::retrieve('id', 'Positive')) {
-      throw new Exception('Missing a valid contract ID');
+      throw new \RuntimeException('Missing a valid contract ID');
     }
 
     // get contract currency from currently active recurring contribution
@@ -76,6 +76,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     // To collect the campaign ids that we need to get the names of
     $campaigns = [];
     $contacts = [];
+    $cancelReasons = [];
 
     // todo: refactor for better performance
     foreach ($activities as $key => $activity) {
@@ -131,13 +132,13 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     $this->assign('activities', $activities);
 
     // Get campaigns
-    if ($campaigns) {
+    if ([] !== $campaigns) {
       foreach (civicrm_api3('Campaign', 'get', ['id' => ['IN' => array_unique($campaigns)]])['values'] as $campaign) {
         $campaigns[$campaign['id']] = $campaign['title'];
       }
     }
     $this->assign('campaigns', $campaigns);
-    if ($cancelReasons) {
+    if ([] !== $cancelReasons) {
       foreach (civicrm_api3(
         'OptionValue',
         'get',
@@ -156,6 +157,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     }
     $this->assign('contacts', $contacts);
 
+    $mediums = [];
     foreach (civicrm_api3(
       'OptionValue',
       'get',
@@ -165,6 +167,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     }
     $this->assign('mediums', $mediums);
 
+    $paymentInstruments = [];
     foreach (civicrm_api3(
       'OptionValue',
       'get',
@@ -178,6 +181,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     $this->assign('paymentInstruments', $paymentInstruments);
 
     // Get activity statuses
+    $activityStatuses = [];
     foreach (civicrm_api3(
       'OptionValue',
       'get',
@@ -187,6 +191,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     }
     $this->assign('activityStatuses', $activityStatuses);
 
+    $paymentFrequencies = [];
     foreach (civicrm_api3(
       'OptionValue',
       'get',
@@ -201,11 +206,10 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     $this->assign('includeWysiwygEditor', TRUE);
 
     // Get membership types
+    $membershipTypes = [];
     foreach (civicrm_api3('MembershipType', 'get', [])['values'] as $membershipType) {
       $membershipTypes[$membershipType['id']] = $membershipType['name'];
     }
-    $this->assign('membershipTypes', $membershipTypes);
-
     $this->assign('membershipTypes', $membershipTypes);
 
     // since Civi 4.7, wysiwyg/ckeditor is a default core resource

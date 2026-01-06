@@ -91,7 +91,7 @@ function contract_civicrm_pageRun(CRM_Core_Page &$page): void {
       civicrm_api3(
         'Membership',
         'get',
-        ['contact_id' => $page->_contactId, 'options' => ['limit' => 0]]
+        ['contact_id' => $page->getContactID(), 'options' => ['limit' => 0]]
       )['values'] as $contract
     ) {
       $contractStatuses[$contract['id']] = civicrm_api3(
@@ -102,7 +102,7 @@ function contract_civicrm_pageRun(CRM_Core_Page &$page): void {
     }
     CRM_Core_Resources::singleton()->addStyleFile(E::LONG_NAME, 'css/contract.css');
     CRM_Core_Resources::singleton()->addVars('contract', ['contractStatuses' => $contractStatuses]);
-    CRM_Core_Resources::singleton()->addVars('contract', ['cid' => $page->_contactId]);
+    CRM_Core_Resources::singleton()->addVars('contract', ['cid' => $page->getContactID()]);
     CRM_Core_Resources::singleton()->addScriptFile(E::LONG_NAME, 'templates/CRM/Member/Page/Tab.js');
     CRM_Core_Resources::singleton()->addVars('contract', [
       'reviewLinkTitles' => [

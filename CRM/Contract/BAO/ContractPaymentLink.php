@@ -114,9 +114,6 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    *
    * @param int $link_id               ID of the link
    * @param string $date               at what timestamp should the link be ended - default is "now"
-   *
-   * @return object CRM_Contract_BAO_ContractPaymentLink resulting object
-   * @throws Exception if mandatory fields aren't set
    */
   public static function endPaymentLink($link_id, $date = 'now') {
     $link_id = (int) $link_id;
@@ -143,10 +140,10 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
     if ($hook == 'create') {
       // check mandatory fields
       if (empty($params['contract_id'])) {
-        throw new Exception('Field contract_id is mandatory.');
+        throw new \RuntimeException('Field contract_id is mandatory.');
       }
       if (empty($params['contribution_recur_id'])) {
-        throw new Exception('Field contribution_recur_id is mandatory.');
+        throw new \RuntimeException('Field contribution_recur_id is mandatory.');
       }
 
       // set create date
@@ -269,6 +266,7 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
 
     }
     catch (Exception $ex) {
+      // @ignoreException
       return [
         'text'   => 'RENDER ERROR',
         'link'   => $ex->getMessage(),

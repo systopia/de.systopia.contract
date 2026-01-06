@@ -172,7 +172,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    */
   public function getContractAttribute($attribute_name) {
     return $this->contract_data_after[$attribute_name]
-        ?? $_REQUEST[$attribute_name]
+        ?? \CRM_Utils_Request::retrieve($attribute_name, 'String')
         ?? $this->contract_data_before[$attribute_name]
         ?? NULL;
   }

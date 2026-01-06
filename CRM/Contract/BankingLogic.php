@@ -34,7 +34,7 @@ class CRM_Contract_BankingLogic {
     $data['id'] = $account['id'];
     if (!empty($account['data_parsed'])) {
       $data_parsed = json_decode($account['data_parsed'], TRUE);
-      if ($data_parsed) {
+      if (is_array($data_parsed)) {
         foreach ($data_parsed as $key => $value) {
           $data[$key] = $value;
           // also add in lower case to avoid stuff like bic/BIC confusion
@@ -214,7 +214,7 @@ class CRM_Contract_BankingLogic {
       }
     }
     catch (Exception $ex) {
-
+      // @ignoreException
     }
 
     return NULL;

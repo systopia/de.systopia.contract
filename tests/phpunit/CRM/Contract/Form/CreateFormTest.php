@@ -47,7 +47,6 @@ class CreateFormTest extends ContractTestBase {
   protected ?int $recurContributionStatusId = NULL;
 
   public static function setUpBeforeClass(): void {
-    /** @phpstan-ignore-next-line */
     $org = Contact::create(FALSE)
       ->addValue('contact_type', 'Organization')
       ->addValue('organization_name', 'CreateFormTest Owner Org ' . rand(1, 1000000))
@@ -123,11 +122,11 @@ class CreateFormTest extends ContractTestBase {
   public static function tearDownAfterClass(): void {
     try {
       if (!empty(self::$sharedCampaign['id'])) {
-        /** @phpstan-ignore-next-line */
         civicrm_api3('Campaign', 'delete', ['id' => self::$sharedCampaign['id']]);
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
 
     try {
@@ -138,17 +137,18 @@ class CreateFormTest extends ContractTestBase {
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
 
     try {
       if (!empty(self::$sharedOwnerOrgId)) {
-        /** @phpstan-ignore-next-line */
         Contact::delete(TRUE)
           ->addWhere('id', '=', self::$sharedOwnerOrgId)
           ->execute();
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
   }
 
@@ -334,10 +334,8 @@ class CreateFormTest extends ContractTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    // @phpstan-ignore-next-line
     $form->method('exportValues')->willReturn($validValues);
 
-    /** @phpstan-ignore-next-line */
     $form->controller = new class($cid) {
 
       public ?string $_destination = NULL;
@@ -365,9 +363,7 @@ class CreateFormTest extends ContractTestBase {
     $cidProp->setAccessible(TRUE);
     $cidProp->setValue($form, $cid);
 
-    /** @phpstan-ignore-next-line */
     $form->preProcess();
-    /** @phpstan-ignore-next-line */
     $form->_submitValues = $validValues;
     $form->setDefaults($validValues);
 
@@ -410,7 +406,6 @@ class CreateFormTest extends ContractTestBase {
     $cid = $this->contact['id'];
     $form = new CreateForm();
 
-    /** @phpstan-ignore-next-line */
     $form->controller = new class($cid) {
 
       public ?string $_destination = NULL;
@@ -433,9 +428,7 @@ class CreateFormTest extends ContractTestBase {
 
     };
 
-    /** @phpstan-ignore-next-line */
     $form->set('cid', $this->contact['id']);
-    /** @phpstan-ignore-next-line */
     $form->preProcess();
     $form->buildQuickForm();
 
@@ -456,12 +449,10 @@ class CreateFormTest extends ContractTestBase {
       'membership_reference' => 'REF-001',
     ];
 
-    /** @phpstan-ignore-next-line */
     $form->_submitValues = $submissionValues;
     $form->setDefaults($submissionValues);
     $form->postProcess();
 
-    /** @phpstan-ignore-next-line */
     $result = civicrm_api3('Contract', 'getsingle', [
       'contact_id' => $this->contact['id'],
     ]);
@@ -476,7 +467,7 @@ class CreateFormTest extends ContractTestBase {
       self::assertEquals('0.00', $contract['membership_payment.membership_annual']);
     }
     elseif ($paymentOption == 'RCUR') {
-      $this->assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
+      self::assertNotEmpty($contract['membership_payment.membership_recurring_contribution']);
     }
   }
 
@@ -500,7 +491,6 @@ class CreateFormTest extends ContractTestBase {
       && !empty(self::$sharedCampaign['id'])
       && $this->campaign['id'] !== self::$sharedCampaign['id']
     ) {
-      /** @phpstan-ignore-next-line */
       civicrm_api3('Campaign', 'delete', ['id' => $this->campaign['id']]);
     }
 

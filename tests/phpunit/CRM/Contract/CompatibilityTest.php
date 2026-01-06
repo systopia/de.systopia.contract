@@ -56,7 +56,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
     // get the resulting change activity
     $this->runContractEngine($contract['id'], '+2 days');
     $change_activity = $this->getLastChangeActivity($contract['id']);
-    $this->assertNotEmpty($change_activity, 'There should be a change activity after the upgrade');
+    self::assertNotEmpty($change_activity, 'There should be a change activity after the upgrade');
 
     if ($this->isExtensionActive('tazcontract')) {
       $this->assertStringContainsOtherString(
@@ -119,7 +119,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
     // get the resulting change activity
     $this->runContractEngine($contract['id'], '+2 days');
     $change_activity = $this->getLastChangeActivity($contract['id']);
-    $this->assertNotEmpty($change_activity, 'There should be a change activity after the upgrade');
+    self::assertNotEmpty($change_activity, 'There should be a change activity after the upgrade');
     $this->assertStringContainsOtherString(
       'Unknown',
       $change_activity['subject'],
@@ -160,7 +160,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
         'activity_type_id'  => ['IN' => $suppressed_types],
         'target_contact_id' => $contact_id,
       ], $last_activity_id);
-      $this->assertEmpty(
+      self::assertEmpty(
         $next_activity_id,
         "A system activity was generated after contract creation event though it's supposed to be suppressed"
       );
@@ -177,7 +177,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
         'activity_type_id'  => ['IN' => $suppressed_types],
         'target_contact_id' => $contact_id,
       ], $last_activity_id);
-      $this->assertEmpty(
+      self::assertEmpty(
         $next_activity_id,
         "A system activity was generated after contract update event though it's supposed to be suppressed"
       );
@@ -189,7 +189,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
         'activity_type_id'  => ['IN' => $suppressed_types],
         'target_contact_id' => $contact_id,
       ], $last_activity_id);
-      $this->assertEmpty(
+      self::assertEmpty(
         $next_activity_id,
         "A system activity was generated after contract pause event though it's supposed to be suppressed"
       );

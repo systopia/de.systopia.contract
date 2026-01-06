@@ -50,7 +50,7 @@ class CRM_Contract_RecurringContribution {
         }
       }
       catch (Exception $e) {
-        // doesn't exist?
+        // @ignoreException doesn't exist?
       }
     }
     return NULL;
