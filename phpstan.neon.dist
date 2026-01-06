@@ -1,5 +1,6 @@
 includes:
 	- phpstan-baseline.neon
+
 parameters:
 	paths:
 		- api
@@ -9,7 +10,7 @@ parameters:
 		- contract.php
 	excludePaths:
 		analyse:
-			- CRM/Contract/CustomData
+			- CRM/Contract/CustomData.php
 			- CRM/Contract/DAO/*
 			- tests/phpunit/bootstrap.php
 	scanFiles:
