@@ -115,7 +115,10 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       'now' => $now,
       'id'  => $contract_id,
     ]);
-    static::assertTrue(empty($result['values']['failed']), 'Contract Engine reports failure');
+    static::assertTrue(
+      empty($result['values']['failed']),
+      'Contract Engine reports failure: ' . print_r($result['values'], TRUE)
+    );
     return $result;
   }
 
