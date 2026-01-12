@@ -26,9 +26,7 @@ use CRM_Contract_ExtensionUtil as E;
  *
  * @group headless
  *
- * @covers ::civicrm_api3_Contract_create
- * @covers ::civicrm_api3_Contract_modify
- * @covers ::civicrm_api3_Contract_process_scheduled_modifications
+ * @coversNothing
  */
 class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 

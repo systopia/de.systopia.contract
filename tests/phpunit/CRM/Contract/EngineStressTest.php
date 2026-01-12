@@ -17,9 +17,7 @@ use CRM_Contract_ExtensionUtil as E;
  *
  * @group headless
  *
- * @covers ::civicrm_api3_Contract_create
- * @covers ::civicrm_api3_Contract_modify
- * @covers ::civicrm_api3_Contract_get_open_modification_counts
+ * @coversNothing
  */
 class CRM_Contract_EngineStressTest extends CRM_Contract_ContractTestBase {
 
