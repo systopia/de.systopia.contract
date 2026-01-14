@@ -328,7 +328,7 @@ class CreateContract extends AbstractAction {
     }
 
     // get start date
-    $date = strtotime(\CRM_Utils_Array::value('start_date', $mandate_data, date('Y-m-d')));
+    $date = strtotime($mandate_data['start_date'] ?? date('Y-m-d'));
 
     // get cycle days
     /** @phpstan-var list<int> $cycleDays */

@@ -144,7 +144,7 @@ abstract class CRM_Contract_Change {
     $required_fields = $this->getRequiredFields();
     foreach ($required_fields as $required_field) {
       if (!isset($this->data[$required_field])) {
-        throw new Exception("Parameter '{$required_field}' missing.");
+        throw new \RuntimeException("Parameter '{$required_field}' missing.");
       }
     }
   }
@@ -157,7 +157,7 @@ abstract class CRM_Contract_Change {
     $contract = $this->getContract();
     $status_name = CRM_Contract_Utils::getMembershipStatusName($contract['status_id']);
     if (!in_array($status_name, $class::getStartStatusList())) {
-      throw new Exception("Cannot {$this->getActionName()} a membership when its status is '{$status_name}'.");
+      throw new \RuntimeException("Cannot {$this->getActionName()} a membership when its status is '{$status_name}'.");
     }
   }
 
@@ -193,7 +193,7 @@ abstract class CRM_Contract_Change {
     // propagate derived fields
     foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
       if (empty($this->data[$change_attribute])) {
-        $this->data[$change_attribute] = CRM_Utils_Array::value($contract_attribute, $contract, '');
+        $this->data[$change_attribute] = $contract[$contract_attribute] ?? '';
       }
     }
 
@@ -211,13 +211,13 @@ abstract class CRM_Contract_Change {
    */
   public function getContract($with_payment_data = FALSE) {
     $contract_id = $this->getContractID();
-    if ($this->contract === NULL || $this->contract['id'] != $contract_id) {
+    if ($this->contract === NULL || (int) $this->contract['id'] !== $contract_id) {
       // (re)load contract
       try {
         $this->contract = civicrm_api3('Membership', 'getsingle', ['id' => $contract_id]);
       }
       catch (Exception $ex) {
-        throw new Exception("Contract [{$contract_id}] not found!");
+        throw new \RuntimeException("Contract [{$contract_id}] not found!", $ex->getCode(), $ex);
       }
       CRM_Contract_CustomData::labelCustomFields($this->contract);
     }
@@ -256,7 +256,7 @@ abstract class CRM_Contract_Change {
           'entity_table' => 'civicrm_contribution_recur',
           'entity_id'    => $contributionRecur['id'],
         ]);
-        if ($sepaMandateResult['count'] == 1) {
+        if (1 === $sepaMandateResult['count']) {
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
           $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount(
             $sepaMandate['contact_id'],
@@ -267,7 +267,7 @@ abstract class CRM_Contract_Change {
           $contract['membership_payment.from_name'] = $sepaMandate['account_holder'] ?? '';
 
         }
-        elseif ($sepaMandateResult['count'] == 0) {
+        elseif (0 === $sepaMandateResult['count']) {
           // this should be a recurring contribution -> get from the latest contribution
           [
             $from_ba,
@@ -288,7 +288,7 @@ abstract class CRM_Contract_Change {
         }
       }
       catch (Exception $ex) {
-        CRM_Core_Error::debug_log_message(
+        Civi::log()->debug(
           "Couldn't load recurring contribution [{$contract['membership_payment.membership_recurring_contribution']}]"
         );
       }
@@ -359,17 +359,11 @@ abstract class CRM_Contract_Change {
    * @return                       string the subject line
    */
   public function renderChangeSubject($change, $contract_before, $contract_after) {
-    // first, try to see if there is some customisation:
-    $rendered_subject = RenderChangeSubjectEvent::renderCustomChangeSubject(
-        $change->getActionName(),
-        $contract_before,
-        $contract_after);
-    if ($rendered_subject !== NULL) {
-      return $rendered_subject;
-    }
-    else {
-      return $change->renderDefaultSubject($contract_after, $contract_before);
-    }
+    return RenderChangeSubjectEvent::renderCustomChangeSubject(
+      $change->getActionName(),
+      $contract_before,
+      $contract_after
+    ) ?? $change->renderDefaultSubject($contract_after, $contract_before);
   }
 
   /**
@@ -400,14 +394,14 @@ abstract class CRM_Contract_Change {
       return 0;
     }
 
-    if ($contributionRecur['frequency_unit'] == 'year') {
+    if ('year' === $contributionRecur['frequency_unit']) {
       return 1 / $contributionRecur['frequency_interval'];
     }
-    elseif ($contributionRecur['frequency_unit'] == 'month') {
+    elseif ('month' === $contributionRecur['frequency_unit']) {
       return 12 / $contributionRecur['frequency_interval'];
     }
     else {
-      throw new Exception("Frequency unit '{$contributionRecur['frequency_unit']}' not allowed.");
+      throw new \RuntimeException("Frequency unit '{$contributionRecur['frequency_unit']}' not allowed.");
     }
   }
 
@@ -430,16 +424,9 @@ abstract class CRM_Contract_Change {
    * @return mixed value in the activity data
    */
   public function getParameter($key, $default = NULL) {
-    // check the data
-    if (isset($this->data[$key])) {
-      return $this->data[$key];
-    }
-    elseif (isset($_REQUEST[$key])) {
-      return $_REQUEST[$key];
-    }
-    else {
-      return $default;
-    }
+    return $this->data[$key]
+      ?? CRM_Utils_Request::retrieve($key, 'String')
+      ?? $default;
   }
 
   /**
@@ -734,13 +721,16 @@ abstract class CRM_Contract_Change {
   }
 
   /**
-   * Get the action name for the given class name
+   * Get the action name for the given class name.
    *
-   * @param $class_name string action class name
-   * @return string action name, e.g. 'cancel'
+   * @param string $className
+   *   Action class name.
+   *
+   * @return string|null
+   *   Action name, e.g. 'cancel'.
    */
-  public static function getActionByClass($class_name) {
-    return CRM_Utils_Array::value($class_name, array_flip(self::ACTION2CLASS));
+  public static function getActionByClass(string $className): ?string {
+    return array_flip(self::ACTION2CLASS)[$className] ?? NULL;
   }
 
   /**
@@ -818,12 +808,12 @@ abstract class CRM_Contract_Change {
    */
   public static function getChangeForData($data) {
     if (empty($data['activity_type_id'])) {
-      throw new Exception('No activity_type_id given.');
+      throw new \RuntimeException('No activity_type_id given.');
     }
 
     $change_class = self::getClassByActivityType($data['activity_type_id']);
     if (empty($change_class)) {
-      throw new Exception(
+      throw new \RuntimeException(
         "Activity type ID '{$data['activity_type_id']}' is not a valid contract change type."
       );
     }

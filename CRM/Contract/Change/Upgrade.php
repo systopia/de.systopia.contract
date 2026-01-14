@@ -209,7 +209,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       - (float) $contract_before['membership_payment.membership_annual']
     );
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
-    $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name']);
+    $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name'] ?? '');
     $this->setStatus('Completed');
     $this->save();
   }
@@ -246,7 +246,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         ]);
       }
       catch (\Exception $e) {
-        // Already cancelled or does not exist
+        // @ignoreException Already canceled or does not exist
       }
     }
   }
@@ -260,7 +260,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         ]);
       }
       catch (\Exception $e) {
-        // Already cancelled or does not exist
+        // @ignoreException Already canceled or does not exist
       }
     }
   }
@@ -376,7 +376,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       return E::ts('Update contract scheduled');
     }
 
-    $before = (array) ($contract_before ?: []);
+    $before = (array) ($contract_before ?? []);
     $after  = (array) $contract_after;
 
     $map = [
@@ -407,7 +407,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       }
     }
 
-    if (!$changes) {
+    if ([] === $changes) {
       return E::ts('Contract updated');
     }
     return E::ts('Contract updated') . ' — ' . implode('; ', $changes);

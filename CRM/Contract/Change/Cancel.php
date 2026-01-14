@@ -103,9 +103,9 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     ]);
     foreach ($scheduled_activities['values'] as $scheduled_activity) {
       $scheduled_for_day = date('Y-m-d', strtotime($scheduled_activity['activity_date_time']));
-      if ($scheduled_for_day == $requested_day) {
+      if ($scheduled_for_day === $requested_day) {
         // there's already a scheduled 'cancel' activity for the same day
-        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
+        throw new \RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
 
@@ -118,15 +118,15 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       'name'   => 'Cancelled',
       'return' => 'id',
     ]);
-    if ($contract['status_id'] == $contract_cancelled_status['id']) {
+    if ((int) $contract['status_id'] == $contract_cancelled_status['id']) {
       // contract is cancelled
       $pending_activity_count = civicrm_api3('Activity', 'getcount', [
         'source_record_id' => $this->getContractID(),
         'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
         'status_id'        => ['IN' => ['Scheduled', 'Needs Review']],
       ]);
-      if ($pending_activity_count == 0) {
-        throw new Exception('Scheduling an (additional) cancellation request in not desired in this context.');
+      if (0 === $pending_activity_count) {
+        throw new \RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
       }
     }
   }
@@ -143,7 +143,9 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       return E::ts('Contract cancellation scheduled');
     }
     $reasonVal = $this->data['contract_cancellation.contact_history_cancel_reason'] ?? NULL;
-    $reason = $reasonVal ? $this->labelValue($reasonVal, 'contract_cancellation.contact_history_cancel_reason') : NULL;
+    $reason = NULL !== $reasonVal
+      ? $this->labelValue($reasonVal, 'contract_cancellation.contact_history_cancel_reason')
+      : NULL;
     return $reason ? E::ts('Contract cancelled (%1)', [1 => $reason]) : E::ts('Contract cancelled');
   }
 

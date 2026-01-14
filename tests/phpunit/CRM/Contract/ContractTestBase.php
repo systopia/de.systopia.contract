@@ -13,7 +13,7 @@ declare(strict_types = 1);
 use Civi\Test\Api3TestTrait;
 use CRM_Contract_ExtensionUtil as E;
 use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
+use Civi\Core\HookInterface;
 use Civi\Test\TransactionalInterface;
 use PHPUnit\Framework\TestCase;
 use Civi\Test\CiviEnvBuilder;
@@ -74,7 +74,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
 
     // check again
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
-    $this->assertNotEmpty($default_creditor_id, 'There is no default SEPA creditor set');
+    self::assertNotEmpty($default_creditor_id, 'There is no default SEPA creditor set');
   }
 
   public function tearDown() : void {
@@ -115,7 +115,10 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       'now' => $now,
       'id'  => $contract_id,
     ]);
-    static::assertTrue(empty($result['values']['failed']), 'Contract Engine reports failure');
+    static::assertTrue(
+      empty($result['values']['failed']),
+      'Contract Engine reports failure: ' . print_r($result['values'], TRUE)
+    );
     return $result;
   }
 
@@ -131,7 +134,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       'now' => $now,
       'id'  => $contract_id,
     ])['values'];
-    $this->assertNotEmpty($result['failed'], 'Contract Engine should report failure(s)');
+    self::assertNotEmpty($result['failed'], 'Contract Engine should report failure(s)');
     if (NULL !== $expectedError) {
       $errorDetails = implode("\n", $result['error_details']);
       $this->assertStringContainsOtherString(
@@ -179,7 +182,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       'is_active'       => 1,
       'option_group_id' => 'payment_instrument',
     ]);
-    $this->assertNotEmpty($pis['count'], 'No PaymentInstruments configured');
+    self::assertNotEmpty($pis['count'], 'No PaymentInstruments configured');
     $instrument = $pis['values'][array_rand($pis['values'])];
     return $instrument['value'];
   }
@@ -330,7 +333,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
         // membership_general.membership_channel    // Membership Channel
       ]
     );
-    $this->assertNotEmpty($contract['id'], "Contract couldn't be created");
+    self::assertNotEmpty($contract['id'], "Contract couldn't be created");
 
     // load the contract
     return $this->getContract($contract['id']);
@@ -385,11 +388,11 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
   public function getBankAccountID($contact_id, $iban = 'DE89370400440532013000', $bic = 'GENODEM1GLS') {
     try {
       $ba_id = CRM_Contract_BankingLogic::getOrCreateBankAccount($contact_id, $iban, $bic);
-      $this->assertNotEmpty($ba_id, 'Failed to create bank account');
+      self::assertNotEmpty($ba_id, 'Failed to create bank account');
       return $ba_id;
     }
     catch (Exception $ex) {
-      $this->fail('Error while createing bank account: ' . $ex->getMessage());
+      self::fail('Error while createing bank account: ' . $ex->getMessage());
     }
   }
 
@@ -487,7 +490,7 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
       }
       $expected_value = $expected_data[$attribute] ?? NULL;
       $current_value  = $current_data[$attribute] ?? NULL;
-      $this->assertEquals($expected_value, $current_value, "Attribute '{$attribute}' differs. ({$source})");
+      self::assertEquals($expected_value, $current_value, "Attribute '{$attribute}' differs. ({$source})");
     }
   }
 

@@ -131,7 +131,7 @@ class CRM_Contract_Configuration {
       $eligible_payment_option_labels = [];
       $eligible_payment_option_ids = [];
       foreach ($eligible_payment_options_query as $option) {
-        if ($option['name'] == 'RCUR') {
+        if ('RCUR' === $option['name']) {
           $option['label'] = E::ts('SEPA Direct Debit');
         }
         $eligible_payment_option_labels[$option['name']] = $option['label'];
@@ -173,6 +173,7 @@ class CRM_Contract_Configuration {
    *   - <other>    => the new payment instrument, e.g. RCUR or Cash
    */
   public static function getPaymentOptions($allow_new_contracts = TRUE, $allow_no_change = TRUE) {
+    $payment_options = [];
     $payment_options['select'] = E::ts('select existing');
 
     if ($allow_new_contracts) {

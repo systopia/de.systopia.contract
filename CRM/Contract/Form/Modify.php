@@ -69,7 +69,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       $this->membership = civicrm_api3('Membership', 'getsingle', ['id' => $this->get('id')]);
     }
     catch (Exception $e) {
-      CRM_Core_Error::fatal('Not a valid contract ID');
+      throw new \RuntimeException('Not a valid contract ID', $e->getCode(), $e);
     }
 
     // Process the requested action
@@ -79,7 +79,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     $this->assign('modificationActivity', $this->modify_action);
     $this->change_class = CRM_Contract_Change::getClassByAction($this->modify_action);
     if (empty($this->change_class)) {
-      throw new Exception(E::ts("Unknown action '%1'.", [1 => $this->modify_action]));
+      throw new \RuntimeException(E::ts("Unknown action '%1'.", [1 => $this->modify_action]));
     }
 
     // set title
@@ -106,7 +106,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     // Validate that the contract has a valid start status
     $membershipStatus = CRM_Contract_Utils::getMembershipStatusName($this->membership['status_id']);
     if (!in_array($membershipStatus, $this->change_class::getStartStatusList())) {
-      throw new Exception(E::ts("Invalid modification for status '%1'.", [1 => $membershipStatus]));
+      throw new \RuntimeException("Invalid modification for status '{$membershipStatus}'.");
     }
   }
 
@@ -136,10 +136,10 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     if (in_array($this->modify_action, ['update', 'revive'])) {
       $this->addUpdateFields();
     }
-    elseif ($this->modify_action == 'cancel') {
+    elseif ('cancel' === $this->modify_action) {
       $this->addCancelFields();
     }
-    elseif ($this->modify_action == 'pause') {
+    elseif ('pause' === $this->modify_action) {
       $this->addPauseFields();
     }
 
@@ -232,6 +232,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     );
 
     // Membership type (membership)
+    $MembershipTypeOptions = [];
     foreach (civicrm_api3(
       'MembershipType',
       'get',
@@ -313,6 +314,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
   public function addCancelFields() {
 
     // Cancel reason
+    $cancelOptions = [];
     foreach (civicrm_api3('OptionValue', 'get', [
       'option_group_id' => 'contract_cancel_reason',
       'filter'          => 0,
@@ -346,6 +348,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
   }
 
   public function setDefaults($defaultValues = NULL, $filter = NULL) {
+    $defaults = [];
     $recurring_contribution_id_field = CRM_Contract_Utils::getCustomFieldId(
       'membership_payment.membership_recurring_contribution'
     );
@@ -381,7 +384,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     $defaults['membership_type_id'] = $this->membership['membership_type_id'];
     $defaults['campaign_id'] = $this->membership['campaign_id'] ?? '';
 
-    if ($this->modify_action == 'cancel') {
+    if ('cancel' === $this->modify_action) {
       [$defaults['activity_date'], $defaults['activity_date_time']] = CRM_Utils_Date::setDateDefaults(
         date('Y-m-d H:i:00'),
         'activityDateTime'
@@ -414,7 +417,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       HTML_QuickForm::setElementError('activity_date',
         'Activity date must be either today (which will execute the change now) or in the future');
     }
-    if ($this->modify_action == 'pause') {
+    if ('pause' === $this->modify_action) {
       $resumeDate = CRM_Utils_Date::processDate($submitted['resume_date']);
       if ($activityDate > $resumeDate) {
         HTML_QuickForm::setElementError('resume_date', 'Resume date must be after the scheduled pause date');

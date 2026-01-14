@@ -31,7 +31,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
    * @throws Exception should anything go wrong in the execution
    */
   public function execute(): void {
-    throw new Exception(
+    throw new \RuntimeException(
       'New membership sign-ups are documentary, they cannot be scheduled into the future, and therefore not executed.'
     );
   }
@@ -42,11 +42,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
   public function populateData() {
     parent::populateData();
     $contract = $this->getContract(TRUE);
-    $this->data['contract_updates.ch_annual_diff'] = CRM_Utils_Array::value(
-      'membership_payment.membership_annual',
-      $contract,
-      ''
-    );
+    $this->data['contract_updates.ch_annual_diff'] = $contract['membership_payment.membership_annual'] ?? '';
   }
 
   /**

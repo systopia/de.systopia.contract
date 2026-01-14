@@ -4,7 +4,7 @@
          colors="true"
          failOnRisky="true"
          failOnWarning="true"
-         forceCoversAnnotation="false"
+         forceCoversAnnotation="true"
          bootstrap="tests/phpunit/bootstrap.php">
 
   <php>

@@ -16,11 +16,11 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
   /**
    * @var ?int contact ID */
-  protected ?int $cid;
+  protected ?int $cid = NULL;
 
   /**
    * @var array contact  data on the membership's contact */
-  protected array $contact;
+  protected ?array $contact = NULL;
 
   public function buildQuickForm() {
     $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer');
@@ -166,6 +166,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     );
 
     // Source media (activity)
+    $mediumOptions = [];
     foreach (civicrm_api3(
       'Activity',
       'getoptions',
@@ -234,10 +235,9 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
    * @param $defaultValues
    * @param $filter
    * @return void
-   * @throws Exception
    */
   public function setDefaults($defaultValues = NULL, $filter = NULL) {
-
+    $defaults = [];
     // start date is now
     $defaults['start_date'] = date('Y-m-d');
 

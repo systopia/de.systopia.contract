@@ -98,48 +98,43 @@ class CRM_Contract_SepaLogic {
       //  on the parameters. See GP-669 / GP-789
 
       // get the right values (desired first, else from current)
-      $from_ba = CRM_Utils_Array::value(
-        'contract_updates.ch_from_ba',
-        $desired_state,
+      $from_ba = $desired_state['contract_updates.ch_from_ba']
         // fallback: membership
-        CRM_Utils_Array::value('membership_payment.from_ba', $current_state)
-      );
-      $cycle_day = (int) CRM_Utils_Array::value(
-        'contract_updates.ch_cycle_day',
-        $desired_state,
+        ?? $current_state['membership_payment.from_ba']
+        ?? NULL;
+      $cycle_day = $desired_state['contract_updates.ch_cycle_day']
         // fallback: membership
-        CRM_Utils_Array::value('membership_payment.cycle_day', $current_state)
-      );
-      $annual_amount = CRM_Utils_Array::value(
-        'contract_updates.ch_annual',
-        $desired_state,
+        ?? $current_state['membership_payment.cycle_day']
+        ?? NULL;
+      if (NULL !== $cycle_day) {
+        $cycle_day = (int) $cycle_day;
+      }
+      $annual_amount = $desired_state['contract_updates.ch_annual']
         // fallback: membership
-        CRM_Utils_Array::value('membership_payment.membership_annual', $current_state)
-      );
-      $frequency = (int) CRM_Utils_Array::value(
-        'contract_updates.ch_frequency',
-        $desired_state,
+        ?? $current_state['membership_payment.membership_annual']
+        ?? NULL;
+      $frequency = $desired_state['contract_updates.ch_frequency']
         // fallback: membership
-        CRM_Utils_Array::value('membership_payment.membership_frequency', $current_state)
-      );
-      $account_holder = CRM_Utils_Array::value(
-        'contract_updates.ch_from_name',
-        $desired_state,
+        ?? $current_state['membership_payment.membership_frequency']
+        ?? NULL;
+      if (NULL !== $frequency) {
+        $frequency = (int) $frequency;
+      }
+      $account_holder = $desired_state['contract_updates.ch_from_name']
         // fallback: membership
-        CRM_Utils_Array::value('membership_payment.from_name', $current_state)
-      );
+        ?? $current_state['membership_payment.from_name']
+        ?? NULL;
 
       $recurring_contribution = NULL;
-      $recurring_contribution_id = (int) CRM_Utils_Array::value(
-        'membership_payment.membership_recurring_contribution',
-        $current_state
-      );
+      $recurring_contribution_id = (int) $current_state['membership_payment.membership_recurring_contribution'] ?? NULL;
       if ($recurring_contribution_id) {
         $recurring_contribution = civicrm_api3('ContributionRecur', 'getsingle', ['id' => $recurring_contribution_id]);
       }
 
-      $campaign_id = CRM_Utils_Array::value('campaign_id', $activity,
-          /* fallback: r. contrib. */ CRM_Utils_Array::value('campaign_id', $recurring_contribution));
+      $campaign_id = $activity['campaign_id']
+        /* fallback: r. contrib. */
+        ?? $recurring_contribution['campaign_id']
+        ?? NULL;
 
       // fallback 2: take (still) missing from connected recurring contribution
       if (empty($cycle_day) || empty($frequency) || empty($annual_amount) || empty($from_ba)) {
@@ -181,7 +176,7 @@ class CRM_Contract_SepaLogic {
       $frequency_interval = 12 / $frequency;
       $amount = self::formatMoney(self::formatMoney($annual_amount) / $frequency);
       if ($amount < 0.01) {
-        throw new Exception('Installment amount too small');
+        throw new \RuntimeException('Installment amount too small');
       }
 
       // get bank account
@@ -193,7 +188,7 @@ class CRM_Contract_SepaLogic {
         }
       }
       if (empty($donor_account['iban'])) {
-        throw new Exception('No donor bank account given.');
+        throw new \RuntimeException('No donor bank account given.');
       }
       if (empty($donor_account['bic'])) {
         // this could be problem until SEPA-245 is implemented
@@ -249,11 +244,9 @@ class CRM_Contract_SepaLogic {
     }
     else {
       // another (existing) recurring contribution has been chosen by the user:
-      $new_recurring_contribution = (int) CRM_Utils_Array::value(
-        'contract_updates.ch_recurring_contribution',
-        $desired_state,
-        $current_state['membership_payment.membership_recurring_contribution'] ?? NULL
-      );
+      $new_recurring_contribution = (int) $desired_state['contract_updates.ch_recurring_contribution']
+        ?? $current_state['membership_payment.membership_recurring_contribution']
+        ?? NULL;
     }
 
     // finally: terminate the old one
@@ -322,7 +315,7 @@ class CRM_Contract_SepaLogic {
         }
       }
       else {
-        throw new Exception('Mandate is not active, cannot be paused');
+        throw new \RuntimeException('Mandate is not active, cannot be paused');
       }
 
     }
@@ -344,7 +337,7 @@ class CRM_Contract_SepaLogic {
         ]);
       }
       else {
-        throw new Exception(' Mandate is not paused, cannot be activated');
+        throw new \RuntimeException(' Mandate is not paused, cannot be activated');
       }
     }
   }
@@ -389,7 +382,7 @@ class CRM_Contract_SepaLogic {
     }
     catch (Exception $ex) {
       // link couldn't be generated
-      CRM_Core_Error::debug_log_message("Contract: Couldn't create payment link: " . $ex->getMessage());
+      Civi::log()->debug("Contract: Couldn't create payment link: " . $ex->getMessage());
     }
   }
 
@@ -407,11 +400,11 @@ class CRM_Contract_SepaLogic {
       }
       catch (Exception $ex) {
         // link couldn't be generated
-        CRM_Core_Error::debug_log_message("Contract: Couldn't create mandate replaced link: " . $ex->getMessage());
+        Civi::log()->debug('Contract: Could not create mandate replaced link: ' . $ex->getMessage());
       }
     }
     else {
-      CRM_Core_Error::debug_log_message("Contract: Couldn't create mandate replaced link, CiviSEPA version too old.");
+      Civi::log()->debug('Contract: Could not create mandate replaced link, CiviSEPA version too old.');
     }
   }
 
@@ -708,7 +701,7 @@ class CRM_Contract_SepaLogic {
       $start_date = strtotime('+ 1 day', $start_date);
       $safety_counter -= 1;
       if ($safety_counter == 0) {
-        throw new Exception("There's something wrong with the nextCycleDay method.");
+        throw new \RuntimeException("There's something wrong with the nextCycleDay method.");
       }
     }
     return (int) date('d', $start_date);

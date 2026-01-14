@@ -52,14 +52,14 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
   /**
    * The change's display title
    *
-   * @var string
+   * @var string|null
    */
   protected $change_activity_display_title = NULL;
 
   /**
    * The change's hover title
    *
-   * @var string
+   * @var string|null
    */
   protected $change_activity_display_hover_title = NULL;
 

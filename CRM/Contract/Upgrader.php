@@ -41,7 +41,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
    * Add custom field "defer_payment_start"
    *
    * @return TRUE on success
-   * @throws Exception
    */
   public function upgrade_1360() {
     $this->ctx->log->info('Applying update 1360');

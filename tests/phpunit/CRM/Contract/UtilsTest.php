@@ -16,6 +16,8 @@ use CRM_Contract_ExtensionUtil as E;
  * Test utility functions
  *
  * @group headless
+ *
+ * @covers \CRM_Contract_Utils::stripNonContractActivityCustomFields
  */
 class CRM_Contract_UtilsTest extends CRM_Contract_ContractTestBase {
 

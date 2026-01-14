@@ -29,6 +29,7 @@ class CRM_Contract_FormUtils {
   }
 
   public function addPaymentContractSelect2($elementName, $contactId, $required = TRUE, $contractId = NULL) {
+    $recurringContributionOptions = [];
     $recurringContributionOptions[''] = E::ts('- none -');
     foreach ($this->recurringContribution->getAll($contactId, TRUE, $contractId, TRUE) as $key => $rc) {
       $recurringContributionOptions[$key] = $rc['label'];
@@ -58,7 +59,7 @@ class CRM_Contract_FormUtils {
       $customGroupTableId = key($details[$result['custom_group_id']]);
       if (!empty($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'])) {
         $entityId = $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'];
-        if ($entity == 'ContributionRecur') {
+        if ('ContributionRecur' === $entity) {
           try {
             $entityResult = civicrm_api3($entity, 'getsingle', ['id' => $entityId]);
             $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
@@ -69,11 +70,11 @@ class CRM_Contract_FormUtils {
               E::ts('NOT FOUND!');
           }
         }
-        elseif ($entity == 'BankAccountReference') {
+        elseif ('BankAccountReference' === $entity) {
           $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
             CRM_Contract_BankingLogic::getIBANforBankAccount((int) $entityId);
         }
-        elseif ($entity == 'PaymentInstrument') {
+        elseif ('PaymentInstrument' === $entity) {
           $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
             civicrm_api3(
               'OptionValue',
@@ -182,6 +183,7 @@ class CRM_Contract_FormUtils {
 
   public function removeMembershipEditDisallowedCustomFields() {
     $customGroupsToRemove = [];
+    $customFieldsToRemove = [];
     $customFieldsToRemove['membership_payment'] = [];
 
     foreach ($this->form->_groupTree as $groupKey => $group) {
@@ -237,7 +239,7 @@ class CRM_Contract_FormUtils {
    */
   public function downloadMembershipContract() {
     // If we requested a contract file download
-    $download = CRM_Utils_Request::retrieve('contract', 'String', CRM_Core_DAO::$_nullObject, FALSE, '', 'GET');
+    $download = CRM_Utils_Request::retrieve('contract', 'String', $null = NULL, FALSE, '', 'GET');
     if (!empty($download)) {
       // FIXME: Could use CRM_Utils_System::download but it still requires you to do all the work (load file to stream
       //        etc) before calling.

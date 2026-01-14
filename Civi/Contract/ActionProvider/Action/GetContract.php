@@ -265,13 +265,6 @@ class GetContract extends AbstractAction {
       $contract_data[$parameter_name] = $value;
     }
 
-    if (!function_exists('str_starts_with')) {
-
-      function str_starts_with($str, $start) {
-        return (@substr_compare($str, $start, 0, strlen($start)) == 0);
-      }
-
-    }
     // get contract
     try {
       $contract = \civicrm_api3('Contract', 'getSingle', $contract_data);

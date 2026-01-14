@@ -16,6 +16,8 @@ use CRM_Contract_ExtensionUtil as E;
  * Basic Contract Engine Tests
  *
  * @group headless
+ *
+ * @coversNothing
  */
 class CRM_Contract_EngineStressTest extends CRM_Contract_ContractTestBase {
 

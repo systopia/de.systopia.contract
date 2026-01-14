@@ -17,6 +17,8 @@ use CRM_Contract_Form_Modify as ModifyForm;
 
 /**
  * @group headless
+ *
+ * @covers \CRM_Contract_Form_Modify
  */
 class ModifyFormTest extends ContractTestBase {
 
@@ -58,7 +60,6 @@ class ModifyFormTest extends ContractTestBase {
   protected array $campaign = [];
 
   public static function setUpBeforeClass(): void {
-    /** @phpstan-ignore-next-line */
     $org = Contact::create(TRUE)
       ->addValue('contact_type', 'Organization')
       ->addValue('organization_name', 'ModifyFormTest Owner Org ' . rand(1, 1000000))
@@ -69,7 +70,7 @@ class ModifyFormTest extends ContractTestBase {
     self::$sharedMembershipType = MembershipType::create(FALSE)
       ->addValue('name', 'Modify Membership Type')
       ->addValue('member_of_contact_id', self::$sharedOwnerOrgId)
-      ->addValue('financial_type_id', (int) (new self())->ensureFinancialTypeId())
+      ->addValue('financial_type_id', self::ensureFinancialTypeId())
       ->addValue('duration_unit', 'year')
       ->addValue('duration_interval', 1)
       ->addValue('period_type', 'rolling')
@@ -195,7 +196,7 @@ class ModifyFormTest extends ContractTestBase {
       ->execute();
   }
 
-  private function ensureFinancialTypeId(): int {
+  private static function ensureFinancialTypeId(): int {
     $row = FinancialType::get(TRUE)
       ->addWhere('name', '=', 'Member Dues')
       ->setSelect(['id'])
@@ -230,7 +231,6 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function getRecurStatusId(string $name = 'In Progress'): int {
-    /** @phpstan-ignore-next-line */
     $row = OptionValue::get(TRUE)
       ->addWhere('option_group_id:name', '=', 'contribution_status')
       ->addWhere('name', '=', $name)
@@ -247,13 +247,13 @@ class ModifyFormTest extends ContractTestBase {
   public static function tearDownAfterClass(): void {
     try {
       if (!empty(self::$sharedCampaign['id'])) {
-        /** @phpstan-ignore-next-line */
         Campaign::delete(TRUE)
           ->addWhere('id', '=', self::$sharedCampaign['id'])
           ->execute();
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
 
     try {
@@ -264,17 +264,18 @@ class ModifyFormTest extends ContractTestBase {
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
 
     try {
       if (!empty(self::$sharedOwnerOrgId)) {
-        /** @phpstan-ignore-next-line */
         Contact::delete(TRUE)
           ->addWhere('id', '=', self::$sharedOwnerOrgId)
           ->execute();
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
   }
 
@@ -317,7 +318,7 @@ class ModifyFormTest extends ContractTestBase {
 
   private function ensureMembershipType(): array {
     $ownerId = $this->ensureOwnerOrgId();
-    $ftId = $this->ensureFinancialTypeId();
+    $ftId = self::ensureFinancialTypeId();
     $name = 'Modify Membership Type (ensured)';
 
     $row = MembershipType::get(TRUE)
@@ -382,13 +383,14 @@ class ModifyFormTest extends ContractTestBase {
         ->execute()
         ->getArrayCopy();
       $mandateIds = array_column($mandates, 'id');
-      if ($mandateIds) {
+      if ([] !== $mandateIds) {
         \Civi\Api4\SepaMandate::delete(TRUE)
           ->addWhere('id', 'IN', $mandateIds)
           ->execute();
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
 
     try {
@@ -404,6 +406,7 @@ class ModifyFormTest extends ContractTestBase {
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
 
     try {
@@ -419,6 +422,7 @@ class ModifyFormTest extends ContractTestBase {
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
 
     try {
@@ -428,13 +432,14 @@ class ModifyFormTest extends ContractTestBase {
         ->execute()
         ->getArrayCopy();
       $memIds = array_column($mems, 'id');
-      if ($memIds) {
+      if ([] !== $memIds) {
         \Civi\Api4\Membership::delete(TRUE)
           ->addWhere('id', 'IN', $memIds)
           ->execute();
       }
     }
     catch (\Throwable $e) {
+      // @ignoreException
     }
   }
 
@@ -471,7 +476,6 @@ class ModifyFormTest extends ContractTestBase {
 
     if ($isExistingSepa || $isExistingNonSepa) {
       $paymentInstrumentId = $isExistingSepa ? $rcurId : $cashId;
-      /** @phpstan-ignore-next-line */
       $recurResult = ContributionRecur::create(TRUE)
         ->addValue('contact_id', $contact['id'])
         ->addValue('amount', '10.00')
@@ -528,7 +532,6 @@ class ModifyFormTest extends ContractTestBase {
           ->first();
       }
 
-      /** @phpstan-ignore-next-line */
       $creditors = SepaCreditor::get(TRUE)
         ->execute()
         ->getArrayCopy();
@@ -537,7 +540,6 @@ class ModifyFormTest extends ContractTestBase {
         $bic = $creditor['bic'] ?? '';
         $needsUpdate = empty($iban) || empty($bic);
         if ($needsUpdate) {
-          /** @phpstan-ignore-next-line */
           SepaCreditor::update(TRUE)
             ->addWhere('id', '=', $creditor['id'])
             ->addValue('iban', $iban ?: 'DE02370502990000684712')
@@ -661,7 +663,6 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function getPaymentInstrumentIdByName(string $name): ?int {
-    /** @phpstan-ignore-next-line */
     $result = OptionValue::get(TRUE)
       ->addWhere('option_group_id:name', '=', 'payment_instrument')
       ->addWhere('name', '=', $name)
@@ -719,6 +720,7 @@ class ModifyFormTest extends ContractTestBase {
     $form->set('id', $this->contract['id']);
 
     $form->set('modify_action', $modifyAction);
+    // @phpstan-ignore-next-line
     $_REQUEST['modify_action'] = $modifyAction;
     $form->_submitValues['modify_action'] = $modifyAction;
 
@@ -738,7 +740,7 @@ class ModifyFormTest extends ContractTestBase {
     ];
 
     $form->_submitValues += [
-      'payment_option' => (string) $paymentOptionValue,
+      'payment_option' => $paymentOptionValue,
       'membership_type_id' => $this->membershipType['id'],
       'payment_amount' => $to === 'None' ? '0' : '10',
       'payment_frequency' => '6',
@@ -769,6 +771,7 @@ class ModifyFormTest extends ContractTestBase {
     $form->_submitValues['contribution_recur_contribution_status_id'] = $this->getRecurStatusId('In Progress');
 
     foreach ($form->_submitValues as $key => $value) {
+      // @phpstan-ignore-next-line
       $_REQUEST[$key] = $value;
     }
 
@@ -795,7 +798,6 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function assertMandateTerminated($contactId): void {
-    /** @phpstan-ignore-next-line */
     $mandates = SepaMandate::get(TRUE)
       ->addWhere('contact_id', '=', $contactId)
       ->addWhere('status', 'IN', ['INVALID', 'COMPLETE', 'ENDED'])
@@ -804,7 +806,6 @@ class ModifyFormTest extends ContractTestBase {
       ->getArrayCopy();
 
     if (empty($mandates)) {
-      /** @phpstan-ignore-next-line */
       $all = SepaMandate::get(TRUE)
         ->addWhere('contact_id', '=', $contactId)
         ->addSelect('id', 'status', 'type', 'entity_id', 'reference')
@@ -818,7 +819,6 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function assertRecurringContributionEnded($contactId): void {
-    /** @phpstan-ignore-next-line */
     $recur = ContributionRecur::get(TRUE)
       ->addWhere('contact_id', '=', $contactId)
       ->addWhere('contribution_status_id:name', 'IN', ['Completed', 'Cancelled'])
@@ -835,7 +835,6 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function getLatestSepaMandateForContact($contactId) {
-    /** @phpstan-ignore-next-line */
     $mandate = SepaMandate::get(TRUE)
       ->addWhere('contact_id', '=', $contactId)
       ->addWhere('type', '=', 'RCUR')
@@ -853,7 +852,6 @@ class ModifyFormTest extends ContractTestBase {
     $membershipId = isset($opts['membership_id']) ? (int) $opts['membership_id'] : NULL;
     $activeStatuses = $opts['active_statuses'] ?? ['In Progress', 'Pending'];
 
-    /** @phpstan-ignore-next-line */
     $q = ContributionRecur::get(TRUE)
       ->addWhere('contact_id', '=', (int) $contactId)
       ->addWhere('is_test', '=', 0)
@@ -896,6 +894,7 @@ class ModifyFormTest extends ContractTestBase {
         }
       }
       catch (\Throwable $e) {
+        // @ignoreException
       }
     }
 
@@ -947,7 +946,7 @@ class ModifyFormTest extends ContractTestBase {
         $noneId = $this->getPaymentInstrumentIdByName('None');
         if ($noneId) {
           self::assertEquals(
-            (int) $noneId,
+            $noneId,
             (int) ($candidate['payment_instrument_id'] ?? 0),
             "Expected PI 'None' ({$noneId}) for zero-amount RC, got " . ($candidate['payment_instrument_id'] ?? 'NULL')
           );
@@ -966,7 +965,6 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   private function assertAssignedExistingRecurring($contactId): void {
-    /** @phpstan-ignore-next-line */
     $recur = ContributionRecur::get(TRUE)
       ->addWhere('contact_id', '=', $contactId)
       ->addWhere('is_test', '=', 0)
@@ -1194,6 +1192,7 @@ class ModifyFormTest extends ContractTestBase {
     $form->set('id', $this->contract['id']);
 
     $form->set('modify_action', $modifyAction);
+    // @phpstan-ignore-next-line
     $_REQUEST['modify_action'] = $modifyAction;
     $form->_submitValues['modify_action'] = $modifyAction;
 
@@ -1223,6 +1222,7 @@ class ModifyFormTest extends ContractTestBase {
     }
 
     foreach ($form->_submitValues as $key => $value) {
+      // @phpstan-ignore-next-line
       $_REQUEST[$key] = $value;
     }
 
@@ -1341,7 +1341,6 @@ class ModifyFormTest extends ContractTestBase {
       && !empty(self::$sharedCampaign['id'])
       && $this->campaign['id'] !== self::$sharedCampaign['id']
     ) {
-      /** @phpstan-ignore-next-line */
       Campaign::delete(TRUE)
         ->addWhere('id', '=', $this->campaign['id'])
         ->execute();
