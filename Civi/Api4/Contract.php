@@ -57,7 +57,7 @@ class Contract extends AbstractEntity {
     return \Civi::service(AddRelatedMembershipAction::class)->setCheckPermissions($checkPermissions);
   }
 
-  public static function endRelatedMembership(bool $checkPermissions = TRUE): AddRelatedMembershipAction {
+  public static function endRelatedMembership(bool $checkPermissions = TRUE): EndRelatedMembershipAction {
     return \Civi::service(EndRelatedMembershipAction::class)->setCheckPermissions($checkPermissions);
   }
 
