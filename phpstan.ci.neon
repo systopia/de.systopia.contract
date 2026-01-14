@@ -17,3 +17,11 @@ parameters:
 
 		# Required with symfony/event-dispatcher <4.4.27
 		- '#::getSubscribedEvents\(\) return type has no value type specified in iterable type array.$#'
+
+		# Required with symfony/dependency-injection <6.3.0
+		- '#Method Civi\\Contract\\ContainerSpecs::process\(\) has no return type specified.$#'
+
+		# Required with civicrm/civicrm-core <6.1.0
+		-
+			message: '#^Binary operation "\." between mixed and ''/contracts/'' results in an error\.$#'
+			path: CRM/Contract/Utils.php

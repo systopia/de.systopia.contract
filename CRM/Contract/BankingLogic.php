@@ -59,11 +59,11 @@ class CRM_Contract_BankingLogic {
    * The account will be created if it doesn't exist yet
    *
    * @todo cache results?
-   * @return int account ID
+   * @return int|null account ID
    */
   public static function getOrCreateBankAccount($contact_id, $iban, $bic) {
     if (empty($iban)) {
-      return '';
+      return NULL;
     }
 
     try {
@@ -88,7 +88,7 @@ class CRM_Contract_BankingLogic {
         if ($contact_bank_accounts['count']) {
           // bank account already exists with the contact
           $account = reset($contact_bank_accounts['values']);
-          return $account['id'];
+          return (int) $account['id'];
         }
       }
 
@@ -106,10 +106,11 @@ class CRM_Contract_BankingLogic {
         'reference_type_id' => self::getIbanReferenceTypeID(),
         'ba_id'             => $bank_account['id'],
       ]);
-      return $bank_account['id'];
+      return (int) $bank_account['id'];
     }
     catch (Exception $e) {
       error_log("Couldn't add bank account '{$iban}' [{$contact_id}]");
+      return NULL;
     }
   }
 
@@ -183,7 +184,7 @@ class CRM_Contract_BankingLogic {
       AND table_name = 'civicrm_value_contribution_information'
   ");
     $dao->fetch();
-    if ($dao->count == 0) {
+    if (0 === $dao->count) {
       return NULL;
     }
 

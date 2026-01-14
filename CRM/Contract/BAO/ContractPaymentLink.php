@@ -120,7 +120,7 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
     if ($link_id) {
       $link = new CRM_Contract_BAO_ContractPaymentLink();
       $link->id = $link_id;
-      $link->is_active = 0;
+      $link->is_active = FALSE;
       $link->end_date = date('YmdHis', strtotime($date));
       $link->save();
     }
@@ -137,7 +137,7 @@ class CRM_Contract_BAO_ContractPaymentLink extends CRM_Contract_DAO_ContractPaym
    */
   public static function add(&$params) {
     $hook = empty($params['id']) ? 'create' : 'edit';
-    if ($hook == 'create') {
+    if ('create' === $hook) {
       // check mandatory fields
       if (empty($params['contract_id'])) {
         throw new \RuntimeException('Field contract_id is mandatory.');

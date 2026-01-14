@@ -39,8 +39,10 @@ function _civicrm_api3_Contract_process_scheduled_modifications_spec(&$params) {
  */
 function civicrm_api3_Contract_process_scheduled_modifications($params) {
   // make sure no other task is running
+  /** @var \Civi\Core\Lock\LockManager $lockManager */
+  $lockManager = Civi\Core\Container::singleton()->get('lockManager');
   /** @var $lock Civi\Core\Lock\LockInterface */
-  $lock = Civi\Core\Container::singleton()->get('lockManager')->acquire('worker.member.contract_engine');
+  $lock = $lockManager->acquire('worker.member.contract_engine');
   if (!$lock->isAcquired()) {
     return civicrm_api3_create_success(
       ['message' => 'Another instance of the Contract.process_scheduled_modifications process is running. Skipped.']
@@ -99,7 +101,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
       // verification failed
       $result['failed'][] = $change->getID();
       $result['error_details'][$change->getID()] = CRM_Contract_Utils::formatExceptionForApi($ex);
-      $result['error_details_test'][$change->getID()] = CRM_Core_Error::formatTextException($ex);
+      $result['error_details_test'][$change->getID()] = CRM_Contract_Utils::formatExceptionForTest($ex);
       $change->setStatus('Failed');
       $change->setParameter('details', CRM_Contract_Utils::formatExceptionForActivityDetails($ex));
       $change->save();
@@ -125,7 +127,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
       // something went wrong...
       $result['failed'][] = $change->getID();
       $result['error_details'][$change->getID()] = CRM_Contract_Utils::formatExceptionForApi($ex);
-      $result['error_details_test'][$change->getID()] = CRM_Core_Error::formatTextException($ex);
+      $result['error_details_test'][$change->getID()] = CRM_Contract_Utils::formatExceptionForTest($ex);
       $change->setStatus('Failed');
       $change->setParameter('details', CRM_Contract_Utils::formatExceptionForActivityDetails($ex));
       $change->save();

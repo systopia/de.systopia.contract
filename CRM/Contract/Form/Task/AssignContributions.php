@@ -187,10 +187,10 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
             $contribution_update['contribution_recur_id'] = $contract['contribution_recur_id'];
             // but keep a record of the range, so we can potentially adjust it
             $receive_date = date('YmdHis', strtotime($contribution['receive_date']));
-            if ($min_date == NULL || $min_date > $receive_date) {
+            if (NULL === $min_date || $min_date > $receive_date) {
               $min_date = $receive_date;
             }
-            if ($max_date == NULL || $max_date < $receive_date) {
+            if (NULL === $max_date || $max_date < $receive_date) {
               $max_date = $receive_date;
             }
             break;
@@ -198,8 +198,8 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
           case 'in':
             // only assign contribution if already in the start_date - end_date range
             $receive_date = date('YmdHis', strtotime($contribution['receive_date']));
-            if (($contribution_recur['start_date'] == NULL || $contribution_recur['start_date'] <= $receive_date)
-                && ($contribution_recur['end_date'] == NULL   || $contribution_recur['end_date'] >= $receive_date)) {
+            if ((NULL === $contribution_recur['start_date'] || $contribution_recur['start_date'] <= $receive_date)
+                && (NULL === $contribution_recur['end_date'] || $contribution_recur['end_date'] >= $receive_date)) {
               $contribution_update['contribution_recur_id'] = $contract['contribution_recur_id'];
             }
             break;
@@ -220,18 +220,18 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
     }
 
     // recurring contribution adjustment
-    if (empty($contract['sepa_mandate_id']) && $values['assign_mode'] == 'adjust') {
+    if (empty($contract['sepa_mandate_id']) && 'adjust' === $values['assign_mode']) {
       $contribution_recur_update = [];
       if (
-        $min_date != NULL
-        && $contribution_recur['start_date'] != NULL
+        NULL !== $min_date
+        && $NULL !== contribution_recur['start_date']
         && $min_date < $contribution_recur['start_date']
       ) {
         $contribution_recur_update['start_date'] = $min_date;
       }
       if (
-        $max_date != NULL
-        && $contribution_recur['end_date'] != NULL
+        NULL !== $max_date
+        && NULL !== $contribution_recur['end_date']
         && $max_date > $contribution_recur['end_date']
       ) {
         $contribution_recur_update['end_date'] = $max_date;
@@ -248,7 +248,7 @@ class CRM_Contract_Form_Task_AssignContributions extends CRM_Contribute_Form_Tas
     }
 
     // see if we need to adjust the bank accounts
-    if (empty($contract['sepa_mandate_id']) && $values['assign_mode'] != 'no') {
+    if (empty($contract['sepa_mandate_id']) && 'no' !== $values['assign_mode']) {
       // something might have changed, check the accounts
       [$from_ba, $to_ba] = CRM_Contract_BankingLogic::getAccountsFromRecurringContribution(
         $contract['contribution_recur_id']

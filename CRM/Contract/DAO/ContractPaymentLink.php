@@ -8,10 +8,10 @@
  *
  * This stub provides compatibility. It is not intended to be modified in a
  * substantive way. Property annotations may be added, but are not required.
- * @property string $id
- * @property string $contract_id
- * @property string $contribution_recur_id
- * @property bool|string $is_active
+ * @property int $id
+ * @property int $contract_id
+ * @property int $contribution_recur_id
+ * @property bool $is_active
  * @property string $creation_date
  * @property string $start_date
  * @property string $end_date

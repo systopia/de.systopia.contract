@@ -136,10 +136,10 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     if (in_array($this->modify_action, ['update', 'revive'])) {
       $this->addUpdateFields();
     }
-    elseif ($this->modify_action == 'cancel') {
+    elseif ('cancel' === $this->modify_action) {
       $this->addCancelFields();
     }
-    elseif ($this->modify_action == 'pause') {
+    elseif ('pause' === $this->modify_action) {
       $this->addPauseFields();
     }
 
@@ -384,7 +384,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     $defaults['membership_type_id'] = $this->membership['membership_type_id'];
     $defaults['campaign_id'] = $this->membership['campaign_id'] ?? '';
 
-    if ($this->modify_action == 'cancel') {
+    if ('cancel' === $this->modify_action) {
       [$defaults['activity_date'], $defaults['activity_date_time']] = CRM_Utils_Date::setDateDefaults(
         date('Y-m-d H:i:00'),
         'activityDateTime'
@@ -417,7 +417,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       HTML_QuickForm::setElementError('activity_date',
         'Activity date must be either today (which will execute the change now) or in the future');
     }
-    if ($this->modify_action == 'pause') {
+    if ('pause' === $this->modify_action) {
       $resumeDate = CRM_Utils_Date::processDate($submitted['resume_date']);
       if ($activityDate > $resumeDate) {
         HTML_QuickForm::setElementError('resume_date', 'Resume date must be after the scheduled pause date');

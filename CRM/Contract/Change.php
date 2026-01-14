@@ -211,7 +211,7 @@ abstract class CRM_Contract_Change {
    */
   public function getContract($with_payment_data = FALSE) {
     $contract_id = $this->getContractID();
-    if ($this->contract === NULL || $this->contract['id'] != $contract_id) {
+    if ($this->contract === NULL || (int) $this->contract['id'] !== $contract_id) {
       // (re)load contract
       try {
         $this->contract = civicrm_api3('Membership', 'getsingle', ['id' => $contract_id]);
@@ -256,7 +256,7 @@ abstract class CRM_Contract_Change {
           'entity_table' => 'civicrm_contribution_recur',
           'entity_id'    => $contributionRecur['id'],
         ]);
-        if ($sepaMandateResult['count'] == 1) {
+        if (1 === $sepaMandateResult['count']) {
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
           $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount(
             $sepaMandate['contact_id'],
@@ -267,7 +267,7 @@ abstract class CRM_Contract_Change {
           $contract['membership_payment.from_name'] = $sepaMandate['account_holder'] ?? '';
 
         }
-        elseif ($sepaMandateResult['count'] == 0) {
+        elseif (0 === $sepaMandateResult['count']) {
           // this should be a recurring contribution -> get from the latest contribution
           [
             $from_ba,
@@ -394,10 +394,10 @@ abstract class CRM_Contract_Change {
       return 0;
     }
 
-    if ($contributionRecur['frequency_unit'] == 'year') {
+    if ('year' === $contributionRecur['frequency_unit']) {
       return 1 / $contributionRecur['frequency_interval'];
     }
-    elseif ($contributionRecur['frequency_unit'] == 'month') {
+    elseif ('month' === $contributionRecur['frequency_unit']) {
       return 12 / $contributionRecur['frequency_interval'];
     }
     else {

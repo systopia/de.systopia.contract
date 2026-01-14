@@ -22,7 +22,7 @@ class CRM_Contract_Handler_MembershipAPI implements API_Wrapper {
 
     // TODO: anything else to check before execution?
 
-    if ($apiRequest['action'] == 'create' || $apiRequest['action'] == 'edit') {
+    if ('create' === $apiRequest['action'] || 'edit' === $apiRequest['action']) {
       $params = $apiRequest['params'];
 
       // verify contract number

@@ -131,7 +131,7 @@ class CRM_Contract_Configuration {
       $eligible_payment_option_labels = [];
       $eligible_payment_option_ids = [];
       foreach ($eligible_payment_options_query as $option) {
-        if ($option['name'] == 'RCUR') {
+        if ('RCUR' === $option['name']) {
           $option['label'] = E::ts('SEPA Direct Debit');
         }
         $eligible_payment_option_labels[$option['name']] = $option['label'];

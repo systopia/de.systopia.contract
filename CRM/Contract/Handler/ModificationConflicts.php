@@ -19,7 +19,7 @@ class CRM_Contract_Handler_ModificationConflicts {
   protected $needsReviewStatusId;
 
   public function __construct() {
-    $this->needsReviewStatusId = civicrm_api3(
+    $this->needsReviewStatusId = (int) civicrm_api3(
       'OptionValue',
       'getvalue',
       ['return' => 'value', 'option_group_id' => 'activity_status', 'name' => 'Needs Review']
@@ -49,7 +49,7 @@ class CRM_Contract_Handler_ModificationConflicts {
 
     if (count($this->scheduledModifications)) {
       foreach ($this->scheduledModifications as $scheduledModification) {
-        if ($scheduledModification['status_id'] != $this->needsReviewStatusId) {
+        if ((int) $scheduledModification['status_id'] !== $this->needsReviewStatusId) {
           $this->markForReview($scheduledModification['id']);
         }
       }
@@ -99,7 +99,7 @@ class CRM_Contract_Handler_ModificationConflicts {
   }
 
   public function whitelistOneActivity() {
-    if (count($this->scheduledModifications) == 1) {
+    if (count($this->scheduledModifications) === 1) {
       // TODO we should perform extra validation here since we know what
       // the start state is, we can check that this would be a valid
       // modification and only whitelist it if so.
@@ -110,7 +110,7 @@ class CRM_Contract_Handler_ModificationConflicts {
   public function whitelistPauseResume() {
 
     // This whitelist only works when there are exactly two activities
-    if (count($this->scheduledModifications) != 2) {
+    if (count($this->scheduledModifications) !== 2) {
       return;
     }
 
@@ -120,8 +120,12 @@ class CRM_Contract_Handler_ModificationConflicts {
     $resumeActivity = next($this->scheduledModifications);
 
     if (
-      $pauseActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Pause')
-      && $resumeActivity['activity_type_id'] == CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Resume')
+      (int) $pauseActivity['activity_type_id'] === CRM_Contract_Change::getActivityIdForClass(
+        'CRM_Contract_Change_Pause'
+      )
+      && (int) $resumeActivity['activity_type_id'] === CRM_Contract_Change::getActivityIdForClass(
+        'CRM_Contract_Change_Resume'
+      )
     ) {
       $this->scheduledModifications = [];
     }

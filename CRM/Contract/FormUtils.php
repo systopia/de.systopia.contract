@@ -59,7 +59,7 @@ class CRM_Contract_FormUtils {
       $customGroupTableId = key($details[$result['custom_group_id']]);
       if (!empty($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'])) {
         $entityId = $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'];
-        if ($entity == 'ContributionRecur') {
+        if ('ContributionRecur' === $entity) {
           try {
             $entityResult = civicrm_api3($entity, 'getsingle', ['id' => $entityId]);
             $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
@@ -70,11 +70,11 @@ class CRM_Contract_FormUtils {
               E::ts('NOT FOUND!');
           }
         }
-        elseif ($entity == 'BankAccountReference') {
+        elseif ('BankAccountReference' === $entity) {
           $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
             CRM_Contract_BankingLogic::getIBANforBankAccount((int) $entityId);
         }
-        elseif ($entity == 'PaymentInstrument') {
+        elseif ('PaymentInstrument' === $entity) {
           $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'] =
             civicrm_api3(
               'OptionValue',
