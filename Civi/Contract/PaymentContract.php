@@ -66,9 +66,9 @@ class PaymentContract {
         'contact_id' => $this->params['contact_id'],
         'amount' => \CRM_Contract_SepaLogic::formatMoney($this->params['payment_amount']),
         'currency' => \CRM_Contract_SepaLogic::getCreditor()->currency,
-        'start_date' => \CRM_Utils_Date::processDate($this->params['start_date'], NULL, FALSE, 'Y-m-d H:i:s'),
+        'start_date' => \CRM_Utils_Date::processDate($this->params['payment_start_date'], NULL, FALSE, 'Y-m-d H:i:s'),
         'creation_date' => date('YmdHis'),
-        'date' => \CRM_Utils_Date::processDate($this->params['start_date'], NULL, FALSE, 'Y-m-d H:i:s'),
+        'date' => \CRM_Utils_Date::processDate($this->params['payment_start_date'], NULL, FALSE, 'Y-m-d H:i:s'),
         'validation_date' => date('YmdHis'),
         'iban' => $this->params['iban'],
         'bic' => $this->params['bic'],
@@ -88,9 +88,19 @@ class PaymentContract {
       'contact_id' => $this->params['contact_id'],
       'amount' => 0,
       'currency' => \CRM_Contract_SepaLogic::getCreditor()->currency,
-      'start_date' => \CRM_Utils_Date::processDate($this->params['start_date'] ?? '', NULL, FALSE, 'Y-m-d H:i:s'),
+      'start_date' => \CRM_Utils_Date::processDate(
+        $this->params['payment_start_date'] ?? '',
+        NULL,
+        FALSE,
+        'Y-m-d H:i:s'
+      ),
       'create_date' => date('YmdHis'),
-      'date' => \CRM_Utils_Date::processDate($this->params['start_date'] ?? '', NULL, FALSE, 'Y-m-d H:i:s'),
+      'date' => \CRM_Utils_Date::processDate(
+        $this->params['payment_start_date'] ?? '',
+        NULL,
+        FALSE,
+        'Y-m-d H:i:s'
+      ),
       'validation_date' => date('YmdHis'),
       'account_holder' => $this->params['account_holder'],
       'campaign_id' => $this->params['campaign_id'] ?? '',
@@ -117,9 +127,19 @@ class PaymentContract {
       'contact_id' => $this->params['contact_id'],
       'amount' => \CRM_Contract_SepaLogic::formatMoney($this->params['payment_amount']),
       'currency' => \CRM_Contract_SepaLogic::getCreditor()->currency,
-      'start_date' => \CRM_Utils_Date::processDate($this->params['start_date'] ?? '', NULL, FALSE, 'Y-m-d H:i:s'),
+      'start_date' => \CRM_Utils_Date::processDate(
+        $this->params['payment_start_date'] ?? '',
+        NULL,
+        FALSE,
+        'Y-m-d H:i:s'
+      ),
       'create_date' => date('YmdHis'),
-      'date' => \CRM_Utils_Date::processDate($this->params['start_date'] ?? '', NULL, FALSE, 'Y-m-d H:i:s'),
+      'date' => \CRM_Utils_Date::processDate(
+        $this->params['payment_start_date'] ?? '',
+        NULL,
+        FALSE,
+        'Y-m-d H:i:s'
+      ),
       'validation_date' => date('YmdHis'),
       'account_holder' => $this->params['account_holder'] ?? NULL,
       'campaign_id' => $this->params['campaign_id'] ?? '',
