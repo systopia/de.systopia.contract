@@ -54,6 +54,11 @@ class GetFieldsAction extends BasicGetFieldsAction {
         'data_type' => 'Date',
       ],
       [
+        'name' => 'payment_start_date',
+        'title' => E::ts('Payment Start Date'),
+        'data_type' => 'Date',
+      ],
+      [
         'name' => 'join_date',
         'title' => E::ts('Join Date'),
         'data_type' => 'Date',

@@ -57,6 +57,7 @@ class CreateFullAction extends BasicCreateAction {
     $params['membership_general.membership_channel'] = $item['membership_channel'] ?? '';
 
     // Add payment contract.
+    $item['payment_start_date'] ??= $item['start_date'];
     $paymentContract = new PaymentContract($item);
     $params['membership_payment.membership_recurring_contribution'] = $paymentContract->processPaymentContractCreate();
     $params['membership_payment.from_name'] = $item['account_holder'] ?? '';
