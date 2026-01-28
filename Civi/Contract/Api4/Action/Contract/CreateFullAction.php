@@ -38,14 +38,18 @@ class CreateFullAction extends BasicCreateAction {
   /**
    * @inheritDoc
    */
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function writeRecord($item): array {
+  // phpcs:enable
     $params = [];
 
     // Add core membership fields.
     $params['contact_id'] = $item['contact_id'];
     $params['membership_type_id'] = $item['membership_type_id'];
     $params['start_date'] = self::formatDate($item['start_date']);
-    $params['join_date'] = self::formatDate($item['join_date']);
+    if (isset($item['join_date'])) {
+      $params['join_date'] = self::formatDate($item['join_date']);
+    }
     if (isset($item['end_date'])) {
       $params['end_date'] = self::formatDate($item['end_date']);
     }
@@ -75,7 +79,10 @@ class CreateFullAction extends BasicCreateAction {
     return $result;
   }
 
-  private static function formatDate(?string $date): string {
+  /**
+   * @phpstan-ignore return.unusedType
+   */
+  private static function formatDate(?string $date): ?string {
     return \CRM_Utils_Date::processDate($date ?? '', NULL, FALSE, 'Y-m-d H:i:s');
   }
 
