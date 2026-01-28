@@ -191,35 +191,6 @@ msgstr "bestehenden Zahlungsvertrag wählen"
 msgid "no change"
 msgstr "keine Änderung"
 
-#: CRM/Contract/DAO/ContractPaymentLink.php
-#: Civi/Contract/ActionProvider/Action/CancelContract.php
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php
-#: Civi/Contract/ActionProvider/Action/PauseContract.php
-#: Civi/Contract/ActionProvider/Action/ResumeContract.php
-#: Civi/Contract/ActionProvider/Action/ReviveContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "Contract ID"
-msgstr "Vertrags-ID"
-
-#: CRM/Contract/DAO/ContractPaymentLink.php
-msgid "ContributionRecur ID"
-msgstr "Zahlungsvertrag ID"
-
-#: CRM/Contract/DAO/ContractPaymentLink.php
-msgid "Creation Date"
-msgstr "Erstellungsdatum"
-
-#: CRM/Contract/DAO/ContractPaymentLink.php CRM/Contract/Form/Create.php
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php
-msgid "Start Date"
-msgstr "Startdatum"
-
-#: CRM/Contract/DAO/ContractPaymentLink.php CRM/Contract/Form/Create.php
-msgid "End Date"
-msgstr "Enddatum"
-
 #: CRM/Contract/Form/Create.php
 msgid "Create a new contract for %1"
 msgstr "Neuen Vertrag für %1 erstellen"
@@ -233,6 +204,7 @@ msgstr "Zahlungsart"
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "IBAN"
 msgstr "IBAN"
 
@@ -240,6 +212,7 @@ msgstr "IBAN"
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "BIC"
 msgstr "BIC"
 
@@ -259,6 +232,7 @@ msgid "Installment"
 msgstr "Betrag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Payment Frequency"
 msgstr "Turnus"
 
@@ -266,6 +240,20 @@ msgstr "Turnus"
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Member Since"
 msgstr "Mitglied seit"
+
+#: CRM/Contract/Form/Create.php
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: schema/ContractPaymentLink.entityType.php
+msgid "Start Date"
+msgstr "Startdatum"
+
+#: CRM/Contract/Form/Create.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: schema/ContractPaymentLink.entityType.php
+msgid "End Date"
+msgstr "Enddatum"
 
 #: CRM/Contract/Form/Create.php
 msgid "if already known"
@@ -277,6 +265,7 @@ msgid "Campaign"
 msgstr "Kampagne"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Membership type"
 msgstr "Mitgliedschaftstyp"
 
@@ -334,10 +323,6 @@ msgid "Unknown action '%1'."
 msgstr "Unbekannte Aktion '%1'."
 
 #: CRM/Contract/Form/Modify.php
-msgid "Invalid modification for status '%1'."
-msgstr "Ungültige Änderung für Status '%1'."
-
-#: CRM/Contract/Form/Modify.php
 msgid "Schedule date"
 msgstr "Geplantes Ausführungsdatum"
 
@@ -350,6 +335,7 @@ msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Account Holder"
 msgstr "Kontoinhaber"
 
@@ -692,8 +678,20 @@ msgstr "Kündigungsgrund (default)"
 #: Civi/Contract/ActionProvider/Action/ResumeContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Contact ID"
 msgstr "CiviCRM ID"
+
+#: Civi/Contract/ActionProvider/Action/CancelContract.php
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/ActionProvider/Action/PauseContract.php
+#: Civi/Contract/ActionProvider/Action/ResumeContract.php
+#: Civi/Contract/ActionProvider/Action/ReviveContract.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: schema/ContractPaymentLink.entityType.php
+msgid "Contract ID"
+msgstr "Vertrags-ID"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
@@ -711,6 +709,8 @@ msgstr "Datum"
 #: Civi/Contract/ActionProvider/Action/ResumeContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: schema/ContractMembershipRelation.entityType.php
 msgid "Membership Type ID"
 msgstr "Mitgliedschaftstyp-ID"
 
@@ -818,6 +818,7 @@ msgid "Error Message (if failed)"
 msgstr "Fehlermeldung (falls fehlgeschlagen)"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Join Date"
 msgstr "Eintrittsdatum"
 
@@ -856,6 +857,7 @@ msgid "Frequency Interval"
 msgstr "Einzugsintervall"
 
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Recurring Contribution ID"
 msgstr "ID der wiederkehrenden Zuwendung"
 
@@ -866,6 +868,46 @@ msgstr "Vertragsänderungen direkt verarbeiten"
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Annual Amount"
 msgstr "Jährlicher Betrag"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Payment Start Date"
+msgstr "Zahlungs-Startdatum"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Membership Reference"
+msgstr "Mitgliedsreferenz"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Membership Contract"
+msgstr "Mitgliedschaftsvertrag"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php resources/l10n.php
+msgid "Membership Channel"
+msgstr "Anwerbekanal"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Payment Option"
+msgstr "Zahlungsoption"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Payment Amount"
+msgstr "Zahlungsbetrag"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php resources/l10n.php
+msgid "Cycle Day"
+msgstr "Einzugstag"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Campaign ID"
+msgstr "Kampagnen-ID"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Activity Details"
+msgstr "Aktivitäts-Details"
+
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Activity Medium"
+msgstr "Aktivitäts-Medium"
 
 #: Civi/Contract/ContainerSpecs.php
 msgid "Contract: Create"
@@ -917,6 +959,14 @@ msgstr "Da Formular für die vorhanden"
 msgid "(not found)"
 msgstr "(nicht gefunden)"
 
+#: api/v3/Contract/Create.php
+msgid "Date/Time of \"Sign\" activity"
+msgstr "Datum/Uhrzeit der \"Unterzeichnen\"-Aktivität"
+
+#: api/v3/Contract/Create.php
+msgid "Leave empty for date/time of execution."
+msgstr "Leer lassen, um Ausführungszeitpunkt zu verwenden."
+
 #: contract.php
 msgid "needs review"
 msgstr "Prüfung erforderlich"
@@ -966,6 +1016,70 @@ msgstr "Keine"
 #: js/contract_modify_tools.js
 msgid "de.systopia.contract"
 msgstr "de.systopia.contract"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Primary Memberships"
+msgstr "Primäre Mitgliedschaften"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Mitgliedschafts ID"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Kontakt Sortiername"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Mitgliedsart"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Beginn der Mitgliedschaft"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Ablaufdatum der Mitgliedschaft"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Zeige Mitgliedschaft"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Update Mitgliedschaft"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Related Memberships"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Lösche Mitgliedschaft"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Membership ID"
+msgstr "Mitgliedschafts-ID"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Contact"
+msgstr "Kontakt"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Start date"
+msgstr "Startdatum"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "End date"
+msgstr "Enddatum"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Parent membership"
+msgstr "Übergeordnete Mitgliedschaft"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Add related membership"
+msgstr "Abgeleitete Mitgliedschaft hinzufügen"
 
 #: resources/l10n.php
 msgid "Contract Cancellation"
@@ -1028,20 +1142,12 @@ msgid "Member's Bank Account"
 msgstr "Mitgliedskonto"
 
 #: resources/l10n.php
-msgid "Cycle Day"
-msgstr "Einzugstag"
-
-#: resources/l10n.php
 msgid "Payment Method"
 msgstr "Zahlungsart"
 
 #: resources/l10n.php
 msgid "Cancellation Date"
 msgstr "Kündigungsdatum"
-
-#: resources/l10n.php
-msgid "Membership Channel"
-msgstr "Anwerbekanal"
 
 #: resources/l10n.php
 msgid "Reference Number"
@@ -1106,6 +1212,130 @@ msgstr "einmalig"
 #: resources/l10n.php
 msgid "trimestral"
 msgstr "vierteljährig"
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Related Membership Definition"
+msgstr "Definition der zugehörigen Mitgliedschaft"
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Related Membership Definitions"
+msgstr "Definitionen der zugehörigen Mitgliedschaft"
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid ""
+"Definitions for relations between membership types and relationship types "
+"for related membership contracts."
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+#: schema/ContractPaymentLink.entityType.php
+msgid "ID"
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Unique ContractMembershipRelation ID"
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "FK to MembershipType"
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Relationship Type ID"
+msgstr "Beziehungstyp-ID"
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "FK to RelationshipType"
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Relationship Direction"
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid ""
+"Direction of relationship in which to derive membership (either \"a_b\" or "
+"\"b_a\")."
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Related membership type"
+msgstr "Zugehöriger Mitgliedschaftstyp"
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid ""
+"Allowed type of related membership for this relation, NULL for any "
+"membership type."
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Maximum Related Memberships"
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Maximum allowed number of related memberships for this relation."
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Maximum Age of Related Members"
+msgstr ""
+
+#: schema/ContractMembershipRelation.entityType.php
+msgid "Maximum allowed age of related members for this relation."
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Contract Payment Link"
+msgstr "Zahlungsvertrags-Verknüpfung"
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Contract Payment Links"
+msgstr "Zahlungsvertrags-Verknüpfungen"
+
+#: schema/ContractPaymentLink.entityType.php
+msgid ""
+"Link between contract (membership) and payment (recurring contribution)."
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Unique ContractPaymentLink ID"
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "FK to Membership ID"
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "ContributionRecur ID"
+msgstr "Zahlungsvertrag ID"
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "FK to civicrm_contribution_recur"
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Enabled"
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Is this link still active?"
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Creation Date"
+msgstr "Erstellungsdatum"
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Link creation date"
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "Start date of the link (optional)"
+msgstr ""
+
+#: schema/ContractPaymentLink.entityType.php
+msgid "End date of the link (optional)"
+msgstr ""
 
 #: settings/contract.setting.php
 msgid "Contract modification reviewer(s)"
@@ -1282,6 +1512,9 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
 
+#~ msgid "Invalid modification for status '%1'."
+#~ msgstr "Ungültige Änderung für Status '%1'."
+
 #~ msgid "No Payment required"
 #~ msgstr "Keine Zahlung erforderlich"
 
@@ -1299,9 +1532,6 @@ msgstr "Zahlte Vertrag"
 
 #~ msgid "create new mandate"
 #~ msgstr "neues SEPA-Mandat"
-
-#~ msgid "End date"
-#~ msgstr "Enddatum"
 
 #~ msgid "Contract number"
 #~ msgstr "Vertragsnummer"
