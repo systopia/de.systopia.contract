@@ -19,7 +19,26 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
+use Civi\Contract\Contract;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class AddRelatedMembershipEvent extends Event {
+
+  protected Contract $primaryMembershipContract;
+
+  protected int $relatedMembershipContactId;
+
+  public function __construct(Contract $primaryMembershipContract, int $relatedMembershipContactId) {
+    $this->primaryMembershipContract = $primaryMembershipContract;
+    $this->relatedMembershipContactId = $relatedMembershipContactId;
+  }
+
+  public function getPrimaryMembershipContract(): Contract {
+    return $this->primaryMembershipContract;
+  }
+
+  public function getRelatedMembershipContactId(): int {
+    return $this->relatedMembershipContactId;
+  }
+
 }

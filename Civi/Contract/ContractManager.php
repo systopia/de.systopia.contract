@@ -68,10 +68,11 @@ class ContractManager {
    *   The ID of the new related membership.
    */
   public function addRelatedMembership(int $membershipId, int $contactId): int {
-    $event = new AddRelatedMembershipEvent();
+    $contract = $this->get($membershipId);
+
+    $event = new AddRelatedMembershipEvent($contract, $contactId);
     $this->eventDispatcher->dispatch(AddRelatedMembershipEvent::class, $event);
 
-    $contract = $this->get($membershipId);
     $relatedMembership = Membership::create(FALSE)
       ->addValue('owner_membership_id', $contract->getMembershipId())
       ->addValue('contact_id', $contactId)
