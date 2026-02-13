@@ -14,8 +14,10 @@ declare(strict_types = 1);
 require_once 'contract.civix.php';
 // phpcs:enable
 
-use Civi\Contract\ContractManager;
 use CRM_Contract_ExtensionUtil as E;
+use Civi\Contract\ContractManager;
+use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
+use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -30,26 +32,22 @@ function contract_civicrm_container(ContainerBuilder $container): void {
 
   $container->autowire(ContractManager::class);
   $container
-    ->autowire(\Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction::class)
+    ->autowire(AddRelatedMembershipAction::class)
     ->setPublic(TRUE);
   $container
-    ->autowire(\Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction::class)
+    ->autowire(EndRelatedMembershipAction::class)
     ->setPublic(TRUE);
 }
 
 /**
  * Implements hook_civicrm_config().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function contract_civicrm_config(&$config): void {
+function contract_civicrm_config(\CRM_Core_Config &$config): void {
   _contract_civix_civicrm_config($config);
 }
 
 /**
  * Implements hook_civicrm_install().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
 function contract_civicrm_install(): void {
   _contract_civix_civicrm_install();
@@ -57,17 +55,16 @@ function contract_civicrm_install(): void {
 
 /**
  * Implements hook_civicrm_enable().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
 function contract_civicrm_enable(): void {
   _contract_civix_civicrm_enable();
 }
 
 /**
- * UI Adjustements for membership forms
+ * Implements hook_civicrm_pageRun().
  */
 function contract_civicrm_pageRun(CRM_Core_Page &$page): void {
+  // UI Adjustements for membership forms
   /** @var string $page_name */
   $page_name = $page->getVar('_name');
   if ($page_name == 'CRM_Contribute_Page_ContributionRecur') {
@@ -116,13 +113,11 @@ function contract_civicrm_pageRun(CRM_Core_Page &$page): void {
 }
 
 /**
- * UI Adjustments for membership forms
- *
- * @todo shorten this function call - move into an 1 or more alter functions
+ * Implements hook_civicrm_buildForm().
  */
-// phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function contract_civicrm_buildForm(string $formName, CRM_Core_Form &$form): void {
-// phpcs:enable
+  // UI Adjustments for membership forms
   switch ($formName) {
     // Membership form in view mode
     case 'CRM_Member_Form_MembershipView':
@@ -260,9 +255,10 @@ function contract_civicrm_buildForm(string $formName, CRM_Core_Form &$form): voi
 }
 
 /**
- * Custom validation for membership forms
+ * Implements hook_civicrm_validateForm().
  */
 function contract_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  // Custom validation for membership forms
   if (
     $formName == 'CRM_Member_Form_Membership'
     && in_array($form->getAction(), [CRM_Core_Action::UPDATE, CRM_Core_Action::ADD])
@@ -272,9 +268,10 @@ function contract_civicrm_validateForm($formName, &$fields, &$files, &$form, &$e
 }
 
 /**
- * Custom links for memberships
+ * Implements hook_civicrm_links().
  */
 function contract_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
+  // Custom links for memberships
   if ($objectName == 'Membership') {
     if ($objectId) {
       // load membership
@@ -311,23 +308,10 @@ function contract_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$
 }
 
 /**
- * CiviCRM PRE hook: Monitoring of relevant entity changes
- */
-function _contract_civicrm_pre($op, $objectName, $id, &$params) {
-  // FIXME: Monitoring currently not implemented in the new engine
-}
-
-/**
- * CiviCRM POST hook: Monitoring of relevant entity changes
- */
-function _contract_civicrm_post($op, $objectName, $id, &$objectRef) {
-  // FIXME: Monitoring currently not implemented in the new engine
-}
-
-/**
- * Add config link
+ * Implements hook_civicrm_navigationMenu().
  */
 function contract_civicrm_navigationMenu(&$menus) {
+  // TODO: Migrate to managed entities.
   // Find the mailing menu
   foreach ($menus as &$menu) {
     if ($menu['attributes']['name'] == 'Memberships') {
@@ -360,15 +344,10 @@ function contract_civicrm_apiWrappers(&$wrappers, $apiRequest) {
 }
 
 /**
- * Add an "Assign to Campaign" for contact / membership search results
- *
- * @param string $objectType specifies the component
- * @param array $tasks the list of actions
- *
- * @access public
+ * Implements hook_civicrm_searchTasks().
  */
-function contract_civicrm_searchTasks($objectType, &$tasks) {
-  if ($objectType == 'contribution') {
+function contract_civicrm_searchTasks(string $objectType, array &$tasks) {
+  if ('contribution' === $objectType) {
     if (CRM_Core_Permission::check('edit memberships')) {
       $tasks[] = [
         'title' => E::ts('Assign to Contract'),
@@ -385,9 +364,7 @@ function contract_civicrm_searchTasks($objectType, &$tasks) {
 }
 
 /**
- * Add CiviContract permissions
- *
- * @param $permissions
+ * Implements hook_civicrm_permission().
  */
 function contract_civicrm_permission(&$permissions) {
   $permissions['edit core membership CiviContract'] = [
@@ -395,8 +372,3 @@ function contract_civicrm_permission(&$permissions) {
     'description' => E::ts('Allow editing memberships using the core membership form'),
   ];
 }
-
-/**
- * Entity Types Hook
- * @param $entityTypes
- */

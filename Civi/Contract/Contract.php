@@ -21,25 +21,32 @@ namespace Civi\Contract;
 
 use Civi\Api4\Membership;
 
+/**
+ * @phpstan-type membershipT array{
+ *     id: int,
+ *     membership_type_id: int,
+ *     contact_id: int,
+ *   }
+ */
 final class Contract {
 
   private int $membershipId;
 
   /**
-   * @phpstan-var array{
-   *   membership_type_id?: int,
-   * }
+   * @phpstan-var membershipT
    */
-  private array $membership = [];
+  private array $membership;
 
   public function __construct(int $membershipId) {
     $this->membershipId = $membershipId;
 
     try {
-      $this->membership = Membership::get(FALSE)
+      /** @phpstan-var membershipT $membershipResult */
+      $membershipResult = Membership::get(FALSE)
         ->addWhere('id', '=', $this->membershipId)
         ->execute()
         ->single();
+      $this->membership = $membershipResult;
     }
     catch (\Exception $e) {
       throw new \RuntimeException(
@@ -55,7 +62,7 @@ final class Contract {
   }
 
   /**
-   * @phpstan-param array{id: int} $result
+   * @phpstan-param membershipT $result
    */
   public static function createFromApiResult(array $result): Contract {
     $contract = new Contract($result['id']);
@@ -68,9 +75,7 @@ final class Contract {
   }
 
   /**
-   * @phpstan-return array{
-   *    membership_type_id?: int,
-   *  }
+   * @phpstan-return membershipT
    */
   public function getMembership(): array {
     return $this->membership;

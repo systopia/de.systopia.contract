@@ -4652,12 +4652,6 @@ parameters:
 			path: api/v3/Contract/ProcessScheduledModifications.php
 
 		-
-			message: '#^Call to an undefined method object\:\:acquire\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: api/v3/Contract/ProcessScheduledModifications.php
-
-		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -4696,12 +4690,6 @@ parameters:
 		-
 			message: '#^In function "civicrm_api3_Contract_process_scheduled_modifications", caught "Exception" must be rethrown\. Either catch a more specific exception, add a "throw" clause in the "catch" block to propagate the exception or add a "// @ignoreException" comment\.$#'
 			count: 2
-			path: api/v3/Contract/ProcessScheduledModifications.php
-
-		-
-			message: '#^PHPDoc tag @var has invalid value \(\$lock Civi\\Core\\Lock\\LockInterface\)\: Unexpected token "\$lock", expected type at offset 9 on line 1$#'
-			identifier: phpDoc.parseError
-			count: 1
 			path: api/v3/Contract/ProcessScheduledModifications.php
 
 		-
@@ -4813,66 +4801,6 @@ parameters:
 			path: contract.php
 
 		-
-			message: '#^Function _contract_civicrm_post\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_post\(\) has parameter \$id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_post\(\) has parameter \$objectName with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_post\(\) has parameter \$objectRef with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_post\(\) has parameter \$op with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_pre\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_pre\(\) has parameter \$id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_pre\(\) has parameter \$objectName with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_pre\(\) has parameter \$op with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function _contract_civicrm_pre\(\) has parameter \$params with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
 			message: '#^Function contract_civicrm_apiWrappers\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4886,12 +4814,6 @@ parameters:
 
 		-
 			message: '#^Function contract_civicrm_apiWrappers\(\) has parameter \$wrappers with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function contract_civicrm_config\(\) has parameter \$config with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: contract.php
@@ -5013,7 +4935,7 @@ parameters:
 		-
 			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
 			identifier: equal.notAllowed
-			count: 12
+			count: 11
 			path: contract.php
 
 		-

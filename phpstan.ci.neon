@@ -25,3 +25,14 @@ parameters:
 		-
 			message: '#^Binary operation "\." between mixed and ''/contracts/'' results in an error\.$#'
 			path: CRM/Contract/Utils.php
+
+		# Errors we get when using "prefer-stable"
+
+		# Required with civicrm/civicrm-core >= 6.10.0
+		-
+			message: '#^Call to function method_exists\(\) with ''CRM_Core_Error'' and ''formatter'' will always evaluate to true\.$#'
+			path: CRM/Contract/Utils.php
+
+		-
+			message: '#^Call to deprecated method formatTextException\(\) of class CRM_Core_Error\:#'
+			path: CRM/Contract/Utils.php

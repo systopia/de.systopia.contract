@@ -41,7 +41,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
   // make sure no other task is running
   /** @var \Civi\Core\Lock\LockManager $lockManager */
   $lockManager = Civi\Core\Container::singleton()->get('lockManager');
-  /** @var $lock Civi\Core\Lock\LockInterface */
+  /** @var \Civi\Core\Lock\LockInterface $lock */
   $lock = $lockManager->acquire('worker.member.contract_engine');
   if (!$lock->isAcquired()) {
     return civicrm_api3_create_success(
