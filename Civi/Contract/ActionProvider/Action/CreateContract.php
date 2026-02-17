@@ -276,7 +276,7 @@ class CreateContract extends AbstractAction {
   protected function getFinancialTypes(): array {
     return FinancialType::get(FALSE)
       ->addSelect('id', 'name')
-      ->addWhere('is_enabled', '=', TRUE)
+      ->addWhere('is_active', '=', TRUE)
       ->execute()
       ->indexBy('id')
       ->column('name');
