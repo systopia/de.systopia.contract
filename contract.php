@@ -15,9 +15,12 @@ require_once 'contract.civix.php';
 // phpcs:enable
 
 use CRM_Contract_ExtensionUtil as E;
+use Civi\Core\CiviEventDispatcherInterface;
 use Civi\Contract\ContractManager;
+use Civi\Contract\RelatedMembershipValidator;
 use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
+use Civi\Contract\EventSubscriber\RelatedMembershipValidationSubscriber;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -30,13 +33,17 @@ function contract_civicrm_container(ContainerBuilder $container): void {
     $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
   }
 
+  $container->autowire(CiviEventDispatcherInterface::class);
   $container->autowire(ContractManager::class);
+  $container->autowire(RelatedMembershipValidator::class);
   $container
     ->autowire(AddRelatedMembershipAction::class)
     ->setPublic(TRUE);
   $container
     ->autowire(EndRelatedMembershipAction::class)
     ->setPublic(TRUE);
+  $container->autowire(RelatedMembershipValidationSubscriber::class)
+    ->addTag('kernel.event_subscriber');
 }
 
 /**
