@@ -10,6 +10,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Activity;
+
 /**
  * Get the number of scheduled modifications for a contract
  */
@@ -26,18 +28,24 @@ function _civicrm_api3_Contract_get_open_modification_counts_spec(&$params) {
  * Get the number of scheduled modifications for a contract
  */
 function civicrm_api3_Contract_get_open_modification_counts($params) {
-  $activitiesForReview = civicrm_api3('Activity', 'getcount', [
-    'source_record_id' => $params['id'],
-    'status_id' => 'Needs Review',
-  ]);
-  $activitiesScheduled = civicrm_api3('Activity', 'getcount', [
-    'source_record_id' => $params['id'],
-    'status_id' => ['IN' => ['Scheduled']],
-  ]);
-  $activitiesFailed = civicrm_api3('Activity', 'getcount', [
-    'source_record_id' => $params['id'],
-    'status_id' => ['IN' => ['Failed']],
-  ]);
+  $activitiesForReview = Activity::get(FALSE)
+    ->selectRowCount()
+    ->addWhere('contract_activity.contract_id', '=', $params['id'])
+    ->addWhere('status_id:name', '=', 'Needs Review')
+    ->execute()
+    ->count();
+  $activitiesScheduled = Activity::get(FALSE)
+    ->selectRowCount()
+    ->addWhere('contract_activity.contract_id', '=', $params['id'])
+    ->addWhere('status_id:name', '=', 'Scheduled')
+    ->execute()
+    ->count();
+  $activitiesFailed = Activity::get(FALSE)
+    ->selectRowCount()
+    ->addWhere('contract_activity.contract_id', '=', $params['id'])
+    ->addWhere('status_id:name', '=', 'Failed')
+    ->execute()
+    ->count();
   return civicrm_api3_create_success([
     'needs_review' => $activitiesForReview,
     'scheduled' => $activitiesScheduled,

@@ -37,6 +37,7 @@ function _civicrm_api3_Contract_process_scheduled_modifications_spec(&$params) {
 /**
  * Process the scheduled contract modifications
  */
+// @phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function civicrm_api3_Contract_process_scheduled_modifications($params) {
   // make sure no other task is running
   /** @var \Civi\Core\Lock\LockManager $lockManager */
@@ -60,28 +61,38 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
     $params['limit'] = CE_ENGINE_PROCESSING_LIMIT;
   }
 
-  // compile query
-  $activityParams = [
-    'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
-    'status_id' => 'scheduled',
+  $scheduledActivitiesQuery = \Civi\Api4\Activity::get(FALSE)
+    ->addSelect(
+      'id',
+      'activity_type_id',
+      'status_id',
+      'activity_date_time',
+      'subject',
+      'contract_activity.contract_id',
+      'contract_cancellation.*',
+      'contract_updates.*',
+    )
+    ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
+    ->addWhere('status_id:name', '=', 'Scheduled')
     // execute everything scheduled in the past
-    'activity_date_time' => ['<=' => date('Y-m-d H:i:s', strtotime($params['now'] ?? 'now'))],
-    'option.limit' => $params['limit'],
+    ->addWhere('activity_date_time', '<=', date('Y-m-d H:i:s', strtotime($params['now'] ?? 'now')))
+    ->setLimit($params['limit'])
     // in the scheduled order(!)
-    'sequential' => 1,
-    'option.sort' => 'activity_date_time ASC, id ASC',
-    'return' => 'id,activity_type_id,status_id,activity_date_time,subject,source_record_id,'
-    . CRM_Contract_Change::getCustomFieldList(),
-  ];
-  if (!empty($params['id'])) {
-    $activityParams['source_record_id'] = (int) $params['id'];
+    ->addOrderBy('activity_date_time', 'ASC')
+    ->addOrderBy('id', 'ASC');
+
+  if (is_numeric($params['id'] ?? NULL)) {
+    $scheduledActivitiesQuery->addWhere('contract_activity.contract_id', '=', (int) $params['id']);
   }
 
   // run query
   $result  = [];
   $counter = 0;
-  $scheduled_activities = civicrm_api3('Activity', 'get', $activityParams);
-  foreach ($scheduled_activities['values'] as $scheduled_activity) {
+  /** @phpstan-var list<array<string, mixed>> $scheduled_activities */
+  $scheduled_activities = $scheduledActivitiesQuery
+    ->execute()
+    ->getArrayCopy();
+  foreach ($scheduled_activities as $scheduled_activity) {
     CRM_Contract_Utils::stripNonContractActivityCustomFields($scheduled_activity);
     $counter++;
     if ($counter > $params['limit']) {
@@ -89,6 +100,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
     }
 
     // execute the changes
+    // @phpstan-ignore argument.type
     $change = CRM_Contract_Change::getChangeForData($scheduled_activity);
     $result['order'][] = $change->getID();
     try {

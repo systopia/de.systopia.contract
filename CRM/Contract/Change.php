@@ -17,16 +17,33 @@ use CRM_Contract_ExtensionUtil as E;
  *
  * This new 'Change' concept is the replacement for the CRM_Contract_ModificationActivity
  *  and the CRM_Contract_Handlers
+ *
+ * @phpstan-type changeT array{
+ *   activity_type_id: int|string,
+ *   activity_date_time?: string,
+ *   campaign_id?: int,
+ *   membership_type_id?: int,
+ *   "contract_activity.contract_id"?: int,
+ *   "membership_payment.cycle_day"?: int,
+ *   "membership_payment.defer_payment_start"?: int,
+ *   "membership_payment.from_name"?: string,
+ *   "membership_payment.from_ba"?: string,
+ *   "membership_payment.to_ba"?: string,
+ *   "membership_payment.membership_annual"?: float,
+ *   "membership_payment.membership_frequency"?: int,
+ *   "membership_payment.membership_recurring_contribution"?: int,
+ *   "membership_payment.payment_instrument"?: int,
+ *   "membership_cancellation.membership_cancel_reason"?: string,
+ *  }
  */
 // phpcs:disable Generic.NamingConventions.AbstractClassNamePrefix.Missing
 abstract class CRM_Contract_Change {
 // phpcs:enable
 
   /**
-   * @phpstan-var array<string, mixed>
-   * Data representing the data. Will mostly be the activity data
+   * @phpstan-var changeT
    */
-  protected ?array $data = NULL;
+  protected array $data;
 
   /**
    * @phpstan-var array<string, mixed>
@@ -87,9 +104,9 @@ abstract class CRM_Contract_Change {
   ];
 
   /**
-   * @phpstan-param array<string, mixed>|null $data
+   * @phpstan-param changeT $data
    */
-  protected function __construct(?array $data) {
+  protected function __construct(array $data) {
     $this->data = $data;
     // make sure activity_type_id is numeric
     $this->data['activity_type_id'] = $this->getActvityTypeID();
@@ -179,8 +196,17 @@ abstract class CRM_Contract_Change {
   /**
    * Get the contract ID
    */
-  public function getContractID() {
-    return (int) $this->data['source_record_id'];
+  public function getContractID(): ?int {
+    $contractReferenceFieldId = \Civi\Api4\CustomField::get(FALSE)
+      ->addSelect('id')
+      ->addWhere('custom_group_id:name', '=', 'contract_activity')
+      ->addWhere('name', '=', 'contract_id')
+      ->execute()
+      ->single()['id'];
+    $contractId = $this->data['contract_activity.contract_id']
+      ?? $this->data['custom_' . $contractReferenceFieldId]
+      ?? NULL;
+    return NULL !== $contractId ? (int) $contractId : NULL;
   }
 
   /**
@@ -193,6 +219,7 @@ abstract class CRM_Contract_Change {
     // propagate derived fields
     foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
       if (empty($this->data[$change_attribute])) {
+        // @phpstan-ignore assign.propertyType
         $this->data[$change_attribute] = $contract[$contract_attribute] ?? '';
       }
     }
@@ -301,8 +328,8 @@ abstract class CRM_Contract_Change {
    * @return int activity type ID
    */
   public function getActvityTypeID() {
-    if (is_numeric($this->data['activity_type_id'])) {
-      return $this->data['activity_type_id'];
+    if (is_numeric($this->data['activity_type_id'] ?? NULL)) {
+      return (int) $this->data['activity_type_id'];
     }
 
     // otherwise translate class to ID
@@ -412,8 +439,8 @@ abstract class CRM_Contract_Change {
    * @param $value string value to set
    */
   public function setParameter($key, $value) {
+    // @phpstan-ignore assign.propertyType
     $this->data[$key] = $value;
-    // TODO: mark as dirty?
   }
 
   /**
@@ -674,24 +701,23 @@ abstract class CRM_Contract_Change {
   /**
    * Get the class for the given activity type
    *
-   * @param $activity_type int|string acitivity type ID or name
-   * @return string class name
+   * @param int|string $activity_type acitivity type ID or name
    */
-  public static function getClassByActivityType($activity_type_id) {
+  public static function getClassByActivityType($activity_type): ?string {
     // check name -> class mapping first
-    if (isset(self::TYPE2CLASS[$activity_type_id])) {
-      return self::TYPE2CLASS[$activity_type_id];
+    if (isset(self::TYPE2CLASS[$activity_type])) {
+      return self::TYPE2CLASS[$activity_type];
     }
 
     // check action -> class mapping second
-    if (isset(self::ACTION2CLASS[$activity_type_id])) {
-      return self::ACTION2CLASS[$activity_type_id];
+    if (isset(self::ACTION2CLASS[$activity_type])) {
+      return self::ACTION2CLASS[$activity_type];
     }
 
     // then try ID -> class
     $type_id2class = self::getActivityTypeId2Class();
-    if (isset($type_id2class[$activity_type_id])) {
-      return $type_id2class[$activity_type_id];
+    if (isset($type_id2class[$activity_type])) {
+      return $type_id2class[$activity_type];
     }
 
     // not found? not one of ours!
@@ -802,17 +828,18 @@ abstract class CRM_Contract_Change {
   /**
    * Get a change with data
    *
-   * @param $data array data
-   * @return CRM_Contract_Change change entity
-   * @throws Exception if the change type couldn't be detected from the activity_type_id
+   * @param changeT $data
+   * @return \CRM_Contract_Change change entity
+   * @throws \RuntimeException if the change type couldn't be detected from the activity_type_id
    */
   public static function getChangeForData($data) {
     if (empty($data['activity_type_id'])) {
       throw new \RuntimeException('No activity_type_id given.');
     }
 
+    /** @var class-string<\CRM_Contract_Change>|null $change_class */
     $change_class = self::getClassByActivityType($data['activity_type_id']);
-    if (empty($change_class)) {
+    if (NULL === $change_class) {
       throw new \RuntimeException(
         "Activity type ID '{$data['activity_type_id']}' is not a valid contract change type."
       );
@@ -828,15 +855,13 @@ abstract class CRM_Contract_Change {
   /**
    * Get a comma separated list of all change activity custom fields
    *
-   * @return string list of field names
+   * @phpstan-return list<string>
+   *   list of field names
    */
   public static function getCustomFieldList() {
     $field_names = [];
     $fields = CRM_Contract_CustomData::getCustomFieldsForGroups(['contract_cancellation', 'contract_updates']);
-    foreach ($fields as $field) {
-      $field_names[] = "custom_{$field['id']}";
-    }
-    return implode(',', $field_names);
+    return array_column($fields, 'name');
   }
 
   /**

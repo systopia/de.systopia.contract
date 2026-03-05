@@ -14,9 +14,16 @@ declare(strict_types = 1);
 
 class CRM_Contract_Handler_ModificationConflicts {
 
-  private $scheduledModifications = [];
-  private $contractId = NULL;
-  protected $needsReviewStatusId;
+  /**
+   * @phpstan-var list<array{
+   *     id: int,
+   *     status_id: int|string,
+   *     activity_type_id: int,
+   *   }> $scheduledModifications
+   */
+  private array $scheduledModifications = [];
+  private ?int $contractId = NULL;
+  protected int $needsReviewStatusId;
 
   public function __construct() {
     $this->needsReviewStatusId = (int) civicrm_api3(
@@ -41,7 +48,7 @@ class CRM_Contract_Handler_ModificationConflicts {
     // consider to be safe. Any modifications left once all the functions have
     // been run will be marked for review.
 
-    $this->getScheduledModifications();
+    $this->retrieveScheduledModifications();
 
     $this->whitelistOneActivity();
 
@@ -56,21 +63,16 @@ class CRM_Contract_Handler_ModificationConflicts {
     }
   }
 
-  public function getScheduledModifications() {
-    $scheduledModifications = civicrm_api3('activity', 'get', [
-    // With more than 10,000 scheduled updates for this contract, probably time to review organisational procedures.
-      'option.limit' => 10000,
-      'source_record_id' => $this->contractId,
-      'status_id' => ['IN' => ['scheduled', 'needs review']],
-    ])['values'];
-    foreach ($scheduledModifications as $k => &$scheduledModification) {
-      $scheduledModification['activity_date_unixtime'] = strtotime($scheduledModification['activity_date_time']);
-    }
-    usort($scheduledModifications, function($a, $b) {
-      return $a['activity_date_unixtime'] - $b['activity_date_unixtime'];
-    });
-    $this->scheduledModifications = $scheduledModifications;
-
+  public function retrieveScheduledModifications(): void {
+    // TODO: This query used to have a limit of 10.000 but without ordering or other handling;
+    //       add performance-related error handling.
+    // @phpstan-ignore assign.propertyType
+    $this->scheduledModifications = \Civi\Api4\Activity::get(FALSE)
+      ->addWhere('contract_activity.contract_id', '=', $this->contractId)
+      ->addWhere('status_id:name', 'IN', ['Scheduled', 'Needs Review'])
+      ->addOrderBy('activity_date_time')
+      ->execute()
+      ->getArrayCopy();
   }
 
   /**
@@ -123,6 +125,7 @@ class CRM_Contract_Handler_ModificationConflicts {
       (int) $pauseActivity['activity_type_id'] === CRM_Contract_Change::getActivityIdForClass(
         'CRM_Contract_Change_Pause'
       )
+      && FALSE !== $resumeActivity
       && (int) $resumeActivity['activity_type_id'] === CRM_Contract_Change::getActivityIdForClass(
         'CRM_Contract_Change_Resume'
       )

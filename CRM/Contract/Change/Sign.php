@@ -95,7 +95,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
     if (!empty($c['membership_payment.cycle_day'])) {
       $parts[] = E::ts('Cycle day %1', [1 => $c['membership_payment.cycle_day']]);
     }
-    $suffix = $parts ? (' — ' . implode(' • ', $parts)) : '';
+    $suffix = [] !== $parts ? (' — ' . implode(' • ', $parts)) : '';
     return E::ts('New membership contract') . $suffix;
   }
 

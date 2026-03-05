@@ -61,7 +61,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
         $contract = $this->getContract();
         $resume_change = CRM_Contract_Change::getChangeForData(['activity_type_id' => 'Contract_Resumed']);
         $resume_change->setParameter('activity_date_time', $resume_date);
-        $resume_change->setParameter('source_record_id', $this->getContractID());
+        $resume_change->setParameter('contract_activity.contract_id', $this->getContractID());
         $resume_change->setParameter('source_contact_id', $this->getParameter('source_contact_id'));
         $resume_change->setParameter('target_contact_id', $contract['contact_id']);
         $resume_change->setParameter('subject', $resume_change->getSubject($contract));

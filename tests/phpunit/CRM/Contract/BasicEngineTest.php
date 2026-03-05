@@ -138,7 +138,13 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // schedule and update for tomorrow
       $this->modifyContract($contract['id'], 'pause', 'tomorrow');
-      $changes = $this->callAPISuccess('Activity', 'get', ['source_record_id' => $contract['id']]);
+      $contractReferenceFieldId = \Civi\Api4\CustomField::get(FALSE)
+        ->addSelect('id')
+        ->addWhere('custom_group_id:name', '=', 'contract_activity')
+        ->addWhere('name', '=', 'contract_id')
+        ->execute()
+        ->single()['id'];
+      $changes = $this->callAPISuccess('Activity', 'get', ['custom_' . $contractReferenceFieldId => $contract['id']]);
 
       // run engine see if anything changed
       $this->runContractEngine($contract['id']);
@@ -258,9 +264,11 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       'membership_payment.membership_annual' => '123.00',
     ]);
     // resolve "Needs Review"
-    CRM_Core_DAO::executeQuery(
-      "UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;"
-    );
+    \Civi\Api4\Activity::update(FALSE)
+      ->addValue('status_id:name', 'Scheduled')
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
+      ->addWhere('status_id:name', '!=', 'Completed')
+      ->execute();
     // run the cancellation (but not the update)
     $this->runContractEngine($contract['id'], '+2 days');
 
@@ -276,9 +284,11 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
       'membership_cancellation.membership_cancel_reason' => 'Unknown',
     ]);
     // resolve "Needs Review"
-    CRM_Core_DAO::executeQuery(
-      "UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;"
-    );
+    \Civi\Api4\Activity::update(FALSE)
+      ->addValue('status_id:name', 'Scheduled')
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
+      ->addWhere('status_id:name', '!=', 'Completed')
+      ->execute();
     // run cancellation
     $this->callEngineFailure(
       $contract['id'],

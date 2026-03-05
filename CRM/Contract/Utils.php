@@ -296,30 +296,25 @@ class CRM_Contract_Utils {
   }
 
   /**
-   * If configured this way, this call will delete the defined
-   *  list of system-generated activities
-   *
-   * @param $contract_id int the contract number
+   * If configured this way, this call will delete the defined list of system-generated activities.
    */
-  public static function deleteSystemActivities($contract_id) {
-    if (empty($contract_id)) {
+  public static function deleteSystemActivities(?int $contract_id): void {
+    if (!isset($contract_id)) {
       return;
     }
 
-    $activity_types_to_delete = CRM_Contract_Configuration::suppressSystemActivityTypes();
-    if (!empty($activity_types_to_delete)) {
-      // find them
-      $activity_search = civicrm_api3('Activity', 'get', [
-        'source_record_id'   => $contract_id,
-        'activity_type_id'   => ['IN' => $activity_types_to_delete],
-        'activity_date_time' => ['>=' => date('Ymd') . '000000'],
-        'return'             => 'id',
-      ]);
-
-      // delete them
-      foreach ($activity_search['values'] as $activity) {
-        civicrm_api3('Activity', 'delete', ['id' => $activity['id']]);
-      }
+    $activityTypesToDelete = CRM_Contract_Configuration::suppressSystemActivityTypes();
+    if ([] !== $activityTypesToDelete) {
+      \Civi\Api4\Activity::delete(FALSE)
+        // Using "source_record_id" here as Core uses that field for system membership activities.
+        ->addWhere('source_record_id', '=', $contract_id)
+        ->addWhere('activity_type_id:name', 'IN', $activityTypesToDelete)
+        ->addWhere(
+          'activity_date_time',
+          '>=',
+          date_create('today midnight')->format('Y-m-d H:i:s')
+        )
+        ->execute();
     }
   }
 
@@ -354,9 +349,9 @@ class CRM_Contract_Utils {
    *
    * @todo remove this code once APIv4 is used
    *
-   * @param array $data
+   * @phpstan-param array<string, mixed> $data
    */
-  public static function stripNonContractActivityCustomFields(array &$data) {
+  public static function stripNonContractActivityCustomFields(array &$data): void {
     // whitelist of contract activity custom fields
     $allowedFields = array_map(
       function($field) {

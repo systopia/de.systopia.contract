@@ -34,12 +34,9 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
       'return' => 'currency',
     ]));
 
-    // Set activity params
-    $activityParams = [
-      'source_record_id' => $id,
-      'status_id' => ['NOT IN' => ['cancelled']],
-      'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
-      'return' => [
+    /** @phpstan-var array<int, array<string, mixed>> $activities */
+    $activities = \Civi\Api4\Activity::get(FALSE)
+      ->addSelect(
         'activity_date_time',
         'status_id',
         'activity_type_id',
@@ -48,25 +45,17 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
         'details',
         'campaign_id',
         'medium_id',
-      ],
-      'option.sort'        => 'activity_date_time DESC, id DESC',
-
-    ];
-    foreach (civicrm_api3(
-      'CustomField',
-      'get',
-      [
-        'custom_group_id' => [
-          'IN' => [
-            'contract_cancellation',
-            'contract_updates',
-          ],
-        ],
-      ]
-    )['values'] as $customField) {
-      $activityParams['return'][] = 'custom_' . $customField['id'];
-    }
-    $activities = civicrm_api3('Activity', 'get', $activityParams)['values'];
+        'contract_cancellation.*',
+        'contract_updates.*',
+      )
+      ->addWhere('contract_activity.contract_id', '=', $id)
+      ->addWhere('status_id', 'NOT IN', ['Cancelled'])
+      ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
+      ->addOrderBy('activity_date_time', 'DESC')
+      ->addOrderBy('id', 'DESC')
+      ->execute()
+      ->indexBy('id')
+      ->getArrayCopy();
 
     // Friendlify custom field names
     CRM_Contract_Utils::warmCustomFieldCache();
@@ -79,54 +68,55 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     $cancelReasons = [];
 
     // todo: refactor for better performance
-    foreach ($activities as $key => $activity) {
-
-      foreach ($activity as $innerKey => $field) {
-        if (isset($customFieldIndex[$innerKey])) {
-          unset($activities[$key][$innerKey]);
-          $activities[$key][$customFieldIndex[$innerKey]] = $field;
+    foreach ($activities as $activityId => $activity) {
+      foreach ($activity as $fieldName => $field) {
+        $newFieldName = str_replace('.', '_', $fieldName);
+        if ($newFieldName !== $fieldName) {
+          unset($activities[$activityId][$fieldName]);
+          $activities[$activityId][$newFieldName] = $field;
         }
       }
       if (
-        isset($activities[$key]['contract_updates_ch_recurring_contribution'])
-        && $activities[$key]['contract_updates_ch_recurring_contribution']
+        isset($activities[$activityId]['contract_updates_ch_recurring_contribution'])
+        && $activities[$activityId]['contract_updates_ch_recurring_contribution']
       ) {
+        /** @phpstan-var array<string, mixed> $rc */
         $rc = civicrm_api3(
           'ContributionRecur',
           'getsingle',
-          ['id' => $activities[$key]['contract_updates_ch_recurring_contribution']]
+          ['id' => $activities[$activityId]['contract_updates_ch_recurring_contribution']]
         );
-        $activities[$key]['payment_instrument_id'] = $rc['payment_instrument_id'];
-        $activities[$key]['recurring_contribution_contact_id'] = $rc['contact_id'];
+        $activities[$activityId]['payment_instrument_id'] = $rc['payment_instrument_id'];
+        $activities[$activityId]['recurring_contribution_contact_id'] = $rc['contact_id'];
       }
       if (
-        isset($activities[$key]['contract_updates_ch_annual'])
-        && isset($activities[$key]['contract_updates_ch_frequency'])
-        && $activities[$key]['contract_updates_ch_annual']
-        && $activities[$key]['contract_updates_ch_frequency']
+        isset($activities[$activityId]['contract_updates_ch_annual'])
+        && isset($activities[$activityId]['contract_updates_ch_frequency'])
+        && $activities[$activityId]['contract_updates_ch_annual']
+        && $activities[$activityId]['contract_updates_ch_frequency']
       ) {
-        $activities[$key]['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
-            $activities[$key]['contract_updates_ch_annual']
-          ) / $activities[$key]['contract_updates_ch_frequency'];
-        $activities[$key]['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
-          $activities[$key]['contract_updates_ch_amount']
+        $activities[$activityId]['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
+            $activities[$activityId]['contract_updates_ch_annual']
+          ) / $activities[$activityId]['contract_updates_ch_frequency'];
+        $activities[$activityId]['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
+          $activities[$activityId]['contract_updates_ch_amount']
         );
       }
-      if (isset($activities[$key]['campaign_id'])) {
-        $campaigns[] = $activities[$key]['campaign_id'];
+      if (isset($activities[$activityId]['campaign_id'])) {
+        $campaigns[] = $activities[$activityId]['campaign_id'];
       }
-      if (isset($activities[$key]['contract_cancellation_contact_history_cancel_reason'])) {
-        $cancelReasons[] = $activities[$key]['contract_cancellation_contact_history_cancel_reason'];
+      if (isset($activities[$activityId]['contract_cancellation_contact_history_cancel_reason'])) {
+        $cancelReasons[] = $activities[$activityId]['contract_cancellation_contact_history_cancel_reason'];
       }
-      if (isset($activities[$key]['source_contact_id'])) {
-        $contacts[] = $activities[$key]['source_contact_id'];
+      if (isset($activities[$activityId]['source_contact_id'])) {
+        $contacts[] = $activities[$activityId]['source_contact_id'];
       }
 
       // add title/hover title
       $display_titles = DisplayChangeTitle::renderDisplayChangeTitleAndHoverText(
-                            $activities[$key]['activity_type_id'], $activities[$key]['id']);
-      $activities[$key]['display_title'] = $display_titles->getDisplayTitle();
-      $activities[$key]['display_hover_title'] = $display_titles->getDisplayHover();
+                            $activities[$activityId]['activity_type_id'], $activities[$activityId]['id']);
+      $activities[$activityId]['display_title'] = $display_titles->getDisplayTitle();
+      $activities[$activityId]['display_hover_title'] = $display_titles->getDisplayHover();
     }
 
     $this->assign('activities', $activities);
@@ -215,20 +205,6 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     // since Civi 4.7, wysiwyg/ckeditor is a default core resource
     if (version_compare(CRM_Utils_System::version(), '4.7', '<')) {
       CRM_Core_Resources::singleton()->addScriptFile('civicrm', 'packages/ckeditor/ckeditor.js');
-    }
-    foreach (civicrm_api3(
-      'CustomField',
-      'get',
-      [
-        'custom_group_id' => [
-          'IN' => [
-            'contract_cancellation',
-            'contract_updates',
-          ],
-        ],
-      ]
-    )['values'] as $customField) {
-      $activityParams['return'][] = 'custom_' . $customField['id'];
     }
 
     // hide some columns
