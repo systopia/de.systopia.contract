@@ -828,15 +828,13 @@ abstract class CRM_Contract_Change {
   /**
    * Get a comma separated list of all change activity custom fields
    *
-   * @return string list of field names
+   * @phpstan-return list<string>
+   *   list of field names
    */
   public static function getCustomFieldList() {
     $field_names = [];
     $fields = CRM_Contract_CustomData::getCustomFieldsForGroups(['contract_cancellation', 'contract_updates']);
-    foreach ($fields as $field) {
-      $field_names[] = "custom_{$field['id']}";
-    }
-    return implode(',', $field_names);
+    return array_column($fields, 'name');
   }
 
   /**
