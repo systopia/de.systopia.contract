@@ -75,7 +75,7 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
         'Activity subject should contain the changed cycle day'
       );
       $this->assertStringContainsOtherString(
-        'Annual amount: 144.00 → 168.00',
+        'Annual amount: $144.00 → $168.00',
         $change_activity['subject'],
         'Activity subject should contain the changed amount'
       );

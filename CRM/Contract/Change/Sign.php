@@ -42,7 +42,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
   public function populateData() {
     parent::populateData();
     $contract = $this->getContract(TRUE);
-    $this->data['contract_updates.ch_annual_diff'] = $contract['membership_payment.membership_annual'] ?? '';
+    $this->data['contract_updates.ch_annual_diff'] = $contract['membership_payment.membership_annual'] ?? 0.0;
   }
 
   /**

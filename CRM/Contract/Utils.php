@@ -332,12 +332,15 @@ class CRM_Contract_Utils {
   }
 
   public static function formatExceptionForTest(Exception $e): string {
+    // Added in CiviCRM 6.10
+    // @phpstan-ignore function.alreadyNarrowedType
     if (method_exists(CRM_Core_Error::class, 'formatter')) {
       /** @var string $formattedException */
       $formattedException = CRM_Core_Error::formatter('text')->formatException($e);
       return $formattedException;
     }
     else {
+      // @phpstan-ignore staticMethod.deprecated
       return CRM_Core_Error::formatTextException($e);
     }
   }

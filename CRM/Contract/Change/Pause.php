@@ -84,7 +84,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
     $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
     if ($payment_contract_id) {
       CRM_Contract_SepaLogic::pauseSepaMandate($payment_contract_id);
-      $this->updateContract(['status_id' => 'Paused']);
+      $this->updateContract(['status_id:name' => 'Paused']);
     }
 
     // update change activity
