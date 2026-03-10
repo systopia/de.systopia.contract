@@ -8,6 +8,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Activity;
+use Civi\Api4\MembershipStatus;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -63,7 +65,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       // @phpstan-ignore offsetAccess.notFound
       self::MEMBERSHIP_CANCEL_REASON => $this->data[self::MEMBERSHIP_CANCEL_REASON],
       self::MEMBERSHIP_CANCEL_DATE   => date('YmdHis'),
-      'status_id'                    => 'Cancelled',
+      'status_id:name'               => 'Cancelled',
     ];
 
     // perform the update
@@ -125,19 +127,20 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     //  @see https://redmine.greenpeace.at/issues/1190
     $contract = $this->getContract();
 
-    /** @phpstan-var array{id: int} $contractCancelledStatus */
-    $contractCancelledStatus = civicrm_api3('MembershipStatus', 'get', [
-      'name'   => 'Cancelled',
-      'return' => 'id',
-    ]);
+    $contractCancelledStatus = MembershipStatus::get(FALSE)
+      ->addWhere('name', '=', 'Cancelled')
+      ->addSelect('id')
+      ->execute()
+      ->single();
     if ((int) $contract['status_id'] === (int) $contractCancelledStatus['id']) {
-      $pendingActivityCount = \Civi\Api4\Activity::get(FALSE)
+      // contract is cancelled
+      $pendingActivityCount = Activity::get(FALSE)
         ->selectRowCount()
         ->addWhere('contract_activity.contract_id', '=', $this->getContractID())
         ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
         ->addWhere('status_id:name', 'IN', ['Scheduled', 'Needs Review'])
         ->execute()
-        ->count();
+        ->countMatched();
       if (0 === $pendingActivityCount) {
         throw new \RuntimeException('Scheduling an (additional) cancellation request is not desired in this context.');
       }
