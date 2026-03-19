@@ -21,41 +21,32 @@ use CRM_Contract_ExtensionUtil as E;
 
 return [
   [
-    'name' => 'SavedSearch_Primary_memberships',
+    'name' => 'SavedSearch_Primary_and_Secondary_Memberships',
     'entity' => 'SavedSearch',
     'cleanup' => 'unused',
     'update' => 'unmodified',
     'params' => [
       'version' => 4,
       'values' => [
-        'name' => 'Primary_memberships',
-        'label' => E::ts('Primary Memberships'),
+        'name' => 'Primary_and_Secondary_Memberships',
+        'label' => E::ts('Primary and Secondary Memberships'),
         'api_entity' => 'Membership',
         'api_params' => [
           'version' => 4,
           'select' => [
+            'IFNULL(owner_membership_id, id) AS IFNULL_owner_membership_id_id',
             'id',
+            'IFNULL(owner_membership_id.contact_id, contact_id) AS IFNULL_owner_membership_id_contact_id_contact_id',
+            'is_primary_member',
             'contact_id.sort_name',
-            'membership_type_id:label',
+            'join_date',
             'start_date',
             'end_date',
+            'status_id:label',
           ],
           'orderBy' => [],
-          'where' => [
-            [
-              'is_primary_member',
-              '=',
-              TRUE,
-            ],
-            [
-              'status_id:name',
-              '=',
-              'Current',
-            ],
-          ],
-          'groupBy' => [
-            'id',
-          ],
+          'where' => [],
+          'groupBy' => [],
           'join' => [
             [
               'Membership AS Membership_Membership_owner_membership_id_01',
@@ -76,22 +67,26 @@ return [
     ],
   ],
   [
-    'name' => 'SavedSearch_Primary_memberships_SearchDisplay_Primary_memberships',
+    'name' => 'SavedSearch_Primary_and_Secondary_Memberships_SearchDisplay_Primary_and_Secondary_Memberships_Table',
     'entity' => 'SearchDisplay',
     'cleanup' => 'unused',
     'update' => 'unmodified',
     'params' => [
       'version' => 4,
       'values' => [
-        'name' => 'Primary_memberships',
-        'label' => E::ts('Primary Memberships'),
-        'saved_search_id.name' => 'Primary_memberships',
+        'name' => 'Primary_and_Secondary_Memberships_Table',
+        'label' => E::ts('Primary and Secondary Memberships Table'),
+        'saved_search_id.name' => 'Primary_and_Secondary_Memberships',
         'type' => 'table',
         'settings' => [
-          'description' => NULL,
+          'description' => E::ts('This display shows primary and associated secondary memberships.'),
           'sort' => [
             [
-              'id',
+              'IFNULL_owner_membership_id_id',
+              'ASC',
+            ],
+            [
+              'is_primary_member',
               'DESC',
             ],
           ],
@@ -102,36 +97,37 @@ return [
             [
               'type' => 'field',
               'key' => 'id',
-              'dataType' => 'Integer',
-              'label' => E::ts('Mitgliedschafts ID'),
+              'label' => E::ts('Membership ID'),
               'sortable' => TRUE,
             ],
             [
               'type' => 'field',
               'key' => 'contact_id.sort_name',
-              'dataType' => 'String',
-              'label' => E::ts('Kontakt Sortiername'),
+              'label' => E::ts('Contact sort name'),
               'sortable' => TRUE,
             ],
             [
               'type' => 'field',
-              'key' => 'membership_type_id:label',
-              'dataType' => 'Integer',
-              'label' => E::ts('Mitgliedsart'),
+              'key' => 'join_date',
+              'label' => E::ts('Member since'),
               'sortable' => TRUE,
             ],
             [
               'type' => 'field',
               'key' => 'start_date',
-              'dataType' => 'Date',
-              'label' => E::ts('Beginn der Mitgliedschaft'),
+              'label' => E::ts('Start date'),
               'sortable' => TRUE,
             ],
             [
               'type' => 'field',
               'key' => 'end_date',
-              'dataType' => 'Date',
-              'label' => E::ts('Ablaufdatum der Mitgliedschaft'),
+              'label' => E::ts('End date'),
+              'sortable' => TRUE,
+            ],
+            [
+              'type' => 'field',
+              'key' => 'status_id:label',
+              'label' => E::ts('Status'),
               'sortable' => TRUE,
             ],
             [
@@ -142,7 +138,7 @@ return [
                   'join' => '',
                   'target' => 'crm-popup',
                   'icon' => 'fa-external-link',
-                  'text' => E::ts('Zeige Mitgliedschaft'),
+                  'text' => E::ts('View Membership'),
                   'style' => 'default',
                   'path' => '',
                   'task' => '',
@@ -154,7 +150,7 @@ return [
                   'join' => '',
                   'target' => 'crm-popup',
                   'icon' => 'fa-pencil',
-                  'text' => E::ts('Update Mitgliedschaft'),
+                  'text' => E::ts('Update Membership'),
                   'style' => 'default',
                   'path' => '',
                   'task' => '',
@@ -185,7 +181,7 @@ return [
                   'join' => '',
                   'target' => 'crm-popup',
                   'icon' => 'fa-trash',
-                  'text' => E::ts('Lösche Mitgliedschaft'),
+                  'text' => E::ts('Delete Membership'),
                   'style' => 'danger',
                   'path' => '',
                   'task' => '',
@@ -200,6 +196,15 @@ return [
           'classes' => [
             'table',
             'table-striped',
+          ],
+          'actions_display_mode' => 'menu',
+          'cssRules' => [
+            [
+              'bg-primary',
+              'is_primary_member',
+              '=',
+              TRUE,
+            ],
           ],
         ],
       ],
