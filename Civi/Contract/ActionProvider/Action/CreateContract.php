@@ -232,7 +232,7 @@ class CreateContract extends AbstractContractAction {
       $params = $this->translateParamsForContractApi($parameters);
 
       try {
-        $result = Contract::createFull(FALSE)
+        $result = Contract::createfull(FALSE)
           ->setValues($params)
           ->execute()
           ->single();
@@ -452,6 +452,9 @@ class CreateContract extends AbstractContractAction {
     return $contractData;
   }
 
+  /**
+   * @phpstan-return array<string, string>
+   */
   private function translateParamsForContractApi(ParameterBagInterface $parameters): array {
 
     $map = [

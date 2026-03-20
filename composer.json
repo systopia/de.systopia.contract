@@ -23,6 +23,9 @@
         "civicrm/civicrm-core": ">=5.81",
         "civicrm/civicrm-packages": ">=5.81"
     },
+    "require-dev": {
+        "systopia/civicrm-test-fixtures": "dev-improvements"
+    },
     "autoload": {
         "classmap": ["ComposerHelper.php"]
     },

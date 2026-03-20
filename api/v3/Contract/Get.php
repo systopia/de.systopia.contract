@@ -12,8 +12,6 @@ declare(strict_types = 1);
  * Contract.get -> redirected to Membership.get
  */
 function _civicrm_api3_Contract_get_spec(&$params) {
-  //@phpstan-ignore includeOnce.fileNotFound
-  include_once 'api/v3/Membership.php';
   _civicrm_api3_membership_get_spec($params);
 }
 

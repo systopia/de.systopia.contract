@@ -11,5 +11,6 @@ parameters:
 		- {VENDOR_DIR}/civicrm/civicrm-core/CRM/
 		- {VENDOR_DIR}/civicrm/civicrm-core/ext/
 		- {VENDOR_DIR}/civicrm/civicrm-packages/HTML/
+		- {VENDOR_DIR}/systopia/civicrm-test-fixtures/
 	bootstrapFiles:
 		- {VENDOR_DIR}/autoload.php
