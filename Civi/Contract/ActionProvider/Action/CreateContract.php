@@ -18,18 +18,16 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\ActionProvider\Action;
 
-use Civi\ActionProvider\Action\AbstractAction;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\Specification;
 use Civi\ActionProvider\Parameter\SpecificationBag;
 
-use Civi\Api4\Campaign;
+use Civi\Api4\Contract;
 use Civi\Api4\FinancialType;
-use Civi\Api4\MembershipType;
 use Civi\Api4\SepaCreditor;
 use CRM_Contract_ExtensionUtil as E;
 
-class CreateContract extends AbstractAction {
+class CreateContract extends AbstractContractAction {
 
   /**
    * Returns the specification of the configuration options for the actual action.
@@ -106,6 +104,16 @@ class CreateContract extends AbstractAction {
         NULL,
         $this->getMultipleContractOptions()
       ),
+      new Specification(
+        'default_payment_option',
+        'String',
+        E::ts('Payment Option (without this defaults to SEPA)'),
+        FALSE,
+        NULL,
+        NULL,
+        \CRM_Contract_Configuration::getPaymentOptions(),
+        FALSE
+      ),
     ]);
   }
 
@@ -116,7 +124,7 @@ class CreateContract extends AbstractAction {
    */
   public function getParameterSpecification() {
     return new SpecificationBag([
-        // required fields
+      // required fields
       new Specification('contact_id', 'Integer', E::ts('Contact ID'), TRUE),
       new Specification('membership_type_id', 'Integer', E::ts('Membership Type ID'), FALSE),
       new Specification('iban', 'String', E::ts('IBAN'), TRUE),
@@ -124,11 +132,11 @@ class CreateContract extends AbstractAction {
       new Specification('amount', 'Money', E::ts('Amount'), TRUE),
       new Specification('reference', 'String', E::ts('Mandate Reference'), FALSE),
 
-        // recurring information
+      // recurring information
       new Specification('frequency', 'Integer', E::ts('Frequency'), FALSE, 12, NULL, $this->getFrequencies()),
       new Specification('cycle_day', 'Integer', E::ts('Collection Day'), FALSE, 1, NULL, $this->getCollectionDays()),
 
-        // basic overrides
+      // basic overrides
       new Specification(
         'creditor_id',
         'Integer',
@@ -159,6 +167,16 @@ class CreateContract extends AbstractAction {
         $this->getCampaigns(),
         FALSE
       ),
+      new Specification(
+        'payment_option',
+        'String',
+        E::ts('Payment Option (without this defaults to SEPA)'),
+        FALSE,
+        NULL,
+        NULL,
+        \CRM_Contract_Configuration::getPaymentOptions(),
+        FALSE
+      ),
 
       // dates
       new Specification('start_date', 'Date', E::ts('Start Date'), FALSE, date('Y-m-d H:i:s')),
@@ -166,7 +184,7 @@ class CreateContract extends AbstractAction {
       new Specification('date', 'Date', E::ts('Signature Date'), FALSE, date('Y-m-d H:i:s')),
       new Specification('validation_date', 'Date', E::ts('Validation Date'), FALSE, date('Y-m-d H:i:s')),
 
-        # Contract stuff
+      # Contract stuff
       new Specification('account_holder', 'String', E::ts('Members Bank Account'), FALSE),
     ]);
   }
@@ -196,7 +214,7 @@ class CreateContract extends AbstractAction {
    *      The parameters this action can send back
    * @return void
    */
-  protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
+  protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output): void {
     if (
       1 === $this->configuration->getParameter('prevent_multiple_contracts')
       && \CRM_Contract_Utils::getActiveContractCount($parameters->getParameter('contact_id')) > 0
@@ -208,55 +226,57 @@ class CreateContract extends AbstractAction {
       return;
     }
 
-    // create mandate
-    try {
-      $mandate_data = $this->buildMandateDate($parameters);
-      /** @phpstan-var array<string, mixed> $mandate */
-      $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
-      /** @phpstan-var array<string, mixed> $mandate */
-      $mandate = \civicrm_api3('SepaMandate', 'getsingle', [
-        'id' => $mandate['id'],
-        'return' => 'id,entity_id,reference',
-      ]);
+    //custom payment instrument
+    if ($parameters->getParameter('payment_option') !== NULL) {
 
-      $contract_data = $this->buildContractData($parameters, $mandate);
-      /** @phpstan-var array<string, mixed> $contract */
-      $contract = \civicrm_api3('Contract', 'create', $contract_data);
+      $params = $this->translateParamsForContractApi($parameters);
 
-      $output->setParameter('mandate_id', $mandate['id']);
-      $output->setParameter('mandate_reference', $mandate['reference']);
-      $output->setParameter('contract_id', $contract['id']);
+      try {
+        $result = Contract::createFull(FALSE)
+          ->setValues($params)
+          ->execute()
+          ->single();
+
+        $output->setParameter('contract_id', $result['id']);
+      }
+      //@codeCoverageIgnoreStart
+      catch (\CRM_Core_Exception $e) {
+        $output->setParameter('payment_instrument_id', $parameters->getParameter('payment_instrument_id'));
+        $output->setParameter('payment_instrument_name', $params['payment_instrument_name']);
+        $output->setParameter('contract_id', '');
+        $output->setParameter('error', $e->getMessage());
+      }
+      //@codeCoverageIgnoreEnd
     }
-    catch (\Exception $ex) {
-      $output->setParameter('mandate_id', '');
-      $output->setParameter('mandate_reference', '');
-      $output->setParameter('contract_id', '');
-      $output->setParameter('error', $ex->getMessage());
+    //Default SEPA behavior
+    else {
+
+      // create mandate
+      try {
+        $mandate_data = $this->buildMandateDate($parameters);
+        /** @phpstan-var array<string, mixed> $mandate */
+        $mandate = \civicrm_api3('SepaMandate', 'createfull', $mandate_data);
+        /** @phpstan-var array<string, mixed> $mandate */
+        $mandate = \civicrm_api3('SepaMandate', 'getsingle', [
+          'id' => $mandate['id'],
+          'return' => 'id,entity_id,reference',
+        ]);
+
+        $contract_data = $this->buildContractData($parameters, $mandate);
+        /** @phpstan-var array<string, mixed> $contract */
+        $contract = \civicrm_api3('Contract', 'create', $contract_data);
+
+        $output->setParameter('mandate_id', $mandate['id']);
+        $output->setParameter('mandate_reference', $mandate['reference']);
+        $output->setParameter('contract_id', $contract['id']);
+      }
+      catch (\Exception $ex) {
+        $output->setParameter('mandate_id', '');
+        $output->setParameter('mandate_reference', '');
+        $output->setParameter('contract_id', '');
+        $output->setParameter('error', $ex->getMessage());
+      }
     }
-  }
-
-  /**
-   * @return array<int, string>
-   */
-  protected function getMembershipTypes(): array {
-    return MembershipType::get(FALSE)
-      ->addSelect('id', 'name')
-      ->execute()
-      ->indexBy('id')
-      ->column('name');
-  }
-
-  /**
-   * @return array<int, string>
-   */
-  protected function getFrequencies(): array {
-    return [
-      1  => E::ts('annually'),
-      2  => E::ts('semi-annually'),
-      4  => E::ts('quarterly'),
-      6  => E::ts('bi-monthly'),
-      12 => E::ts('monthly'),
-    ];
   }
 
   /**
@@ -280,28 +300,6 @@ class CreateContract extends AbstractAction {
       ->execute()
       ->indexBy('id')
       ->column('name');
-  }
-
-  /**
-   * @return array<int, string>
-   */
-  protected function getCampaigns(): array {
-    return Campaign::get(FALSE)
-      ->addSelect('id', 'name')
-      ->addWhere('is_active', '=', TRUE)
-      ->execute()
-      ->indexBy('id')
-      ->column('name');
-  }
-
-  /**
-   * @return array<int<0, 28>, int<1, 28>|string>
-   */
-  protected function getCollectionDays(): array {
-    $list = range(0, 28);
-    $options = array_combine($list, $list);
-    $options[0] = E::ts('as soon as possible');
-    return $options;
   }
 
   /**
@@ -352,8 +350,8 @@ class CreateContract extends AbstractAction {
    */
   protected function getMultipleContractOptions(): array {
     return [
-      0  => E::ts('ignore'),
-      1  => E::ts('show error message'),
+      0 => E::ts('ignore'),
+      1 => E::ts('show error message'),
     ];
   }
 
@@ -385,7 +383,7 @@ class CreateContract extends AbstractAction {
     foreach (['creditor_id', 'financial_type_id', 'campaign_id', 'cycle_day', 'frequency'] as $parameterName) {
       $value = $parameters->getParameter($parameterName);
       if (NULL === $value || '' === $value) {
-        $value = $this->configuration->getParameter("default_{$parameterName}");
+        $value = $this->configuration->getParameter("default_$parameterName");
       }
       $mandateData[$parameterName] = $value;
     }
@@ -393,11 +391,12 @@ class CreateContract extends AbstractAction {
     // sort out frequency
     $mandateData['frequency_interval'] = 12 / $mandateData['frequency'];
     $mandateData['frequency_unit'] = 'month';
+
     unset($mandateData['frequency']);
 
     // verify/adjust start date
     $buffer_days = (int) $this->configuration->getParameter('buffer_days');
-    $earliestStartDate = strtotime("+ {$buffer_days} days");
+    $earliestStartDate = strtotime("+ $buffer_days days");
     $currentStartDate = strtotime($mandateData['start_date']);
     if (
       FALSE !== $earliestStartDate && FALSE !== $currentStartDate
@@ -433,7 +432,7 @@ class CreateContract extends AbstractAction {
     foreach (['membership_type_id'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (empty($value)) {
-        $value = $this->configuration->getParameter("default_{$parameter_name}");
+        $value = $this->configuration->getParameter("default_$parameter_name");
       }
       $contractData[$parameter_name] = $value;
     }
@@ -451,6 +450,23 @@ class CreateContract extends AbstractAction {
     $contractData['membership_payment.membership_recurring_contribution'] = $mandate['entity_id'];
 
     return $contractData;
+  }
+
+  private function translateParamsForContractApi(ParameterBagInterface $parameters): array {
+
+    $map = [
+      'contact_id' => ['contact_id', 'default_contact_id', 'int'],
+      'membership_type_id' => ['membership_type_id', 'default_membership_type_id', 'int'],
+      'start_date' => ['start_date', 'default_start_date'],
+      'join_date' => ['join_date', 'default_join_date'],
+      'financial_type_id' => ['financial_type_id', 'default_financial_type_id', 'int'],
+      'payment_amount' => ['amount', 'default_amount', 'float'],
+      'payment_frequency' => ['frequency', 'default_frequency', 'int'],
+      'cycle_day' => ['cycle_day', 'default_cycle_day', 'int'],
+      'payment_option' => ['payment_option', 'default_payment_option'],
+    ];
+
+    return $this->translateParameterMap($map, $parameters);
   }
 
 }

@@ -123,10 +123,10 @@ class PaymentContract {
    * Create new payment contract for the other non-SEPA payment options like Cash or EFT.
    */
   private function createDefault(): int {
+
     $paymentContractParams = [
       'contact_id' => $this->params['contact_id'],
       'amount' => \CRM_Contract_SepaLogic::formatMoney($this->params['payment_amount']),
-      'currency' => \CRM_Contract_SepaLogic::getCreditor()->currency,
       'start_date' => \CRM_Utils_Date::processDate(
         $this->params['payment_start_date'] ?? '',
         NULL,
@@ -154,6 +154,7 @@ class PaymentContract {
       'checkPermissions' => TRUE,
     ];
     \CRM_Contract_CustomData::resolveCustomFields($paymentContractParams);
+
     $newRecurringContribution = civicrm_api3('ContributionRecur', 'create', $paymentContractParams);
     return $newRecurringContribution['id'];
   }
