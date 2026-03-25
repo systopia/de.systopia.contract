@@ -59,7 +59,8 @@ abstract class AbstractContractAction extends AbstractAction {
   }
 
   /**
-   * @return array<string, array<string,string,string>
+   * @phpstan-param array<string, array<int, string|null>> $map
+   * @phpstan-return array<string, string>
    */
   protected function translateParameterMap(array $map, ParameterBagInterface $parameters): array {
     $params = [];

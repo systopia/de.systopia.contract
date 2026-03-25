@@ -17,8 +17,6 @@ use CRM_Contract_ExtensionUtil as E;
  * You cannot schedule Contract.create for the future.
  */
 function _civicrm_api3_Contract_create_spec(&$params) {
-  //@phpstan-ignore includeOnce.fileNotFound
-  include_once 'api/v3/Membership.php';
   _civicrm_api3_membership_create_spec($params);
   $params['activity_date_time'] = [
     'name' => 'activity_date_time',
