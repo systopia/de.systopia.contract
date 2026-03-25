@@ -389,15 +389,17 @@ class CreateContract extends AbstractContractAction {
     }
 
     // sort out frequency
-    $mandateData['frequency_interval'] = 12 / $mandateData['frequency'];
-    $mandateData['frequency_unit'] = 'month';
+    if (isset($mandateData['frequency'])) {
+      $mandateData['frequency_interval'] = 12 / $mandateData['frequency'];
+      $mandateData['frequency_unit'] = 'month';
+    }
 
     unset($mandateData['frequency']);
 
     // verify/adjust start date
     $buffer_days = (int) $this->configuration->getParameter('buffer_days');
     $earliestStartDate = strtotime("+ $buffer_days days");
-    $currentStartDate = strtotime($mandateData['start_date']);
+    $currentStartDate = strtotime($mandateData['start_date'] ?? '');
     if (
       FALSE !== $earliestStartDate && FALSE !== $currentStartDate
       && $currentStartDate < $earliestStartDate
@@ -406,7 +408,7 @@ class CreateContract extends AbstractContractAction {
     }
 
     // if not set, calculate the closest cycle day
-    if (NULL === $mandateData['cycle_day'] || '' === $mandateData['cycle_day']) {
+    if (!isset($mandateData['cycle_day']) || '' === $mandateData['cycle_day']) {
       $mandateData['cycle_day'] = static::calculateSoonestCycleDay($mandateData);
     }
 

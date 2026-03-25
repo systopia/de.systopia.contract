@@ -2630,12 +2630,6 @@ parameters:
 			path: CRM/Contract/RecurringContribution.php
 
 		-
-			message: '#^Part \$mandateReference \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: CRM/Contract/RecurringContribution.php
-
-		-
 			message: '#^Property CRM_Contract_RecurringContribution\:\:\$cached_results has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
