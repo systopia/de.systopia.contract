@@ -1,19 +1,47 @@
 {
-    "require": {
-        "kcs/phpstan-strict-rules": "^2",
-        "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2",
-        "phpstan/phpstan-beberlei-assert": "^2",
-        "phpstan/phpstan-deprecation-rules": "^2",
-        "phpstan/phpstan-phpunit": "^2",
-        "phpstan/phpstan-strict-rules": "^2",
-        "phpstan/phpstan-webmozart-assert": "^2",
-        "voku/phpstan-rules": "^3.6"
-    },
-    "config": {
-        "allow-plugins": {
-            "phpstan/extension-installer": true
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "project60/org.project60.sepa",
+        "version": "dev-master",
+        "source": {
+          "url": "https://github.com/Project60/org.project60.sepa.git",
+          "type": "git",
+          "reference": "master"
         },
-        "sort-packages": true
+        "autoload": {
+          "classmap": [
+            ""
+          ]
+        }
+      }
     }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "kcs/phpstan-strict-rules": "^2",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^2",
+    "phpstan/phpstan-beberlei-assert": "^2",
+    "phpstan/phpstan-deprecation-rules": "^2",
+    "phpstan/phpstan-phpunit": "^2",
+    "phpstan/phpstan-strict-rules": "^2",
+    "phpstan/phpstan-webmozart-assert": "^2",
+    "voku/phpstan-rules": "^3.6",
+    "systopia/civicrm-test-fixtures-sepa": "dev-main"
+  },
+  "config": {
+    "allow-plugins": {
+      "civicrm/composer-compile-plugin": true,
+      "civicrm/composer-downloads-plugin": true,
+      "cweagans/composer-patches": true,
+      "phpstan/extension-installer": true
+    },
+    "sort-packages": true
+  },
+  "extra": {
+    "compile-whitelist": ["civicrm/civicrm-core", "civicrm/composer-compile-lib"]
+  }
 }

@@ -1,70 +1,112 @@
 {
-    "name": "systopia/de.systopia.contract",
-    "description": "Extends CiviMember to support European style Contracts",
-    "type": "civicrm-ext",
-    "license": "AGPL-3.0-or-later",
-    "authors": [
-        {
-            "name": "SYSTOPIA GmbH",
-            "email": "info@systopia.de",
-            "homepage": "https://www.systopia.de"
-        }
-    ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "prepend-autoloader": false,
-        "sort-packages": true,
-        "platform": {
-        }
-    },
-    "require": {
-        "php": "^8.1",
-        "civicrm/civicrm-core": ">=5.81",
-        "civicrm/civicrm-packages": ">=5.81"
-    },
-    "autoload": {
-        "classmap": ["ComposerHelper.php"]
-    },
-    "scripts": {
-        "pre-update-cmd": [
-            "Contract\\ComposerHelper::preUpdate"
-        ],
-        "composer-phpcs": [
-            "@composer --working-dir=tools/phpcs"
-        ],
-        "composer-phpstan": [
-            "@composer --working-dir=tools/phpstan"
-        ],
-        "composer-phpunit": [
-            "@composer --working-dir=tools/phpunit"
-        ],
-        "composer-tools": [
-            "@composer-phpcs",
-            "@composer-phpstan",
-            "@composer-phpunit"
-        ],
-        "phpcs": [
-            "@php tools/phpcs/vendor/bin/phpcs"
-        ],
-        "phpcbf": [
-            "@php tools/phpcs/vendor/bin/phpcbf"
-        ],
-        "phpstan": [
-            "@php tools/phpstan/vendor/bin/phpstan -v"
-        ],
-        "phpunit": [
-            "@php tools/phpunit/vendor/bin/simple-phpunit --coverage-text"
-        ],
-        "test": [
-            "@phpcs",
-            "@phpstan",
-            "@phpunit"
-        ]
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.0.x-dev"
-        }
+  "name": "systopia/de.systopia.contract",
+  "description": "Extends CiviMember to support European style Contracts",
+  "type": "civicrm-ext",
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "SYSTOPIA",
+      "email": "info@systopia.de",
+      "homepage": "https://www.systopia.de"
     }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "prepend-autoloader": false,
+    "sort-packages": true,
+    "platform": {
+    },
+    "allow-plugins": {
+      "civicrm/composer-compile-plugin": true,
+      "civicrm/composer-downloads-plugin": true,
+      "cweagans/composer-patches": true
+    }
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/civicrm/coder.git"
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "project60/org.project60.sepa",
+        "version": "dev-master",
+        "source": {
+          "url": "https://github.com/Project60/org.project60.sepa.git",
+          "type": "git",
+          "reference": "master"
+        },
+        "autoload": {
+          "classmap": [
+            ""
+          ]
+        }
+      }
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "civicrm/civicrm-core": ">=5.81",
+    "civicrm/civicrm-packages": ">=5.81"
+  },
+  "require-dev": {
+    "systopia/civicrm-test-fixtures-sepa": "dev-main"
+  },
+  "autoload": {
+    "classmap": [
+      "ComposerHelper.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Systopia\\Contract\\Tests\\": "tests/phpunit"
+    }
+  },
+  "scripts": {
+    "pre-update-cmd": [
+      "Contract\\ComposerHelper::preUpdate"
+    ],
+    "composer-phpcs": [
+      "@composer --working-dir=tools/phpcs"
+    ],
+    "composer-phpstan": [
+      "@composer --working-dir=tools/phpstan"
+    ],
+    "composer-phpunit": [
+      "@composer --working-dir=tools/phpunit"
+    ],
+    "composer-tools": [
+      "@composer-phpcs",
+      "@composer-phpstan",
+      "@composer-phpunit"
+    ],
+    "phpcs": [
+      "@php tools/phpcs/vendor/bin/phpcs"
+    ],
+    "phpcbf": [
+      "@php tools/phpcs/vendor/bin/phpcbf"
+    ],
+    "phpstan": [
+      "@php tools/phpstan/vendor/bin/phpstan -v"
+    ],
+    "phpunit": [
+      "@php tools/phpunit/vendor/bin/simple-phpunit --coverage-text"
+    ],
+    "phpunit:html": [
+      "@php tools/phpunit/vendor/bin/simple-phpunit --coverage-html /var/www/html/coverage"
+    ],
+    "test": [
+      "@phpcs",
+      "@phpstan",
+      "@phpunit"
+    ]
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.0.x-dev"
+    },
+    "compile-whitelist": ["civicrm/civicrm-core", "civicrm/composer-compile-lib"]
+  }
 }
