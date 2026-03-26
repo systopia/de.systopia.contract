@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Systopia\Contract\Tests\Support;
+namespace Civi\Contract\Support;
 
 use Civi\ActionProvider\Parameter\ParameterBag;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;

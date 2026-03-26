@@ -16,34 +16,12 @@
     "prepend-autoloader": false,
     "sort-packages": true,
     "platform": {
-    },
-    "allow-plugins": {
-      "civicrm/composer-compile-plugin": true,
-      "civicrm/composer-downloads-plugin": true,
-      "cweagans/composer-patches": true
     }
   },
   "repositories": [
     {
       "type": "git",
       "url": "https://github.com/civicrm/coder.git"
-    },
-    {
-      "type": "package",
-      "package": {
-        "name": "project60/org.project60.sepa",
-        "version": "dev-master",
-        "source": {
-          "url": "https://github.com/Project60/org.project60.sepa.git",
-          "type": "git",
-          "reference": "master"
-        },
-        "autoload": {
-          "classmap": [
-            ""
-          ]
-        }
-      }
     }
   ],
   "require": {

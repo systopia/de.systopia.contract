@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Systopia\Contract\Tests\Civi\Contract\ActionProvider\Action;
+namespace Civi\Contract\ActionProvider\Action;
 
 use Civi\ActionProvider\Parameter\ParameterBag;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
@@ -14,9 +14,9 @@ use Civi\Test;
 use Civi\Test\CiviEnvBuilder;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
+use Civi\Contract\Support\DummyContract;
+use Civi\Contract\Support\DummyModifyContract;
 use PHPUnit\Framework\TestCase;
-use Systopia\Contract\Tests\Support\DummyContract;
-use Systopia\Contract\Tests\Support\DummyModifyContract;
 use Systopia\TestFixtures\Core\FixtureEntityStore;
 use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;
 

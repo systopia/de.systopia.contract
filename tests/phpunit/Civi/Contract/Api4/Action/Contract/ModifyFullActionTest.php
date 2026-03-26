@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Systopia\Contract\Tests\Civi\Contract\ActionProvider\Action;
+namespace Civi\Contract\ActionProvider\Action;
 
 use Civi\Api4\FinancialType;
 use Civi\Api4\SepaCreditor;
@@ -10,9 +10,9 @@ use Civi\Test;
 use Civi\Test\CiviEnvBuilder;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
+use Civi\Contract\Support\DummyCreateFullAction;
+use Civi\Contract\Support\DummyModifyFullAction;
 use PHPUnit\Framework\TestCase;
-use Systopia\Contract\Tests\Support\DummyCreateFullAction;
-use Systopia\Contract\Tests\Support\DummyModifyFullAction;
 use Systopia\TestFixtures\Core\FixtureEntityStore;
 use Systopia\TestFixtures\Fixtures\Scenarios\ContributionRecurScenario;
 use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;

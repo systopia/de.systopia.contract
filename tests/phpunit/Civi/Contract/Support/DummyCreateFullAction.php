@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Systopia\Contract\Tests\Support;
+namespace Civi\Contract\Support;
 
 use Civi\Contract\Api4\Action\Contract\CreateFullAction;
 
