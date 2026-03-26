@@ -30,7 +30,8 @@
     "civicrm/civicrm-packages": ">=5.81"
   },
   "require-dev": {
-    "systopia/civicrm-test-fixtures-sepa": "dev-main"
+    "systopia/civicrm-test-fixtures-sepa": "dev-main@dev",
+    "systopia/civicrm-test-fixtures": "@dev"
   },
   "autoload": {
     "classmap": [
