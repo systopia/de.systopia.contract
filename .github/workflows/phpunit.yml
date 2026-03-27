@@ -103,8 +103,8 @@ jobs:
           # compatible with symfony/console >=8.0 used in composer since 2.9.0.
           composer require --with-all-dependencies --no-progress --prefer-dist --${{ matrix.prefer }} \
             --optimize-autoloader $EXT_COMPOSER_NAME 'pear/pear-core-minimal:>=1.10.16' \
-            'civicrm/composer-compile-plugin:>=0.22'
-          composer require systopia/civicrm-test-fixtures-sepa --dev
+            'civicrm/composer-compile-plugin:>=0.22' 
+          composer require systopia/civicrm-test-fixtures-sepa --dev --with-all-dependencies 
 
       - name: Clean nested PHPUnit CiviCRM vendor
         run: |
