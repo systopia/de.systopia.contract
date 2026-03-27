@@ -104,7 +104,7 @@ jobs:
           composer require --with-all-dependencies --no-progress --prefer-dist --${{ matrix.prefer }} \
             --optimize-autoloader $EXT_COMPOSER_NAME 'pear/pear-core-minimal:>=1.10.16' \
             'civicrm/composer-compile-plugin:>=0.22'
-          composer require systopia/civicrm-test-fixtures-sepa
+          composer require systopia/civicrm-test-fixtures-sepa --dev
 
       - name: Clean nested PHPUnit CiviCRM vendor
         run: |
@@ -139,3 +139,4 @@ jobs:
           export CV_CONFIG="$HOME/.cv.json"
           cd ../civicrm-standalone/ext/$(basename "$PWD")
           composer phpunit
+          bash
