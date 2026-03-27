@@ -2,16 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ActionProvider\Action;
+namespace Civi\Contract\Tests\ActionProvider\Action;
 
 use Civi\ActionProvider\Parameter\ParameterBag;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
-use Civi\Test;
-use Civi\Test\CiviEnvBuilder;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\TransactionalInterface;
+use Civi\Contract\Support\AbstractSetupHeadless;
 use Civi\Contract\Support\DummyAbstractContractAction;
-use PHPUnit\Framework\TestCase;
 use Systopia\TestFixtures\Core\FixtureEntityStore;
 use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;
 
@@ -19,16 +15,7 @@ use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;
  * @covers \Civi\Contract\ActionProvider\Action\AbstractContractAction
  * @group headless
  */
-final class AbstractContractActionTest extends TestCase implements HeadlessInterface, TransactionalInterface {
-
-  public function setUpHeadless(): CiviEnvBuilder {
-    return Test::headless()
-      ->installMe(__DIR__)
-      ->install('civi_campaign')
-      ->install('org.project60.sepa')
-      ->install('org.project60.banking')
-      ->apply();
-  }
+final class AbstractContractActionTest extends AbstractSetupHeadless {
 
   public function testGetFrequencies_ReturnsExpectedOptions(): void {
     $action = new DummyAbstractContractAction();

@@ -30,8 +30,7 @@
     "civicrm/civicrm-packages": ">=5.81"
   },
   "require-dev": {
-    "systopia/civicrm-test-fixtures-sepa": "dev-main@dev",
-    "systopia/civicrm-test-fixtures": "@dev"
+    "systopia/civicrm-test-fixtures-sepa": "dev-main"
   },
   "autoload": {
     "classmap": [
@@ -40,7 +39,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Systopia\\Contract\\Tests\\": "tests/phpunit"
+      "Civi\\Contract\\Tests\\": "tests/phpunit"
     }
   },
   "scripts": {

@@ -10,8 +10,6 @@
 
 declare(strict_types = 1);
 
-use CRM_Contract_ExtensionUtil as E;
-
 /**
  * Compatibility Tests: Make sure the engine refactoring is still compatible
  * with the old behavior where wanted

@@ -10,12 +10,8 @@ use Civi\Api4\ContributionRecur;
 use Civi\Api4\FinancialType;
 use Civi\Api4\SepaCreditor;
 use Civi\Api4\SepaMandate;
-use Civi\Test;
-use Civi\Test\CiviEnvBuilder;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\TransactionalInterface;
+use Civi\Contract\Support\AbstractSetupHeadless;
 use Civi\Contract\Support\DummyContract;
-use PHPUnit\Framework\TestCase;
 use Systopia;
 use Systopia\TestFixtures\Core\FixtureEntityStore;
 use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;
@@ -24,18 +20,7 @@ use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;
  * @covers \Civi\Contract\ActionProvider\Action\CreateContract
  * @group headless
  */
-final class CreateContractTest extends TestCase implements HeadlessInterface, TransactionalInterface {
-
-  public function setUpHeadless(): CiviEnvBuilder {
-    FixtureEntityStore::reset();
-
-    return Test::headless()
-      ->installMe(__DIR__)
-      ->install('civi_campaign')
-      ->install('org.project60.sepa')
-      ->install('org.project60.banking')
-      ->apply();
-  }
+final class CreateContractTest extends AbstractSetupHeadless {
 
   public function testGetConfigurationSpecification_LoadsAllExpectedSpecs(): void {
     $action = new CreateContract();

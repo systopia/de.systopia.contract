@@ -17,6 +17,10 @@ use CRM_Contract_ExtensionUtil as E;
  * You cannot schedule Contract.create for the future.
  */
 function _civicrm_api3_Contract_create_spec(&$params) {
+  //At the moment the setup of the legacy tests without global state does not know _civicrm_api3_membership_create_spec
+  if (!function_exists('_civicrm_api3_membership_create_spec')) {
+    require_once \Civi::paths()->getPath('[civicrm.root]/api/v3/Membership.php');
+  }
   _civicrm_api3_membership_create_spec($params);
   $params['activity_date_time'] = [
     'name' => 'activity_date_time',

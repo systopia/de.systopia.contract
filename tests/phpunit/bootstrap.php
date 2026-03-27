@@ -23,8 +23,10 @@ require_once __DIR__ . '/../../contract.civix.php';
 
 // phpcs:disable PSR1.Files.SideEffects
 
-// Add test classes to class loader.
+// Add test classes to class loader
 addExtensionDirToClassLoader(__DIR__);
+
+// Add classes for non-headless unit tests
 addExtensionToClassLoader('de.systopia.contract');
 addExtensionToClassLoader('action-provider');
 

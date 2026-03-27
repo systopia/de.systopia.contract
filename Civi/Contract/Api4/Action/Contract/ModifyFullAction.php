@@ -42,7 +42,7 @@ class ModifyFullAction extends BasicUpdateAction {
   // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   protected function writeRecord($item) {
 
-  // phpcs:enable
+    // phpcs:enable
     $membership = Membership::get(FALSE)
       ->addSelect('contact_id')
       ->addWhere('id', '=', $item['id'])
