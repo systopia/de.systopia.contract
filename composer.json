@@ -1,90 +1,93 @@
 {
-  "name": "systopia/de.systopia.contract",
-  "description": "Extends CiviMember to support European style Contracts",
-  "type": "civicrm-ext",
-  "license": "AGPL-3.0-or-later",
-  "authors": [
-    {
-      "name": "SYSTOPIA",
-      "email": "info@systopia.de",
-      "homepage": "https://www.systopia.de"
-    }
-  ],
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "config": {
-    "prepend-autoloader": false,
-    "sort-packages": true,
-    "platform": {
-    }
-  },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/civicrm/coder.git"
-    }
-  ],
-  "require": {
-    "php": "^8.1",
-    "civicrm/civicrm-core": ">=5.81",
-    "civicrm/civicrm-packages": ">=5.81"
-  },
-  "require-dev": {
-    "systopia/civicrm-test-fixtures-sepa": "dev-main"
-  },
-  "autoload": {
-    "classmap": [
-      "ComposerHelper.php"
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Civi\\Contract\\Tests\\": "tests/phpunit"
-    }
-  },
-  "scripts": {
-    "pre-update-cmd": [
-      "Contract\\ComposerHelper::preUpdate"
+    "name": "systopia/de.systopia.contract",
+    "description": "Extends CiviMember to support European style Contracts",
+    "type": "civicrm-ext",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "SYSTOPIA",
+            "email": "info@systopia.de",
+            "homepage": "https://www.systopia.de"
+        }
     ],
-    "composer-phpcs": [
-      "@composer --working-dir=tools/phpcs"
-    ],
-    "composer-phpstan": [
-      "@composer --working-dir=tools/phpstan"
-    ],
-    "composer-phpunit": [
-      "@composer --working-dir=tools/phpunit"
-    ],
-    "composer-tools": [
-      "@composer-phpcs",
-      "@composer-phpstan",
-      "@composer-phpunit"
-    ],
-    "phpcs": [
-      "@php tools/phpcs/vendor/bin/phpcs"
-    ],
-    "phpcbf": [
-      "@php tools/phpcs/vendor/bin/phpcbf"
-    ],
-    "phpstan": [
-      "@php tools/phpstan/vendor/bin/phpstan -v"
-    ],
-    "phpunit": [
-      "@php tools/phpunit/vendor/bin/simple-phpunit --coverage-text"
-    ],
-    "phpunit:html": [
-      "@php tools/phpunit/vendor/bin/simple-phpunit --coverage-html /var/www/html/coverage"
-    ],
-    "test": [
-      "@phpcs",
-      "@phpstan",
-      "@phpunit"
-    ]
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "2.0.x-dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "prepend-autoloader": false,
+        "sort-packages": true,
+        "platform": {
+        }
     },
-    "compile-whitelist": ["civicrm/civicrm-core", "civicrm/composer-compile-lib"]
-  }
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/civicrm/coder.git"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "civicrm/civicrm-core": ">=5.81",
+        "civicrm/civicrm-packages": ">=5.81"
+    },
+    "require-dev": {
+        "systopia/civicrm-test-fixtures-sepa": "dev-main"
+    },
+    "autoload": {
+        "classmap": [
+            "ComposerHelper.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Civi\\Contract\\Tests\\": "tests/phpunit"
+        }
+    },
+    "scripts": {
+        "pre-update-cmd": [
+            "Contract\\ComposerHelper::preUpdate"
+        ],
+        "composer-phpcs": [
+            "@composer --working-dir=tools/phpcs"
+        ],
+        "composer-phpstan": [
+            "@composer --working-dir=tools/phpstan"
+        ],
+        "composer-phpunit": [
+            "@composer --working-dir=tools/phpunit"
+        ],
+        "composer-tools": [
+            "@composer-phpcs",
+            "@composer-phpstan",
+            "@composer-phpunit"
+        ],
+        "phpcs": [
+            "@php tools/phpcs/vendor/bin/phpcs"
+        ],
+        "phpcbf": [
+            "@php tools/phpcs/vendor/bin/phpcbf"
+        ],
+        "phpstan": [
+            "@php tools/phpstan/vendor/bin/phpstan -v"
+        ],
+        "phpunit": [
+            "@php tools/phpunit/vendor/bin/simple-phpunit --coverage-text"
+        ],
+        "phpunit:html": [
+            "@php tools/phpunit/vendor/bin/simple-phpunit --coverage-html /var/www/html/coverage"
+        ],
+        "test": [
+            "@phpcs",
+            "@phpstan",
+            "@phpunit"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        },
+        "compile-whitelist": [
+            "civicrm/civicrm-core",
+            "civicrm/composer-compile-lib"
+        ]
+    }
 }
