@@ -35,8 +35,8 @@ more to come...
 
 ## Förderhinweis / Funding Acknowledgement
 
-Diese Weiterentwicklung von CiviCRM wurde durch vom **AWO Bundesverband e.V.** beauftragt und durch die **SYSTOPIA GmbH
-** entwickelt. Besonderer Dank gilt dem Förderprogramm **„Zukunftssicherung der Freien Wohlfahrtspflege durch
+Diese Weiterentwicklung von CiviCRM wurde durch vom **AWO Bundesverband e.V.** beauftragt und durch die **SYSTOPIA GmbH**
+entwickelt. Besonderer Dank gilt dem Förderprogramm **„Zukunftssicherung der Freien Wohlfahrtspflege durch
 Digitalisierung“** des **Bundesministeriums für Bildung, Familie, Senioren, Frauen und Jugend**.
 
 This extension of CiviCRM was commissioned by the **AWO Bundesverband e.V. (Federal Association of Workers' Welfare)**
