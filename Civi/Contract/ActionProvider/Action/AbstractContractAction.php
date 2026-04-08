@@ -74,7 +74,7 @@ abstract class AbstractContractAction extends AbstractAction {
       $value = $parameters->getParameter($name) ?? $this->configuration->getParameter($default) ?? NULL;
 
       //fix default values submitted by form processor
-      if($value === '') {
+      if ($value === '') {
         $value = NULL;
       }
 
