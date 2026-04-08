@@ -102,7 +102,7 @@ final class AbstractContractActionTest extends AbstractSetupHeadless {
 
     $result = $action->runTranslateParameterMap($map, $parameters);
 
-    self::assertSame(NULL, $result['campaign_id']);
+    self::assertNull($result['campaign_id']);
   }
 
   public function testTranslateParameterMap_WithParametersAndDefaults_ReturnsTranslatedValues(): void {
