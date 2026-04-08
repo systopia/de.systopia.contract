@@ -88,6 +88,23 @@ final class AbstractContractActionTest extends AbstractSetupHeadless {
     self::assertArrayNotHasKey($inactiveCampaign['id'], $campaigns);
   }
 
+  public function testTranslateParameterMap_WithEmptyStrings_ReturnsTranslatedValues(): void {
+    $action = new DummyAbstractContractAction();
+    $action->setTestConfiguration([
+      'default_campaign_id' => '',
+    ]);
+
+    $parameters = $this->createParameterBag([]);
+
+    $map = [
+      'campaign_id' => ['campaign_id', 'default_campaign_id', 'int'],
+    ];
+
+    $result = $action->runTranslateParameterMap($map, $parameters);
+
+    self::assertSame(NULL, $result['campaign_id']);
+  }
+
   public function testTranslateParameterMap_WithParametersAndDefaults_ReturnsTranslatedValues(): void {
     $action = new DummyAbstractContractAction();
     $action->setTestConfiguration([
@@ -116,7 +133,9 @@ final class AbstractContractActionTest extends AbstractSetupHeadless {
 
   public function testTranslateParameterMap_WithMissingValues_ReturnsNullOrCastFallbacks(): void {
     $action = new DummyAbstractContractAction();
-    $action->setTestConfiguration([]);
+    $action->setTestConfiguration([
+      'default_amount' => '9.99',
+    ]);
 
     $parameters = $this->createParameterBag([]);
 
@@ -128,8 +147,8 @@ final class AbstractContractActionTest extends AbstractSetupHeadless {
 
     $result = $action->runTranslateParameterMap($map, $parameters);
 
-    self::assertSame(0, $result['contact_id']);
-    self::assertSame(0.0, $result['payment_amount']);
+    self::assertNull($result['contact_id']);
+    self::assertSame(9.99, $result['payment_amount']);
     self::assertNull($result['payment_option']);
   }
 

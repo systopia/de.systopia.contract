@@ -73,11 +73,18 @@ abstract class AbstractContractAction extends AbstractAction {
 
       $value = $parameters->getParameter($name) ?? $this->configuration->getParameter($default) ?? NULL;
 
-      if ($cast === 'int') {
-        $value = (int) $value;
+      //fix default values submitted by form processor
+      if($value === '') {
+        $value = NULL;
       }
-      elseif ($cast === 'float') {
-        $value = (float) $value;
+
+      if ($value !== NULL) {
+        if ($cast === 'int') {
+          $value = (int) $value;
+        }
+        elseif ($cast === 'float') {
+          $value = (float) $value;
+        }
       }
 
       $params[$newName] = $value;

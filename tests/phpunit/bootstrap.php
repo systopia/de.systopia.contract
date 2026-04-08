@@ -56,7 +56,7 @@ function addExtensionToClassLoader(string $extension): void {
     }
   }
 
-  throw new RuntimeException("Extension path not found for: {$extension}");
+  throw new RuntimeException("Extension path not found for: $extension");
 }
 
 function addExtensionDirToClassLoader(string $extensionDir): void {
