@@ -95,6 +95,9 @@ jobs:
             composer require --no-update "civicrm/civicrm-core:${{ inputs.civicrm-version }}" \
               "civicrm/civicrm-packages:${{ inputs.civicrm-version }}"
           fi
+
+          # Install dev dependencies from extension's composer.json.
+          jq -r '.["require-dev"] | to_entries[] | "\"\(.key):\(.value)\""' "$EXT_DIR/composer.json" | xargs -r composer require --dev --no-update
           
           # --with-all-dependencies is required because downgrades from packages
           # installed before might be necessary.
@@ -103,14 +106,11 @@ jobs:
           # compatible with symfony/console >=8.0 used in composer since 2.9.0.
           composer require --with-all-dependencies --no-progress --prefer-dist --${{ matrix.prefer }} \
             --optimize-autoloader $EXT_COMPOSER_NAME 'pear/pear-core-minimal:>=1.10.16' \
-            'civicrm/composer-compile-plugin:>=0.22' 
-          composer require systopia/civicrm-test-fixtures-sepa --dev --with-all-dependencies 
+            'civicrm/composer-compile-plugin:>=0.22'
 
-      - name: Clean nested PHPUnit CiviCRM vendor
-        run: |
-          EXT_DIR=$PWD
-          rm -rf "$EXT_DIR/tools/phpunit/vendor/civicrm/civicrm-core"
-          rm -rf "$EXT_DIR/tools/phpunit/vendor/civicrm/civicrm-packages"
+          cd ext
+          git clone --depth=1 https://lab.civicrm.org/extensions/action-provider.git
+          git clone --depth=1 https://github.com/project60/org.project60.sepa.git
 
       - name: Set up CiviCRM
         env:
@@ -128,10 +128,6 @@ jobs:
           export CV_CONFIG="$HOME/.cv.json"
           cv vars:fill --quiet
           sed -i "s#\"TEST_DB_DSN\": \".*\"#\"TEST_DB_DSN\": \"$DATABASE_URL\"#g" "$CV_CONFIG"
-
-          cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.193/action-provider-1.193.zip"
-          cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/1.12.3/org.project60.sepa-1.12.3.zip"
-          cv ext:download "org.project60.banking@https://github.com/Project60/org.project60.banking/releases/download/1.3.2/org.project60.banking-1.3.2.zip"
 
       - name: Run PHPUnit
         run: |

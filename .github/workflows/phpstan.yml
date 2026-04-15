@@ -76,7 +76,6 @@ jobs:
           
           git clone --depth=1 https://lab.civicrm.org/extensions/action-provider.git ../action-provider
           git clone --depth=1 https://github.com/project60/org.project60.sepa.git ../org.project60.sepa
-          git clone --depth=1 https://github.com/project60/org.project60.banking.git ../org.project60.banking
 
           # Run with --no-scripts so ComposerHelper doesn't prevent installation
           # of civicrm packages.
