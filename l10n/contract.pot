@@ -54,7 +54,7 @@ msgstr ""
 msgid "Pause Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Pause.php
+#: CRM/Contract/Change/Pause.php managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Pause"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr ""
 msgid "Update Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php
+#: CRM/Contract/Change/Upgrade.php managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Update"
 msgstr ""
 
@@ -875,43 +875,15 @@ msgid "de.systopia.contract"
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Primary Memberships"
+msgid "Primary and Secondary Memberships"
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Mitgliedschafts ID"
+msgid "Primary and Secondary Memberships Table"
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Kontakt Sortiername"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Mitgliedsart"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Beginn der Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Ablaufdatum der Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Zeige Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Update Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Related Memberships"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Lösche Mitgliedschaft"
+msgid "This display shows primary and associated secondary memberships."
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
@@ -919,7 +891,11 @@ msgid "Membership ID"
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Contact"
+msgid "Contact sort name"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Member since"
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
@@ -928,6 +904,26 @@ msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "End date"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php templates/CRM/Contract/Page/Review.tpl
+msgid "Status"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "View"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "End"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Related Memberships"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Contact"
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
@@ -1296,10 +1292,6 @@ msgstr ""
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Added by"
-msgstr ""
-
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Status"
 msgstr ""
 
 #: templates/CRM/Contract/Page/Review.tpl
