@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\Tests\ActionProvider\Action;
+namespace Civi\Contract\ActionProvider\Action;
 
 use Civi\ActionProvider\Parameter\ParameterBag;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
