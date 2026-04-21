@@ -41,7 +41,8 @@ class ModifyFullAction extends BasicUpdateAction {
    */
   // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   protected function writeRecord($item) {
-  // phpcs:enable
+
+    // phpcs:enable
     $membership = Membership::get(FALSE)
       ->addSelect('contact_id')
       ->addWhere('id', '=', $item['id'])
@@ -79,7 +80,7 @@ class ModifyFullAction extends BasicUpdateAction {
 
           $freq = ($rc['frequency_unit'] === 'month')
             ? (int) (12 / max(1, (int) $rc['frequency_interval']))
-            // por si fuera anual
+            // In case it is a yearly frequency
             : (int) (1 / max(1, (int) $rc['frequency_interval']));
 
           $annual = \CRM_Contract_SepaLogic::formatMoney(
@@ -154,20 +155,20 @@ class ModifyFullAction extends BasicUpdateAction {
       // add other changes
       $params['membership_type_id'] = $item['membership_type_id'];
       $params['campaign_id'] = $item['campaign_id'];
-
-      // If this is a cancellation
     }
+    // If this is a cancellation
     elseif ($item['action'] == 'cancel') {
       $params['membership_cancellation.membership_cancel_reason'] = $item['cancel_reason'];
 
-      // If this is a pause
     }
+    // If this is a pause
     elseif ($item['action'] == 'pause') {
       $params['resume_date'] = \CRM_Utils_Date::processDate($item['resume_date'], NULL, FALSE, 'Y-m-d');
     }
 
     \CRM_Contract_CustomData::resolveCustomFields($params);
     /** @phpstan-var array<string, mixed> $result */
+
     $result = civicrm_api3('Contract', 'modify', $params);
     civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
     return $result;

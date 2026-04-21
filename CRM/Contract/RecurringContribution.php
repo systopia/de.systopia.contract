@@ -464,8 +464,6 @@ class CRM_Contract_RecurringContribution {
     $payment_contract_params = [
       'contact_id' => $contactId,
       'amount' => $amount,
-      // TODO: Why use currency from SEPA creditor?
-      'currency' => CRM_Contract_SepaLogic::getCreditor()->currency,
       'start_date' => CRM_Utils_Date::processDate($startDate, NULL, NULL, 'Y-m-d H:i:s'),
       // NOW
       'create_date' => date('YmdHis'),

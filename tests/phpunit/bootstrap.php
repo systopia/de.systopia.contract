@@ -23,9 +23,12 @@ require_once __DIR__ . '/../../contract.civix.php';
 
 // phpcs:disable PSR1.Files.SideEffects
 
-// Add test classes to class loader.
+// Add test classes to class loader
 addExtensionDirToClassLoader(__DIR__);
+
+// Add classes for non-headless unit tests
 addExtensionToClassLoader('de.systopia.contract');
+addExtensionToClassLoader('action-provider');
 
 if (!function_exists('ts')) {
   // Ensure function ts() is available - it's declared in the same file as CRM_Core_I18n in CiviCRM < 5.74.
@@ -40,7 +43,20 @@ function _contract_test_civicrm_container(ContainerBuilder $container): void {
 }
 
 function addExtensionToClassLoader(string $extension): void {
-  addExtensionDirToClassLoader(__DIR__ . '/../../../' . $extension);
+  $candidates = [
+    dirname((string) getenv('PWD')) . '/' . $extension,
+    __DIR__ . '/../../../' . $extension,
+  ];
+
+  foreach ($candidates as $candidate) {
+    $real = realpath($candidate);
+    if ($real !== FALSE && is_dir($real)) {
+      addExtensionDirToClassLoader($real);
+      return;
+    }
+  }
+
+  throw new RuntimeException("Extension path not found for: $extension");
 }
 
 function addExtensionDirToClassLoader(string $extensionDir): void {

@@ -59,7 +59,34 @@ class ModifyFormTest extends ContractTestBase {
 
   protected array $campaign = [];
 
+  /**
+   * @var array<string,mixed>
+   */
+  protected array $originalRequest = [];
+
+  /**
+   * @var array<string,mixed>
+   */
+  protected array $originalGet = [];
+
+  /**
+   * @var array<string,mixed>
+   */
+  protected array $originalPost = [];
+
   public static function setUpBeforeClass(): void {
+  }
+
+  public function setUp(): void {
+    // @phpstan-ignore-next-line
+    $this->originalRequest = $_REQUEST;
+    // @phpstan-ignore-next-line
+    $this->originalGet = $_GET;
+    // @phpstan-ignore-next-line
+    $this->originalPost = $_POST;
+
+    parent::setUp();
+
     $org = Contact::create(TRUE)
       ->addValue('contact_type', 'Organization')
       ->addValue('organization_name', 'ModifyFormTest Owner Org ' . rand(1, 1000000))
@@ -98,6 +125,14 @@ class ModifyFormTest extends ContractTestBase {
 
     \CRM_Core_PseudoConstant::flush();
     self::$sharedContribStatusReady = TRUE;
+
+    $this->ensureBaseOptionData();
+
+    $ownerId = $this->ensureOwnerOrgId();
+    self::$sharedOwnerOrgId = $ownerId;
+
+    $this->membershipType = $this->ensureMembershipType();
+    $this->campaign = $this->ensureCampaign();
   }
 
   private static function ensurePaymentInstrumentNone(): void {
@@ -245,49 +280,6 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   public static function tearDownAfterClass(): void {
-    try {
-      if (!empty(self::$sharedCampaign['id'])) {
-        Campaign::delete(TRUE)
-          ->addWhere('id', '=', self::$sharedCampaign['id'])
-          ->execute();
-      }
-    }
-    catch (\Throwable $e) {
-      // @ignoreException
-    }
-
-    try {
-      if (!empty(self::$sharedMembershipType['id'])) {
-        MembershipType::delete(TRUE)
-          ->addWhere('id', '=', self::$sharedMembershipType['id'])
-          ->execute();
-      }
-    }
-    catch (\Throwable $e) {
-      // @ignoreException
-    }
-
-    try {
-      if (!empty(self::$sharedOwnerOrgId)) {
-        Contact::delete(TRUE)
-          ->addWhere('id', '=', self::$sharedOwnerOrgId)
-          ->execute();
-      }
-    }
-    catch (\Throwable $e) {
-      // @ignoreException
-    }
-  }
-
-  public function setUp(): void {
-    parent::setUp();
-    $this->ensureBaseOptionData();
-
-    $ownerId = $this->ensureOwnerOrgId();
-    self::$sharedOwnerOrgId = $ownerId;
-
-    $this->membershipType = $this->ensureMembershipType();
-    $this->campaign = $this->ensureCampaign();
   }
 
   private function ensureOwnerOrgId(): int {
@@ -375,7 +367,7 @@ class ModifyFormTest extends ContractTestBase {
 
 // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   private function purgeDataForContact(int $cid): void {
- // phpcs:enable
+    // phpcs:enable
     try {
       $mandates = \Civi\Api4\SepaMandate::get(TRUE)
         ->addWhere('contact_id', '=', $cid)
@@ -511,8 +503,15 @@ class ModifyFormTest extends ContractTestBase {
           ->addValue('bic', 'COKSDE33')
           ->addValue('creditor_type', 'OOFF')
           ->addValue('payment_processor_id', 1)
+          ->addValue('currency', 'EUR')
+          ->addValue('mandate_active', 1)
           ->execute()
           ->first();
+
+        self::assertNotNull($creditor);
+
+        //IMPORTANT: Without this tests will use the same creditor stored in the settings throughout all the tests
+        \CRM_Sepa_Logic_Settings::setSetting($creditor['id'], 'batching_default_creditor');
 
         SepaMandate::save(TRUE)
           ->addRecord([
@@ -699,7 +698,8 @@ class ModifyFormTest extends ContractTestBase {
         $this->contractId = $contractId;
       }
 
-      public function set(string $k, mixed $v = NULL): void {}
+      public function set(string $k, mixed $v = NULL): void {
+      }
 
       public function get(string $k): mixed {
         return match ($k) {
@@ -768,12 +768,39 @@ class ModifyFormTest extends ContractTestBase {
       $form->_submitValues['payment_instrument_id'] = $piId;
     }
 
+    // For "to existing" cases select an already existing recurring contribution,
+    // not pretend this is just another Cash payment.
+    if ($to === 'existing' && $expectedActions[0] === 'end_recurring_contribution'
+      && $expectedActions[1]
+      === 'assign_existing_recurring') {
+      $existingRc = ContributionRecur::get()
+        ->addWhere('contact_id', '=', (int) $this->contact['id'])
+        ->addWhere('is_test', '=', 0)
+        ->addOrderBy('id', 'DESC')
+        ->setLimit(1)
+        ->execute()
+        ->first();
+
+      if (empty($existingRc['id'])) {
+        throw new \RuntimeException('No existing recurring contribution found for existing-payment test case.');
+      }
+
+      $form->_submitValues['payment_option'] = 'select';
+      $form->_submitValues['recurring_contribution'] = (int) $existingRc['id'];
+    }
+
     $form->_submitValues['contribution_recur_contribution_status_id'] = $this->getRecurStatusId('In Progress');
 
     foreach ($form->_submitValues as $key => $value) {
       // @phpstan-ignore-next-line
       $_REQUEST[$key] = $value;
     }
+
+    $defaultCreditorId = \CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
+    self::assertNotEmpty($defaultCreditorId, 'No batching_default_creditor configured');
+
+    $creditor = \CRM_Contract_SepaLogic::getCreditor();
+    self::assertNotNull($creditor, 'CRM_Contract_SepaLogic::getCreditor() returned null');
 
     $form->preProcess();
     $form->buildQuickForm();
@@ -1171,7 +1198,8 @@ class ModifyFormTest extends ContractTestBase {
         $this->contractId = $contractId;
       }
 
-      public function set(string $k, mixed $v = NULL): void {}
+      public function set(string $k, mixed $v = NULL): void {
+      }
 
       public function get(string $k): mixed {
         return match ($k) {
@@ -1326,35 +1354,12 @@ class ModifyFormTest extends ContractTestBase {
   }
 
   public function tearDown(): void {
-    try {
-      Contact::update(TRUE)
-        ->addValue('id', $this->contact['id'])
-        ->addValue('is_deleted', 1)
-        ->execute();
-    }
-    catch (\Exception $e) {
-      throw $e;
-    }
-
-    if (
-      isset($this->campaign['id'])
-      && !empty(self::$sharedCampaign['id'])
-      && $this->campaign['id'] !== self::$sharedCampaign['id']
-    ) {
-      Campaign::delete(TRUE)
-        ->addWhere('id', '=', $this->campaign['id'])
-        ->execute();
-    }
-
-    if (
-      isset($this->membershipType['id'])
-      && !empty(self::$sharedMembershipType['id'])
-      && $this->membershipType['id'] !== self::$sharedMembershipType['id']
-    ) {
-      MembershipType::delete(TRUE)
-        ->addWhere('id', '=', $this->membershipType['id'])
-        ->execute();
-    }
+    // @phpstan-ignore-next-line
+    $_REQUEST = $this->originalRequest;
+    // @phpstan-ignore-next-line
+    $_GET = $this->originalGet;
+    // @phpstan-ignore-next-line
+    $_POST = $this->originalPost;
 
     parent::tearDown();
   }

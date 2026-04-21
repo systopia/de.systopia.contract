@@ -47,6 +47,14 @@ class CreateFormTest extends ContractTestBase {
   protected ?int $recurContributionStatusId = NULL;
 
   public static function setUpBeforeClass(): void {
+  }
+
+  public static function tearDownAfterClass(): void {
+  }
+
+  public function setUp(): void {
+    parent::setUp();
+
     $org = Contact::create(FALSE)
       ->addValue('contact_type', 'Organization')
       ->addValue('organization_name', 'CreateFormTest Owner Org ' . rand(1, 1000000))
@@ -117,45 +125,13 @@ class CreateFormTest extends ContractTestBase {
       ])
       ->execute()
       ->single();
-  }
 
-  public static function tearDownAfterClass(): void {
-    try {
-      if (!empty(self::$sharedCampaign['id'])) {
-        civicrm_api3('Campaign', 'delete', ['id' => self::$sharedCampaign['id']]);
-      }
-    }
-    catch (\Throwable $e) {
-      // @ignoreException
-    }
-
-    try {
-      if (!empty(self::$sharedMembershipType['id'])) {
-        MembershipType::delete(TRUE)
-          ->addWhere('id', '=', self::$sharedMembershipType['id'])
-          ->execute();
-      }
-    }
-    catch (\Throwable $e) {
-      // @ignoreException
-    }
-
-    try {
-      if (!empty(self::$sharedOwnerOrgId)) {
-        Contact::delete(TRUE)
-          ->addWhere('id', '=', self::$sharedOwnerOrgId)
-          ->execute();
-      }
-    }
-    catch (\Throwable $e) {
-      // @ignoreException
-    }
-  }
-
-  public function setUp(): void {
-    parent::setUp();
     $this->setupRecurContributionStatus();
     $this->createRequiredEntities();
+  }
+
+  public function tearDown(): void {
+    parent::tearDown();
   }
 
   private static function ensurePaymentInstrumentNone(): void {
@@ -307,6 +283,7 @@ class CreateFormTest extends ContractTestBase {
   }
 
   private function runFormValidationWithValidData(string $paymentOption, mixed $membershipContract): void {
+    /** @var int $cid */
     $cid = $this->contact['id'];
     $today = date('Y-m-d');
 
@@ -403,6 +380,7 @@ class CreateFormTest extends ContractTestBase {
   }
 
   private function runFormSubmissionCreatesContract(string $paymentOption, mixed $paymentAmount): void {
+    /** @var int $cid */
     $cid = $this->contact['id'];
     $form = new CreateForm();
 
@@ -473,38 +451,6 @@ class CreateFormTest extends ContractTestBase {
 
   public function testFormSubmissionCreatesContract_RCUR_120(): void {
     $this->runFormSubmissionCreatesContract('RCUR', 120);
-  }
-
-  public function tearDown(): void {
-    try {
-      Contact::update(TRUE)
-        ->addValue('id', $this->contact['id'])
-        ->addValue('is_deleted', 1)
-        ->execute();
-    }
-    catch (\Exception $e) {
-      throw $e;
-    }
-
-    if (
-      isset($this->campaign['id'])
-      && !empty(self::$sharedCampaign['id'])
-      && $this->campaign['id'] !== self::$sharedCampaign['id']
-    ) {
-      civicrm_api3('Campaign', 'delete', ['id' => $this->campaign['id']]);
-    }
-
-    if (
-      isset($this->membershipType['id'])
-      && !empty(self::$sharedMembershipType['id'])
-      && $this->membershipType['id'] !== self::$sharedMembershipType['id']
-    ) {
-      MembershipType::delete(TRUE)
-        ->addWhere('id', '=', $this->membershipType['id'])
-        ->execute();
-    }
-
-    parent::tearDown();
   }
 
 }

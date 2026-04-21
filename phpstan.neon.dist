@@ -13,6 +13,7 @@ parameters:
 			- CRM/Contract/CustomData.php
 			- CRM/Contract/DAO/*
 			- tests/phpunit/bootstrap.php
+			- tests/phpunit/bootstrap.local.php (?)
 	scanFiles:
 		- contract.civix.php
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/src/Framework/TestCase.php

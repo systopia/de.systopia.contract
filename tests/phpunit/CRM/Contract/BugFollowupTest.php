@@ -10,8 +10,6 @@
 
 declare(strict_types = 1);
 
-use CRM_Contract_ExtensionUtil as E;
-
 /**
  * Bug reproduction and follow-up tests
  *

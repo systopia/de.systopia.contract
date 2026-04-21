@@ -28,7 +28,7 @@ class ContainerSpecs implements CompilerPassInterface {
   /**
    * Register SEPA Actions
    */
-  public function process(ContainerBuilder $container) {
+  public function process(ContainerBuilder $container): void {
     if (!$container->hasDefinition('action_provider')) {
       return;
     }
@@ -85,6 +85,14 @@ class ContainerSpecs implements CompilerPassInterface {
       'UpdateContract',
       'Civi\Contract\ActionProvider\Action\UpdateContract',
       E::ts('Contract: Update'),
+      [
+        \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
+      ],
+    ]);
+    $typeFactoryDefinition->addMethodCall('addAction', [
+      'ModifyContract',
+      'Civi\Contract\ActionProvider\Action\ModifyContract',
+      E::ts('Contract: Modify'),
       [
         \Civi\ActionProvider\Action\AbstractAction::SINGLE_CONTACT_ACTION_TAG,
       ],
