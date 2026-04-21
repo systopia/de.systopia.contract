@@ -41,6 +41,7 @@ msgid "Cancel Contract"
 msgstr "Vertrag beenden"
 
 #: CRM/Contract/Change/Cancel.php CRM/Contract/Form/Create.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Cancel"
 msgstr "Beenden"
 
@@ -71,6 +72,8 @@ msgid "Pause Contract"
 msgstr "Vertrag pausieren"
 
 #: CRM/Contract/Change/Pause.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Pause"
 msgstr "Pausieren"
 
@@ -91,6 +94,7 @@ msgid "Revive Contract"
 msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
 
 #: CRM/Contract/Change/Revive.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Revive"
 msgstr "Wiederaufnehmen (nach Beendigung)"
 
@@ -158,6 +162,8 @@ msgid "Update Contract"
 msgstr "Vertrag aktualisieren"
 
 #: CRM/Contract/Change/Upgrade.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Update"
 msgstr "Ändern"
 
@@ -203,6 +209,7 @@ msgstr "Zahlungsart"
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "IBAN"
@@ -211,6 +218,7 @@ msgstr "IBAN"
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "BIC"
@@ -232,6 +240,7 @@ msgid "Installment"
 msgstr "Betrag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Payment Frequency"
 msgstr "Turnus"
@@ -260,6 +269,7 @@ msgid "if already known"
 msgstr "Falls bereits bekannt"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Campaign"
 msgstr "Kampagne"
@@ -335,6 +345,7 @@ msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Account Holder"
 msgstr "Kontoinhaber"
@@ -348,7 +359,7 @@ msgid "Start Collection"
 msgstr "Einzugsstart"
 
 #: CRM/Contract/Form/Modify.php
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "as soon as possible"
 msgstr "so bald wie möglich"
@@ -362,6 +373,7 @@ msgid "Cancellation reason"
 msgstr "Kündigungsgrund"
 
 #: CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
 msgid "Resume Date"
 msgstr "Wiederaufnahmedatum"
@@ -627,13 +639,13 @@ msgid "Paid by"
 msgstr "Bezahlt von"
 
 #: CRM/Contract/RecurringContribution.php
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
 msgid "annually"
 msgstr "jährlich"
 
 #: CRM/Contract/RecurringContribution.php
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
 msgid "monthly"
 msgstr "monatlich"
@@ -658,9 +670,25 @@ msgstr "Konfigurationsproblem"
 msgid "Reference '%1' is already in use!"
 msgstr "Vertragsreferenz '%1' wird bereits verwendet!"
 
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+msgid "semi-annually"
+msgstr "halbjährlich"
+
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+msgid "quarterly"
+msgstr "vierteljährlich"
+
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+msgid "bi-monthly"
+msgstr "zweimonatlich"
+
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
 #: Civi/Contract/ActionProvider/Action/ResumeContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
@@ -685,6 +713,7 @@ msgstr "CiviCRM ID"
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
 #: Civi/Contract/ActionProvider/Action/ResumeContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
@@ -705,6 +734,7 @@ msgstr "Datum"
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/PauseContract.php
 #: Civi/Contract/ActionProvider/Action/ResumeContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
@@ -736,6 +766,7 @@ msgid "Financial Type (default)"
 msgstr "Zuwendungsart (default)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Campaign (default)"
 msgstr "Kampagne (default)"
 
@@ -744,6 +775,7 @@ msgid "Frequency (default)"
 msgstr "Zahlungsrhytmus (default)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Collection Day (default)"
 msgstr "Einzugstag (default)"
 
@@ -754,6 +786,10 @@ msgstr "Puffertage"
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "If a Contract already exists"
 msgstr "Falls der Vertrag bereits besteht"
+
+#: Civi/Contract/ActionProvider/Action/CreateContract.php
+msgid "Payment Option (without this defaults to SEPA)"
+msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
@@ -768,6 +804,7 @@ msgid "Mandate Reference"
 msgstr "Mandatsreferenz"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Collection Day"
 msgstr "Einzugstag"
@@ -788,21 +825,6 @@ msgstr "Mandats-ID"
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Contract already exists"
 msgstr "Vertrag besteht bereits"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
-msgid "semi-annually"
-msgstr "halbjährlich"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
-msgid "quarterly"
-msgstr "vierteljährlich"
-
-#: Civi/Contract/ActionProvider/Action/CreateContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
-msgid "bi-monthly"
-msgstr "zweimonatlich"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "ignore"
@@ -839,6 +861,7 @@ msgid "Donor's Bank Account"
 msgstr "Konto der Spender_in"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
 msgid "Defer Payment Start"
@@ -860,6 +883,54 @@ msgstr "Einzugsintervall"
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Recurring Contribution ID"
 msgstr "ID der wiederkehrenden Zuwendung"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Action (default)"
+msgstr "Aktion (default)"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Payment Option (default)"
+msgstr "Zahlungsoption (Standard)"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Payment Frequency (default)"
+msgstr "Zahlungsrhytmus (Standard)"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Action"
+msgstr "Aktion"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Medium"
+msgstr "Kanal"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Note"
+msgstr "Notiz"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Payment Option"
+msgstr "Zahlungsoption"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+msgid "Payment Amount"
+msgstr "Zahlungsbetrag"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Recurring Contribution"
+msgstr "Wiederkehrende Zuwendung"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Cancellation Reason"
+msgstr "Kündigungsgrund"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Error Message"
+msgstr "Fehlermeldung"
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "directly process scheduled changes"
@@ -884,14 +955,6 @@ msgstr "Mitgliedschaftsvertrag"
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php resources/l10n.php
 msgid "Membership Channel"
 msgstr "Anwerbekanal"
-
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
-msgid "Payment Option"
-msgstr "Zahlungsoption"
-
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
-msgid "Payment Amount"
-msgstr "Zahlungsbetrag"
 
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php resources/l10n.php
 msgid "Cycle Day"
@@ -940,6 +1003,10 @@ msgstr "Vertrag Wiederbeleben"
 #: Civi/Contract/ContainerSpecs.php
 msgid "Contract: Update"
 msgstr "Vertrag Anpassen"
+
+#: Civi/Contract/ContainerSpecs.php
+msgid "Contract: Modify"
+msgstr "Vertrag bearbeiten"
 
 #: Civi/Contract/Event/RapidCreateFormEvent.php
 msgid ""
@@ -1018,43 +1085,15 @@ msgid "de.systopia.contract"
 msgstr "de.systopia.contract"
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Primary Memberships"
-msgstr "Primäre Mitgliedschaften"
+msgid "Primary and Secondary Memberships"
+msgstr "Primäre und sekundäre Mitgliedschaften"
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Mitgliedschafts ID"
-msgstr ""
+msgid "Primary and Secondary Memberships Table"
+msgstr "Primäre und sekundäre Mitgliedschaften Tabelle"
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Kontakt Sortiername"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Mitgliedsart"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Beginn der Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Ablaufdatum der Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Zeige Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Update Mitgliedschaft"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Related Memberships"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Lösche Mitgliedschaft"
+msgid "This display shows primary and associated secondary memberships."
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
@@ -1062,8 +1101,12 @@ msgid "Membership ID"
 msgstr "Mitgliedschafts-ID"
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Contact"
-msgstr "Kontakt"
+msgid "Contact sort name"
+msgstr "Kontakt Sortiername"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Member since"
+msgstr "Mitglied seit"
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Start date"
@@ -1072,6 +1115,27 @@ msgstr "Startdatum"
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "End date"
 msgstr "Enddatum"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Status"
+msgstr "Status"
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "View"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "End"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Related Memberships"
+msgstr ""
+
+#: managed/SavedSearch_Related_Memberships.mgd.php
+msgid "Contact"
+msgstr "Kontakt"
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Parent membership"
@@ -1477,24 +1541,12 @@ msgid "Modification"
 msgstr "Änderung"
 
 #: templates/CRM/Contract/Page/Review.tpl
-msgid "Medium"
-msgstr "Kanal"
-
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Note"
-msgstr "Notiz"
-
-#: templates/CRM/Contract/Page/Review.tpl
 msgid "Cancel reason"
 msgstr "Kündigungsgrund"
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Added by"
 msgstr "Erfasst von"
-
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Status"
-msgstr "Status"
 
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Actions"
@@ -1532,9 +1584,6 @@ msgstr "Zahlte Vertrag"
 
 #~ msgid "create new mandate"
 #~ msgstr "neues SEPA-Mandat"
-
-#~ msgid "Contract number"
-#~ msgstr "Vertragsnummer"
 
 #~ msgid "new contract: %1"
 #~ msgstr "Neuer %1 Vertrag"
