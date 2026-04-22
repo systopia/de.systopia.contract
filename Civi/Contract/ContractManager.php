@@ -20,6 +20,8 @@ declare(strict_types = 1);
 namespace Civi\Contract;
 
 use Civi\Api4\Membership;
+use Civi\Contract\Event\AddRelatedMembershipEvent;
+use Civi\Core\CiviEventDispatcherInterface;
 
 class ContractManager {
 
@@ -27,6 +29,12 @@ class ContractManager {
    * @phpstan-var array<int, \Civi\Contract\Contract>
    */
   private array $contracts = [];
+
+  private CiviEventDispatcherInterface $eventDispatcher;
+
+  public function __construct(CiviEventDispatcherInterface $eventDispatcher) {
+    $this->eventDispatcher = $eventDispatcher;
+  }
 
   public function get(int $membershipId): Contract {
     if (!isset($this->contracts[$membershipId])) {
@@ -61,6 +69,10 @@ class ContractManager {
    */
   public function addRelatedMembership(int $membershipId, int $contactId): int {
     $contract = $this->get($membershipId);
+
+    $event = new AddRelatedMembershipEvent($contract, $contactId);
+    $this->eventDispatcher->dispatch(AddRelatedMembershipEvent::class, $event);
+
     $relatedMembership = Membership::create(FALSE)
       ->addValue('owner_membership_id', $contract->getMembershipId())
       ->addValue('contact_id', $contactId)
