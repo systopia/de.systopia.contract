@@ -58,7 +58,7 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
     self::assertArrayHasKey('id', $modified);
 
     $activity = \Civi\Api4\Activity::get(FALSE)
-      ->addWhere('source_record_id', '=', $contract['id'])
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
       ->addOrderBy('id', 'DESC')
       ->execute()
       ->first();
@@ -101,7 +101,7 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
     self::assertArrayHasKey('id', $modified);
 
     $activity = \Civi\Api4\Activity::get(FALSE)
-      ->addWhere('source_record_id', '=', $contract['id'])
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
       ->addOrderBy('id', 'DESC')
       ->execute()
       ->first();
@@ -143,7 +143,7 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
     self::assertArrayHasKey('id', $modified);
 
     $activity = \Civi\Api4\Activity::get(FALSE)
-      ->addWhere('source_record_id', '=', $contract['id'])
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
       ->addOrderBy('id', 'DESC')
       ->execute()
       ->first();
@@ -203,7 +203,7 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
     self::assertArrayHasKey('id', $modified);
 
     $activity = \Civi\Api4\Activity::get(FALSE)
-      ->addWhere('source_record_id', '=', $contract['id'])
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
       ->addOrderBy('id', 'DESC')
       ->execute()
       ->first();
@@ -252,7 +252,7 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
     self::assertArrayHasKey('id', $modified);
 
     $activity = \Civi\Api4\Activity::get(FALSE)
-      ->addWhere('source_record_id', '=', $contract['id'])
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
       ->addOrderBy('id', 'DESC')
       ->execute()
       ->first();
@@ -310,7 +310,7 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
     self::assertArrayHasKey('id', $modified);
 
     $activity = \Civi\Api4\Activity::get(FALSE)
-      ->addWhere('source_record_id', '=', $contract['id'])
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
       ->addOrderBy('id', 'DESC')
       ->execute()
       ->first();
@@ -351,7 +351,7 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
     self::assertArrayHasKey('id', $modified);
 
     $activity = \Civi\Api4\Activity::get(FALSE)
-      ->addWhere('source_record_id', '=', $contract['id'])
+      ->addWhere('contract_activity.contract_id', '=', $contract['id'])
       ->addOrderBy('id', 'DESC')
       ->execute()
       ->first();

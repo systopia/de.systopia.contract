@@ -442,11 +442,17 @@ class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterfac
    */
   public function getChangeActivities($contract_id, $types = NULL, $status = []) {
     // compile query
+    $contractReferenceFieldId = \Civi\Api4\CustomField::get(FALSE)
+      ->addSelect('id')
+      ->addWhere('custom_group_id:name', '=', 'contract_activity')
+      ->addWhere('name', '=', 'contract_id')
+      ->execute()
+      ->single()['id'];
     $query = [
-      'source_record_id' => $contract_id,
-      'sequential'       => 1,
-      'option.limit'     => 0,
-      'option.sort'      => 'activity_date_time desc',
+      'custom_' . $contractReferenceFieldId => $contract_id,
+      'sequential' => 1,
+      'option.limit' => 0,
+      'option.sort' => 'activity_date_time desc',
     ];
     if (!empty($types)) {
       $query['activity_type_id'] = ['IN' => $types];

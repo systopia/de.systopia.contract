@@ -18,7 +18,7 @@ use Civi\Api4\OptionValue;
  */
 class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
-  public function enable() {
+  public function enable(): void {
     require_once 'CRM/Contract/CustomData.php';
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
@@ -42,7 +42,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
    *
    * @return TRUE on success
    */
-  public function upgrade_1360() {
+  public function upgrade_1360(): bool {
     $this->ctx->log->info('Applying update 1360');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
@@ -50,19 +50,19 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  public function upgrade_1370() {
+  public function upgrade_1370(): bool {
     $this->ctx->log->info('Applying update 1370');
     return TRUE;
   }
 
-  public function upgrade_1390() {
+  public function upgrade_1390(): bool {
     $this->ctx->log->info('Applying update 1390');
     $logging = new CRM_Logging_Schema();
     $logging->fixSchemaDifferences();
     return TRUE;
   }
 
-  public function upgrade_1402() {
+  public function upgrade_1402(): bool {
     $this->ctx->log->info('Applying updates for 14xx');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
@@ -71,7 +71,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  public function upgrade_1403() {
+  public function upgrade_1403(): bool {
     $this->ctx->log->info('Applying updates for 14xx');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
@@ -79,7 +79,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  public function upgrade_1501() {
+  public function upgrade_1501(): bool {
     $this->ctx->log->info('Applying localisation');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
@@ -96,14 +96,14 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  public function upgrade_1502() {
+  public function upgrade_1502(): bool {
     $this->ctx->log->info('Hide/filter activity types');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
 
-  public function upgrade_1503() {
+  public function upgrade_1503(): bool {
     $this->ctx->log->info('Update translations');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_payment.json'));
@@ -111,40 +111,76 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  public function upgrade_2000() {
+  public function upgrade_2000(): bool {
     $this->ctx->log->info('Adjust filters for contract actions');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
 
-  public function upgrade_2001() {
+  public function upgrade_2001(): bool {
     $this->ctx->log->info('Update contract types');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
 
-  public function upgrade_2002() {
+  public function upgrade_2002(): bool {
     $this->ctx->log->info('Delete dialoger field on contract');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncEntities(E::path('resources/custom_group_membership_general.json'));
     return TRUE;
   }
 
-  public function upgrade_2003() {
+  public function upgrade_2003(): bool {
     $this->ctx->log->info('Add "No Payment required" payment instrument.');
     $this->ensureNoPaymentRequiredPaymentInstrument();
     return TRUE;
   }
 
-  public function upgrade_2004() {
+  public function upgrade_2004(): bool {
     $this->ctx->log->info('Add ContractMembershipRelation entity schema.');
     E::schema()->createEntityTable('schema/ContractMembershipRelation.entityType.php');
     return TRUE;
   }
 
-  protected function ensureNoPaymentRequiredPaymentInstrument() {
+  public function upgrade_2005(): bool {
+    // Migrate "source_record_id" to custom field contract_activity.contract_id for contract activities.
+    $contractIds = \Civi\Api4\Activity::get(FALSE)
+      ->addSelect('id', 'source_record_id', 'membership.id')
+      ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
+      ->addWhere('source_record_id', 'IS NOT NULL')
+      // @phpstan-ignore argument.type
+      ->addJoin('Membership AS membership', 'LEFT', ['membership.id', '=', 'source_record_id'])
+      ->execute()
+      ->indexBy('id')
+      ->column('membership.id');
+    foreach ($contractIds as $activityId => $contractId) {
+      $this->addTask(
+        E::ts('Migrate contract references for activities from "source_record_id" to entity reference field'),
+        'migrateContractReference',
+        $activityId, $contractId
+      );
+    }
+    return TRUE;
+  }
+
+  public function migrateContractReference(int $activityId, ?int $contractId): bool {
+    if (NULL === $contractId) {
+      $this->ctx->log->warning(E::ts(
+        'Referenced contract does not exist, deleting reference on activity %1.',
+        [1 => $activityId]
+      ));
+    }
+    \Civi\Api4\Activity::update(FALSE)
+      ->addValue('contract_activity.contract_id', $contractId)
+      ->addValue('source_record_id', NULL)
+      ->addWhere('id', '=', $activityId)
+      ->execute();
+    return TRUE;
+  }
+
+  protected function ensureNoPaymentRequiredPaymentInstrument(): void {
     try {
       $currentNone = OptionValue::get(FALSE)
         ->addWhere('option_group_id.name', '=', 'payment_instrument')
@@ -201,7 +237,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     }
   }
 
-  protected function findNextAvailablePaymentInstrumentValueByGroupName(string $groupName) {
+  protected function findNextAvailablePaymentInstrumentValueByGroupName(string $groupName): int {
     $rows = OptionValue::get(FALSE)
       ->addWhere('option_group_id.name', '=', $groupName)
       ->setSelect(['value'])

@@ -190,22 +190,15 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
     return $this->change_activity_type_id;
   }
 
-  /**
-   * Get the ID of the change activity
-   *
-   * @return string
-   */
-  public function getActivityClass() {
+  public function getActivityClass(): ?string {
     return CRM_Contract_Change::getClassByActivityType($this->change_activity_type_id);
   }
 
-  /**
-   * Get the action name of the change
-   *
-   * @return string
-   */
-  public function getActivityAction() {
+  public function getActivityAction(): ?string {
     $class = $this->getActivityClass();
+    if (NULL === $class) {
+      throw new \RuntimeException('No class name resolved for activity type.');
+    }
     return CRM_Contract_Change::getActionByClass($class);
   }
 

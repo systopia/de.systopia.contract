@@ -44,6 +44,10 @@ function civicrm_api3_Contract_create($params) {
   }
 
   // create
+  /** @phpstan-var array{
+   *     id: int|string
+   *   } $membership
+   */
   $membership = civicrm_api3('Membership', 'create', $params);
 
   // link SEPA Mandate
@@ -62,7 +66,7 @@ function civicrm_api3_Contract_create($params) {
     $change->setParameter('activity_date_time', $params['activity_date_time']);
   }
   $change->setParameter('source_contact_id', CRM_Contract_Configuration::getUserID());
-  $change->setParameter('source_record_id', $membership['id']);
+  $change->setParameter('contract_activity.contract_id', (int) $membership['id']);
   $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
   $change->setStatus('Completed');
   $change->populateData();
@@ -76,7 +80,7 @@ function civicrm_api3_Contract_create($params) {
   );
 
   // maybe we need to do some cleanup:
-  CRM_Contract_Utils::deleteSystemActivities($membership['id']);
+  CRM_Contract_Utils::deleteSystemActivities((int) $membership['id']);
 
   return $membership;
 }
