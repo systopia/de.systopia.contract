@@ -1441,13 +1441,13 @@ parameters:
 		-
 			message: '#^BooleanAnd\: Condition between bool and false are always false\.$#'
 			identifier: voku.BooleanAnd
-			count: 3
+			count: 2
 			path: CRM/Contract/Form/Modify.php
 
 		-
 			message: '#^BooleanAndNode\: Condition between bool and false are always false\.$#'
 			identifier: voku.BooleanAndNode
-			count: 3
+			count: 2
 			path: CRM/Contract/Form/Modify.php
 
 		-
@@ -2672,7 +2672,7 @@ parameters:
 		-
 			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
 			identifier: equal.notAllowed
-			count: 16
+			count: 14
 			path: CRM/Contract/SepaLogic.php
 
 		-
@@ -5291,12 +5291,6 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Identical\: Possible insane comparison between null and float\.$#'
-			identifier: voku.Identical
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
 			message: '#^In method "ModifyFormTest\:\:ensurePaymentInstrumentNone", caught "Throwable" must be rethrown\. Either catch a more specific exception, add a "throw" clause in the "catch" block to propagate the exception or add a "// @ignoreException" comment\.$#'
 			count: 2
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
@@ -5551,10 +5545,4 @@ parameters:
 			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
 			identifier: ternary.shortNotAllowed
 			count: 5
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between float and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
