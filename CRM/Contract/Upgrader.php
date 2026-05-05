@@ -145,14 +145,39 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   public function upgrade_2005(): bool {
-    // TODO: Migrate source_record_id to custom field contract_activity.contract_id for contract activities.
-    // TODO: Use a queue.
+    // Migrate "source_record_id" to custom field contract_activity.contract_id for contract activities.
     $contractIds = \Civi\Api4\Activity::get(FALSE)
-      ->addSelect('id', 'source_record_id')
+      ->addSelect('id', 'source_record_id', 'membership.id')
       ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
+      ->addWhere('source_record_id', 'IS NOT NULL')
+      // @phpstan-ignore argument.type
+      ->addJoin('Membership AS membership', 'LEFT', ['membership.id', '=', 'source_record_id'])
       ->execute()
       ->indexBy('id')
-      ->column('source_record_id');
+      ->column('membership.id');
+    foreach ($contractIds as $activityId => $contractId) {
+      $this->addTask(
+        E::ts('Migrate contract references for activities from "source_record_id" to entity reference field'),
+        'migrateContractReference',
+        $activityId, $contractId
+      );
+    }
+    return TRUE;
+  }
+
+  public function migrateContractReference(int $activityId, ?int $contractId): bool {
+    if (NULL === $contractId) {
+      $this->ctx->log->warning(E::ts(
+        'Referenced contract does not exist, deleting reference on activity %1.',
+        [1 => $activityId]
+      ));
+    }
+    \Civi\Api4\Activity::update(FALSE)
+      ->addValue('contract_activity.contract_id', $contractId)
+      ->addValue('source_record_id', NULL)
+      ->addWhere('id', '=', $activityId)
+      ->execute();
+    return TRUE;
   }
 
   protected function ensureNoPaymentRequiredPaymentInstrument(): void {
