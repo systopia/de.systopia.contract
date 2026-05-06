@@ -36,7 +36,7 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
     $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
     if ($payment_contract_id) {
       CRM_Contract_SepaLogic::resumeSepaMandate($payment_contract_id);
-      $this->updateContract(['status_id' => 'Current']);
+      $this->updateContract(['status_id:name' => 'Current']);
     }
 
     // update change activity

@@ -8,6 +8,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Activity;
+use Civi\Api4\MembershipStatus;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -62,7 +64,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       'end_date'                     => date('YmdHis'),
       self::MEMBERSHIP_CANCEL_REASON => $this->data[self::MEMBERSHIP_CANCEL_REASON],
       self::MEMBERSHIP_CANCEL_DATE   => date('YmdHis'),
-      'status_id'                    => 'Cancelled',
+      'status_id:name'               => 'Cancelled',
     ];
 
     // perform the update
@@ -93,19 +95,23 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     // check for OTHER CANCELLATION REQUEST for the same day
     //  @see https://redmine.greenpeace.at/issues/1190
     $requested_day = date('Y-m-d', strtotime($this->data['activity_date_time']));
-    $scheduled_activities = civicrm_api3('Activity', 'get', [
-      'source_record_id' => $this->getContractID(),
-      'activity_type_id' => $this->getActvityTypeID(),
-      'status_id'        => 'Scheduled',
-      'option.limit'     => 0,
-      'sequential'       => 1,
-      'return'           => 'id,activity_date_time',
-    ]);
-    foreach ($scheduled_activities['values'] as $scheduled_activity) {
-      $scheduled_for_day = date('Y-m-d', strtotime($scheduled_activity['activity_date_time']));
+    /** @var \ArrayObject<int, array{id: int, activity_date_time: string|null}> $scheduled_activities */
+    $scheduled_activities = Activity::get(FALSE)
+      ->addWhere('source_record_id', '=', $this->getContractID())
+      ->addWhere('activity_type_id', '=', $this->getActvityTypeID())
+      ->addWhere('status_id:name', '=', 'Scheduled')
+      ->addSelect('id', 'activity_date_time')
+      ->execute();
+    foreach ($scheduled_activities as $scheduled_activity) {
+      if (NULL === $scheduled_activity['activity_date_time']) {
+        continue;
+      }
+      /** @var int $activityTime */
+      $activityTime = strtotime($scheduled_activity['activity_date_time']);
+      $scheduled_for_day = date('Y-m-d', $activityTime);
       if ($scheduled_for_day === $requested_day) {
         // there's already a scheduled 'cancel' activity for the same day
-        throw new \RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
+        throw new \RuntimeException('Scheduling an (additional) cancellation request is not desired in this context.');
       }
     }
 
@@ -114,17 +120,20 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     //  @see https://redmine.greenpeace.at/issues/1190
     $contract = $this->getContract();
 
-    $contract_cancelled_status = civicrm_api3('MembershipStatus', 'get', [
-      'name'   => 'Cancelled',
-      'return' => 'id',
-    ]);
-    if ((int) $contract['status_id'] == $contract_cancelled_status['id']) {
+    $contract_cancelled_status = MembershipStatus::get(FALSE)
+      ->addWhere('name', '=', 'Cancelled')
+      ->addSelect('id')
+      ->execute()
+      ->single();
+    if ($contract['status_id'] == $contract_cancelled_status['id']) {
       // contract is cancelled
-      $pending_activity_count = civicrm_api3('Activity', 'getcount', [
-        'source_record_id' => $this->getContractID(),
-        'activity_type_id' => ['IN' => CRM_Contract_Change::getActivityTypeIds()],
-        'status_id'        => ['IN' => ['Scheduled', 'Needs Review']],
-      ]);
+      $pending_activity_count = Activity::get(FALSE)
+        ->selectRowCount()
+        ->addWhere('source_record_id', '=', $this->getContractID())
+        ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
+        ->addWhere('status_id:name', 'IN', ['Scheduled', 'Needs Review'])
+        ->execute()
+        ->countMatched();
       if (0 === $pending_activity_count) {
         throw new \RuntimeException('Scheduling an (additional) cancellation request in not desired in this context.');
       }
