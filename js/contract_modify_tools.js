@@ -183,6 +183,8 @@
         break;
 
       case 'modify':
+        toggleSection('div.payment-create', true);
+        toggleSection('div.payment-sepa',   true);
         toggleSection('div.payment-modify', true);
         break;
 

@@ -104,6 +104,7 @@ class ModifyFullAction extends BasicUpdateAction {
           }
           break;
 
+        case 'modify':
         case 'RCUR':
           $amount = \CRM_Contract_SepaLogic::formatMoney($item['payment_amount']);
           $annual = \CRM_Contract_SepaLogic::formatMoney($item['payment_frequency'] * $amount);

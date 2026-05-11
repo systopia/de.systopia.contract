@@ -174,6 +174,7 @@ class CRM_Contract_Configuration {
    */
   public static function getPaymentOptions($allow_new_contracts = TRUE, $allow_no_change = TRUE) {
     $payment_options = [];
+    $payment_options['modify'] = E::ts('modify current');
     $payment_options['select'] = E::ts('select existing');
 
     if ($allow_new_contracts) {
