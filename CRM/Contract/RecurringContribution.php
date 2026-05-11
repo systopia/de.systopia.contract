@@ -293,12 +293,12 @@ class CRM_Contract_RecurringContribution {
    */
   protected function getValidRcurStatusIds() {
     $pending_id = CRM_Core_PseudoConstant::getKey(
-      'CRM_Contribute_BAO_Contribution',
+      'CRM_Contribute_BAO_ContributionRecur',
       'contribution_status_id',
       'Pending'
     );
     $current_id = CRM_Core_PseudoConstant::getKey(
-      'CRM_Contribute_BAO_Contribution',
+      'CRM_Contribute_BAO_ContributionRecur',
       'contribution_status_id',
       'In Progress'
     );
