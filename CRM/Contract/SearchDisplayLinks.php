@@ -69,7 +69,7 @@ class CRM_Contract_SearchDisplayLinks {
   private static function getActiveDisplayLinks(): array {
     return [
       self::link('update', E::ts('Update Contract'), 'fa-pencil',
-        ['status_id:name', 'IN', ['New', 'Grace', 'Current', 'Pending', 'Paused']]),
+        ['status_id:name', 'IN', CRM_Contract_Change_Upgrade::getStartStatusList()]),
       self::link('pause', E::ts('Pause Contract'), 'fa-pause',
         ['status_id:name', 'IN', CRM_Contract_Change_Pause::getStartStatusList()]),
       self::link('resume', E::ts('Resume Contract'), 'fa-play',
