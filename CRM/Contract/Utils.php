@@ -299,7 +299,7 @@ class CRM_Contract_Utils {
    * If configured this way, this call will delete the defined list of system-generated activities.
    */
   public static function deleteSystemActivities(?int $contract_id): void {
-    if (!isset($contract_id)) {
+    if (NULL === $contract_id) {
       return;
     }
 

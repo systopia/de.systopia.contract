@@ -151,8 +151,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
       ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
       ->addWhere('source_record_id', 'IS NOT NULL')
       ->addWhere('contract_activity.contract_id', 'IS NULL')
-      // @phpstan-ignore argument.type
-      ->addJoin('Membership AS membership', 'LEFT', ['membership.id', '=', 'source_record_id'])
+      ->addJoin('Membership AS membership', 'LEFT', NULL, ['membership.id', '=', 'source_record_id'])
       ->execute()
       ->indexBy('id')
       ->column('membership.id');
@@ -169,7 +168,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   public function migrateContractReference(int $activityId, ?int $contractId): bool {
     if (NULL === $contractId) {
       $this->ctx->log->warning(E::ts(
-        'Referenced contract does not exist, deleting reference on activity %1.',
+        'Referenced contract does not exist, deleting referencing activity %1.',
         [1 => $activityId]
       ));
     }

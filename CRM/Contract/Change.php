@@ -197,15 +197,19 @@ abstract class CRM_Contract_Change {
    * Get the contract ID
    */
   public function getContractID(): ?int {
-    $contractReferenceFieldId = \Civi\Api4\CustomField::get(FALSE)
-      ->addSelect('id')
-      ->addWhere('custom_group_id:name', '=', 'contract_activity')
-      ->addWhere('name', '=', 'contract_id')
-      ->execute()
-      ->single()['id'];
-    $contractId = $this->data['contract_activity.contract_id']
-      ?? $this->data['custom_' . $contractReferenceFieldId]
-      ?? NULL;
+    if (isset($this->data['contract_activity.contract_id'])) {
+      $contractId = $this->data['contract_activity.contract_id'];
+    }
+    else {
+      // Lookup for APIv3 custom field name.
+      $contractReferenceFieldId = \Civi\Api4\CustomField::get(FALSE)
+        ->addSelect('id')
+        ->addWhere('custom_group_id:name', '=', 'contract_activity')
+        ->addWhere('name', '=', 'contract_id')
+        ->execute()
+        ->single()['id'];
+      $contractId = $this->data['custom_' . $contractReferenceFieldId] ?? NULL;
+    }
     return NULL !== $contractId ? (int) $contractId : NULL;
   }
 
@@ -701,7 +705,8 @@ abstract class CRM_Contract_Change {
   /**
    * Get the class for the given activity type
    *
-   * @param int|string $activity_type acitivity type ID or name
+   * @param int|string $activity_type
+   *   Acitivity type ID, name, or change action name.
    */
   public static function getClassByActivityType($activity_type): ?string {
     // check name -> class mapping first

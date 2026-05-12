@@ -49,7 +49,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
         'contract_updates.*',
       )
       ->addWhere('contract_activity.contract_id', '=', $id)
-      ->addWhere('status_id', 'NOT IN', ['Cancelled'])
+      ->addWhere('status_id:name', 'NOT IN', ['Cancelled'])
       ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
       ->addOrderBy('activity_date_time', 'DESC')
       ->addOrderBy('id', 'DESC')

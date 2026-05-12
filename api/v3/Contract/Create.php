@@ -45,7 +45,7 @@ function civicrm_api3_Contract_create($params) {
 
   // create
   /** @phpstan-var array{
-   *     id: int|string
+   *     id: int|numeric-string
    *   } $membership
    */
   $membership = civicrm_api3('Membership', 'create', $params);

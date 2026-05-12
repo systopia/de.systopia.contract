@@ -104,16 +104,15 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
     /** @phpstan-var list<array{id: int, activity_date_time: string}> $scheduled_activities */
     $scheduled_activities = \Civi\Api4\Activity::get(FALSE)
       ->addSelect('id', 'activity_date_time')
+      ->addWhere('activity_date_time', 'IS NOT NULL')
       ->addWhere('contract_activity.contract_id', '=', $this->getContractID())
       ->addWhere('activity_type_id', '=', $this->getActvityTypeID())
       ->addWhere('status_id:name', '=', 'Scheduled')
       ->execute()
       ->getArrayCopy();
     foreach ($scheduled_activities as $scheduled_activity) {
+      /** @var int $scheduledActivityDateTime */
       $scheduledActivityDateTime = strtotime($scheduled_activity['activity_date_time']);
-      if (FALSE === $scheduledActivityDateTime) {
-        throw new \RuntimeException('Invalid activity date.');
-      }
       $scheduled_for_day = date('Y-m-d', $scheduledActivityDateTime);
       if ($scheduled_for_day === $requested_day) {
         // There is already a scheduled 'cancel' activity for the same day.

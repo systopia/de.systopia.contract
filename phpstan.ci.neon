@@ -15,6 +15,9 @@ parameters:
 	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
 		# Errors caused by dependencies
+
+		# Required with CiviSEPA (no fixed version yet):
+		# bogus return type hint in \CRM_Sepa_Logic_Verification::verifyIBAN()
 		-
 			message: '#^Identical\: Insane comparison between null and null\.$#'
 			path: CRM/Contract/SepaLogic.php

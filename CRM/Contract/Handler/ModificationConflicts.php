@@ -17,7 +17,7 @@ class CRM_Contract_Handler_ModificationConflicts {
   /**
    * @phpstan-var list<array{
    *     id: int,
-   *     status_id: int|string,
+   *     status_id: int,
    *     activity_type_id: int,
    *   }> $scheduledModifications
    */

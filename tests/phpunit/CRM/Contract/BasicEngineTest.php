@@ -138,13 +138,6 @@ class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
       // schedule and update for tomorrow
       $this->modifyContract($contract['id'], 'pause', 'tomorrow');
-      $contractReferenceFieldId = \Civi\Api4\CustomField::get(FALSE)
-        ->addSelect('id')
-        ->addWhere('custom_group_id:name', '=', 'contract_activity')
-        ->addWhere('name', '=', 'contract_id')
-        ->execute()
-        ->single()['id'];
-      $changes = $this->callAPISuccess('Activity', 'get', ['custom_' . $contractReferenceFieldId => $contract['id']]);
 
       // run engine see if anything changed
       $this->runContractEngine($contract['id']);
