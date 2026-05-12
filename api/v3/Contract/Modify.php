@@ -75,6 +75,7 @@ function civicrm_api3_Contract_modify($params) {
   $params['activity_type_id']   = $params['action'];
   $params['activity_date_time'] = date('Y-m-d H:i:s', $requested_execution_time);
   $params['contract_activity.contract_id'] = (int) $params['id'];
+  $params['source_record_id'] = (int) $params['id'];
   unset($params['id']);
   if (!empty($params['note'])) {
     $params['details'] = $params['note'];

@@ -150,6 +150,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
       ->addSelect('id', 'source_record_id', 'membership.id')
       ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
       ->addWhere('source_record_id', 'IS NOT NULL')
+      ->addWhere('contract_activity.contract_id', 'IS NULL')
       // @phpstan-ignore argument.type
       ->addJoin('Membership AS membership', 'LEFT', ['membership.id', '=', 'source_record_id'])
       ->execute()
@@ -174,7 +175,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     }
     \Civi\Api4\Activity::update(FALSE)
       ->addValue('contract_activity.contract_id', $contractId)
-      ->addValue('source_record_id', NULL)
       ->addWhere('id', '=', $activityId)
       ->execute();
     return TRUE;

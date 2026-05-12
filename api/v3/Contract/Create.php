@@ -67,6 +67,7 @@ function civicrm_api3_Contract_create($params) {
   }
   $change->setParameter('source_contact_id', CRM_Contract_Configuration::getUserID());
   $change->setParameter('contract_activity.contract_id', (int) $membership['id']);
+  $change->setParameter('source_record_id', (int) $membership['id']);
   $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
   $change->setStatus('Completed');
   $change->populateData();
