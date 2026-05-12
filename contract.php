@@ -44,6 +44,11 @@ function contract_civicrm_container(ContainerBuilder $container): void {
  */
 function contract_civicrm_config(\CRM_Core_Config &$config): void {
   _contract_civix_civicrm_config($config);
+
+  \Civi::dispatcher()->addListener(
+    'civi.api.respond',
+    ['CRM_Contract_SearchDisplayLinks', 'onApiRespond']
+  );
 }
 
 /**
