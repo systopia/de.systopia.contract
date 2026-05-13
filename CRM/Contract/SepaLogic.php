@@ -739,10 +739,11 @@ class CRM_Contract_SepaLogic {
   /**
    * Validate the given IBAN
    *
-   * @return TRUE if IBAN is valid
+   * @return bool
+   *   TRUE if IBAN is valid
    */
-  public static function validateIBAN($iban) {
-    return NULL == CRM_Sepa_Logic_Verification::verifyIBAN($iban);
+  public static function validateIBAN($iban): bool {
+    return NULL === CRM_Sepa_Logic_Verification::verifyIBAN($iban);
   }
 
   /**
@@ -760,7 +761,7 @@ class CRM_Contract_SepaLogic {
    * @return TRUE if BIC is valid
    */
   public static function validateBIC($bic) {
-    return NULL == CRM_Sepa_Logic_Verification::verifyBIC($bic);
+    return NULL === CRM_Sepa_Logic_Verification::verifyBIC($bic);
   }
 
   /**

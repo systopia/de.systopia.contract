@@ -963,7 +963,7 @@ class ModifyFormTest extends ContractTestBase {
         sprintf(
           'Unexpected amount on new recurring contribution. Expected: %.4f, got: %s (RC id #%s, status=%s)',
           $target,
-          $gotAmt === NULL ? '∅' : (string) $gotAmt,
+          (string) $gotAmt,
           $candidate['id'] ?? '?',
           $candidate['contribution_status_id:name'] ?? '?'
         )

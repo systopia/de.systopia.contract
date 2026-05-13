@@ -205,6 +205,7 @@ class CRM_Contract_RecurringContribution {
       }
       $mandateReference = '';
       if (is_array($mandate) && isset($mandate['reference'])) {
+        /** @var string $mandateReference */
         $mandateReference = $mandate['reference'];
       }
 

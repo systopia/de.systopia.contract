@@ -64,9 +64,11 @@ class CRM_Contract_EngineStressTest extends CRM_Contract_ContractTestBase {
       );
 
       // cheekily set all of the 'needs review' ones to 'scheduled'
-      CRM_Core_DAO::executeQuery(
-        "UPDATE civicrm_activity SET status_id = 1 WHERE source_record_id = {$contract['id']} AND status_id <> 2;"
-      );
+      \Civi\Api4\Activity::update(FALSE)
+        ->addValue('status_id:name', 'Scheduled')
+        ->addWhere('contract_activity.contract_id', '=', $contract['id'])
+        ->addWhere('status_id:name', '!=', 'Completed')
+        ->execute();
 
       // now... these should all be scheduled
       $scheduled_updates = $this->callAPISuccess(

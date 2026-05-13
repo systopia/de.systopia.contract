@@ -332,13 +332,13 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 2
+			count: 1
 			path: CRM/Contract/Change.php
 
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 9
+			count: 8
 			path: CRM/Contract/Change.php
 
 		-
@@ -425,24 +425,6 @@ parameters:
 			path: CRM/Contract/Change.php
 
 		-
-			message: '#^Method CRM_Contract_Change\:\:getActvityTypeID\(\) should return int but returns float\|int\|string\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getChangeForData\(\) has parameter \$data with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getChangeForData\(\) should return CRM_Contract_Change but returns object\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
 			message: '#^Method CRM_Contract_Change\:\:getChangeTypes\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -461,18 +443,6 @@ parameters:
 			path: CRM/Contract/Change.php
 
 		-
-			message: '#^Method CRM_Contract_Change\:\:getClassByActivityType\(\) has parameter \$activity_type_id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getClassByActivityType\(\) should return string but returns null\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
 			message: '#^Method CRM_Contract_Change\:\:getContract\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -481,12 +451,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Change\:\:getContract\(\) should return array but returns array\|null\.$#'
 			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getContractID\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: CRM/Contract/Change.php
 
@@ -707,24 +671,6 @@ parameters:
 			path: CRM/Contract/Change.php
 
 		-
-			message: '#^Offset ''activity_type_id'' might not exist on array\<string, mixed\>\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Offset ''source_record_id'' might not exist on array\<string, mixed\>\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Parameter \#3 \$params of function civicrm_api3 expects array, array\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
 			message: '#^Property CRM_Contract_Change\:\:\$_type_id2label type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -751,24 +697,6 @@ parameters:
 		-
 			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
 			identifier: function.strict
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Cannot access offset ''values'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
-			identifier: equal.notAllowed
 			count: 1
 			path: CRM/Contract/Change/Cancel.php
 
@@ -823,30 +751,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Change_Cancel\:\:shouldBeAccepted\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Offset ''activity_date_time'' might not exist on array\<string, mixed\>\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Offset ''membership_cancellation\.membership_cancel_reason'' might not exist on array\<string, mixed\>\|null\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Only booleans are allowed in a ternary operator condition, string\|null given\.$#'
-			identifier: ternary.condNotBoolean
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Parameter \#1 \$datetime of function strtotime expects string, mixed given\.$#'
-			identifier: argument.type
 			count: 1
 			path: CRM/Contract/Change/Cancel.php
 
@@ -1069,12 +973,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Change_Sign\:\:shouldBeAccepted\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Only booleans are allowed in a ternary operator condition, list\<string\> given\.$#'
-			identifier: ternary.condNotBoolean
 			count: 1
 			path: CRM/Contract/Change/Sign.php
 
@@ -1313,12 +1211,6 @@ parameters:
 			path: CRM/Contract/Change/Upgrade.php
 
 		-
-			message: '#^Parameter \#2 \$array of function array_key_exists expects array, array\<string, mixed\>\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Contract/Change/Upgrade.php
-
-		-
 			message: '#^Parameter \#5 \$paymentOption of static method CRM_Contract_RecurringContribution\:\:createRecurringContribution\(\) expects string, int\|string given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1549,13 +1441,13 @@ parameters:
 		-
 			message: '#^BooleanAnd\: Condition between bool and false are always false\.$#'
 			identifier: voku.BooleanAnd
-			count: 3
+			count: 2
 			path: CRM/Contract/Form/Modify.php
 
 		-
 			message: '#^BooleanAndNode\: Condition between bool and false are always false\.$#'
 			identifier: voku.BooleanAndNode
-			count: 3
+			count: 2
 			path: CRM/Contract/Form/Modify.php
 
 		-
@@ -2258,12 +2150,6 @@ parameters:
 			path: CRM/Contract/Handler/MembershipForm.php
 
 		-
-			message: '#^Cannot access offset ''values'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/Handler/ModificationConflicts.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 2
@@ -2278,12 +2164,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Handler_ModificationConflicts\:\:checkForConflicts\(\) has parameter \$contractId with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Handler/ModificationConflicts.php
-
-		-
-			message: '#^Method CRM_Contract_Handler_ModificationConflicts\:\:getScheduledModifications\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: CRM/Contract/Handler/ModificationConflicts.php
 
@@ -2330,39 +2210,9 @@ parameters:
 			path: CRM/Contract/Handler/ModificationConflicts.php
 
 		-
-			message: '#^Property CRM_Contract_Handler_ModificationConflicts\:\:\$contractId has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: CRM/Contract/Handler/ModificationConflicts.php
-
-		-
-			message: '#^Property CRM_Contract_Handler_ModificationConflicts\:\:\$needsReviewStatusId has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: CRM/Contract/Handler/ModificationConflicts.php
-
-		-
-			message: '#^Property CRM_Contract_Handler_ModificationConflicts\:\:\$scheduledModifications has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: CRM/Contract/Handler/ModificationConflicts.php
-
-		-
-			message: '#^Cannot access offset ''contact_id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/Page/Review.php
-
-		-
-			message: '#^Cannot access offset ''payment_instrument_id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/Page/Review.php
-
-		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 11
+			count: 8
 			path: CRM/Contract/Page/Review.php
 
 		-
@@ -2822,7 +2672,7 @@ parameters:
 		-
 			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
 			identifier: equal.notAllowed
-			count: 16
+			count: 14
 			path: CRM/Contract/SepaLogic.php
 
 		-
@@ -3185,96 +3035,6 @@ parameters:
 			path: CRM/Contract/Upgrader.php
 
 		-
-			message: '#^Method CRM_Contract_Upgrader\:\:enable\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:ensureNoPaymentRequiredPaymentInstrument\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:findNextAvailablePaymentInstrumentValueByGroupName\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_1370\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_1390\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_1402\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_1403\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_1501\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_1502\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_1503\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_2000\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_2001\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_2002\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_2003\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
-			message: '#^Method CRM_Contract_Upgrader\:\:upgrade_2004\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Upgrader.php
-
-		-
 			message: '#^Only booleans are allowed in &&, array given on the right side\.$#'
 			identifier: booleanAnd.rightNotBoolean
 			count: 1
@@ -3325,7 +3085,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 6
+			count: 5
 			path: CRM/Contract/Utils.php
 
 		-
@@ -3337,7 +3097,7 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 4
+			count: 2
 			path: CRM/Contract/Utils.php
 
 		-
@@ -3365,18 +3125,6 @@ parameters:
 
 		-
 			message: '#^Method CRM_Contract_Utils\:\:contractFilePath\(\) has parameter \$file with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Utils.php
-
-		-
-			message: '#^Method CRM_Contract_Utils\:\:deleteSystemActivities\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Utils.php
-
-		-
-			message: '#^Method CRM_Contract_Utils\:\:deleteSystemActivities\(\) has parameter \$contract_id with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: CRM/Contract/Utils.php
@@ -3486,18 +3234,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Utils\:\:singleton\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Utils.php
-
-		-
-			message: '#^Method CRM_Contract_Utils\:\:stripNonContractActivityCustomFields\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Utils.php
-
-		-
-			message: '#^Method CRM_Contract_Utils\:\:stripNonContractActivityCustomFields\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: CRM/Contract/Utils.php
 
@@ -4118,12 +3854,6 @@ parameters:
 			path: Civi/Contract/Event/DisplayChangeTitle.php
 
 		-
-			message: '#^Method Civi\\Contract\\Event\\DisplayChangeTitle\:\:getActivityAction\(\) should return string but returns string\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
 			message: '#^Method Civi\\Contract\\Event\\DisplayChangeTitle\:\:getChangeActivityData\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -4496,12 +4226,6 @@ parameters:
 			path: Civi/Contract/PaymentContract.php
 
 		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: api/v3/Contract/Create.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 1
@@ -4640,15 +4364,9 @@ parameters:
 			path: api/v3/Contract/ProcessScheduledModifications.php
 
 		-
-			message: '#^Cannot access offset ''values'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: api/v3/Contract/ProcessScheduledModifications.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 3
+			count: 2
 			path: api/v3/Contract/ProcessScheduledModifications.php
 
 		-
@@ -5573,12 +5291,6 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Identical\: Possible insane comparison between null and float\.$#'
-			identifier: voku.Identical
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
 			message: '#^In method "ModifyFormTest\:\:ensurePaymentInstrumentNone", caught "Throwable" must be rethrown\. Either catch a more specific exception, add a "throw" clause in the "catch" block to propagate the exception or add a "// @ignoreException" comment\.$#'
 			count: 2
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
@@ -5833,10 +5545,4 @@ parameters:
 			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
 			identifier: ternary.shortNotAllowed
 			count: 5
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between float and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
