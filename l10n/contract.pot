@@ -402,7 +402,7 @@ msgstr ""
 msgid "Assign %1 Contributions to:"
 msgstr ""
 
-#: CRM/Contract/Form/Task/AssignContributions.php
+#: CRM/Contract/Form/Task/AssignContributions.php managed/CustomGroup_contract_activity.mgd.php
 msgid "Contract"
 msgstr ""
 
@@ -568,6 +568,14 @@ msgstr ""
 
 #: CRM/Contract/SepaLogic.php
 msgid "Serious Configuration Issue"
+msgstr ""
+
+#: CRM/Contract/Upgrader.php
+msgid "Migrate contract references for activities from \"source_record_id\" to entity reference field"
+msgstr ""
+
+#: CRM/Contract/Upgrader.php
+msgid "Referenced contract does not exist, deleting referencing activity %1."
 msgstr ""
 
 #: CRM/Contract/Validation/ContractNumber.php
@@ -916,6 +924,10 @@ msgstr ""
 
 #: js/contract_modify_tools.js
 msgid "de.systopia.contract"
+msgstr ""
+
+#: managed/CustomGroup_contract_activity.mgd.php
+msgid "Contract Activity"
 msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php

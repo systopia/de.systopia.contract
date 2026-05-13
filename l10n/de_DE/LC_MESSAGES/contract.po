@@ -478,6 +478,7 @@ msgid "Assign %1 Contributions to:"
 msgstr "Weise %1 Zuwendungen zu:"
 
 #: CRM/Contract/Form/Task/AssignContributions.php
+#: managed/CustomGroup_contract_activity.mgd.php
 msgid "Contract"
 msgstr "Vertrag"
 
@@ -665,6 +666,16 @@ msgstr "Bitte mindestens einen CiviSEPA Kreditor konfigurieren!"
 #: CRM/Contract/SepaLogic.php
 msgid "Serious Configuration Issue"
 msgstr "Konfigurationsproblem"
+
+#: CRM/Contract/Upgrader.php
+msgid ""
+"Migrate contract references for activities from \"source_record_id\" to "
+"entity reference field"
+msgstr ""
+
+#: CRM/Contract/Upgrader.php
+msgid "Referenced contract does not exist, deleting referencing activity %1."
+msgstr ""
 
 #: CRM/Contract/Validation/ContractNumber.php
 msgid "Reference '%1' is already in use!"
@@ -1083,6 +1094,12 @@ msgstr "Keine"
 #: js/contract_modify_tools.js
 msgid "de.systopia.contract"
 msgstr "de.systopia.contract"
+
+#: managed/CustomGroup_contract_activity.mgd.php
+#, fuzzy
+#| msgid "Contract Preview"
+msgid "Contract Activity"
+msgstr "Vertragsvorschau"
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Primary and Secondary Memberships"
