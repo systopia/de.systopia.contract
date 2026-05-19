@@ -377,7 +377,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
         $mandate = CRM_Contract_SepaLogic::getMandateForRecurringContributionID(
           (int) $defaults['recurring_contribution']
         );
-        if ($mandate) {
+        if (NULL !== $mandate) {
           $defaults['iban'] = $mandate['iban'] ?? '';
           $defaults['bic'] = $mandate['bic'] ?? '';
           $defaults['account_holder'] = $mandate['account_holder'] ?? '';

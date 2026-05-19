@@ -155,7 +155,7 @@ class CRM_Contract_SepaLogic {
           }
           if (empty($from_ba)) {
             $mandate = self::getMandateForRecurringContributionID($recurring_contribution_id);
-            if ($mandate) {
+            if (NULL !== $mandate) {
               $from_ba = CRM_Contract_BankingLogic::getOrCreateBankAccount(
                 $current_state['contact_id'],
                 $mandate['iban'],
@@ -267,7 +267,7 @@ class CRM_Contract_SepaLogic {
    */
   public static function terminateSepaMandate($recurring_contribution_id, $reason = 'CHNG') {
     $mandate = self::getMandateForRecurringContributionID($recurring_contribution_id);
-    if ($mandate) {
+    if (NULL !== $mandate) {
       // FIXME: use "now" instead of "today" once that's fixed in CiviSEPA
       CRM_Sepa_BAO_SEPAMandate::terminateMandate($mandate['id'], 'today', $reason);
     }
@@ -290,7 +290,7 @@ class CRM_Contract_SepaLogic {
   public static function pauseSepaMandate($recurring_contribution_id) {
     $mandate = self::getMandateForRecurringContributionID($recurring_contribution_id);
     // NON-SEPA contributions not be changed, see GP-796
-    if ($mandate) {
+    if (NULL !== $mandate) {
       if ($mandate['status'] == 'RCUR' || $mandate['status'] == 'FRST') {
         // only for active mandates:
         // set status to ONHOLD
@@ -328,7 +328,7 @@ class CRM_Contract_SepaLogic {
   public static function resumeSepaMandate($recurring_contribution_id) {
     $mandate = self::getMandateForRecurringContributionID($recurring_contribution_id);
     // NON-SEPA contributions not be changed, see GP-796
-    if ($mandate) {
+    if (NULL !== $mandate) {
       if ($mandate['status'] == 'ONHOLD') {
         $new_status = empty($mandate['first_contribution_id']) ? 'FRST' : 'RCUR';
         civicrm_api3('SepaMandate', 'create', [
@@ -568,9 +568,12 @@ class CRM_Contract_SepaLogic {
   /**
    * Return the mandate entity if there is one attached to this recurring contribution
    *
-   * @return mandate or NULL if there is not a (unique) match
+   * @param int|string|null $recurring_contribution_id
+   *
+   * @return array<string, mixed>|null
+   *   The mandate, or NULL if there is not a (unique) match
    */
-  public static function getMandateForRecurringContributionID($recurring_contribution_id) {
+  public static function getMandateForRecurringContributionID($recurring_contribution_id): ?array {
     if (empty($recurring_contribution_id)) {
       return NULL;
     }
@@ -582,12 +585,13 @@ class CRM_Contract_SepaLogic {
       'type'         => 'RCUR',
     ]);
 
-    if ($mandate['count'] == 1 && $mandate['id']) {
-      return reset($mandate['values']);
+    if ($mandate['count'] == 1 && $mandate['id'] && is_array($mandate['values'])) {
+      /** @var array<string, mixed>|false $values */
+      $values = reset($mandate['values']);
+      return is_array($values) ? $values : NULL;
     }
-    else {
-      return NULL;
-    }
+
+    return NULL;
   }
 
   /**
