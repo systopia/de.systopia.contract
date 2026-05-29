@@ -37,7 +37,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
         if (!empty($this->data[$contract_attribute])) {
           // @phpstan-ignore assign.propertyType
           $this->data[$change_attribute] = $this->data[$contract_attribute];
-          $contract_after_execution[$contract_attribute] = $this->data[$contract_attribute];
+          $contract_after_execution[$contract_attribute] = $this->data[$contract_attribute] ?? NULL;
         }
       }
 
