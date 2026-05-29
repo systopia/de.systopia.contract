@@ -82,7 +82,11 @@ function contract_civicrm_pageRun(CRM_Core_Page &$page): void {
   }
   elseif ($page_name == 'CRM_Member_Page_Tab') {
     /** @var CRM_Member_Page_Tab $page */
-    // thus is the membership summary tab
+    $context = CRM_Utils_Request::retrieve('context', 'Alphanumeric', $page);
+    if ('search' !== $context) {
+      return;
+    }
+    // This is the membership summary/list tab.
     $contractStatuses = [];
     foreach (
       civicrm_api3(
