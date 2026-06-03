@@ -22,7 +22,7 @@ msgstr ""
 msgid "Contract cancelled"
 msgstr ""
 
-#: CRM/Contract/Change/Cancel.php resources/l10n.php
+#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
 msgid "Cancel Contract"
 msgstr ""
 
@@ -50,7 +50,7 @@ msgstr ""
 msgid "Contract paused"
 msgstr ""
 
-#: CRM/Contract/Change/Pause.php resources/l10n.php
+#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
 msgid "Pause Contract"
 msgstr ""
 
@@ -66,11 +66,11 @@ msgstr ""
 msgid "Contract resumed"
 msgstr ""
 
-#: CRM/Contract/Change/Resume.php resources/l10n.php
+#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
 msgid "Resume Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Revive.php resources/l10n.php
+#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
 msgid "Revive Contract"
 msgstr ""
 
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Contract updated"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php resources/l10n.php
+#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
 msgid "Update Contract"
 msgstr ""
 
@@ -156,6 +156,10 @@ msgstr ""
 
 #: CRM/Contract/Configuration.php
 msgid "EFT"
+msgstr ""
+
+#: CRM/Contract/Configuration.php
+msgid "modify current"
 msgstr ""
 
 #: CRM/Contract/Configuration.php
