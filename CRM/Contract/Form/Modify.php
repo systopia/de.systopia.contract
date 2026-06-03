@@ -353,7 +353,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
       'membership_payment.membership_recurring_contribution'
     );
     if (isset($this->membership[$recurring_contribution_id_field])) {
-      $defaults['payment_option'] = 'nochange';
+      $defaults['payment_option'] = 'modify';
       $defaults['recurring_contribution'] = $this->membership[$recurring_contribution_id_field];
       // wait until the paid-for time has passed
       $defaults['defer_payment_start'] = 1;
@@ -373,6 +373,15 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
           'id' => (int) $defaults['recurring_contribution'],
           'return' => 'amount',
         ]);
+        // pre-fill SEPA mandate fields so users see what's currently in use
+        $mandate = CRM_Contract_SepaLogic::getMandateForRecurringContributionID(
+          (int) $defaults['recurring_contribution']
+        );
+        if (NULL !== $mandate) {
+          $defaults['iban'] = $mandate['iban'] ?? '';
+          $defaults['bic'] = $mandate['bic'] ?? '';
+          $defaults['account_holder'] = $mandate['account_holder'] ?? '';
+        }
       }
       $defaults['payment_frequency'] = $this->membership[CRM_Contract_Utils::getCustomFieldId(
         'membership_payment.membership_frequency'
@@ -385,17 +394,11 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     $defaults['campaign_id'] = $this->membership['campaign_id'] ?? '';
 
     if ('cancel' === $this->modify_action) {
-      [$defaults['activity_date'], $defaults['activity_date_time']] = CRM_Utils_Date::setDateDefaults(
-        date('Y-m-d H:i:00'),
-        'activityDateTime'
-      );
+      $defaults['activity_date'] = date('Y-m-d');
     }
     else {
-      // if it's not a cancellation, set the default change date to tomorrow 12am (see GP-1507)
-      [$defaults['activity_date'], $defaults['activity_date_time']] = CRM_Utils_Date::setDateDefaults(
-        date('Y-m-d 00:00:00', strtotime('+1 day')),
-        'activityDateTime'
-      );
+      // if it's not a cancellation, set the default change date to tomorrow (see GP-1507)
+      $defaults['activity_date'] = date('Y-m-d', strtotime('+1 day'));
     }
 
     // add customisation

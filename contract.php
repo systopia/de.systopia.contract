@@ -18,6 +18,7 @@ use CRM_Contract_ExtensionUtil as E;
 use Civi\Contract\ContractManager;
 use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
+use Civi\Contract\SearchDisplayLinks;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -44,6 +45,8 @@ function contract_civicrm_container(ContainerBuilder $container): void {
  */
 function contract_civicrm_config(\CRM_Core_Config &$config): void {
   _contract_civix_civicrm_config($config);
+
+  \Civi::dispatcher()->addSubscriber(new SearchDisplayLinks());
 }
 
 /**
