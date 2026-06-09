@@ -237,7 +237,7 @@ class CRM_Contract_SepaLogic {
           'return'       => 'id',
         ]);
         if (!empty($old_mandate['id'])) {
-          self::addSepaMandateReplacedLink($new_mandate['id'], $old_mandate['id']);
+          self::addSepaMandateReplacedLink((int) $new_mandate['id'], (int) $old_mandate['id']);
         }
       }
 
@@ -269,7 +269,7 @@ class CRM_Contract_SepaLogic {
     $mandate = self::getMandateForRecurringContributionID($recurring_contribution_id);
     if (NULL !== $mandate) {
       // FIXME: use "now" instead of "today" once that's fixed in CiviSEPA
-      CRM_Sepa_BAO_SEPAMandate::terminateMandate($mandate['id'], 'today', $reason);
+      CRM_Sepa_BAO_SEPAMandate::terminateMandate((int) $mandate['id'], 'today', $reason);
     }
     else {
       if ($recurring_contribution_id) {
@@ -666,7 +666,7 @@ class CRM_Contract_SepaLogic {
       return [1];
     }
     else {
-      return CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), $creditor->id);
+      return CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), (int) $creditor->id);
     }
   }
 
