@@ -311,10 +311,10 @@ class UpdateContract extends AbstractAction {
    */
   protected function calculateSoonestCycleDay($mandate_data) {
     // get creditor ID
-    $creditor_id = (int) $mandate_data['creditor_id'];
-    if (!$creditor_id) {
+    $creditor_id = is_numeric($mandate_data['creditor_id']) ? (int) $mandate_data['creditor_id'] : NULL;
+    if (NULL === $creditor_id) {
       $default_creditor = \CRM_Sepa_Logic_Settings::defaultCreditor();
-      if ($default_creditor) {
+      if (NULL !== $default_creditor) {
         $creditor_id = $default_creditor->id;
       }
       else {
@@ -329,7 +329,7 @@ class UpdateContract extends AbstractAction {
     $date = strtotime($mandate_data['start_date'] ?? date('Y-m-d'));
 
     // get cycle days
-    $cycle_days = \CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), $creditor_id);
+    $cycle_days = \CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), (int) $creditor_id);
 
     // iterate through the days until we hit a cycle day
     for ($i = 0; $i < 31; $i++) {

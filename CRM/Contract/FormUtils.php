@@ -58,7 +58,7 @@ class CRM_Contract_FormUtils {
     if (isset($details[$result['custom_group_id']])) {
       $customGroupTableId = key($details[$result['custom_group_id']]);
       if (!empty($details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'])) {
-        $entityId = $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'];
+        $entityId = $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['data'];
         if ('ContributionRecur' === $entity) {
           try {
             $entityResult = civicrm_api3($entity, 'getsingle', ['id' => $entityId]);
@@ -105,7 +105,7 @@ class CRM_Contract_FormUtils {
     $details = $this->form->getTemplateVars('viewCustomData');
     $customGroupTableId = key($details[$rcur_field['custom_group_id']]);
     $recContributionId =
-      $details[$rcur_field['custom_group_id']][$customGroupTableId]['fields'][$rcur_field['id']]['field_value'];
+      $details[$rcur_field['custom_group_id']][$customGroupTableId]['fields'][$rcur_field['id']]['data'];
     try {
       $recContribution = civicrm_api3('ContributionRecur', 'getsingle', ['id' => $recContributionId]);
       $customGroupTableId = key($details[$rcur_field['custom_group_id']]);
@@ -116,7 +116,7 @@ class CRM_Contract_FormUtils {
       );
       // phpcs:disable Generic.Files.LineLength.TooLong
       $annual_amount_value =
-        $details[$annual_amount_field['custom_group_id']][$customGroupTableId]['fields'][$annual_amount_field['id']]['field_value']
+        $details[$annual_amount_field['custom_group_id']][$customGroupTableId]['fields'][$annual_amount_field['id']]['data']
         ?? '';
       // phpcs:enable
       if (is_numeric($annual_amount_value)) {
@@ -157,7 +157,7 @@ class CRM_Contract_FormUtils {
       $customGroupTableId = key($details[$result['custom_group_id']]);
 
       $membershipTypeId =
-        $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['field_value'];
+        $details[$result['custom_group_id']][$customGroupTableId]['fields'][$result['id']]['data'];
       if ($membershipTypeId) {
         $membershipType = civicrm_api3('MembershipType', 'getsingle', ['id' => $membershipTypeId]);
 

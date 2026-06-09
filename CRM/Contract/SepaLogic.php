@@ -237,7 +237,7 @@ class CRM_Contract_SepaLogic {
           'return'       => 'id',
         ]);
         if (!empty($old_mandate['id'])) {
-          self::addSepaMandateReplacedLink($new_mandate['id'], $old_mandate['id']);
+          self::addSepaMandateReplacedLink((int) $new_mandate['id'], (int) $old_mandate['id']);
         }
       }
 
@@ -269,7 +269,7 @@ class CRM_Contract_SepaLogic {
     $mandate = self::getMandateForRecurringContributionID($recurring_contribution_id);
     if (NULL !== $mandate) {
       // FIXME: use "now" instead of "today" once that's fixed in CiviSEPA
-      CRM_Sepa_BAO_SEPAMandate::terminateMandate($mandate['id'], 'today', $reason);
+      CRM_Sepa_BAO_SEPAMandate::terminateMandate((int) $mandate['id'], 'today', $reason);
     }
     else {
       if ($recurring_contribution_id) {
@@ -570,7 +570,13 @@ class CRM_Contract_SepaLogic {
    *
    * @param int|string|null $recurring_contribution_id
    *
-   * @return array<string, mixed>|null
+   * @return array{
+   *   id: numeric-string,
+   *   iban: string,
+   *   bic: string,
+   *   status: string,
+   *   entity_id: int|numeric-string,
+   *   }|null
    *   The mandate, or NULL if there is not a (unique) match
    */
   public static function getMandateForRecurringContributionID($recurring_contribution_id): ?array {
@@ -586,7 +592,13 @@ class CRM_Contract_SepaLogic {
     ]);
 
     if ($mandate['count'] == 1 && $mandate['id'] && is_array($mandate['values'])) {
-      /** @var array<string, mixed>|false $values */
+      /** @phpstan-var array{
+       * id: numeric-string,
+       * iban: string,
+       * bic: string,
+       * status: string,
+       * entity_id: int|numeric-string,
+       * } $values */
       $values = reset($mandate['values']);
       return is_array($values) ? $values : NULL;
     }
@@ -666,7 +678,7 @@ class CRM_Contract_SepaLogic {
       return [1];
     }
     else {
-      return CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), $creditor->id);
+      return CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), (int) $creditor->id);
     }
   }
 
@@ -696,7 +708,7 @@ class CRM_Contract_SepaLogic {
 
     $buffer_days = (int) CRM_Sepa_Logic_Settings::getSetting(
         'pp_buffer_days'
-      ) + (int) CRM_Sepa_Logic_Settings::getSetting('batching.FRST.notice', $creditor->id);
+      ) + (int) CRM_Sepa_Logic_Settings::getSetting('batching.FRST.notice', (int) $creditor->id);
     $cycle_days = self::getCycleDays();
 
     $safety_counter = 32;
@@ -762,7 +774,8 @@ class CRM_Contract_SepaLogic {
   /**
    * Validate the given BIC
    *
-   * @return TRUE if BIC is valid
+   * @return bool
+   *   TRUE if BIC is valid
    */
   public static function validateBIC($bic) {
     return NULL === CRM_Sepa_Logic_Verification::verifyBIC($bic);
@@ -832,11 +845,14 @@ class CRM_Contract_SepaLogic {
 
     $creditor_parameters = $creditor_parameters['values'];
     foreach ($creditor_parameters as &$creditor) {
-      $creditor['grace']  = (int) CRM_Sepa_Logic_Settings::getSetting('batching.RCUR.grace', $creditor['id']);
+      // @phpstan-ignore cast.int
+      $creditor['grace'] = (int) CRM_Sepa_Logic_Settings::getSetting('batching.RCUR.grace', $creditor['id']);
+      // @phpstan-ignore cast.int
       $creditor['notice'] = (int) CRM_Sepa_Logic_Settings::getSetting('batching.RCUR.notice', $creditor['id']);
     }
 
     // set the default
+    // @phpstan-ignore cast.int
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
     $creditor_parameters['default'] = $creditor_parameters[$default_creditor_id];
 

@@ -1355,18 +1355,6 @@ parameters:
 			path: CRM/Contract/Configuration.php
 
 		-
-			message: '#^BooleanAnd\: Condition between bool and false are always false\.$#'
-			identifier: voku.BooleanAnd
-			count: 1
-			path: CRM/Contract/Form/Create.php
-
-		-
-			message: '#^BooleanAndNode\: Condition between bool and false are always false\.$#'
-			identifier: voku.BooleanAndNode
-			count: 1
-			path: CRM/Contract/Form/Create.php
-
-		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
@@ -1437,18 +1425,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: CRM/Contract/Form/Create.php
-
-		-
-			message: '#^BooleanAnd\: Condition between bool and false are always false\.$#'
-			identifier: voku.BooleanAnd
-			count: 2
-			path: CRM/Contract/Form/Modify.php
-
-		-
-			message: '#^BooleanAndNode\: Condition between bool and false are always false\.$#'
-			identifier: voku.BooleanAndNode
-			count: 2
-			path: CRM/Contract/Form/Modify.php
 
 		-
 			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
@@ -1550,12 +1526,6 @@ parameters:
 			message: '#^Parameter \#2 \$action of static method Civi\\Contract\\Event\\ContractFormDefaultsEvent\:\:adjustDefaults\(\) expects string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
-			path: CRM/Contract/Form/Modify.php
-
-		-
-			message: '#^Parameter \#2 \$formatType of static method CRM_Utils_Date\:\:setDateDefaults\(\) expects null, string given\.$#'
-			identifier: argument.type
-			count: 2
 			path: CRM/Contract/Form/Modify.php
 
 		-
@@ -2510,42 +2480,6 @@ parameters:
 			path: CRM/Contract/SepaLogic.php
 
 		-
-			message: '#^Access to offset ''bic'' on an unknown class mandate\.$#'
-			identifier: class.notFound
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Access to offset ''entity_id'' on an unknown class mandate\.$#'
-			identifier: class.notFound
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Access to offset ''first_contribution…'' on an unknown class mandate\.$#'
-			identifier: class.notFound
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Access to offset ''iban'' on an unknown class mandate\.$#'
-			identifier: class.notFound
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Access to offset ''id'' on an unknown class mandate\.$#'
-			identifier: class.notFound
-			count: 3
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Access to offset ''status'' on an unknown class mandate\.$#'
-			identifier: class.notFound
-			count: 3
-			path: CRM/Contract/SepaLogic.php
-
-		-
 			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -2638,7 +2572,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 5
+			count: 2
 			path: CRM/Contract/SepaLogic.php
 
 		-
@@ -2745,30 +2679,6 @@ parameters:
 			message: '#^Method CRM_Contract_SepaLogic\:\:getCycleDays\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Method CRM_Contract_SepaLogic\:\:getCycleDays\(\) should return array but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Method CRM_Contract_SepaLogic\:\:getMandateForRecurringContributionID\(\) has invalid return type mandate\.$#'
-			identifier: class.notFound
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Method CRM_Contract_SepaLogic\:\:getMandateForRecurringContributionID\(\) has parameter \$recurring_contribution_id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Method CRM_Contract_SepaLogic\:\:getMandateForRecurringContributionID\(\) should return mandate but returns null\.$#'
-			identifier: return.type
-			count: 2
 			path: CRM/Contract/SepaLogic.php
 
 		-
@@ -3375,12 +3285,6 @@ parameters:
 			path: Civi/Contract/ActionProvider/Action/CreateContract.php
 
 		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/CreateContract.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 5
@@ -3388,24 +3292,6 @@ parameters:
 
 		-
 			message: '#^In method "Civi\\Contract\\ActionProvider\\Action\\CreateContract\:\:doAction", caught "Exception" must be rethrown\. Either catch a more specific exception, add a "throw" clause in the "catch" block to propagate the exception or add a "// @ignoreException" comment\.$#'
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/CreateContract.php
-
-		-
-			message: '#^Only booleans are allowed in a negated boolean, int given\.$#'
-			identifier: booleanNot.exprNotBoolean
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/CreateContract.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, CRM_Sepa_BAO_SEPACreditor given\.$#'
-			identifier: if.condNotBoolean
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/CreateContract.php
-
-		-
-			message: '#^PHPDoc tag @var with type list\<int\> is not subtype of type string\.$#'
-			identifier: varTag.type
 			count: 1
 			path: Civi/Contract/ActionProvider/Action/CreateContract.php
 
@@ -3700,24 +3586,6 @@ parameters:
 		-
 			message: '#^Method Civi\\Contract\\ActionProvider\\Action\\UpdateContract\:\:yesNoOptions\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
-
-		-
-			message: '#^Only booleans are allowed in a negated boolean, int given\.$#'
-			identifier: booleanNot.exprNotBoolean
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, CRM_Sepa_BAO_SEPACreditor given\.$#'
-			identifier: if.condNotBoolean
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
-
-		-
-			message: '#^Parameter \#2 \$haystack of function in_array expects array, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
 
