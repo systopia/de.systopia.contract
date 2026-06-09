@@ -311,10 +311,10 @@ class CreateContract extends AbstractContractAction {
    */
   protected static function calculateSoonestCycleDay(array $mandate_data): int {
     // get creditor ID
-    $creditor_id = (int) $mandate_data['creditor_id'];
-    if (!$creditor_id) {
+    $creditor_id = is_numeric($mandate_data['creditor_id']) ? (int) $mandate_data['creditor_id'] : NULL;
+    if (NULL === $creditor_id) {
       $default_creditor = \CRM_Sepa_Logic_Settings::defaultCreditor();
-      if ($default_creditor) {
+      if (NULL !== $default_creditor) {
         $creditor_id = $default_creditor->id;
       }
       else {
@@ -331,7 +331,7 @@ class CreateContract extends AbstractContractAction {
     // get cycle days
     /** @phpstan-var list<int> $cycleDays */
     // TODO: Is this safe to return a list of integers only?
-    $cycleDays = \CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), $creditor_id);
+    $cycleDays = \CRM_Sepa_Logic_Settings::getListSetting('cycledays', range(1, 28), (int) $creditor_id);
 
     // iterate through the days until we hit a cycle day
     for ($i = 0; $i < 31; $i++) {
