@@ -36,7 +36,8 @@ msgstr "Vertrag beendet (%1)"
 msgid "Contract cancelled"
 msgstr "Vertrag beendet"
 
-#: CRM/Contract/Change/Cancel.php resources/l10n.php
+#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php
+#: resources/l10n.php
 msgid "Cancel Contract"
 msgstr "Vertrag beenden"
 
@@ -67,7 +68,8 @@ msgstr "Vertrag pausiert bis %1"
 msgid "Contract paused"
 msgstr "Vertrag pausiert"
 
-#: CRM/Contract/Change/Pause.php resources/l10n.php
+#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php
+#: resources/l10n.php
 msgid "Pause Contract"
 msgstr "Vertrag pausieren"
 
@@ -85,11 +87,13 @@ msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
 msgid "Contract resumed"
 msgstr "Vertrag wiederaufgenommen (nach Pausierung)"
 
-#: CRM/Contract/Change/Resume.php resources/l10n.php
+#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php
+#: resources/l10n.php
 msgid "Resume Contract"
 msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
 
-#: CRM/Contract/Change/Revive.php resources/l10n.php
+#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php
+#: resources/l10n.php
 msgid "Revive Contract"
 msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
 
@@ -133,15 +137,16 @@ msgstr "Zahlungsturnus"
 
 #: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php
 #: CRM/Contract/Form/Modify.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Cycle day"
 msgstr "Einzugstag"
 
 #: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: js/contract_modify_tools.js resources/l10n.php
-#: templates/CRM/Contract/Page/Review.tpl
+#: js/contract_modify_tools.js managed/CustomGroup_membership_payment.mgd.php
+#: resources/l10n.php templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr "Zahlungsart"
 
@@ -157,7 +162,8 @@ msgstr "keine"
 msgid "Contract updated"
 msgstr "Vertrag aktualisiert"
 
-#: CRM/Contract/Change/Upgrade.php resources/l10n.php
+#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php
+#: resources/l10n.php
 msgid "Update Contract"
 msgstr "Vertrag aktualisieren"
 
@@ -188,6 +194,12 @@ msgstr "Barzahlung"
 #: CRM/Contract/Configuration.php
 msgid "EFT"
 msgstr "Überweisung"
+
+#: CRM/Contract/Configuration.php
+#, fuzzy
+#| msgid "modify contract"
+msgid "modify current"
+msgstr "Zahlungsvertrag anpassen"
 
 #: CRM/Contract/Configuration.php
 msgid "select existing"
@@ -855,26 +867,31 @@ msgstr "Fehlermeldung (falls fehlgeschlagen)"
 msgid "Join Date"
 msgstr "Eintrittsdatum"
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Annual Membership Contribution"
 msgstr "Jährliche Mitgliedschaftszahlung"
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Payment Interval"
 msgstr "Zahlungsintervall"
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Recurring contribution/mandate"
 msgstr "Wiederkehrende Zuwendung / Mandat"
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Donor's Bank Account"
 msgstr "Konto der Spender_in"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Defer Payment Start"
 msgstr "Zahlungsbeginn aufschieben"
 
@@ -1101,6 +1118,18 @@ msgstr "de.systopia.contract"
 msgid "Contract Activity"
 msgstr "Vertragsvorschau"
 
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+msgid "Payment Information"
+msgstr "Zahlungsinformationen"
+
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+msgid "Organisation's Bank Account"
+msgstr "Organisationskonto"
+
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+msgid "Donor's Account Name"
+msgstr "Kontoinhaber"
+
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Primary and Secondary Memberships"
 msgstr "Primäre und sekundäre Mitgliedschaften"
@@ -1179,10 +1208,6 @@ msgid "General Information"
 msgstr "Allgemeine Informationen"
 
 #: resources/l10n.php
-msgid "Payment Information"
-msgstr "Zahlungsinformationen"
-
-#: resources/l10n.php
 msgid "Channel"
 msgstr "Kanal"
 
@@ -1215,10 +1240,6 @@ msgid "GP Bank Account"
 msgstr "Organisationskonto"
 
 #: resources/l10n.php
-msgid "Donor's Account Name"
-msgstr "Kontoinhaber"
-
-#: resources/l10n.php
 msgid "Member's Bank Account"
 msgstr "Mitgliedskonto"
 
@@ -1237,10 +1258,6 @@ msgstr "Referenznummer"
 #: resources/l10n.php
 msgid "Contract Number"
 msgstr "Vertragsnummer"
-
-#: resources/l10n.php
-msgid "Organisation's Bank Account"
-msgstr "Organisationskonto"
 
 #: resources/l10n.php
 msgid "Paused"
@@ -1589,9 +1606,6 @@ msgstr "Zahlte Vertrag"
 
 #~ msgid "no payment required"
 #~ msgstr "Keine Zahlung erforderlich"
-
-#~ msgid "modify contract"
-#~ msgstr "Zahlungsvertrag anpassen"
 
 #~ msgid "select other"
 #~ msgstr "bestehender Zahlungsvertrag"

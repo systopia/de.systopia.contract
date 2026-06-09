@@ -110,11 +110,11 @@ msgstr ""
 msgid "Payment frequency"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php templates/CRM/Contract/Page/Review.tpl
 msgid "Cycle day"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js resources/l10n.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js managed/CustomGroup_membership_payment.mgd.php resources/l10n.php templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr ""
 
@@ -706,23 +706,23 @@ msgstr ""
 msgid "Join Date"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Annual Membership Contribution"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Payment Interval"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Recurring contribution/mandate"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Donor's Bank Account"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Defer Payment Start"
 msgstr ""
 
@@ -934,6 +934,18 @@ msgstr ""
 msgid "Contract Activity"
 msgstr ""
 
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+msgid "Payment Information"
+msgstr ""
+
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+msgid "Organisation's Bank Account"
+msgstr ""
+
+#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+msgid "Donor's Account Name"
+msgstr ""
+
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Primary and Secondary Memberships"
 msgstr ""
@@ -1011,10 +1023,6 @@ msgid "General Information"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Payment Information"
-msgstr ""
-
-#: resources/l10n.php
 msgid "Channel"
 msgstr ""
 
@@ -1047,10 +1055,6 @@ msgid "GP Bank Account"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Donor's Account Name"
-msgstr ""
-
-#: resources/l10n.php
 msgid "Member's Bank Account"
 msgstr ""
 
@@ -1068,10 +1072,6 @@ msgstr ""
 
 #: resources/l10n.php
 msgid "Contract Number"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Organisation's Bank Account"
 msgstr ""
 
 #: resources/l10n.php
