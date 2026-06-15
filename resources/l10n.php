@@ -38,6 +38,4 @@
       ts("Pending");
       ts("Cancelled");
       ts("Deceased");
-      ts("Needs Review");
-      ts("Failed");
 }

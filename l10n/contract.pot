@@ -22,7 +22,7 @@ msgstr ""
 msgid "Contract cancelled"
 msgstr ""
 
-#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php
+#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
 msgid "Cancel Contract"
 msgstr ""
 
@@ -50,7 +50,7 @@ msgstr ""
 msgid "Contract paused"
 msgstr ""
 
-#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php
+#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
 msgid "Pause Contract"
 msgstr ""
 
@@ -66,11 +66,11 @@ msgstr ""
 msgid "Contract resumed"
 msgstr ""
 
-#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php
+#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
 msgid "Resume Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php
+#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
 msgid "Revive Contract"
 msgstr ""
 
@@ -90,7 +90,7 @@ msgstr ""
 msgid "New membership contract"
 msgstr ""
 
-#: CRM/Contract/Change/Sign.php
+#: CRM/Contract/Change/Sign.php managed/OptionGroup_activity_type.mgd.php
 msgid "Sign Contract"
 msgstr ""
 
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Contract updated"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php
+#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
 msgid "Update Contract"
 msgstr ""
 
@@ -1128,14 +1128,6 @@ msgstr ""
 
 #: resources/l10n.php
 msgid "Deceased"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Needs Review"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Failed"
 msgstr ""
 
 #: schema/ContractMembershipRelation.entityType.php
