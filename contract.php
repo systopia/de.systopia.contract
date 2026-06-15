@@ -379,3 +379,15 @@ function contract_civicrm_permission(&$permissions) {
     'description' => E::ts('Allow editing memberships using the core membership form'),
   ];
 }
+
+/**
+ * Implements hook_civicrm_scanClasses().
+ *
+ * @see CRM_Utils_Hook::scanClasses()
+ *
+ * @phpstan-param list<class-string> $classes
+ */
+function contract_civicrm_scanClasses(array &$classes): void {
+  // @phpstan-ignore parameterByRef.type
+  \Civi\Core\ClassScanner::scanFolders($classes, __DIR__, 'Civi/ActionProvider/Action', '\\');
+}
