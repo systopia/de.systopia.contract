@@ -1055,11 +1055,6 @@ msgid "Channel"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Contract Cancel Reason"
-msgstr ""
-msgstr ""
-
-#: resources/l10n.php
 msgid "Membership Type"
 msgstr ""
 

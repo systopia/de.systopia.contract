@@ -22,8 +22,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     require_once 'CRM/Contract/CustomData.php';
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_contract_cancel_reason.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_contract_cancel_reason.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_activity_status.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_cancellation.json'));
@@ -77,7 +75,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Applying localisation');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_contract_cancel_reason.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_activity_status.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_cancellation.json'));
