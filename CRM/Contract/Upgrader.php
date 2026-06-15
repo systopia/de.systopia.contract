@@ -30,7 +30,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     $customData->syncEntities(E::path('resources/entities_membership_status.json'));
     $this->ensureNoPaymentRequiredPaymentInstrument();
   }
@@ -63,7 +62,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $this->ctx->log->info('Applying updates for 14xx');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncOptionGroup(E::path('resources/option_group_contact_channel.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
     return TRUE;
   }
@@ -86,7 +84,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
-    $customData->syncOptionGroup(E::path('resources/option_group_order_type.json'));
     return TRUE;
   }
 

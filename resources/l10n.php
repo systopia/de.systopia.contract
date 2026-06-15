@@ -7,7 +7,6 @@
   ts("Payment Information");
   ts("Channel");
   ts("Contract Cancel Reason");
-  ts("Order Type");
       ts("Cancel Reason");
       ts("Membership Type");
       ts("Annual Membership Contribution");
@@ -51,5 +50,4 @@
       ts("Revive Contract");
       ts("Unknown");
       ts("Unknown");
-      ts("Welcome Gift");
 }

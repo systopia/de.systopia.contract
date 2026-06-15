@@ -946,6 +946,18 @@ msgstr ""
 msgid "Donor's Account Name"
 msgstr ""
 
+#: managed/OptionGroup_order_type.mgd.php resources/l10n.php
+msgid "Order Type"
+msgstr ""
+
+#: managed/OptionGroup_order_type.mgd.php
+msgid "Type of the membership welcome present"
+msgstr ""
+
+#: managed/OptionGroup_order_type.mgd.php
+msgid "Welcome Gift"
+msgstr ""
+
 #: managed/OptionGroup_payment_frequency.mgd.php resources/l10n.php
 msgid "Payment Intervals"
 msgstr ""
@@ -1045,9 +1057,6 @@ msgstr ""
 #: resources/l10n.php
 msgid "Contract Cancel Reason"
 msgstr ""
-
-#: resources/l10n.php
-msgid "Order Type"
 msgstr ""
 
 #: resources/l10n.php
@@ -1124,11 +1133,6 @@ msgstr ""
 
 #: resources/l10n.php
 msgid "Unknown"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Welcome Gift"
-msgstr ""
 msgstr ""
 
 #: schema/ContractMembershipRelation.entityType.php
