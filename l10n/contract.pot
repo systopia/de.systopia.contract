@@ -946,7 +946,19 @@ msgstr ""
 msgid "Donor's Account Name"
 msgstr ""
 
-#: managed/OptionGroup_order_type.mgd.php resources/l10n.php
+#: managed/OptionGroup_contract_cancel_reason.mgd.php
+msgid "Contract Cancel Reason"
+msgstr ""
+
+#: managed/OptionGroup_contract_cancel_reason.mgd.php
+msgid "Dropdown options for Contract cancellation reasons"
+msgstr ""
+
+#: managed/OptionGroup_contract_cancel_reason.mgd.php
+msgid "Unknown"
+msgstr ""
+
+#: managed/OptionGroup_order_type.mgd.php
 msgid "Order Type"
 msgstr ""
 
@@ -958,7 +970,7 @@ msgstr ""
 msgid "Welcome Gift"
 msgstr ""
 
-#: managed/OptionGroup_payment_frequency.mgd.php resources/l10n.php
+#: managed/OptionGroup_payment_frequency.mgd.php
 msgid "Payment Intervals"
 msgstr ""
 
@@ -1051,10 +1063,6 @@ msgid "General Information"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Channel"
-msgstr ""
-
-#: resources/l10n.php
 msgid "Membership Type"
 msgstr ""
 
@@ -1124,10 +1132,6 @@ msgstr ""
 
 #: resources/l10n.php
 msgid "Failed"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Unknown"
 msgstr ""
 
 #: schema/ContractMembershipRelation.entityType.php

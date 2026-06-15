@@ -5,7 +5,6 @@
   ts("Cancellation Information");
   ts("General Information");
   ts("Payment Information");
-  ts("Channel");
       ts("Cancel Reason");
       ts("Membership Type");
       ts("Annual Membership Contribution");
@@ -47,5 +46,4 @@
       ts("Update Contract");
       ts("Cancel Contract");
       ts("Revive Contract");
-      ts("Unknown");
 }
