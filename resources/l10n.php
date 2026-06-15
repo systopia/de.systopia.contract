@@ -8,7 +8,6 @@
   ts("Channel");
   ts("Contract Cancel Reason");
   ts("Order Type");
-  ts("Payment Intervals");
       ts("Cancel Reason");
       ts("Membership Type");
       ts("Annual Membership Contribution");
@@ -53,11 +52,4 @@
       ts("Unknown");
       ts("Unknown");
       ts("Welcome Gift");
-      ts("one-off");
-      ts("annually");
-      ts("semi-annually");
-      ts("trimestral");
-      ts("quarterly");
-      ts("bi-monthly");
-      ts("monthly");
 }

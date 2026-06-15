@@ -550,11 +550,11 @@ msgstr ""
 msgid "Paid by"
 msgstr ""
 
-#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
 msgid "annually"
 msgstr ""
 
-#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
 msgid "monthly"
 msgstr ""
 
@@ -586,15 +586,15 @@ msgstr ""
 msgid "Reference '%1' is already in use!"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
 msgid "semi-annually"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
 msgid "quarterly"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
 msgid "bi-monthly"
 msgstr ""
 
@@ -946,6 +946,22 @@ msgstr ""
 msgid "Donor's Account Name"
 msgstr ""
 
+#: managed/OptionGroup_payment_frequency.mgd.php resources/l10n.php
+msgid "Payment Intervals"
+msgstr ""
+
+#: managed/OptionGroup_payment_frequency.mgd.php
+msgid "The value describes the payment interval in months."
+msgstr ""
+
+#: managed/OptionGroup_payment_frequency.mgd.php
+msgid "one-off"
+msgstr ""
+
+#: managed/OptionGroup_payment_frequency.mgd.php
+msgid "trimestral"
+msgstr ""
+
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Primary and Secondary Memberships"
 msgstr ""
@@ -1035,10 +1051,6 @@ msgid "Order Type"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Payment Intervals"
-msgstr ""
-
-#: resources/l10n.php
 msgid "Membership Type"
 msgstr ""
 
@@ -1117,13 +1129,6 @@ msgstr ""
 #: resources/l10n.php
 msgid "Welcome Gift"
 msgstr ""
-
-#: resources/l10n.php
-msgid "one-off"
-msgstr ""
-
-#: resources/l10n.php
-msgid "trimestral"
 msgstr ""
 
 #: schema/ContractMembershipRelation.entityType.php

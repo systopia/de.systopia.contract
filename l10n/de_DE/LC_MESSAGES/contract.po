@@ -1309,7 +1309,7 @@ msgstr "einmalig"
 
 #: resources/l10n.php
 msgid "trimestral"
-msgstr "vierteljährig"
+msgstr "dritteljährlich"
 
 #: schema/ContractMembershipRelation.entityType.php
 msgid "Related Membership Definition"
