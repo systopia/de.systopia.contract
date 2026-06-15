@@ -40,10 +40,4 @@
       ts("Deceased");
       ts("Needs Review");
       ts("Failed");
-      ts("Sign Contract");
-      ts("Pause Contract");
-      ts("Resume Contract");
-      ts("Update Contract");
-      ts("Cancel Contract");
-      ts("Revive Contract");
 }

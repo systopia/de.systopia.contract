@@ -21,7 +21,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   public function enable(): void {
     require_once 'CRM/Contract/CustomData.php';
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_activity_status.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
@@ -72,7 +71,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   public function upgrade_1501(): bool {
     $this->ctx->log->info('Applying localisation');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
     $customData->syncOptionGroup(E::path('resources/option_group_activity_status.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
@@ -81,31 +79,10 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
-  public function upgrade_1502(): bool {
-    $this->ctx->log->info('Hide/filter activity types');
-    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
-    return TRUE;
-  }
-
   public function upgrade_1503(): bool {
     $this->ctx->log->info('Update translations');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
-    return TRUE;
-  }
-
-  public function upgrade_2000(): bool {
-    $this->ctx->log->info('Adjust filters for contract actions');
-    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncOptionGroup(E::path('resources/option_group_activity_types.json'));
-    return TRUE;
-  }
-
-  public function upgrade_2001(): bool {
-    $this->ctx->log->info('Update contract types');
-    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncEntities(E::path('resources/option_group_activity_types.json'));
     return TRUE;
   }
 

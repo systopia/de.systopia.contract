@@ -22,7 +22,7 @@ msgstr ""
 msgid "Contract cancelled"
 msgstr ""
 
-#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
+#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php
 msgid "Cancel Contract"
 msgstr ""
 
@@ -50,7 +50,7 @@ msgstr ""
 msgid "Contract paused"
 msgstr ""
 
-#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
+#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php
 msgid "Pause Contract"
 msgstr ""
 
@@ -66,11 +66,11 @@ msgstr ""
 msgid "Contract resumed"
 msgstr ""
 
-#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
+#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php
 msgid "Resume Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
+#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php
 msgid "Revive Contract"
 msgstr ""
 
@@ -90,7 +90,7 @@ msgstr ""
 msgid "New membership contract"
 msgstr ""
 
-#: CRM/Contract/Change/Sign.php resources/l10n.php
+#: CRM/Contract/Change/Sign.php
 msgid "Sign Contract"
 msgstr ""
 
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Contract updated"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php resources/l10n.php
+#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php
 msgid "Update Contract"
 msgstr ""
 
@@ -946,16 +946,20 @@ msgstr ""
 msgid "Donor's Account Name"
 msgstr ""
 
+#: managed/OptionGroup_contact_channel.mgd.php
+msgid "Channel"
+msgstr ""
+
+#: managed/OptionGroup_contact_channel.mgd.php managed/OptionGroup_contract_cancel_reason.mgd.php
+msgid "Unknown"
+msgstr ""
+
 #: managed/OptionGroup_contract_cancel_reason.mgd.php
 msgid "Contract Cancel Reason"
 msgstr ""
 
 #: managed/OptionGroup_contract_cancel_reason.mgd.php
 msgid "Dropdown options for Contract cancellation reasons"
-msgstr ""
-
-#: managed/OptionGroup_contract_cancel_reason.mgd.php
-msgid "Unknown"
 msgstr ""
 
 #: managed/OptionGroup_order_type.mgd.php
