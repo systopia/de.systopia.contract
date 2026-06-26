@@ -126,7 +126,7 @@ jobs:
           sed -i "s#\"TEST_DB_DSN\": \".*\"#\"TEST_DB_DSN\": \"$DATABASE_URL\"#g" "$CV_CONFIG"
 
           cv ext:download "action-provider@https://lab.civicrm.org/extensions/action-provider/-/archive/1.196/action-provider-1.196.zip"
-          cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/1.13.0/org.project60.sepa-1.13.0.zip"
+          cv ext:download "org.project60.sepa@https://github.com/Project60/org.project60.sepa/releases/download/1.14.0-beta2/org.project60.sepa-1.14.0-beta2.zip"
           cv ext:download "org.project60.banking@https://github.com/Project60/org.project60.banking/releases/download/1.4.1/org.project60.banking-1.4.1.zip"
 
       - name: Run PHPUnit
