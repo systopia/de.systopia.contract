@@ -1,11 +1,9 @@
 <?php
  function l10n() {
-  ts("Contract Cancellation");
   ts("Contract Updates");
   ts("Cancellation Information");
   ts("General Information");
   ts("Payment Information");
-      ts("Cancel Reason");
       ts("Membership Type");
       ts("Annual Membership Contribution");
       ts("Increase");

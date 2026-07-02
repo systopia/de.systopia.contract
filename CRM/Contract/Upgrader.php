@@ -20,7 +20,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function postInstall(): void {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_contract_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
@@ -73,7 +72,6 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   public function upgrade_1501(): bool {
     $this->ctx->log->info('Applying localisation');
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncCustomGroup(E::path('resources/custom_group_contract_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));

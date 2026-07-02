@@ -622,7 +622,7 @@ msgstr ""
 msgid "Membership Type ID"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/CancelContract.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/CancelContract.php
 msgid "Cancel Reason"
 msgstr ""
 
@@ -946,6 +946,14 @@ msgstr ""
 msgid "Donor's Account Name"
 msgstr ""
 
+#: managed/OptionGroup_activity_status.mgd.php
+msgid "Needs Review"
+msgstr ""
+
+#: managed/OptionGroup_activity_status.mgd.php
+msgid "Failed"
+msgstr ""
+
 #: managed/OptionGroup_contact_channel.mgd.php
 msgid "Channel"
 msgstr ""
@@ -1048,10 +1056,6 @@ msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Add related membership"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Contract Cancellation"
 msgstr ""
 
 #: resources/l10n.php
