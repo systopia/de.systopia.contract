@@ -1,10 +1,7 @@
 <?php
  function l10n() {
-  ts("Cancellation Information");
   ts("General Information");
   ts("Payment Information");
-      ts("Cancellation Date");
-      ts("Cancel Reason");
       ts("Membership Channel");
       ts("Reference Number");
       ts("Contract Number");

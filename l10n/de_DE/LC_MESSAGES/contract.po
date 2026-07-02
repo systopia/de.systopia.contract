@@ -196,8 +196,6 @@ msgid "EFT"
 msgstr "Überweisung"
 
 #: CRM/Contract/Configuration.php
-#, fuzzy
-#| msgid "modify contract"
 msgid "modify current"
 msgstr "Zahlungsvertrag anpassen"
 
@@ -773,7 +771,7 @@ msgid "Membership Type ID"
 msgstr "Mitgliedschaftstyp-ID"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
-#: managed/CustomGroup_contract_cancellation.mgd.php resources/l10n.php
+#: managed/CustomGroup_contract_cancellation.mgd.php
 msgid "Cancel Reason"
 msgstr "Kündigungsgrund"
 
@@ -874,11 +872,13 @@ msgid "Join Date"
 msgstr "Eintrittsdatum"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/CustomGroup_contract_updates.mgd.php
 #: managed/CustomGroup_membership_payment.mgd.php
 msgid "Annual Membership Contribution"
 msgstr "Jährliche Mitgliedschaftszahlung"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/CustomGroup_contract_updates.mgd.php
 #: managed/CustomGroup_membership_payment.mgd.php
 msgid "Payment Interval"
 msgstr "Zahlungsintervall"
@@ -897,6 +897,7 @@ msgstr "Konto der Spender_in"
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
+#: managed/CustomGroup_contract_updates.mgd.php
 #: managed/CustomGroup_membership_payment.mgd.php
 msgid "Defer Payment Start"
 msgstr "Zahlungsbeginn aufschieben"
@@ -991,6 +992,7 @@ msgid "Membership Channel"
 msgstr "Anwerbekanal"
 
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: managed/CustomGroup_contract_updates.mgd.php
 msgid "Cycle Day"
 msgstr "Einzugstag"
 
@@ -1126,6 +1128,40 @@ msgstr "Vertragsaktivität"
 msgid "Contract Cancellation"
 msgstr "Vertrag Beenden"
 
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Contract Updates"
+msgstr "Vertragsaktualisierungen"
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Membership Type"
+msgstr "Mitgliedschaftstyp"
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Increase"
+msgstr "Erhöhung"
+
+#: managed/CustomGroup_contract_updates.mgd.php
+#: managed/CustomGroup_membership_payment.mgd.php
+msgid "Donor's Account Name"
+msgstr "Kontoinhaber"
+
+#: managed/CustomGroup_contract_updates.mgd.php
+#: templates/CRM/Contract/Form/Create.tpl
+msgid "Payment Contract"
+msgstr "Vertrag pausieren"
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Organization's Bank Account"
+msgstr "Organisationskonto"
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Member's Bank Account"
+msgstr "Kontoinhaber"
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Payment Method"
+msgstr "Zahlungsart"
+
 #: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Payment Information"
 msgstr "Zahlungsinformationen"
@@ -1133,10 +1169,6 @@ msgstr "Zahlungsinformationen"
 #: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Organisation's Bank Account"
 msgstr "Organisationskonto"
-
-#: managed/CustomGroup_membership_payment.mgd.php
-msgid "Donor's Account Name"
-msgstr "Kontoinhaber"
 
 #: managed/OptionGroup_activity_status.mgd.php
 msgid "Needs Review"
@@ -1253,16 +1285,8 @@ msgid "Add related membership"
 msgstr "Abgeleitete Mitgliedschaft hinzufügen"
 
 #: resources/l10n.php
-msgid "Cancellation Information"
-msgstr "Kündigungsgrund"
-
-#: resources/l10n.php
 msgid "General Information"
 msgstr "Allgemeine Informationen"
-
-#: resources/l10n.php
-msgid "Cancellation Date"
-msgstr "Kündigungsdatum"
 
 #: resources/l10n.php
 msgid "Reference Number"
@@ -1437,10 +1461,6 @@ msgid "Membership data"
 msgstr "Mitgliedschaftsdaten"
 
 #: templates/CRM/Contract/Form/Create.tpl
-msgid "Payment Contract"
-msgstr "Vertrag pausieren"
-
-#: templates/CRM/Contract/Form/Create.tpl
 msgid "Contract Preview"
 msgstr "Vertragsvorschau"
 
@@ -1590,3 +1610,9 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
+
+#~ msgid "Cancellation Information"
+#~ msgstr "Kündigungsgrund"
+
+#~ msgid "Cancellation Date"
+#~ msgstr "Kündigungsdatum"

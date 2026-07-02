@@ -622,7 +622,7 @@ msgstr ""
 msgid "Membership Type ID"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/CancelContract.php managed/CustomGroup_contract_cancellation.mgd.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/CancelContract.php managed/CustomGroup_contract_cancellation.mgd.php
 msgid "Cancel Reason"
 msgstr ""
 
@@ -706,11 +706,11 @@ msgstr ""
 msgid "Join Date"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Annual Membership Contribution"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Payment Interval"
 msgstr ""
 
@@ -722,7 +722,7 @@ msgstr ""
 msgid "Donor's Bank Account"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Defer Payment Start"
 msgstr ""
 
@@ -810,7 +810,7 @@ msgstr ""
 msgid "Membership Channel"
 msgstr ""
 
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/CustomGroup_contract_updates.mgd.php
 msgid "Cycle Day"
 msgstr ""
 
@@ -938,16 +938,44 @@ msgstr ""
 msgid "Contract Cancellation"
 msgstr ""
 
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Contract Updates"
+msgstr ""
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Membership Type"
+msgstr ""
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Increase"
+msgstr ""
+
+#: managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
+msgid "Donor's Account Name"
+msgstr ""
+
+#: managed/CustomGroup_contract_updates.mgd.php templates/CRM/Contract/Form/Create.tpl
+msgid "Payment Contract"
+msgstr ""
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Organization's Bank Account"
+msgstr ""
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Member's Bank Account"
+msgstr ""
+
+#: managed/CustomGroup_contract_updates.mgd.php
+msgid "Payment Method"
+msgstr ""
+
 #: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Payment Information"
 msgstr ""
 
 #: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Organisation's Bank Account"
-msgstr ""
-
-#: managed/CustomGroup_membership_payment.mgd.php
-msgid "Donor's Account Name"
 msgstr ""
 
 #: managed/OptionGroup_activity_status.mgd.php
@@ -1063,15 +1091,7 @@ msgid "Add related membership"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Cancellation Information"
-msgstr ""
-
-#: resources/l10n.php
 msgid "General Information"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Cancellation Date"
 msgstr ""
 
 #: resources/l10n.php
@@ -1236,10 +1256,6 @@ msgstr ""
 
 #: templates/CRM/Contract/Form/Create.tpl
 msgid "Membership data"
-msgstr ""
-
-#: templates/CRM/Contract/Form/Create.tpl
-msgid "Payment Contract"
 msgstr ""
 
 #: templates/CRM/Contract/Form/Create.tpl
