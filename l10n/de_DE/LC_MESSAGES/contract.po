@@ -772,6 +772,7 @@ msgstr "Mitgliedschaftstyp-ID"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
 #: managed/CustomGroup_contract_cancellation.mgd.php
+#: managed/CustomGroup_membership_cancellation.mgd.php
 msgid "Cancel Reason"
 msgstr "Kündigungsgrund"
 
@@ -987,7 +988,8 @@ msgstr "Mitgliedsreferenz"
 msgid "Membership Contract"
 msgstr "Mitgliedschaftsvertrag"
 
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php resources/l10n.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: managed/CustomGroup_membership_general.mgd.php
 msgid "Membership Channel"
 msgstr "Anwerbekanal"
 
@@ -1162,6 +1164,26 @@ msgstr "Kontoinhaber"
 msgid "Payment Method"
 msgstr "Zahlungsart"
 
+#: managed/CustomGroup_membership_cancellation.mgd.php
+msgid "Cancellation Information"
+msgstr "Kündigungsgrund"
+
+#: managed/CustomGroup_membership_cancellation.mgd.php
+msgid "Cancellation Date"
+msgstr "Kündigungsdatum"
+
+#: managed/CustomGroup_membership_general.mgd.php
+msgid "General Information"
+msgstr "Allgemeine Informationen"
+
+#: managed/CustomGroup_membership_general.mgd.php
+msgid "Reference Number"
+msgstr "Referenznummer"
+
+#: managed/CustomGroup_membership_general.mgd.php
+msgid "Contract Number"
+msgstr "Vertragsnummer"
+
 #: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Payment Information"
 msgstr "Zahlungsinformationen"
@@ -1283,18 +1305,6 @@ msgstr "Übergeordnete Mitgliedschaft"
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Add related membership"
 msgstr "Abgeleitete Mitgliedschaft hinzufügen"
-
-#: resources/l10n.php
-msgid "General Information"
-msgstr "Allgemeine Informationen"
-
-#: resources/l10n.php
-msgid "Reference Number"
-msgstr "Referenznummer"
-
-#: resources/l10n.php
-msgid "Contract Number"
-msgstr "Vertragsnummer"
 
 #: resources/l10n.php
 msgid "Paused"
@@ -1610,9 +1620,3 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
-
-#~ msgid "Cancellation Information"
-#~ msgstr "Kündigungsgrund"
-
-#~ msgid "Cancellation Date"
-#~ msgstr "Kündigungsdatum"
