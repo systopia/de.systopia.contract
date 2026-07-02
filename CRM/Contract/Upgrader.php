@@ -18,8 +18,7 @@ use Civi\Api4\OptionValue;
  */
 class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
-  public function enable(): void {
-    require_once 'CRM/Contract/CustomData.php';
+  public function postInstall(): void {
     $customData = new CRM_Contract_CustomData(E::LONG_NAME);
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_cancellation.json'));
     $customData->syncCustomGroup(E::path('resources/custom_group_contract_updates.json'));
@@ -27,6 +26,10 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $customData->syncCustomGroup(E::path('resources/custom_group_membership_general.json'));
     $customData->syncEntities(E::path('resources/entities_membership_status.json'));
     $this->ensureNoPaymentRequiredPaymentInstrument();
+  }
+
+  public function enable(): void {
+    $this->postInstall();
   }
 
   /**
