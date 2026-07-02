@@ -121,7 +121,7 @@ return [
       'values' => [
         'custom_group_id.name' => 'membership_payment',
         'name' => 'to_ba',
-        'label' => E::ts("Organisation's Bank Account"),
+        'label' => E::ts("Organization's Bank Account"),
         'data_type' => 'EntityReference',
         'html_type' => 'Autocomplete-Select',
         'is_searchable' => TRUE,

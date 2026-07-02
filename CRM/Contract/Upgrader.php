@@ -19,8 +19,6 @@ use Civi\Api4\OptionValue;
 class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function postInstall(): void {
-    $customData = new CRM_Contract_CustomData(E::LONG_NAME);
-    $customData->syncEntities(E::path('resources/entities_membership_status.json'));
     $this->ensureNoPaymentRequiredPaymentInstrument();
   }
 

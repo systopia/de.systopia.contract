@@ -885,12 +885,12 @@ msgid "Payment Interval"
 msgstr "Zahlungsintervall"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Recurring contribution/mandate"
 msgstr "Wiederkehrende Zuwendung / Mandat"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Donor's Bank Account"
 msgstr "Konto der Spender_in"
 
@@ -1153,6 +1153,7 @@ msgid "Payment Contract"
 msgstr "Vertrag pausieren"
 
 #: managed/CustomGroup_contract_updates.mgd.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Organization's Bank Account"
 msgstr "Organisationskonto"
 
@@ -1184,13 +1185,37 @@ msgstr "Referenznummer"
 msgid "Contract Number"
 msgstr "Vertragsnummer"
 
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Payment Information"
 msgstr "Zahlungsinformationen"
 
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
-msgid "Organisation's Bank Account"
-msgstr "Organisationskonto"
+#: managed/MembershipStatus.mgd.php
+msgid "New"
+msgstr "Neu"
+
+#: managed/MembershipStatus.mgd.php
+msgid "Current"
+msgstr "Laufend"
+
+#: managed/MembershipStatus.mgd.php
+msgid "Grace"
+msgstr "Zahlungsfrist"
+
+#: managed/MembershipStatus.mgd.php
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: managed/MembershipStatus.mgd.php
+msgid "Cancelled"
+msgstr "Beendet"
+
+#: managed/MembershipStatus.mgd.php
+msgid "Deceased"
+msgstr "Verstorben"
+
+#: managed/MembershipStatus.mgd.php
+msgid "Paused"
+msgstr "Pausiert"
 
 #: managed/OptionGroup_activity_status.mgd.php
 msgid "Needs Review"
@@ -1305,34 +1330,6 @@ msgstr "Übergeordnete Mitgliedschaft"
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Add related membership"
 msgstr "Abgeleitete Mitgliedschaft hinzufügen"
-
-#: resources/l10n.php
-msgid "Paused"
-msgstr "Pausiert"
-
-#: resources/l10n.php
-msgid "New"
-msgstr "Neu"
-
-#: resources/l10n.php
-msgid "Grace"
-msgstr "Zahlungsfrist"
-
-#: resources/l10n.php
-msgid "Current"
-msgstr "Laufend"
-
-#: resources/l10n.php
-msgid "Pending"
-msgstr "Ausstehend"
-
-#: resources/l10n.php
-msgid "Cancelled"
-msgstr "Beendet"
-
-#: resources/l10n.php
-msgid "Deceased"
-msgstr "Verstorben"
 
 #: schema/ContractMembershipRelation.entityType.php
 msgid "Related Membership Definition"
@@ -1620,3 +1617,6 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
+
+#~ msgid "Organisation's Bank Account"
+#~ msgstr "Organisationskonto"

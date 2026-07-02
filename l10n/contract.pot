@@ -714,11 +714,11 @@ msgstr ""
 msgid "Payment Interval"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Recurring contribution/mandate"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Donor's Bank Account"
 msgstr ""
 
@@ -958,7 +958,7 @@ msgstr ""
 msgid "Payment Contract"
 msgstr ""
 
-#: managed/CustomGroup_contract_updates.mgd.php
+#: managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Organization's Bank Account"
 msgstr ""
 
@@ -990,12 +990,36 @@ msgstr ""
 msgid "Contract Number"
 msgstr ""
 
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Payment Information"
 msgstr ""
 
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
-msgid "Organisation's Bank Account"
+#: managed/MembershipStatus.mgd.php
+msgid "New"
+msgstr ""
+
+#: managed/MembershipStatus.mgd.php
+msgid "Current"
+msgstr ""
+
+#: managed/MembershipStatus.mgd.php
+msgid "Grace"
+msgstr ""
+
+#: managed/MembershipStatus.mgd.php
+msgid "Pending"
+msgstr ""
+
+#: managed/MembershipStatus.mgd.php
+msgid "Cancelled"
+msgstr ""
+
+#: managed/MembershipStatus.mgd.php
+msgid "Deceased"
+msgstr ""
+
+#: managed/MembershipStatus.mgd.php
+msgid "Paused"
 msgstr ""
 
 #: managed/OptionGroup_activity_status.mgd.php
@@ -1108,34 +1132,6 @@ msgstr ""
 
 #: managed/SavedSearch_Related_Memberships.mgd.php
 msgid "Add related membership"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Paused"
-msgstr ""
-
-#: resources/l10n.php
-msgid "New"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Grace"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Current"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Pending"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Cancelled"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Deceased"
 msgstr ""
 
 #: schema/ContractMembershipRelation.entityType.php
