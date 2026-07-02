@@ -138,7 +138,7 @@ msgstr "Zahlungsturnus"
 #: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php
 #: CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Cycle day"
 msgstr "Einzugstag"
@@ -146,7 +146,7 @@ msgstr "Einzugstag"
 #: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: js/contract_modify_tools.js managed/CustomGroup_membership_payment.mgd.php
-#: resources/l10n.php templates/CRM/Contract/Page/Review.tpl
+#: templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr "Zahlungsart"
 
@@ -773,6 +773,7 @@ msgid "Membership Type ID"
 msgstr "Mitgliedschaftstyp-ID"
 
 #: Civi/Contract/ActionProvider/Action/CancelContract.php
+#: managed/CustomGroup_contract_cancellation.mgd.php resources/l10n.php
 msgid "Cancel Reason"
 msgstr "Kündigungsgrund"
 
@@ -873,12 +874,12 @@ msgid "Join Date"
 msgstr "Eintrittsdatum"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Annual Membership Contribution"
 msgstr "Jährliche Mitgliedschaftszahlung"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Payment Interval"
 msgstr "Zahlungsintervall"
 
@@ -896,7 +897,7 @@ msgstr "Konto der Spender_in"
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/ReviveContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Defer Payment Start"
 msgstr "Zahlungsbeginn aufschieben"
 
@@ -989,7 +990,7 @@ msgstr "Mitgliedschaftsvertrag"
 msgid "Membership Channel"
 msgstr "Anwerbekanal"
 
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php resources/l10n.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Cycle Day"
 msgstr "Einzugstag"
 
@@ -1118,10 +1119,12 @@ msgid "de.systopia.contract"
 msgstr "de.systopia.contract"
 
 #: managed/CustomGroup_contract_activity.mgd.php
-#, fuzzy
-#| msgid "Contract Preview"
 msgid "Contract Activity"
-msgstr "Vertragsvorschau"
+msgstr "Vertragsaktivität"
+
+#: managed/CustomGroup_contract_cancellation.mgd.php
+msgid "Contract Cancellation"
+msgstr "Vertrag Beenden"
 
 #: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Payment Information"
@@ -1131,7 +1134,7 @@ msgstr "Zahlungsinformationen"
 msgid "Organisation's Bank Account"
 msgstr "Organisationskonto"
 
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Donor's Account Name"
 msgstr "Kontoinhaber"
 
@@ -1250,40 +1253,12 @@ msgid "Add related membership"
 msgstr "Abgeleitete Mitgliedschaft hinzufügen"
 
 #: resources/l10n.php
-msgid "Contract Updates"
-msgstr "Vertrag Anpassen"
-
-#: resources/l10n.php
 msgid "Cancellation Information"
 msgstr "Kündigungsgrund"
 
 #: resources/l10n.php
 msgid "General Information"
 msgstr "Allgemeine Informationen"
-
-#: resources/l10n.php
-msgid "Membership Type"
-msgstr "Mitgliedschaftart"
-
-#: resources/l10n.php
-msgid "Increase"
-msgstr "Erhöhung"
-
-#: resources/l10n.php templates/CRM/Contract/Form/Create.tpl
-msgid "Payment Contract"
-msgstr "Vertrag pausieren"
-
-#: resources/l10n.php
-msgid "GP Bank Account"
-msgstr "Organisationskonto"
-
-#: resources/l10n.php
-msgid "Member's Bank Account"
-msgstr "Mitgliedskonto"
-
-#: resources/l10n.php
-msgid "Payment Method"
-msgstr "Zahlungsart"
 
 #: resources/l10n.php
 msgid "Cancellation Date"
@@ -1462,6 +1437,10 @@ msgid "Membership data"
 msgstr "Mitgliedschaftsdaten"
 
 #: templates/CRM/Contract/Form/Create.tpl
+msgid "Payment Contract"
+msgstr "Vertrag pausieren"
+
+#: templates/CRM/Contract/Form/Create.tpl
 msgid "Contract Preview"
 msgstr "Vertragsvorschau"
 
@@ -1611,73 +1590,3 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
-
-#~ msgid "Contract Cancellation"
-#~ msgstr "Vertrag Beenden"
-
-#~ msgid "Invalid modification for status '%1'."
-#~ msgstr "Ungültige Änderung für Status '%1'."
-
-#~ msgid "No Payment required"
-#~ msgstr "Keine Zahlung erforderlich"
-
-#~ msgid "no payment required"
-#~ msgstr "Keine Zahlung erforderlich"
-
-#~ msgid "select other"
-#~ msgstr "bestehender Zahlungsvertrag"
-
-#~ msgid "Member name"
-#~ msgstr "Mitgliedsname"
-
-#~ msgid "create new mandate"
-#~ msgstr "neues SEPA-Mandat"
-
-#~ msgid "new contract: %1"
-#~ msgstr "Neuer %1 Vertrag"
-
-#~ msgid "modify"
-#~ msgstr "Ändern"
-
-#~ msgid "Start date must be the same or later than Member since."
-#~ msgstr "Startdatum darf nicht vor Eintrittsdatum liegen."
-
-#~ msgid "DD-Venue"
-#~ msgstr "Ort der Anwerbung"
-
-#~ msgid "Last name"
-#~ msgstr "Nachname"
-
-#~ msgid "Save and new"
-#~ msgstr "Speichern und neu"
-
-#~ msgid "Please specify a frequency when specifying an amount"
-#~ msgstr "Bitte gebe eine Zahlungsfrequenz an, wenn du einen Betrag eingibt"
-
-#~ msgid "Please specify an amount when specifying a frequency"
-#~ msgstr "Bitte gebe einen Betrag an, wenn du eine Zahlungsfrequenz eingibst."
-
-#~ msgid "Annual amount too small."
-#~ msgstr "Jährlicher Betrag zu gering."
-
-#~ msgid "Please enter a valid IBAN"
-#~ msgstr "Bitte gebe eine gültige IBAN an."
-
-#~ msgid "Do not use any of the organisation's own IBANs"
-#~ msgstr "Nutze keine der Organisation zugehörigen IBANs."
-
-#~ msgid "Please enter a valid BIC"
-#~ msgstr "Bitte gebe eine gültige BIC an."
-
-#~ msgid "Domain"
-#~ msgstr "Domäne"
-
-#~ msgid ""
-#~ "Some features like the Rapid Create form might work or\n"
-#~ "                      look different depending on the selected value."
-#~ msgstr ""
-#~ "Einige Features wie das Rapid Create Formular könnten unterschiedlich "
-#~ "aussehen oder funktionieren abhängig vom hier ausgewählten Wert."
-
-#~ msgid "Create a new contact with associated contract and mandate"
-#~ msgstr "Erstelle einen neuen Kontakt mit zugehörigem Vertrag und Mandat"

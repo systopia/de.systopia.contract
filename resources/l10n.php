@@ -1,34 +1,16 @@
 <?php
  function l10n() {
-  ts("Contract Updates");
   ts("Cancellation Information");
   ts("General Information");
   ts("Payment Information");
-      ts("Membership Type");
-      ts("Annual Membership Contribution");
-      ts("Increase");
-      ts("Payment Interval");
-      ts("Payment Contract");
-      ts("GP Bank Account");
-      ts("Donor's Account Name");
-      ts("Member's Bank Account");
-      ts("Cycle Day");
-      ts("Payment Method");
-      ts("Defer Payment Start");
       ts("Cancellation Date");
       ts("Cancel Reason");
       ts("Membership Channel");
       ts("Reference Number");
       ts("Contract Number");
-      ts("Annual Membership Contribution");
-      ts("Payment Interval");
       ts("Recurring contribution/mandate");
       ts("Organisation's Bank Account");
-      ts("Donor's Account Name");
       ts("Donor's Bank Account");
-      ts("Cycle day");
-      ts("Payment method");
-      ts("Defer Payment Start");
       ts("Paused");
       ts("New");
       ts("Grace");

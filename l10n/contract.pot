@@ -110,11 +110,11 @@ msgstr ""
 msgid "Payment frequency"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
 msgid "Cycle day"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js managed/CustomGroup_membership_payment.mgd.php resources/l10n.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js managed/CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr ""
 
@@ -622,7 +622,7 @@ msgstr ""
 msgid "Membership Type ID"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/CancelContract.php
+#: Civi/Contract/ActionProvider/Action/CancelContract.php managed/CustomGroup_contract_cancellation.mgd.php resources/l10n.php
 msgid "Cancel Reason"
 msgstr ""
 
@@ -706,11 +706,11 @@ msgstr ""
 msgid "Join Date"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Annual Membership Contribution"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Payment Interval"
 msgstr ""
 
@@ -722,7 +722,7 @@ msgstr ""
 msgid "Donor's Bank Account"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/CustomGroup_membership_payment.mgd.php
 msgid "Defer Payment Start"
 msgstr ""
 
@@ -810,7 +810,7 @@ msgstr ""
 msgid "Membership Channel"
 msgstr ""
 
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php resources/l10n.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Cycle Day"
 msgstr ""
 
@@ -934,6 +934,10 @@ msgstr ""
 msgid "Contract Activity"
 msgstr ""
 
+#: managed/CustomGroup_contract_cancellation.mgd.php
+msgid "Contract Cancellation"
+msgstr ""
+
 #: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
 msgid "Payment Information"
 msgstr ""
@@ -942,7 +946,7 @@ msgstr ""
 msgid "Organisation's Bank Account"
 msgstr ""
 
-#: managed/CustomGroup_membership_payment.mgd.php resources/l10n.php
+#: managed/CustomGroup_membership_payment.mgd.php
 msgid "Donor's Account Name"
 msgstr ""
 
@@ -1059,39 +1063,11 @@ msgid "Add related membership"
 msgstr ""
 
 #: resources/l10n.php
-msgid "Contract Updates"
-msgstr ""
-
-#: resources/l10n.php
 msgid "Cancellation Information"
 msgstr ""
 
 #: resources/l10n.php
 msgid "General Information"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Membership Type"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Increase"
-msgstr ""
-
-#: resources/l10n.php templates/CRM/Contract/Form/Create.tpl
-msgid "Payment Contract"
-msgstr ""
-
-#: resources/l10n.php
-msgid "GP Bank Account"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Member's Bank Account"
-msgstr ""
-
-#: resources/l10n.php
-msgid "Payment Method"
 msgstr ""
 
 #: resources/l10n.php
@@ -1260,6 +1236,10 @@ msgstr ""
 
 #: templates/CRM/Contract/Form/Create.tpl
 msgid "Membership data"
+msgstr ""
+
+#: templates/CRM/Contract/Form/Create.tpl
+msgid "Payment Contract"
 msgstr ""
 
 #: templates/CRM/Contract/Form/Create.tpl
