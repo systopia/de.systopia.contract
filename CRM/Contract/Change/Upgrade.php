@@ -206,8 +206,8 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     }
     $this->setParameter(
       'contract_updates.ch_annual_diff',
-      (float) $contract_after['membership_payment.membership_annual']
-      - (float) $contract_before['membership_payment.membership_annual']
+      (float) CRM_Contract_SepaLogic::formatMoney($contract_after['membership_payment.membership_annual'] ?? 0)
+      - (float) CRM_Contract_SepaLogic::formatMoney($contract_before['membership_payment.membership_annual'] ?? 0)
     );
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
     $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name'] ?? '');
