@@ -24,6 +24,11 @@ use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Contract\ContractManager;
 
+/**
+ * @method $this setContractId(int $contractId)
+ * @method $this setContactId(int $contactId)
+ * @method $this setStartDate(string|null $startDate)
+ */
 class AddRelatedMembershipAction extends AbstractAction {
 
   private ContractManager $contractManager;
@@ -34,7 +39,7 @@ class AddRelatedMembershipAction extends AbstractAction {
    * @var int
    * @required
    */
-  protected $membershipId;
+  protected $contractId;
 
   /**
    * ID of the contact to add as related member
@@ -43,6 +48,13 @@ class AddRelatedMembershipAction extends AbstractAction {
    * @required
    */
   protected $contactId;
+
+  /**
+   * The start date of the related membership
+   *
+   * @var string|null
+   */
+  protected ?string $startDate = NULL;
 
   public function __construct(ContractManager $contractManager) {
     parent::__construct(Contract::getEntityName(), 'addRelatedMembership');
@@ -53,7 +65,17 @@ class AddRelatedMembershipAction extends AbstractAction {
    * @inheritDoc
    */
   public function _run(Result $result): void {
-    $relatedMembershipId = $this->contractManager->addRelatedMembership($this->membershipId, $this->contactId);
+    if (isset($this->startDate)) {
+      $startDate = \DateTime::createFromFormat('Y-m-d', $this->startDate);
+      if (FALSE === $startDate) {
+        throw new \RuntimeException('Invalid date format for parameter "startDate".');
+      }
+    }
+    $relatedMembershipId = $this->contractManager->addRelatedMembership(
+      $this->contractId,
+      $this->contactId,
+      $startDate ?? NULL
+    );
     $result->exchangeArray(['id' => $relatedMembershipId]);
   }
 

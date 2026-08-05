@@ -24,6 +24,10 @@ use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Contract\ContractManager;
 
+/**
+ * @method $this setRelatedMembershipId(int $relatedMembershipId)
+ * @method $this setEndDate(string|null $endDate)
+ */
 class EndRelatedMembershipAction extends AbstractAction {
 
   private ContractManager $contractManager;
@@ -34,7 +38,14 @@ class EndRelatedMembershipAction extends AbstractAction {
    * @var int
    * @required
    */
-  protected $membershipId;
+  protected $relatedMembershipId;
+
+  /**
+   * The end date of the related membership
+   *
+   * @var string|null
+   */
+  protected ?string $endDate = NULL;
 
   public function __construct(ContractManager $contractManager) {
     parent::__construct(Contract::getEntityName(), 'endRelatedMembership');
@@ -45,8 +56,14 @@ class EndRelatedMembershipAction extends AbstractAction {
    * @inheritDoc
    */
   public function _run(Result $result): void {
-    $this->contractManager->endRelatedMembership($this->membershipId);
-    $result->exchangeArray(['id' => $this->membershipId]);
+    if (isset($this->endDate)) {
+      $endDate = \DateTime::createFromFormat('Y-m-d', $this->endDate);
+      if (FALSE === $endDate) {
+        throw new \RuntimeException('Invalid date format for parameter "endDate".');
+      }
+    }
+    $this->contractManager->endRelatedMembership($this->relatedMembershipId, $endDate ?? NULL);
+    $result->exchangeArray(['id' => $this->relatedMembershipId]);
   }
 
 }
