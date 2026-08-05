@@ -10,6 +10,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractManager;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -61,19 +62,12 @@ function civicrm_api3_Contract_create($params) {
 
   // create 'sign' activity
   $params['activity_type_id'] = 'sign';
-  $change = CRM_Contract_Change::getChangeForData($params);
-  if (isset($params['activity_date_time'])) {
-    $change->setParameter('activity_date_time', $params['activity_date_time']);
-  }
-  $change->setParameter('source_contact_id', CRM_Contract_Configuration::getUserID());
-  $change->setParameter('contract_activity.contract_id', (int) $membership['id']);
-  $change->setParameter('source_record_id', (int) $membership['id']);
-  $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
-  $change->setStatus('Completed');
-  $change->populateData();
-  $change->verifyData();
-  $change->shouldBeAccepted();
-  $change->save();
+  $contractManager = new ContractManager();
+  $change = $contractManager->createContractChange(
+    (int) $membership['id'],
+    $params,
+    'Completed'
+  );
 
   // also derive contract fields
   $change->updateContract(

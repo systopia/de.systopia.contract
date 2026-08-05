@@ -56,12 +56,14 @@ abstract class CRM_Contract_Change {
    *  activity_type_name => change class
    */
   protected const TYPE2CLASS = [
-    'Contract_Signed'    => 'CRM_Contract_Change_Sign',
+    'Contract_Signed' => 'CRM_Contract_Change_Sign',
     'Contract_Cancelled' => 'CRM_Contract_Change_Cancel',
-    'Contract_Updated'   => 'CRM_Contract_Change_Upgrade',
-    'Contract_Resumed'   => 'CRM_Contract_Change_Resume',
-    'Contract_Revived'   => 'CRM_Contract_Change_Revive',
-    'Contract_Paused'    => 'CRM_Contract_Change_Pause',
+    'Contract_Updated' => 'CRM_Contract_Change_Upgrade',
+    'Contract_Resumed' => 'CRM_Contract_Change_Resume',
+    'Contract_Revived' => 'CRM_Contract_Change_Revive',
+    'Contract_Paused' => 'CRM_Contract_Change_Pause',
+    'Secondary_Membership_Created' => 'CRM_Contract_Change_AddRelatedMembership',
+    'Secondary_Membership_Ended' => 'CRM_Contract_Change_EndRelatedMembership',
   ];
 
   /**
@@ -69,12 +71,14 @@ abstract class CRM_Contract_Change {
    *  activity_type_name => change class
    */
   protected const ACTION2CLASS = [
-    'sign'    => 'CRM_Contract_Change_Sign',
-    'cancel'  => 'CRM_Contract_Change_Cancel',
-    'update'  => 'CRM_Contract_Change_Upgrade',
-    'resume'  => 'CRM_Contract_Change_Resume',
-    'revive'  => 'CRM_Contract_Change_Revive',
-    'pause'   => 'CRM_Contract_Change_Pause',
+    'sign' => 'CRM_Contract_Change_Sign',
+    'cancel' => 'CRM_Contract_Change_Cancel',
+    'update' => 'CRM_Contract_Change_Upgrade',
+    'resume' => 'CRM_Contract_Change_Resume',
+    'revive' => 'CRM_Contract_Change_Revive',
+    'pause' => 'CRM_Contract_Change_Pause',
+    'add related' => 'CRM_Contract_Change_AddRelatedMembership',
+    'end related' => 'CRM_Contract_Change_EndRelatedMembership',
   ];
 
   /**
@@ -133,11 +137,14 @@ abstract class CRM_Contract_Change {
   /**
    * Get action name for
    *
-   * @param $contract_after       array  data of the contract after
-   * @param $contract_before      array  data of the contract before
-   * @return                      string the subject line
+   * @phpstan-param array<string, mixed>|null $contract_after
+   *   Data of the contract after.
+   * @phpstan-param array<string, mixed>|null $contract_before
+   *   Data of the contract before.
+   * @return string
+   *   The subject line.
    */
-  abstract public function renderDefaultSubject($contract_after, $contract_before = NULL);
+  abstract public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string;
 
   ################################################################################
   ##                           COMMON FUNCTIONS                                 ##

@@ -372,7 +372,10 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     return NULL;
   }
 
-  public function renderDefaultSubject($contract_after, $contract_before = NULL) {
+  /**
+   * @inheritDoc
+   */
+  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
     if ($this->isNew()) {
       return E::ts('Update contract scheduled');
     }

@@ -21,6 +21,9 @@ namespace Civi\Contract;
 
 use Civi\Api4\Membership;
 
+/**
+ * @phpstan-import-type changeT from \CRM_Contract_Change
+ */
 class ContractManager {
 
   /**
@@ -28,7 +31,7 @@ class ContractManager {
    */
   private array $contracts = [];
 
-  public function get(int $membershipId): Contract {
+  public function getContract(int $membershipId): Contract {
     if (!isset($this->contracts[$membershipId])) {
       $this->contracts[$membershipId] = Contract::create($membershipId);
     }
@@ -38,7 +41,7 @@ class ContractManager {
     return $this->contracts[$membershipId];
   }
 
-  public function getOwnerByRelated(int $relatedMembershipId): Contract {
+  public function getOwnerContract(int $relatedMembershipId): Contract {
     $relatedMembership = Membership::get(FALSE)
       ->addSelect('owner_membership_id')
       ->addWhere('id', '=', $relatedMembershipId)
@@ -47,35 +50,84 @@ class ContractManager {
     if (!isset($relatedMembership['owner_membership_id'])) {
       throw new \RuntimeException('Membership with ID ' . $relatedMembershipId . ' is not a related membership');
     }
-    return $this->get($relatedMembership['owner_membership_id']);
+    return $this->getContract($relatedMembership['owner_membership_id']);
   }
 
   /**
-   * @param int $membershipId
-   *   The ID of the membership which to add a realted membership to.
+   * @param int $contractId
+   *   The ID of the membership which to add a related membership to.
    * @param int $contactId
    *   The ID of the contact which to add a related membership for.
+   * @param \DateTimeInterface|null $startDate
+   *   The start date of the related membership. Defaults to today.
    *
    * @return int
    *   The ID of the new related membership.
    */
-  public function addRelatedMembership(int $membershipId, int $contactId): int {
-    $contract = $this->get($membershipId);
+  public function addRelatedMembership(int $contractId, int $contactId, ?\DateTimeInterface $startDate = NULL): int {
+    $startDate ??= \date_create('today');
+    $contract = $this->getContract($contractId);
     $relatedMembership = Membership::create(FALSE)
       ->addValue('owner_membership_id', $contract->getMembershipId())
       ->addValue('contact_id', $contactId)
       ->addValue('membership_type_id', $contract->getMembershipTypeId())
+      ->addValue('start_date', $startDate->format('Y-m-d'))
       // TODO: Set more values?
       ->execute()
       ->single();
+
+    $this->createContractChange(
+      $contract->getMembershipId(),
+      [
+        'activity_type_id' => \CRM_Contract_Change_AddRelatedMembership::CONTRACT_ACTION,
+        'activity_date_time' => $startDate->format('Y-m-d H:i:s'),
+      ],
+      'Completed'
+    );
+
     return $relatedMembership['id'];
   }
 
-  public function endRelatedMembership(int $relatedMembershipId): void {
+  public function endRelatedMembership(int $relatedMembershipId, ?\DateTimeInterface $endDate = NULL): void {
+    $endDate ??= \date_create('today');
     Membership::update(FALSE)
       ->addWhere('id', '=', $relatedMembershipId)
-      ->addValue('status_id.name', 'Cancelled')
+      ->addValue('end_date', $endDate->format('Y-m-d'))
       ->execute();
+
+    $contract = $this->getOwnerContract($relatedMembershipId);
+    $this->createContractChange(
+      $contract->getMembershipId(),
+      [
+        'activity_type_id' => \CRM_Contract_Change_EndRelatedMembership::CONTRACT_ACTION,
+        'activity_date_time' => $endDate->format('Y-m-d H:i:s'),
+      ],
+      'Completed'
+    );
+  }
+
+  /**
+   * @phpstan-param changeT $changeData
+   */
+  public function createContractChange(
+    int $membershipId,
+    array $changeData,
+    string $status = 'Scheduled'
+  ): \CRM_Contract_Change {
+    $change = \CRM_Contract_Change::getChangeForData($changeData);
+    if (isset($changeData['activity_date_time'])) {
+      $change->setParameter('activity_date_time', $changeData['activity_date_time']);
+    }
+    $change->setParameter('source_contact_id', \CRM_Contract_Configuration::getUserID());
+    $change->setParameter('contract_activity.contract_id', $membershipId);
+    $change->setParameter('source_record_id', $membershipId);
+    $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
+    $change->setStatus($status);
+    $change->populateData();
+    $change->verifyData();
+    $change->shouldBeAccepted();
+    $change->save();
+    return $change;
   }
 
 }
