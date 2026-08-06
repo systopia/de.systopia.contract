@@ -7,6 +7,7 @@
 +--------------------------------------------------------------*/
 
 declare(strict_types = 1);
+use Civi\Contract\ContractManager;
 
 /**
  * Schedule a Contract modification
@@ -72,7 +73,7 @@ function civicrm_api3_Contract_modify($params) {
   }
 
   // modify data to match internal structure
-  $params['activity_type_id']   = $params['action'];
+  $params['activity_type_id'] = $params['action'];
   $params['activity_date_time'] = date('Y-m-d H:i:s', $requested_execution_time);
   $params['contract_activity.contract_id'] = (int) $params['id'];
   $params['source_record_id'] = (int) $params['id'];
@@ -82,14 +83,11 @@ function civicrm_api3_Contract_modify($params) {
   }
 
   // generate change (activity)
-  $change = CRM_Contract_Change::getChangeForData($params);
-  $change->setParameter('source_contact_id', CRM_Contract_Configuration::getUserID());
-  $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
-  $change->setStatus('Scheduled');
-  $change->populateData();
-  $change->verifyData();
-  $change->shouldBeAccepted();
-  $change->save();
+  $contractManager = new ContractManager();
+  $change = $contractManager->createContractChange(
+    $params['contract_activity.contract_id'],
+    $params
+  );
 
   // make sure any newly created conflicts are marked
   $change->checkForConflicts();

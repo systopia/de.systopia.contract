@@ -1,0 +1,9 @@
+<af-form ctrl="afform">
+  <af-entity type="ContractRelatedMembership" name="ContractRelatedMembership1" label="Related Membership (Contract) 1" actions="{create: true, update: false}" security="RBAC" data="{}" url-autofill="1" />
+  <fieldset af-fieldset="ContractRelatedMembership1" class="af-container" af-title="Related Membership (Contract) 1">
+    <af-field name="contract_id" defn="{input_type: 'Hidden', input_attrs: {}}" />
+    <af-field name="contact_id" />
+    <af-field name="start_date" />
+  </fieldset>
+  <button class="af-button btn btn-primary" crm-icon="fa-check" ng-click="afform.submit()" ng-if="afform.showSubmitButton">Bestätigen</button>
+</af-form>

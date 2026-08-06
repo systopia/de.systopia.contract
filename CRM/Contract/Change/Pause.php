@@ -124,13 +124,9 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
   }
 
   /**
-   * Render the default subject
-   *
-   * @param $contract_after       array  data of the contract after
-   * @param $contract_before      array  data of the contract before
-   * @return                      string the subject line
+   * @inheritDoc
    */
-  public function renderDefaultSubject($contract_after, $contract_before = NULL) {
+  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
     $resume = $this->getParameter('resume_date');
     if ($this->isNew()) {
       return $resume

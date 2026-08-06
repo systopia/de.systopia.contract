@@ -50,4 +50,7 @@ parameters:
 	ignoreErrors:
 		# Note paths are prefixed with "*/" to work with inspections in PHPStorm because of:
 		# https://youtrack.jetbrains.com/issue/WI-63891/PHPStan-ignoreErrors-configuration-isnt-working-with-inspections
+		- # Allow ??= operator.
+			identifier: voku.Coalesce
+			message: '#^Coalesce: Do not compare objects directly, [^\s]+ and [^\s]+\|null found.$#'
 	tmpDir: .phpstan

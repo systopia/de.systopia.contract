@@ -569,18 +569,6 @@ parameters:
 			path: CRM/Contract/Change.php
 
 		-
-			message: '#^Method CRM_Contract_Change\:\:renderDefaultSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:renderDefaultSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
 			message: '#^Method CRM_Contract_Change\:\:resolveValue\(\) has parameter \$field_name with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -737,18 +725,6 @@ parameters:
 			path: CRM/Contract/Change/Cancel.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:renderDefaultSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:renderDefaultSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
 			message: '#^Method CRM_Contract_Change_Cancel\:\:shouldBeAccepted\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -799,18 +775,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Change_Pause\:\:populateData\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:renderDefaultSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:renderDefaultSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: CRM/Contract/Change/Pause.php
 
@@ -871,18 +835,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Change_Resume\:\:getStartStatusList\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change/Resume.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Resume\:\:renderDefaultSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Resume.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Resume\:\:renderDefaultSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: CRM/Contract/Change/Resume.php
 
@@ -955,18 +907,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Change_Sign\:\:populateData\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Sign\:\:renderDefaultSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Sign\:\:renderDefaultSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: CRM/Contract/Change/Sign.php
 
@@ -1165,18 +1105,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Change_Upgrade\:\:populateData\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Upgrade.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:renderDefaultSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Upgrade.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:renderDefaultSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: CRM/Contract/Change/Upgrade.php
 

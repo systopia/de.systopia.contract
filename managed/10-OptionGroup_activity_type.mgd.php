@@ -146,4 +146,67 @@ return [
       ],
     ],
   ],
+  [
+    'name' => 'OptionGroup_activity_type_OptionValue_Secondary_Membership_Created',
+    'entity' => 'OptionValue',
+    'cleanup' => 'unused',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'option_group_id.name' => 'activity_type',
+        'label' => E::ts('Create Secondary Membership'),
+        'name' => 'Secondary_Membership_Created',
+        'filter' => 1,
+        'is_reserved' => TRUE,
+        'icon' => 'fa-person-circle-plus',
+      ],
+      'match' => [
+        'option_group_id',
+        'name',
+      ],
+    ],
+  ],
+  [
+    'name' => 'OptionGroup_activity_type_OptionValue_Secondary_Membership_Ended',
+    'entity' => 'OptionValue',
+    'cleanup' => 'unused',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'option_group_id.name' => 'activity_type',
+        'label' => E::ts('End Secondary Membership'),
+        'name' => 'Secondary_Membership_Ended',
+        'filter' => 1,
+        'is_reserved' => TRUE,
+        'icon' => 'fa-person-circle-minus',
+      ],
+      'match' => [
+        'option_group_id',
+        'name',
+      ],
+    ],
+  ],
+  [
+    'name' => 'OptionGroup_activity_type_OptionValue_Secondary_Membership_Updated',
+    'entity' => 'OptionValue',
+    'cleanup' => 'unused',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'option_group_id.name' => 'activity_type',
+        'label' => E::ts('Update Secondary Membership'),
+        'name' => 'Secondary_Membership_Updated',
+        'filter' => 1,
+        'is_reserved' => TRUE,
+        'icon' => 'fa-person-circle-exclamation',
+      ],
+      'match' => [
+        'option_group_id',
+        'name',
+      ],
+    ],
+  ],
 ];

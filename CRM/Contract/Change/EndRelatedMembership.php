@@ -1,0 +1,51 @@
+<?php
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published by
+ *  the Free Software Foundation in version 3.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+declare(strict_types = 1);
+
+use CRM_Contract_ExtensionUtil as E;
+
+class CRM_Contract_Change_EndRelatedMembership extends CRM_Contract_Change {
+
+  public const CONTRACT_ACTION = 'end related';
+
+  /**
+   * @inheritDoc
+   */
+  public function execute(): void {
+    throw new \RuntimeException(
+      // phpcs:ignore Generic.Files.LineLength.TooLong
+      'Terminations of related memberships are documentary, they cannot be scheduled into the future, and therefore not executed.'
+    );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getRequiredFields(): array {
+    // None required because change is documentary.
+    return [];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
+    return E::ts('Related membership ended');
+  }
+
+}
