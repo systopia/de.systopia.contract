@@ -11,6 +11,7 @@
 declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
+use Civi\Api4\Activity;
 use Civi\Api4\OptionValue;
 
 /**
@@ -54,7 +55,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_2005(): bool {
     // Migrate "source_record_id" to custom field contract_activity.contract_id for contract activities.
-    $lastActivity = \Civi\Api4\Activity::get(FALSE)
+    $lastActivity = Activity::get(FALSE)
       ->addSelect('id')
       ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
       ->addOrderBy('id', 'DESC')
@@ -80,7 +81,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
    *   Inclusive upper bound of the migrated activity ID range.
    */
   public function migrateContractReferences(int $fromId, int $toId): bool {
-    $contractIds = \Civi\Api4\Activity::get(FALSE)
+    $contractIds = Activity::get(FALSE)
       ->addSelect('id', 'source_record_id', 'membership.id')
       ->addJoin('Membership AS membership', 'LEFT', NULL, ['membership.id', '=', 'source_record_id'])
       ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
@@ -100,7 +101,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
         ));
         continue;
       }
-      \Civi\Api4\Activity::update(FALSE)
+      Activity::update(FALSE)
         ->addValue('contract_activity.contract_id', $contractId)
         ->addWhere('id', '=', $activityId)
         ->execute();
