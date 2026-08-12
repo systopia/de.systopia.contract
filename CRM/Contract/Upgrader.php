@@ -55,14 +55,12 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_2005(): bool {
     // Migrate "source_record_id" to custom field contract_activity.contract_id for contract activities.
-    $lastActivity = Activity::get(FALSE)
-      ->addSelect('id')
+    /** @var int $maxActivityId */
+    $maxActivityId = Activity::get(FALSE)
+      ->addSelect('MAX(id) AS max_id')
       ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
-      ->addOrderBy('id', 'DESC')
-      ->setLimit(1)
       ->execute()
-      ->first();
-    $maxActivityId = (int) ($lastActivity['id'] ?? 0);
+      ->first()['max_id'] ?? 0;
     for ($fromId = 0; $fromId < $maxActivityId; $fromId += self::CONTRACT_REFERENCE_BATCH_SIZE) {
       $this->addTask(
         E::ts('Migrate contract references for activities from "source_record_id" to entity reference field'),
@@ -95,11 +93,11 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
     foreach ($contractIds as $activityId => $contractId) {
       if (NULL === $contractId) {
+        // Cascaded deletion is configured for field contract_activity.contract_id.
         $this->ctx->log->warning(E::ts(
-          'Referenced contract does not exist for activity %1, skipping.',
+          'Referenced contract does not exist, deleting referencing activity %1.',
           [1 => $activityId]
         ));
-        continue;
       }
       Activity::update(FALSE)
         ->addValue('contract_activity.contract_id', $contractId)
