@@ -11,12 +11,15 @@
 declare(strict_types = 1);
 
 use CRM_Contract_ExtensionUtil as E;
+use Civi\Api4\Activity;
 use Civi\Api4\OptionValue;
 
 /**
  * Collection of upgrade steps.
  */
 class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
+
+  private const CONTRACT_REFERENCE_BATCH_SIZE = 5000;
 
   public function postInstall(): void {
     $this->ensureNoPaymentRequiredPaymentInstrument();
@@ -52,36 +55,56 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
 
   public function upgrade_2005(): bool {
     // Migrate "source_record_id" to custom field contract_activity.contract_id for contract activities.
-    $contractIds = \Civi\Api4\Activity::get(FALSE)
-      ->addSelect('id', 'source_record_id', 'membership.id')
+    /** @var int $maxActivityId */
+    $maxActivityId = Activity::get(FALSE)
+      ->addSelect('MAX(id) AS max_id')
       ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
-      ->addWhere('source_record_id', 'IS NOT NULL')
-      ->addWhere('contract_activity.contract_id', 'IS NULL')
-      ->addJoin('Membership AS membership', 'LEFT', NULL, ['membership.id', '=', 'source_record_id'])
       ->execute()
-      ->indexBy('id')
-      ->column('membership.id');
-    foreach ($contractIds as $activityId => $contractId) {
+      ->first()['max_id'] ?? 0;
+    for ($fromId = 0; $fromId < $maxActivityId; $fromId += self::CONTRACT_REFERENCE_BATCH_SIZE) {
       $this->addTask(
         E::ts('Migrate contract references for activities from "source_record_id" to entity reference field'),
-        'migrateContractReference',
-        $activityId, $contractId
+        'migrateContractReferences',
+        $fromId,
+        $fromId + self::CONTRACT_REFERENCE_BATCH_SIZE
       );
     }
     return TRUE;
   }
 
-  public function migrateContractReference(int $activityId, ?int $contractId): bool {
-    if (NULL === $contractId) {
-      $this->ctx->log->warning(E::ts(
-        'Referenced contract does not exist, deleting referencing activity %1.',
-        [1 => $activityId]
-      ));
+  /**
+   * @param int $fromId
+   *   Exclusive lower bound of the migrated activity ID range.
+   * @param int $toId
+   *   Inclusive upper bound of the migrated activity ID range.
+   */
+  public function migrateContractReferences(int $fromId, int $toId): bool {
+    $contractIds = Activity::get(FALSE)
+      ->addSelect('id', 'source_record_id', 'membership.id')
+      ->addJoin('Membership AS membership', 'LEFT', NULL, ['membership.id', '=', 'source_record_id'])
+      ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
+      ->addWhere('source_record_id', 'IS NOT NULL')
+      ->addWhere('contract_activity.contract_id', 'IS NULL')
+      ->addWhere('id', '>', $fromId)
+      ->addWhere('id', '<=', $toId)
+      ->execute()
+      ->indexBy('id')
+      ->column('membership.id');
+
+    foreach ($contractIds as $activityId => $contractId) {
+      if (NULL === $contractId) {
+        // Cascaded deletion is configured for field contract_activity.contract_id.
+        $this->ctx->log->warning(E::ts(
+          'Referenced contract does not exist, deleting referencing activity %1.',
+          [1 => $activityId]
+        ));
+      }
+      Activity::update(FALSE)
+        ->addValue('contract_activity.contract_id', $contractId)
+        ->addWhere('id', '=', $activityId)
+        ->execute();
     }
-    \Civi\Api4\Activity::update(FALSE)
-      ->addValue('contract_activity.contract_id', $contractId)
-      ->addWhere('id', '=', $activityId)
-      ->execute();
+
     return TRUE;
   }
 
