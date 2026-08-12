@@ -251,13 +251,12 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
     $value = $this->getChangeAttribute('contract_updates.ch_annual_diff');
     if (!$value) {
       // no diff recorded, try to calculate
-      $before = $this->getContractDataBefore('membership_payment.membership_annual');
-      $after = $this->getContractDataAfter('membership_payment.membership_annual');
-
-      // this value's formatted, make sure there's no thousand separator in the values
-      $thousand_separator = \CRM_Core_Config::singleton()->monetaryThousandSeparator;
-      $before = (float) preg_replace("/[{$thousand_separator}]/", '', $before);
-      $after = (float) preg_replace("/[{$thousand_separator}]/", '', $after);
+      $before = (float) \CRM_Contract_SepaLogic::formatMoney(
+        $this->getContractDataBefore('membership_payment.membership_annual')
+      );
+      $after = (float) \CRM_Contract_SepaLogic::formatMoney(
+        $this->getContractDataAfter('membership_payment.membership_annual')
+      );
       $value = $after - $before;
     }
     return (float) $value;

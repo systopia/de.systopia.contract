@@ -3896,12 +3896,6 @@ parameters:
 			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
 
 		-
-			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
 			message: '#^Property Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:\$change_data \(array\) does not accept null\.$#'
 			identifier: assign.propertyType
 			count: 1
