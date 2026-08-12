@@ -506,12 +506,7 @@ abstract class CRM_Contract_Change {
       unset($data['status_id']);
     }
 
-    if ($this->isNew()) {
-      $result = Activity::create(FALSE)->setValues($data)->execute()->single();
-    }
-    else {
-      $result = Activity::update(FALSE)->setValues($data)->execute()->single();
-    }
+    $result = Activity::save(FALSE)->setRecords([$data])->execute()->single();
 
     // mitigation: there seems to be cases where the boolean value will not be written to ch_defer_payment_start
     // todo: extract table/column name from specs? Should be identical...

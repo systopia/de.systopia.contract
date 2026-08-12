@@ -135,15 +135,15 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       },
 
       'none_to_sepa_enable' => function(self $self, $contract_before, $to, $types) {
-        $self->endRecurringContributionZero($contract_before);
+        $self->endRecurringContribution($contract_before);
         return $self->createSepaMandate($contract_before, $to, $types);
       },
       'none_to_nonsepa_enable' => function(self $self, $contract_before, $to, $types) {
-        $self->endRecurringContributionZero($contract_before);
+        $self->endRecurringContribution($contract_before);
         return $self->createNonSepaRecurring($contract_before, $to, $types);
       },
       'none_to_existing_reassign' => function(self $self, $contract_before, $to, $types) {
-        $self->endRecurringContributionZero($contract_before);
+        $self->endRecurringContribution($contract_before);
         $self->assignExistingRecurringContribution($contract_before, $to);
         return NULL;
       },
@@ -250,32 +250,18 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     }
   }
 
-  private function endRecurringContribution($contract) {
+  /**
+   * @param array{"membership_payment.membership_recurring_contribution"?: int, ...} $contract
+   *
+   * @throws \CRM_Core_Exception
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  private function endRecurringContribution(array $contract): void {
     if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
-      try {
-        // There seems to be no equivalent in APIv4...
-        civicrm_api3('ContributionRecur', 'cancel', [
-          'id' => $contract['membership_payment.membership_recurring_contribution'],
-        ]);
-      }
-      catch (\Exception $e) {
-        // @ignoreException Already canceled or does not exist
-      }
-    }
-  }
-
-  private function endRecurringContributionZero($contract) {
-    if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
-      try {
-        // There seems to be no equivalent in APIv4...
-        civicrm_api3('ContributionRecur', 'cancel', [
-          'id' => $contract['membership_payment.membership_recurring_contribution'],
-          'amount' => 0,
-        ]);
-      }
-      catch (\Exception $e) {
-        // @ignoreException Already canceled or does not exist
-      }
+      ContributionRecur::cancelSubscription(FALSE)
+        ->addWhere('id', '=', $contract['membership_payment.membership_recurring_contribution'])
+        ->addWhere('contribution_status_id:name', '!=', 'Cancelled',)
+        ->execute();
     }
   }
 
