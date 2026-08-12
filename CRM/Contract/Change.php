@@ -15,6 +15,7 @@ use Civi\Api4\OptionValue;
 use Civi\Contract\Api4\Helper\FieldNameHelper;
 use Civi\Contract\Event\RenderChangeSubjectEvent;
 use CRM_Contract_ExtensionUtil as E;
+use Webmozart\Assert\Assert;
 
 /**
  * Base class for contract changes. These are tracked changes to
@@ -236,7 +237,6 @@ abstract class CRM_Contract_Change {
     // propagate derived fields
     foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
       if (empty($this->data[$change_attribute])) {
-        // @phpstan-ignore assign.propertyType
         $this->data[$change_attribute] = $contract[$contract_attribute] ?? '';
       }
     }
@@ -424,7 +424,7 @@ abstract class CRM_Contract_Change {
   /**
    * Calculate annual amount
    *
-   * @param array{amount: float, frequency_unit: "month"|"year"|null, frequency_interval: int} $contributionRecur
+   * @param array{amount: float, frequency_unit: "month"|"year"|null, frequency_interval: int, ...} $contributionRecur
    *    recurring contribution data
    * @return float
    */
@@ -434,7 +434,7 @@ abstract class CRM_Contract_Change {
 
   /**
    * Calculate the frequency from the unit/interval set in the recurring contribution data
-   * @param array{frequency_interval: int, frequency_unit: "year"|"month"|null} $contributionRecur
+   * @param array{frequency_interval: int, frequency_unit: "year"|"month"|null, ...} $contributionRecur
    *    recurring contribution data
    * @return int payment frequency (in months)
    * @throws Exception if the unit is not recognised ('month' or 'year')
@@ -446,10 +446,14 @@ abstract class CRM_Contract_Change {
     }
 
     if ('year' === $contributionRecur['frequency_unit']) {
+      assert(1 === $contributionRecur['frequency_interval']);
+
       return 1 / $contributionRecur['frequency_interval'];
     }
     // @phpstan-ignore voku.Identical
     elseif ('month' === ($contributionRecur['frequency_unit'] ?? 'month')) {
+      assert(in_array($contributionRecur['frequency_interval'], [1, 2, 3, 4, 6, 12], TRUE));
+
       return 12 / $contributionRecur['frequency_interval'];
     }
     else {
