@@ -54,6 +54,10 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
   }
 
   public function upgrade_2005(): bool {
+    return TRUE;
+  }
+
+  public function upgrade_2006(): bool {
     // Migrate "source_record_id" to custom field contract_activity.contract_id for contract activities.
     /** @var int $maxActivityId */
     $maxActivityId = Activity::get(FALSE)
@@ -98,11 +102,16 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
           'Referenced contract does not exist, deleting referencing activity %1.',
           [1 => $activityId]
         ));
+        Activity::delete(FALSE)
+          ->addWhere('id', '=', $activityId)
+          ->execute();
       }
-      Activity::update(FALSE)
-        ->addValue('contract_activity.contract_id', $contractId)
-        ->addWhere('id', '=', $activityId)
-        ->execute();
+      else {
+        Activity::update(FALSE)
+          ->addValue('contract_activity.contract_id', $contractId)
+          ->addWhere('id', '=', $activityId)
+          ->execute();
+      }
     }
 
     return TRUE;
