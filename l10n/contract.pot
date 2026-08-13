@@ -10,6 +10,10 @@ msgstr ""
 msgid "%2 [%1] from %3 to %4"
 msgstr ""
 
+#: CRM/Contract/Change/AddRelatedMembership.php
+msgid "New related membership"
+msgstr ""
+
 #: CRM/Contract/Change/Cancel.php
 msgid "Contract cancellation scheduled"
 msgstr ""
@@ -22,12 +26,16 @@ msgstr ""
 msgid "Contract cancelled"
 msgstr ""
 
-#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
 msgid "Cancel Contract"
 msgstr ""
 
 #: CRM/Contract/Change/Cancel.php CRM/Contract/Form/Create.php Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Cancel"
+msgstr ""
+
+#: CRM/Contract/Change/EndRelatedMembership.php
+msgid "Related membership ended"
 msgstr ""
 
 #: CRM/Contract/Change/Pause.php
@@ -50,11 +58,11 @@ msgstr ""
 msgid "Contract paused"
 msgstr ""
 
-#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
 msgid "Pause Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Pause.php Civi/Contract/ActionProvider/Action/ModifyContract.php managed/SavedSearch_Related_Memberships.mgd.php
+#: CRM/Contract/Change/Pause.php Civi/Contract/ActionProvider/Action/ModifyContract.php managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Pause"
 msgstr ""
 
@@ -66,11 +74,11 @@ msgstr ""
 msgid "Contract resumed"
 msgstr ""
 
-#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
 msgid "Resume Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
 msgid "Revive Contract"
 msgstr ""
 
@@ -90,7 +98,7 @@ msgstr ""
 msgid "New membership contract"
 msgstr ""
 
-#: CRM/Contract/Change/Sign.php managed/OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Sign.php managed/10-OptionGroup_activity_type.mgd.php
 msgid "Sign Contract"
 msgstr ""
 
@@ -110,11 +118,11 @@ msgstr ""
 msgid "Payment frequency"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
 msgid "Cycle day"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js managed/CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr ""
 
@@ -130,11 +138,11 @@ msgstr ""
 msgid "Contract updated"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php managed/OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
 msgid "Update Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php Civi/Contract/ActionProvider/Action/ModifyContract.php managed/SavedSearch_Related_Memberships.mgd.php
+#: CRM/Contract/Change/Upgrade.php Civi/Contract/ActionProvider/Action/ModifyContract.php managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Update"
 msgstr ""
 
@@ -206,11 +214,11 @@ msgstr ""
 msgid "Member Since"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php schema/ContractPaymentLink.entityType.php
+#: CRM/Contract/Form/Create.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php Civi/Contract/Api4/Action/ContractRelatedMembership/GetFieldsAction.php schema/ContractPaymentLink.entityType.php
 msgid "Start Date"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php schema/ContractPaymentLink.entityType.php
+#: CRM/Contract/Form/Create.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php Civi/Contract/Api4/Action/ContractRelatedMembership/GetFieldsAction.php schema/ContractPaymentLink.entityType.php
 msgid "End Date"
 msgstr ""
 
@@ -222,7 +230,7 @@ msgstr ""
 msgid "Campaign"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php managed/SavedSearch_Related_Memberships.mgd.php
+#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Membership type"
 msgstr ""
 
@@ -406,7 +414,7 @@ msgstr ""
 msgid "Assign %1 Contributions to:"
 msgstr ""
 
-#: CRM/Contract/Form/Task/AssignContributions.php managed/CustomGroup_contract_activity.mgd.php
+#: CRM/Contract/Form/Task/AssignContributions.php managed/20-CustomGroup_contract_activity.mgd.php
 msgid "Contract"
 msgstr ""
 
@@ -550,11 +558,11 @@ msgstr ""
 msgid "Paid by"
 msgstr ""
 
-#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
+#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "annually"
 msgstr ""
 
-#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
+#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "monthly"
 msgstr ""
 
@@ -586,15 +594,15 @@ msgstr ""
 msgid "Reference '%1' is already in use!"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "semi-annually"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "quarterly"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/OptionGroup_payment_frequency.mgd.php
+#: Civi/Contract/ActionProvider/Action/AbstractContractAction.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "bi-monthly"
 msgstr ""
 
@@ -606,11 +614,11 @@ msgstr ""
 msgid "Cancel Reason (default)"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/CancelContract.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/PauseContract.php Civi/Contract/ActionProvider/Action/ResumeContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: Civi/Contract/ActionProvider/Action/CancelContract.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/PauseContract.php Civi/Contract/ActionProvider/Action/ResumeContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php Civi/Contract/Api4/Action/ContractRelatedMembership/GetFieldsAction.php
 msgid "Contact ID"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/CancelContract.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/PauseContract.php Civi/Contract/ActionProvider/Action/ResumeContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php schema/ContractPaymentLink.entityType.php
+#: Civi/Contract/ActionProvider/Action/CancelContract.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/PauseContract.php Civi/Contract/ActionProvider/Action/ResumeContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php Civi/Contract/Api4/Action/ContractRelatedMembership/GetFieldsAction.php schema/ContractPaymentLink.entityType.php
 msgid "Contract ID"
 msgstr ""
 
@@ -622,7 +630,7 @@ msgstr ""
 msgid "Membership Type ID"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/CancelContract.php managed/CustomGroup_contract_cancellation.mgd.php managed/CustomGroup_membership_cancellation.mgd.php
+#: Civi/Contract/ActionProvider/Action/CancelContract.php managed/20-CustomGroup_contract_cancellation.mgd.php managed/20-CustomGroup_membership_cancellation.mgd.php
 msgid "Cancel Reason"
 msgstr ""
 
@@ -706,23 +714,23 @@ msgstr ""
 msgid "Join Date"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Annual Membership Contribution"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Payment Interval"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Recurring contribution/mandate"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Donor's Bank Account"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Defer Payment Start"
 msgstr ""
 
@@ -806,11 +814,11 @@ msgstr ""
 msgid "Membership Contract"
 msgstr ""
 
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/CustomGroup_membership_general.mgd.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/20-CustomGroup_membership_general.mgd.php
 msgid "Membership Channel"
 msgstr ""
 
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/CustomGroup_contract_updates.mgd.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/20-CustomGroup_contract_updates.mgd.php
 msgid "Cycle Day"
 msgstr ""
 
@@ -824,6 +832,10 @@ msgstr ""
 
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Activity Medium"
+msgstr ""
+
+#: Civi/Contract/Api4/Action/ContractRelatedMembership/GetFieldsAction.php managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Membership ID"
 msgstr ""
 
 #: Civi/Contract/ContainerSpecs.php
@@ -872,6 +884,22 @@ msgstr ""
 
 #: Civi/Contract/Event/RenderChangeSubjectEvent.php
 msgid "(not found)"
+msgstr ""
+
+#: afformEntities/ContractRelatedMembership.php ang/afformAddRelatedMembershipContract.aff.php
+msgid "Related Membership (Contract)"
+msgstr ""
+
+#: ang/afformEndRelatedMembershipContract.aff.php
+msgid "End Related Membership (Contract)"
+msgstr ""
+
+#: ang/afsearchPrimaryAndSecondaryMemberships.aff.php managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Primary and Secondary Memberships"
+msgstr ""
+
+#: ang/afsearchRelatedMemberships.aff.php managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Related Memberships"
 msgstr ""
 
 #: api/v3/Contract/Create.php
@@ -930,207 +958,207 @@ msgstr ""
 msgid "de.systopia.contract"
 msgstr ""
 
-#: managed/CustomGroup_contract_activity.mgd.php
-msgid "Contract Activity"
-msgstr ""
-
-#: managed/CustomGroup_contract_cancellation.mgd.php
-msgid "Contract Cancellation"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php
-msgid "Contract Updates"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php
-msgid "Membership Type"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php
-msgid "Increase"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
-msgid "Donor's Account Name"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php templates/CRM/Contract/Form/Create.tpl
-msgid "Payment Contract"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php managed/CustomGroup_membership_payment.mgd.php
-msgid "Organization's Bank Account"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php
-msgid "Member's Bank Account"
-msgstr ""
-
-#: managed/CustomGroup_contract_updates.mgd.php
-msgid "Payment Method"
-msgstr ""
-
-#: managed/CustomGroup_membership_cancellation.mgd.php
-msgid "Cancellation Information"
-msgstr ""
-
-#: managed/CustomGroup_membership_cancellation.mgd.php
-msgid "Cancellation Date"
-msgstr ""
-
-#: managed/CustomGroup_membership_general.mgd.php
-msgid "General Information"
-msgstr ""
-
-#: managed/CustomGroup_membership_general.mgd.php
-msgid "Reference Number"
-msgstr ""
-
-#: managed/CustomGroup_membership_general.mgd.php
-msgid "Contract Number"
-msgstr ""
-
-#: managed/CustomGroup_membership_payment.mgd.php
-msgid "Payment Information"
-msgstr ""
-
-#: managed/MembershipStatus.mgd.php
+#: managed/10-MembershipStatus.mgd.php
 msgid "New"
 msgstr ""
 
-#: managed/MembershipStatus.mgd.php
+#: managed/10-MembershipStatus.mgd.php
 msgid "Current"
 msgstr ""
 
-#: managed/MembershipStatus.mgd.php
+#: managed/10-MembershipStatus.mgd.php
 msgid "Grace"
 msgstr ""
 
-#: managed/MembershipStatus.mgd.php
+#: managed/10-MembershipStatus.mgd.php
 msgid "Pending"
 msgstr ""
 
-#: managed/MembershipStatus.mgd.php
+#: managed/10-MembershipStatus.mgd.php
 msgid "Cancelled"
 msgstr ""
 
-#: managed/MembershipStatus.mgd.php
+#: managed/10-MembershipStatus.mgd.php
 msgid "Deceased"
 msgstr ""
 
-#: managed/MembershipStatus.mgd.php
+#: managed/10-MembershipStatus.mgd.php
 msgid "Paused"
 msgstr ""
 
-#: managed/OptionGroup_activity_status.mgd.php
+#: managed/10-OptionGroup_activity_status.mgd.php
 msgid "Needs Review"
 msgstr ""
 
-#: managed/OptionGroup_activity_status.mgd.php
+#: managed/10-OptionGroup_activity_status.mgd.php
 msgid "Failed"
 msgstr ""
 
-#: managed/OptionGroup_contact_channel.mgd.php
+#: managed/10-OptionGroup_activity_type.mgd.php
+msgid "Create Secondary Membership"
+msgstr ""
+
+#: managed/10-OptionGroup_activity_type.mgd.php
+msgid "End Secondary Membership"
+msgstr ""
+
+#: managed/10-OptionGroup_activity_type.mgd.php
+msgid "Update Secondary Membership"
+msgstr ""
+
+#: managed/10-OptionGroup_contact_channel.mgd.php
 msgid "Channel"
 msgstr ""
 
-#: managed/OptionGroup_contact_channel.mgd.php managed/OptionGroup_contract_cancel_reason.mgd.php
+#: managed/10-OptionGroup_contact_channel.mgd.php managed/10-OptionGroup_contract_cancel_reason.mgd.php
 msgid "Unknown"
 msgstr ""
 
-#: managed/OptionGroup_contract_cancel_reason.mgd.php
+#: managed/10-OptionGroup_contract_cancel_reason.mgd.php
 msgid "Contract Cancel Reason"
 msgstr ""
 
-#: managed/OptionGroup_contract_cancel_reason.mgd.php
+#: managed/10-OptionGroup_contract_cancel_reason.mgd.php
 msgid "Dropdown options for Contract cancellation reasons"
 msgstr ""
 
-#: managed/OptionGroup_order_type.mgd.php
+#: managed/10-OptionGroup_order_type.mgd.php
 msgid "Order Type"
 msgstr ""
 
-#: managed/OptionGroup_order_type.mgd.php
+#: managed/10-OptionGroup_order_type.mgd.php
 msgid "Type of the membership welcome present"
 msgstr ""
 
-#: managed/OptionGroup_order_type.mgd.php
+#: managed/10-OptionGroup_order_type.mgd.php
 msgid "Welcome Gift"
 msgstr ""
 
-#: managed/OptionGroup_payment_frequency.mgd.php
+#: managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "Payment Intervals"
 msgstr ""
 
-#: managed/OptionGroup_payment_frequency.mgd.php
+#: managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "The value describes the payment interval in months."
 msgstr ""
 
-#: managed/OptionGroup_payment_frequency.mgd.php
+#: managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "one-off"
 msgstr ""
 
-#: managed/OptionGroup_payment_frequency.mgd.php
+#: managed/10-OptionGroup_payment_frequency.mgd.php
 msgid "trimestral"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Primary and Secondary Memberships"
+#: managed/20-CustomGroup_contract_activity.mgd.php
+msgid "Contract Activity"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/20-CustomGroup_contract_cancellation.mgd.php
+msgid "Contract Cancellation"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php
+msgid "Contract Updates"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php
+msgid "Membership Type"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php
+msgid "Increase"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Donor's Account Name"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php templates/CRM/Contract/Form/Create.tpl
+msgid "Payment Contract"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Organization's Bank Account"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php
+msgid "Member's Bank Account"
+msgstr ""
+
+#: managed/20-CustomGroup_contract_updates.mgd.php
+msgid "Payment Method"
+msgstr ""
+
+#: managed/20-CustomGroup_membership_cancellation.mgd.php
+msgid "Cancellation Information"
+msgstr ""
+
+#: managed/20-CustomGroup_membership_cancellation.mgd.php
+msgid "Cancellation Date"
+msgstr ""
+
+#: managed/20-CustomGroup_membership_general.mgd.php
+msgid "General Information"
+msgstr ""
+
+#: managed/20-CustomGroup_membership_general.mgd.php
+msgid "Reference Number"
+msgstr ""
+
+#: managed/20-CustomGroup_membership_general.mgd.php
+msgid "Contract Number"
+msgstr ""
+
+#: managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Payment Information"
+msgstr ""
+
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Primary and Secondary Memberships Table"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "This display shows primary and associated secondary memberships."
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Membership ID"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Contact sort name"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Member since"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Start date"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "End date"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php templates/CRM/Contract/Page/Review.tpl
+#: managed/90-SavedSearch_Related_Memberships.mgd.php templates/CRM/Contract/Page/Review.tpl
 msgid "Status"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "View"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "End"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
-msgid "Related Memberships"
-msgstr ""
-
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Contact"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Parent membership"
 msgstr ""
 
-#: managed/SavedSearch_Related_Memberships.mgd.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Add related membership"
 msgstr ""
 
