@@ -24,7 +24,7 @@ class CRM_Contract_Change_Revive extends CRM_Contract_Change_Upgrade {
   public function updateContract($updates) {
     // Revive does all the same things as Upgrade, except it also removes end_date and sets status
     $updates['end_date'] = '';
-    $updates['status_id'] = 'Current';
+    $updates['status_id:name'] = 'Current';
     parent::updateContract($updates);
   }
 

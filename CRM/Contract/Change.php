@@ -8,8 +8,14 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Activity;
+use Civi\Api4\ContributionRecur;
+use Civi\Api4\Membership;
+use Civi\Api4\OptionValue;
+use Civi\Contract\Api4\Helper\FieldNameHelper;
 use Civi\Contract\Event\RenderChangeSubjectEvent;
 use CRM_Contract_ExtensionUtil as E;
+use Webmozart\Assert\Assert;
 
 /**
  * Base class for contract changes. These are tracked changes to
@@ -23,6 +29,7 @@ use CRM_Contract_ExtensionUtil as E;
  *   activity_date_time?: string,
  *   campaign_id?: int,
  *   membership_type_id?: int,
+ *   status_id?: int|string,
  *   "contract_activity.contract_id"?: int,
  *   "membership_payment.cycle_day"?: int,
  *   "membership_payment.defer_payment_start"?: int,
@@ -230,7 +237,6 @@ abstract class CRM_Contract_Change {
     // propagate derived fields
     foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
       if (empty($this->data[$change_attribute])) {
-        // @phpstan-ignore assign.propertyType
         $this->data[$change_attribute] = $contract[$contract_attribute] ?? '';
       }
     }
@@ -252,12 +258,15 @@ abstract class CRM_Contract_Change {
     if ($this->contract === NULL || (int) $this->contract['id'] !== $contract_id) {
       // (re)load contract
       try {
-        $this->contract = civicrm_api3('Membership', 'getsingle', ['id' => $contract_id]);
+        $this->contract = Membership::get(FALSE)
+          ->addSelect('*', 'custom.*')
+          ->addWhere('id', '=', $contract_id)
+          ->execute()
+          ->single();
       }
       catch (Exception $ex) {
         throw new \RuntimeException("Contract [{$contract_id}] not found!", $ex->getCode(), $ex);
       }
-      CRM_Contract_CustomData::labelCustomFields($this->contract);
     }
 
     // add the payment data, if requested
@@ -279,17 +288,28 @@ abstract class CRM_Contract_Change {
     if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
       // we have a recurring contribution!
       try {
-        $contributionRecur = civicrm_api3(
-          'ContributionRecur',
-          'getsingle',
-          ['id' => $contract['membership_payment.membership_recurring_contribution']]
-        );
+        /**
+         * @var array{
+         *   id: int,
+         *   amount: float,
+         *   frequency_unit: "year"|"month"|null,
+         *   frequency_interval: int,
+         *   cycle_day: int,
+         *   payment_instrument_id: int|null,
+         * } $contributionRecur
+         */
+        $contributionRecur = ContributionRecur::get(FALSE)
+          ->addWhere('id', '=', $contract['membership_payment.membership_recurring_contribution'])
+          ->addSelect('id', 'amount', 'frequency_unit', 'frequency_interval', 'cycle_day', 'payment_instrument_id')
+          ->execute()
+          ->single();
         $contract['membership_payment.membership_annual']    = $this->calcAnnualAmount($contributionRecur);
         $contract['membership_payment.membership_frequency'] = $this->calcPaymentFrequency($contributionRecur);
         $contract['membership_payment.cycle_day']            = $contributionRecur['cycle_day'];
         $contract['membership_payment.payment_instrument']   = $contributionRecur['payment_instrument_id'] ?? NULL;
 
         // if this is a sepa payment, get the 'to' and 'from' bank account
+        /** @var array{count: int, id: int, values: array<int, array<string, mixed>>} $sepaMandateResult */
         $sepaMandateResult = civicrm_api3('SepaMandate', 'get', [
           'entity_table' => 'civicrm_contribution_recur',
           'entity_id'    => $contributionRecur['id'],
@@ -366,11 +386,8 @@ abstract class CRM_Contract_Change {
     // derive fields if possible
     $this->derivePaymentData($updates);
 
-    // make sure all fields are resolved
-    CRM_Contract_CustomData::resolveCustomFields($updates);
-
     // finally: write through
-    civicrm_api3('Membership', 'create', $updates);
+    Membership::update(FALSE)->setValues($updates)->execute();
 
     // and delete the cached contract data (if any)
     $this->contract = NULL;
@@ -407,35 +424,36 @@ abstract class CRM_Contract_Change {
   /**
    * Calculate annual amount
    *
-   * @param $contributionRecur array recurring contribution data
-   * @return string properly formatted annual amount
+   * @param array{amount: float, frequency_unit: "month"|"year"|null, frequency_interval: int, ...} $contributionRecur
+   *    recurring contribution data
+   * @return float
    */
-  protected function calcAnnualAmount($contributionRecur) {
-    // only 'month' and 'year' should be in use
-    $frequencyUnitTranslate = ['month' => 12, 'year' => 1];
-    return CRM_Contract_SepaLogic::formatMoney(
-      CRM_Contract_SepaLogic::formatMoney(
-        $contributionRecur['amount']
-      ) * $frequencyUnitTranslate[$contributionRecur['frequency_unit']] / $contributionRecur['frequency_interval']
-    );
+  protected function calcAnnualAmount(array $contributionRecur): float {
+    return round($contributionRecur['amount'] * $this->calcPaymentFrequency($contributionRecur), 2);
   }
 
   /**
    * Calculate the frequency from the unit/interval set in the recurring contribution data
-   * @param $contributionRecur array recurring contribution data
+   * @param array{frequency_interval: int, frequency_unit: "year"|"month"|null, ...} $contributionRecur
+   *    recurring contribution data
    * @return int payment frequency (in months)
    * @throws Exception if the unit is not recognised ('month' or 'year')
    */
-  protected function calcPaymentFrequency($contributionRecur) {
+  protected function calcPaymentFrequency(array $contributionRecur) {
     if (empty($contributionRecur['frequency_interval'])) {
       // unable to calculate
       return 0;
     }
 
     if ('year' === $contributionRecur['frequency_unit']) {
+      assert(1 === $contributionRecur['frequency_interval']);
+
       return 1 / $contributionRecur['frequency_interval'];
     }
-    elseif ('month' === $contributionRecur['frequency_unit']) {
+    // @phpstan-ignore voku.Identical
+    elseif ('month' === ($contributionRecur['frequency_unit'] ?? 'month')) {
+      assert(in_array($contributionRecur['frequency_interval'], [1, 2, 3, 4, 6, 12], TRUE));
+
       return 12 / $contributionRecur['frequency_interval'];
     }
     else {
@@ -446,8 +464,8 @@ abstract class CRM_Contract_Change {
   /**
    * Set a parameter with the activity
    *
-   * @param $key   string property name
-   * @param $value string value to set
+   * @param string $key property name
+   * @param mixed $value value to set
    */
   public function setParameter($key, $value) {
     // @phpstan-ignore assign.propertyType
@@ -457,8 +475,8 @@ abstract class CRM_Contract_Change {
   /**
    * Get a parameter from the activity
    *
-   * @param $key     string property name
-   * @param $default mixed  default to return if not set
+   * @param string $key property name
+   * @param mixed $default default to return if not set
    * @return mixed value in the activity data
    */
   public function getParameter($key, $default = NULL) {
@@ -475,8 +493,20 @@ abstract class CRM_Contract_Change {
     $mitigation_ch_defer_payment_start_value = $this->data['membership_payment.defer_payment_start'] ?? 0;
 
     // store via API
-    CRM_Contract_CustomData::resolveCustomFields($this->data);
-    $result = civicrm_api3('Activity', 'create', $this->data);
+    $data = $this->data;
+    // Using Membership custom fields in Activity will result in wrong database
+    // inserts.
+    $fieldNames = (new FieldNameHelper())->getFieldNames('Activity');
+    $data = array_intersect_key($data, $fieldNames);
+
+    // APIv3 allowed the name for status_id. This is for compatibility.
+    // Can be removed once fully migrated to APIv4.
+    if (isset($data['status_id']) && !is_numeric($data['status_id'])) {
+      $data['status_id:name'] = $data['status_id'];
+      unset($data['status_id']);
+    }
+
+    $result = Activity::save(FALSE)->setRecords([$data])->execute()->single();
 
     // mitigation: there seems to be cases where the boolean value will not be written to ch_defer_payment_start
     // todo: extract table/column name from specs? Should be identical...
@@ -504,9 +534,9 @@ abstract class CRM_Contract_Change {
   /**
    * Set change status
    *
-   * @param $status string valid activity status
+   * @param string $status valid activity status
    */
-  public function setStatus($status) {
+  public function setStatus($status): void {
     $this->data['status_id'] = $status;
   }
 
@@ -547,6 +577,11 @@ abstract class CRM_Contract_Change {
         else {
           return $value;
         }
+
+      case 'membership_payment.membership_annual':
+        /** @var \Civi\Core\Format $format */
+        $format = Civi::service('format');
+        return $format->money($value);
 
       case 'membership_payment.membership_frequency':
       case 'contract_updates.ch_frequency':
@@ -780,17 +815,14 @@ abstract class CRM_Contract_Change {
     if (self::$_type_id2class === NULL) {
       // populate on demand:
       self::$_type_id2class = [];
-      $query = civicrm_api3('OptionValue', 'get', [
-        'option_group_id' => 'activity_type',
-        'name'            => ['IN' => array_keys(self::TYPE2CLASS)],
-        'return'          => 'value,name',
-        'option.limit'    => 0,
-        'sequential'      => 1,
-      ]);
-      foreach ($query['values'] as $entry) {
-        if (isset(self::TYPE2CLASS[$entry['name']])) {
-          self::$_type_id2class[$entry['value']] = self::TYPE2CLASS[$entry['name']];
-        }
+      /** @var \ArrayObject<int, array{value: string, name: string}> $activityTypes */
+      $activityTypes = OptionValue::get(FALSE)
+        ->addSelect('value', 'name')
+        ->addWhere('option_group_id.name', '=', 'activity_type')
+        ->addWhere('name', 'IN', array_keys(self::TYPE2CLASS))
+        ->execute();
+      foreach ($activityTypes as $entry) {
+        self::$_type_id2class[$entry['value']] = self::TYPE2CLASS[$entry['name']];
       }
     }
     return self::$_type_id2class;
@@ -821,20 +853,20 @@ abstract class CRM_Contract_Change {
    * @return array [activity_type_id => activity label]
    */
   public static function getChangeTypes() {
-    static $change_types = NULL;
-    if ($change_types === NULL) {
-      $change_types = [];
-      $query = civicrm_api3('OptionValue', 'get', [
-        'option_group_id' => 'activity_type',
-        'option.limit'    => 0,
-        'value'           => ['IN' => self::getActivityTypeIds()],
-        'return'          => 'value,label',
-      ]);
-      foreach ($query['values'] as $activity_type) {
-        $change_types[$activity_type['value']] = $activity_type['label'];
+    static $changeTypes = NULL;
+    if ($changeTypes === NULL) {
+      $changeTypes = [];
+      /** @var \ArrayObject<int, array{value: string, label: string}> $activityTypes */
+      $activityTypes = OptionValue::get(FALSE)
+        ->addSelect('value', 'label')
+        ->addWhere('option_group_id.name', '=', 'activity_type')
+        ->addWhere('value', 'IN', self::getActivityTypeIds())
+        ->execute();
+      foreach ($activityTypes as $activityType) {
+        $changeTypes[$activityType['value']] = $activityType['label'];
       }
     }
-    return $change_types;
+    return $changeTypes;
   }
 
   /**
