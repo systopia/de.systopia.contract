@@ -28,12 +28,12 @@ class CRM_Contract_UpgraderTest extends CRM_Contract_ContractTestBase {
     self::assertSame($contractId, $this->getContractReference($activityId));
   }
 
-  public function testMigrateContractReferences_WithMissingContract_LeavesReferenceEmpty(): void {
+  public function testMigrateContractReferences_WithMissingContract_DeletesActivity(): void {
     $activityId = $this->createUnmigratedContractActivity(999999999);
 
     $this->runMigration(0, PHP_INT_MAX);
 
-    self::assertNull($this->getContractReference($activityId));
+    self::assertNull($this->getActivity($activityId));
   }
 
   public function testMigrateContractReferences_OutsideIdRange_LeavesReferenceEmpty(): void {
@@ -81,15 +81,31 @@ class CRM_Contract_UpgraderTest extends CRM_Contract_ContractTestBase {
   }
 
   private function getContractReference(int $activityId): ?int {
-    $activity = Activity::get(FALSE)
-      ->addSelect('contract_activity.contract_id')
-      ->addWhere('id', '=', $activityId)
-      ->execute()
-      ->single();
+    $activity = $this->getActivity($activityId);
 
     return isset($activity['contract_activity.contract_id'])
       ? (int) $activity['contract_activity.contract_id']
       : NULL;
+  }
+
+  /**
+   * @phpstan-return array{
+   *   "contract_activity.contract_id": int|numeric-string,
+   * }|null
+   */
+  private function getActivity(int $activityId): ?array {
+    try {
+      // @phpstan-ignore return.type
+      return Activity::get(FALSE)
+        ->addSelect('contract_activity.contract_id')
+        ->addWhere('id', '=', $activityId)
+        ->execute()
+        ->single();
+    }
+    catch (\Exception $exception) {
+      // @ignoreException
+      return NULL;
+    }
   }
 
 }
