@@ -4811,7 +4811,7 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/CreateFormTest.php
 
 		-
-			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/CreateFormTest\.php\:387\.$#'
+			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/CreateFormTest\.php\:386\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/CreateFormTest.php
@@ -4912,37 +4912,37 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1178\:\:exportValues\(\) has parameter \$elementList with no type specified\.$#'
+			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:exportValues\(\) has parameter \$elementList with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1178\:\:exportValues\(\) has parameter \$filterInternal with no type specified\.$#'
+			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:exportValues\(\) has parameter \$filterInternal with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1178\:\:exportValues\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:exportValues\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:681\:\:exportValues\(\) has parameter \$elementList with no type specified\.$#'
+			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:exportValues\(\) has parameter \$elementList with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:681\:\:exportValues\(\) has parameter \$filterInternal with no type specified\.$#'
+			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:exportValues\(\) has parameter \$filterInternal with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:681\:\:exportValues\(\) return type has no value type specified in iterable type array\.$#'
+			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:exportValues\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
@@ -5104,25 +5104,25 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Property CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1178\:\:\$_submitValues type has no value type specified in iterable type array\.$#'
+			message: '#^Property CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:\$_submitValues type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Property CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:681\:\:\$_submitValues type has no value type specified in iterable type array\.$#'
+			message: '#^Property CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:\$_submitValues type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1187\.$#'
+			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1185\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:689\.$#'
+			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:687\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php

@@ -502,7 +502,6 @@ class ModifyFormTest extends ContractTestBase {
           ->addValue('iban', 'DE02370502990000684712')
           ->addValue('bic', 'COKSDE33')
           ->addValue('creditor_type', 'OOFF')
-          ->addValue('payment_processor_id', 1)
           ->addValue('currency', 'EUR')
           ->addValue('mandate_active', 1)
           ->execute()
@@ -598,7 +597,6 @@ class ModifyFormTest extends ContractTestBase {
         ->addValue('iban', 'DE44500105175407324931')
         ->addValue('bic', 'DEUTDEFF500')
         ->addValue('creditor_type', 'OOFF')
-        ->addValue('payment_processor_id', 1)
         ->execute()
         ->first();
 

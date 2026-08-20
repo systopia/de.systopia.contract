@@ -12,8 +12,8 @@ use Civi\Api4\SepaCreditor;
 use Civi\Api4\SepaMandate;
 use Civi\Contract\Support\AbstractSetupHeadless;
 use Civi\Contract\Support\DummyContract;
-use Systopia;
 use Systopia\TestFixtures\Core\FixtureEntityStore;
+use Systopia\TestFixtures\Fixtures\Builders\SepaCreditorBuilder;
 use Systopia\TestFixtures\Fixtures\Scenarios\ContributionScenario;
 
 /**
@@ -205,6 +205,8 @@ final class CreateContractTest extends AbstractSetupHeadless {
     $membership = $storedEntities['Civi\Api4\Membership'];
     $contact = $storedEntities['Civi\Api4\Contact'];
 
+    $creditorId = SepaCreditorBuilder::createDefault(['pi_rcur' => '']);
+
     $action = new DummyContract();
     $action->setTestConfiguration([
       'default_membership_type_id' => $membership['membership_type_id'],
@@ -217,6 +219,7 @@ final class CreateContractTest extends AbstractSetupHeadless {
 
     $parameters = $this->createParameterBag([
       'contact_id' => $contact['id'],
+      'creditor_id' => $creditorId,
       'iban' => 'DE89370400440532013000',
       'bic' => 'COBADEFFXXX',
       'amount' => '12.34',
@@ -237,7 +240,7 @@ final class CreateContractTest extends AbstractSetupHeadless {
     self::assertEquals('', $mandate);
     self::assertEquals('', $mandateRef);
     self::assertEquals('', $contract);
-    self::assertEquals('FRST mandate for creditor ID [] disabled, i.e. no valid payment instrument set.', $error);
+    self::assertStringContainsString('no valid payment instrument set', $error);
   }
 
   public function testDoAction_WithoutCycleDay_CreatesDefaultContract(): void {
@@ -359,7 +362,7 @@ final class CreateContractTest extends AbstractSetupHeadless {
 
     self::assertNotNull($overrideFinancialType);
 
-    $overrideCreditor = Systopia\TestFixtures\Fixtures\Builders\SepaCreditorBuilder::create();
+    $overrideCreditor = SepaCreditorBuilder::create();
     self::assertGreaterThan(0, $overrideCreditor);
 
     $action = new DummyContract();
