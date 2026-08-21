@@ -10,13 +10,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\Support\AbstractSetupHeadless;
 use Civi\Test\Api3TestTrait;
-use CRM_Contract_ExtensionUtil as E;
-use Civi\Test\HeadlessInterface;
-use Civi\Core\HookInterface;
-use Civi\Test\TransactionalInterface;
-use PHPUnit\Framework\TestCase;
-use Civi\Test\CiviEnvBuilder;
 
 /**
  * FIXME - Add test description.
@@ -32,26 +27,13 @@ use Civi\Test\CiviEnvBuilder;
  *
  * @group headless
  */
-// phpcs:disable Generic.Files.LineLength.TooLong
-class CRM_Contract_ContractTestBase extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
-// phpcs:enable
+class CRM_Contract_ContractTestBase extends AbstractSetupHeadless {
 
   use Api3TestTrait {
     callAPISuccess as public traitCallAPISuccess;
   }
 
   protected static int $counter = 0;
-
-  public function setUpHeadless(): CiviEnvBuilder {
-    // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
-    // See: https://docs.civicrm.org/dev/en/latest/testing/phpunit/#civitest
-    return \Civi\Test::headless()
-      ->installMe(__DIR__)
-      ->install('civi_campaign')
-      ->install('org.project60.sepa')
-      ->install('org.project60.banking')
-      ->apply();
-  }
 
   public function setUp() : void {
     parent::setUp();

@@ -16,6 +16,7 @@ abstract class AbstractSetupHeadless extends TestCase implements Test\HeadlessIn
 
     return Test::headless()
       ->installMe(__DIR__)
+      ->install('action-provider')
       ->install('civi_campaign')
       ->install('org.project60.sepa')
       ->install('org.project60.banking')

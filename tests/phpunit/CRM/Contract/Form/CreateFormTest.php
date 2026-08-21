@@ -337,7 +337,6 @@ class CreateFormTest extends ContractTestBase {
 
     $refl = new ReflectionClass($form);
     $cidProp = $refl->getProperty('cid');
-    $cidProp->setAccessible(TRUE);
     $cidProp->setValue($form, $cid);
 
     $form->preProcess();

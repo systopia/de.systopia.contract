@@ -23,12 +23,11 @@ require_once __DIR__ . '/../../contract.civix.php';
 
 // phpcs:disable PSR1.Files.SideEffects
 
-// Add test classes to class loader
+// Add test classes to class loader.
 addExtensionDirToClassLoader(__DIR__);
 
-// Add classes for non-headless unit tests
+// Add classes for tests without booted CiviCRM environment, i.e. simple PHPUnit tests.
 addExtensionToClassLoader('de.systopia.contract');
-addExtensionToClassLoader('action-provider');
 
 if (!function_exists('ts')) {
   // Ensure function ts() is available - it's declared in the same file as CRM_Core_I18n in CiviCRM < 5.74.
@@ -43,8 +42,13 @@ function _contract_test_civicrm_container(ContainerBuilder $container): void {
 }
 
 function addExtensionToClassLoader(string $extension): void {
+  // Support symlinks. Current working dir should be the extensions' directory
+  // relative to the "ext" directory.
+  // Note: getcwd() is not used because it returns the real path.
+  /** @var string $currentWorkingDir */
+  $currentWorkingDir = getenv('PWD');
   $candidates = [
-    dirname((string) getenv('PWD')) . '/' . $extension,
+    dirname($currentWorkingDir) . '/' . $extension,
     __DIR__ . '/../../../' . $extension,
   ];
 
@@ -52,6 +56,7 @@ function addExtensionToClassLoader(string $extension): void {
     $real = realpath($candidate);
     if ($real !== FALSE && is_dir($real)) {
       addExtensionDirToClassLoader($real);
+
       return;
     }
   }
@@ -79,6 +84,7 @@ function addExtensionDirToClassLoader(string $extensionDir): void {
  *   The rest of the command to send.
  * @param string $decode
  *   Ex: 'json' or 'phpcode'.
+ *
  * @return mixed
  *   Response output (if the command executed normally).
  *   For 'raw' or 'phpcode', this will be a string. For 'json', it could be any JSON value.
@@ -112,6 +118,7 @@ function cv(string $cmd, string $decode = 'json') {
       if (substr(trim($result), 0, 12) !== '/*BEGINPHP*/' || substr(trim($result), -10) !== '/*ENDPHP*/') {
         throw new \RuntimeException("Command failed ($cmd):\n$result");
       }
+
       return $result;
 
     case 'json':

@@ -2,6 +2,17 @@ includes:
 	- phpstan-baseline.neon
 
 parameters:
+	civicrm:
+		# The class \CRM_Core_Smarty provides various methods. Methods that are
+		# not explicitly defined are delegated to the actual Smarty object via
+		# __call(). In many cases explicit methods like fetchWith() (or
+		# \CRM_Utils_String::parseOneOffStringThroughSmarty()) should be enough.
+		# Though if one of the implicit methods is used, this option has to be
+		# enabled.
+		implicitSmartyMethodsUsed: false
+		scanFiles:
+			core:
+				- api/v3/Membership.php
 	paths:
 		- api
 		- Civi
@@ -10,7 +21,6 @@ parameters:
 		- contract.php
 	excludePaths:
 		analyse:
-			- CRM/Contract/CustomData.php
 			- CRM/Contract/DAO/*
 			- tests/phpunit/bootstrap.php
 			- tests/phpunit/bootstrap.local.php (?)
@@ -31,9 +41,13 @@ parameters:
 		- Civi\Core\Event\GenericHookEvent
 		- CRM_Core_Config
 		- CRM_Core_DAO
+		- civicrm_api3
 	earlyTerminatingMethodCalls:
+		CRM_Core_Error:
+			- statusBounce
 		CRM_Utils_System:
 			- civiExit
+			- redirect
 		CRM_Queue_Runner:
 			- runAllViaWeb
 	checkTooWideReturnTypesInProtectedAndPublicMethods: true
@@ -54,3 +68,12 @@ parameters:
 			identifier: voku.Coalesce
 			message: '#^Coalesce: Do not compare objects directly, [^\s]+ and [^\s]+\|null found.$#'
 	tmpDir: .phpstan
+
+parametersSchema:
+	civicrm: structure([
+		implicitSmartyMethodsUsed: bool()
+		?scanFiles: structure([
+			# Additional files inside the CiviCRM core directory to scan.
+			?core: listOf(string())
+		])
+	])
