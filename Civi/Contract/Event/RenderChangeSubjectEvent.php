@@ -10,7 +10,8 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
-use Civi;
+use Civi\Contract\ContractChange\ContractChangeInterface;
+use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
 use CRM_Contract_ExtensionUtil as E;
 use CRM_Contract_CustomData as CRM_Contract_CustomData;
 
@@ -29,52 +30,31 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
-   * @var string the action name
+   * @var string|null the raw contract data after
    */
-  protected $change_action;
-
-  /**
-   * @var array the raw contract data before
-   */
-  protected $contract_data_before;
-
-  /**
-   * @var array the raw contract data after
-   */
-  protected $contract_data_after;
-
-  /**
-   * @var array the data of the change object
-   */
-  protected $change_data;
-
-  /**
-   * @var string the raw contract data after
-   */
-  protected $subject;
+  protected ?string $subject = NULL;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
    *
-   * @param string $change_action
-   *   the internal name of the change action
-   *
-   * @param array $contract_data_before
+   * @param array<string, mixed>|null $contract_data_before
    *   the state of the contract before the change
    *
-   * @param array $contract_data_after
+   * @param array<string, mixed>|null $contract_data_after
    *   the state of the contract after the change
    */
-  public function __construct($change_action, $contract_data_before, $contract_data_after) {
+  public function __construct(
+    private readonly ContractChangeInterface $change,
+    protected ?array $contract_data_before,
+    protected ?array $contract_data_after
+  ) {
     $this->subject = NULL;
-    $this->change_action = $change_action;
-    $this->change_data = NULL;
-    $this->contract_data_before = $contract_data_before;
-    $this->contract_data_after = $contract_data_after;
-    if ($this->contract_data_before) {
+    if (NULL !== $this->contract_data_before) {
+      // @phpstan-ignore assign.propertyType
       CRM_Contract_CustomData::labelCustomFields($this->contract_data_before);
     }
-    if ($this->contract_data_after) {
+    if (NULL !== $this->contract_data_after) {
+      // @phpstan-ignore assign.propertyType
       CRM_Contract_CustomData::labelCustomFields($this->contract_data_after);
     }
   }
@@ -82,22 +62,23 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   /**
    * Issue a Symfony event to render a contract change's subject/title
    *
-   * @param string $change_action
-   *   the internal name of the change action
-   *
-   * @param array|null $contract_data_before
+   * @param array<string, mixed>|null $contract_data_before
    *   the state of the contract before the change
    *
-   * @param array|null $contract_data_after
+   * @param array<string, mixed>|null $contract_data_after
    *   the state of the contract after the change
    *
-   * @return string
+   * @return string|null
    *   the subject line of the given change activity
    */
-  public static function renderCustomChangeSubject($change_action, $contract_data_before, $contract_data_after) {
+  public static function renderCustomChangeSubject(
+    ContractChangeInterface $change,
+    ?array $contract_data_before,
+    ?array $contract_data_after
+  ): ?string {
     // create and run event
-    $event = new RenderChangeSubjectEvent($change_action, $contract_data_before, $contract_data_after);
-    Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
+    $event = new RenderChangeSubjectEvent($change, $contract_data_before, $contract_data_after);
+    \Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
 
     $custom_subject = $event->getRenderedSubject();
     return $custom_subject;
@@ -109,17 +90,17 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    * @param string $subject
    *    the proposed subject for the change
    */
-  public function setRenderedSubject($subject) {
+  public function setRenderedSubject(string $subject): void {
     $this->subject = $subject;
   }
 
   /**
    * Get the currently proposed subject
    *
-   * @return string
+   * @return string|null
    *   the proposed subject for the change
    */
-  public function getRenderedSubject() {
+  public function getRenderedSubject(): ?string {
     return $this->subject;
   }
 
@@ -132,7 +113,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    * @return mixed
    *   raw contract data before the change
    */
-  public function getContractDataBefore($attribute = NULL) {
+  public function getContractDataBefore(?string $attribute = NULL): mixed {
     if ($attribute) {
       return $this->contract_data_before[$attribute] ?? NULL;
     }
@@ -150,7 +131,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    * @return mixed
    *   raw contract data after the change
    */
-  public function getContractDataAfter($attribute = NULL) {
+  public function getContractDataAfter(?string $attribute = NULL): mixed {
     if ($attribute) {
       return $this->contract_data_after[$attribute] ?? NULL;
     }
@@ -170,7 +151,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    * @return mixed|null
    *   the value
    */
-  public function getContractAttribute($attribute_name) {
+  public function getContractAttribute(string $attribute_name): mixed {
     return $this->contract_data_after[$attribute_name]
         ?? \CRM_Utils_Request::retrieve($attribute_name, 'String')
         ?? $this->contract_data_before[$attribute_name]
@@ -188,7 +169,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    * @return mixed|null
    *   the value
    */
-  public function getChangeAttribute($attribute_name) {
+  public function getChangeAttribute(string $attribute_name): mixed {
     // this is all mixed up in the same pile
     return $this->getContractAttribute($attribute_name);
   }
@@ -198,14 +179,18 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    *
    * @return string
    */
-  public function getActivityAction() {
-    return $this->change_action;
+  public function getActivityAction(): ?string {
+    return $this->change instanceof SchedulableContractChangeInterface ? $this->change::getActionName() : NULL;
+  }
+
+  public function getActivityTypeName(): string {
+    return $this->change::getActivityTypeName();
   }
 
   /**
    * @return string label of the membership type
    */
-  public function getMembershipTypeName() {
+  public function getMembershipTypeName(): string {
     $type_id = $this->getContractAttribute('membership_type_id');
     if (!empty($type_id)) {
       return \CRM_Contract_Utils::lookupValue('MembershipType', 'name', ['id' => $type_id]);
@@ -218,7 +203,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   /**
    * @return string label of the cancel reason
    */
-  public function getCancelReason() {
+  public function getCancelReason(): string {
     $reason_id = $this->getChangeAttribute('contract_cancellation.contact_history_cancel_reason');
     if (empty($reason_id)) {
       $reason_id = $this->getContractAttribute('membership_cancellation.membership_cancel_reason');
@@ -236,7 +221,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
    *
    * @return float annual amount
    */
-  public function getMembershipAnnualAmount() {
+  public function getMembershipAnnualAmount(): float {
     $new_amount = (float) $this->getChangeAttribute('contract_updates.ch_annual');
     if (empty($new_amount)) {
       $new_amount = (float) $this->getContractAttribute('membership_payment.membership_annual');
@@ -247,7 +232,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   /**
    * @return float annual amount
    */
-  public function getMembershipIncreaseAmount() {
+  public function getMembershipIncreaseAmount(): float {
     $value = $this->getChangeAttribute('contract_updates.ch_annual_diff');
     if (!$value) {
       // no diff recorded, try to calculate
@@ -265,7 +250,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   /**
    * @return string rendered
    */
-  public function getExecutionDate($date_format = 'Y-m-d') {
+  public function getExecutionDate(): string {
     $date = $this->getChangeAttribute('activity_date_time');
     if ($date) {
       return date('Y-m-d', strtotime($date));
@@ -278,12 +263,13 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   /**
    * @return string label of the frequency
    */
-  public function getMembershipPaymentFrequency() {
+  public function getMembershipPaymentFrequency(): string {
     $frequency = (int) $this->getChangeAttribute('contract_updates.ch_frequency');
     if (empty($frequency)) {
       $frequency = (int) $this->getContractAttribute('membership_payment.membership_frequency');
     }
-    return \CRM_Contract_Utils::lookupOptionValue('payment_frequency', $frequency);
+    /** @var string */
+    return \CRM_Contract_Utils::lookupOptionValue('payment_frequency', (string) $frequency);
   }
 
 }

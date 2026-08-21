@@ -11,41 +11,31 @@ declare(strict_types = 1);
 use CRM_Contract_ExtensionUtil as E;
 
 /**
- * "Revive Membership" change
+ * "Update Membership" change
  */
-class CRM_Contract_Change_Revive extends CRM_Contract_Change_UpdateBase {
+class CRM_Contract_Change_Update extends CRM_Contract_Change_UpdateBase {
 
   public static function getActionName(): string {
-    return 'revive';
+    return 'update';
   }
 
   public static function getActivityTypeName(): string {
-    return 'Contract_Revived';
+    return 'Contract_Updated';
   }
 
   public static function getActivityTypeIcon(): string {
-    return 'fa-play-circle-o';
+    return 'fa-arrow-circle-o-up';
   }
 
   public static function getTitle(): string {
-    return E::ts('Revive Contract');
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function updateContract(array $updates): void {
-    // Revive does all the same things as Upgrade, except it also removes end_date and sets status
-    $updates['end_date'] = '';
-    $updates['status_id:name'] = 'Current';
-    parent::updateContract($updates);
+    return E::ts('Update Contract');
   }
 
   /**
    * @inheritDoc
    */
   public static function getStartStatusList(): array {
-    return ['Cancelled'];
+    return ['New', 'Grace', 'Current'];
   }
 
   /**
@@ -62,12 +52,11 @@ class CRM_Contract_Change_Revive extends CRM_Contract_Change_UpdateBase {
   ): void {
     if (in_array($current_status_name, self::getStartStatusList(), TRUE)) {
       $links[] = [
-        'name'  => E::ts('Revive'),
+        'name'  => E::ts('Update'),
         'title' => self::getTitle(),
         'url'   => 'civicrm/contract/modify',
         'bit'   => CRM_Core_Action::UPDATE,
-        'qs'    => 'modify_action=revive&id=%%id%%',
-        'weight' => 30,
+        'qs'    => 'modify_action=update&id=%%id%%',
       ];
     }
   }

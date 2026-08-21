@@ -11,8 +11,8 @@ declare(strict_types = 1);
 namespace Civi\Contract\Event;
 
 use Civi;
-use CRM_Contract_Change as CRM_Contract_Change;
-use civicrm_api3 as civicrm_api3;
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
 
 /**
  * Class DisplayChangeTitle
@@ -30,67 +30,56 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
 
   /**
    * The change activity ID
-   *
-   * @var integer
    */
-  protected $change_activity_id;
+  protected int $change_activity_id;
 
   /**
    * The change activity type ID
-   *
-   * @var integer
    */
-  protected $change_activity_type_id;
+  protected int $change_activity_type_id;
 
   /**
    * The change activity data
-   *
-   * @var array
    */
-  protected $change_activity_data = NULL;
+  protected ?array $change_activity_data = NULL;
 
   /**
    * The change's display title
-   *
-   * @var string|null
    */
-  protected $change_activity_display_title = NULL;
+  protected ?string $change_activity_display_title = NULL;
 
   /**
    * The change's hover title
-   *
-   * @var string|null
    */
-  protected $change_activity_display_hover_title = NULL;
+  protected ?string $change_activity_display_hover_title = NULL;
 
   /**
    * Symfony event to allow customisation of a contract change event subject
    *
-   * @param integer $change_activity_type_id
+   * @param int $change_activity_type_id
    *   the change activity type ID
    *
-   * @param integer $change_activity_id
+   * @param int $change_activity_id
    *   the change activity
    */
-  public function __construct($change_activity_type_id, $change_activity_id) {
+  public function __construct(int $change_activity_type_id, int $change_activity_id) {
     $this->change_activity_id = $change_activity_id;
     $this->change_activity_type_id = $change_activity_type_id;
-    $this->change_activity_display_title = NULL;
-    $this->change_activity_display_hover_title = NULL;
   }
 
   /**
    * Symfony event to allow customisation of a contract change event subject
    *
-   * @param integer $change_activity_type_id
+   * @param int $change_activity_type_id
    *   the change activity type ID
    *
-   * @param integer $change_activity_id
+   * @param int $change_activity_id
    *   the change activity
-   *
-   * @return DisplayChangeTitle;
    */
-  public static function renderDisplayChangeTitleAndHoverText($change_activity_type_id, $change_activity_id) {
+  public static function renderDisplayChangeTitleAndHoverText(
+    int $change_activity_type_id,
+    int $change_activity_id
+  ): self {
     $event = new DisplayChangeTitle($change_activity_type_id, $change_activity_id);
     Civi::dispatcher()->dispatch(self::EVENT_NAME, $event);
     return $event;
@@ -101,14 +90,13 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
    *
    * @return string
    */
-  public function getDisplayTitle() {
+  public function getDisplayTitle(): string {
     if ($this->change_activity_display_title !== NULL) {
       return $this->change_activity_display_title;
     }
     else {
       // Default is activity type label.
-      $type_id2label = \CRM_Contract_Change::getActionLabels();
-      return $type_id2label[$this->change_activity_type_id];
+      return $this->getActivityClass()::getTitle();
     }
   }
 
@@ -118,7 +106,7 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
    * @param $title
    *   the display title to be displayed for this activity
    */
-  public function setDisplayTitle($title) {
+  public function setDisplayTitle(string $title): void {
     $this->change_activity_display_title = $title;
   }
 
@@ -127,7 +115,7 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
    *
    * @return string
    */
-  public function getDisplayHover() {
+  public function getDisplayHover(): string {
     if ($this->change_activity_display_hover_title !== NULL) {
       return $this->change_activity_display_hover_title;
     }
@@ -143,7 +131,7 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
    * @param $title
    *   the display hover title to be displayed for this activity
    */
-  public function setDisplayHoverTitle($title) {
+  public function setDisplayHoverTitle(string $title): void {
     $this->change_activity_display_hover_title = $title;
   }
 
@@ -152,21 +140,22 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
    *
    * @return array activity data
    */
-  public function getChangeActivityData() {
+  public function getChangeActivityData(): array {
     if (empty($this->change_activity_data) && !empty($this->getActivityID())) {
       // todo: isn't that cached somewhere?
+      // @phpstan-ignore assign.propertyType
       $this->change_activity_data = civicrm_api3('Activity', 'getsingle', ['id' => $this->getActivityID()]);
       \CRM_Contract_CustomData::labelCustomFields($this->change_activity_data);
     }
-    return $this->change_activity_data;
+    return $this->change_activity_data ?? [];
   }
 
   /**
    * Returns true if the action is scheduled, or false if it's already been executed or cancelled
    *
-   * @return boolean is scheduled
+   * @return bool is scheduled
    */
-  public function isActionScheduled() {
+  public function isActionScheduled(): bool {
     $data = $this->getChangeActivityData();
     // Completed
     return ($data['status_id'] != 2);
@@ -177,7 +166,7 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
    *
    * @return int
    */
-  public function getActivityID() {
+  public function getActivityID(): int {
     return $this->change_activity_id;
   }
 
@@ -186,20 +175,26 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
    *
    * @return int
    */
-  public function getActivityTypeID() {
+  public function getActivityTypeID(): int {
     return $this->change_activity_type_id;
   }
 
-  public function getActivityClass(): ?string {
-    return CRM_Contract_Change::getClassByActivityType($this->change_activity_type_id);
+  /**
+   * @return class-string<\Civi\Contract\ContractChange\ContractChangeInterface>
+   *
+   * @throws \CRM_Core_Exception
+   */
+  public function getActivityClass(): string {
+    return ContractChangeTypeContainer::getInstance()->getClassForActivityTypeId($this->change_activity_type_id);
   }
 
+  /**
+   * @throws \CRM_Core_Exception
+   */
   public function getActivityAction(): ?string {
     $class = $this->getActivityClass();
-    if (NULL === $class) {
-      throw new \RuntimeException('No class name resolved for activity type.');
-    }
-    return CRM_Contract_Change::getActionByClass($class);
+
+    return is_a($class, SchedulableContractChangeInterface::class, TRUE) ? $class::getActionName() : NULL;
   }
 
 }

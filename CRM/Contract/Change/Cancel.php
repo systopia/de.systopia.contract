@@ -10,15 +10,32 @@ declare(strict_types = 1);
 
 use Civi\Api4\Activity;
 use Civi\Api4\MembershipStatus;
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Cancel Membership" change
  */
-class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
+class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
 
   private const MEMBERSHIP_CANCEL_REASON = 'membership_cancellation.membership_cancel_reason';
   private const MEMBERSHIP_CANCEL_DATE   = 'membership_cancellation.membership_cancel_date';
+
+  public static function getActionName(): string {
+    return 'cancel';
+  }
+
+  public static function getActivityTypeName(): string {
+    return 'Contract_Cancelled';
+  }
+
+  public static function getActivityTypeIcon(): string {
+    return 'fa-stop-circle-o';
+  }
+
+  public static function getTitle(): string {
+    return E::ts('Cancel Contract');
+  }
 
   /**
    * Get a list of required fields for this type
@@ -34,7 +51,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   /**
    * Derive/populate additional data
    */
-  public function populateData() {
+  public function populateData(): void {
     if ($this->isNew()) {
       $this->setParameter(
         'contract_cancellation.contact_history_cancel_reason',
@@ -92,7 +109,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
    *
    * @throws Exception if the creation should be disallowed
    */
-  public function shouldBeAccepted() {
+  public function shouldBeAccepted(): void {
     parent::shouldBeAccepted();
 
     // check for OTHER CANCELLATION REQUEST for the same day
@@ -108,7 +125,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       ->addSelect('id', 'activity_date_time')
       ->addWhere('activity_date_time', 'IS NOT NULL')
       ->addWhere('contract_activity.contract_id', '=', $this->getContractID())
-      ->addWhere('activity_type_id', '=', $this->getActvityTypeID())
+      ->addWhere('activity_type_id:name', '=', self::getActivityTypeName())
       ->addWhere('status_id:name', '=', 'Scheduled')
       ->execute()
       ->getArrayCopy();
@@ -137,7 +154,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
       $pendingActivityCount = Activity::get(FALSE)
         ->selectRowCount()
         ->addWhere('contract_activity.contract_id', '=', $this->getContractID())
-        ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
+        ->addWhere('activity_type_id:name', 'IN', ContractChangeTypeContainer::getInstance()->getActivityTypes())
         ->addWhere('status_id:name', 'IN', ['Scheduled', 'Needs Review'])
         ->execute()
         ->countMatched();
@@ -150,7 +167,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   /**
    * @inheritDoc
    */
-  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
     if ($this->isNew()) {
       return E::ts('Contract cancellation scheduled');
     }
@@ -169,35 +186,28 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_Change {
   }
 
   /**
-   * Get a list of the status names that this change can be applied to
-   *
-   * @return array list of membership status names
+   * @inheritDoc
    */
-  public static function getStartStatusList() {
+  public static function getStartStatusList(): array {
     return ['New', 'Grace', 'Current', 'Pending'];
-  }
-
-  /**
-   * Get a (human readable) title of this change
-   *
-   * @return string title
-   */
-  public static function getChangeTitle() {
-    return E::ts('Cancel Contract');
   }
 
   /**
    * Modify action links provided to the user for a given membership
    *
-   * @param $links                array  currently given links
-   * @param $current_status_name  string membership status as a string
-   * @param $membership_data      array  all known information on the membership in question
+   * @param array<int, array<string, mixed>> $links currently given links
+   * @param string $current_status_name membership status as a string
+   * @param array<string, mixed> $membership_data all known information on the membership in question
    */
-  public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
-    if (in_array($current_status_name, self::getStartStatusList())) {
+  public static function modifyMembershipActionLinks(
+    array &$links,
+    string $current_status_name,
+    array $membership_data
+  ): void {
+    if (in_array($current_status_name, self::getStartStatusList(), TRUE)) {
       $links[] = [
         'name'  => E::ts('Cancel'),
-        'title' => self::getChangeTitle(),
+        'title' => self::getTitle(),
         'url'   => 'civicrm/contract/modify',
         'bit'   => CRM_Core_Action::UPDATE,
         'qs'    => 'modify_action=cancel&id=%%id%%',

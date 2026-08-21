@@ -8,6 +8,9 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ContractChangeFactory;
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+
 const CE_ENGINE_PROCESSING_LIMIT = 500;
 
 /**
@@ -72,7 +75,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
       'contract_cancellation.*',
       'contract_updates.*',
     )
-    ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
+    ->addWhere('activity_type_id:name', 'IN', ContractChangeTypeContainer::getInstance()->getActivityTypes())
     ->addWhere('status_id:name', '=', 'Scheduled')
     // execute everything scheduled in the past
     ->addWhere('activity_date_time', '<=', date('Y-m-d H:i:s', strtotime($params['now'] ?? 'now')))
@@ -101,7 +104,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
 
     // execute the changes
     // @phpstan-ignore argument.type
-    $change = CRM_Contract_Change::getChangeForData($scheduled_activity);
+    $change = ContractChangeFactory::getInstance()->createSchedulable($scheduled_activity);
     $result['order'][] = $change->getID();
     try {
       // verify the data before execution

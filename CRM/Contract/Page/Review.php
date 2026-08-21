@@ -10,12 +10,13 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
 use Civi\Contract\Event\DisplayChangeTitle as DisplayChangeTitle;
 
 class CRM_Contract_Page_Review extends CRM_Core_Page {
 
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
-  public function run() {
+  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  public function run(): void {
   // phpcs:enable
     // get the adjustments
     $adjustments = \Civi\Contract\Event\AdjustContractReviewEvent::getContractReviewAdjustments();
@@ -50,7 +51,7 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
       )
       ->addWhere('contract_activity.contract_id', '=', $id)
       ->addWhere('status_id:name', 'NOT IN', ['Cancelled'])
-      ->addWhere('activity_type_id', 'IN', CRM_Contract_Change::getActivityTypeIds())
+      ->addWhere('activity_type_id:name', 'IN', ContractChangeTypeContainer::getInstance()->getActivityTypes())
       ->addOrderBy('activity_date_time', 'DESC')
       ->addOrderBy('id', 'DESC')
       ->execute()
@@ -191,21 +192,12 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     }
     $this->assign('paymentFrequencies', $paymentFrequencies);
 
-    // Get activity types
-    $this->assign('activityTypes', CRM_Contract_Change::getChangeTypes());
-    $this->assign('includeWysiwygEditor', TRUE);
-
     // Get membership types
     $membershipTypes = [];
     foreach (civicrm_api3('MembershipType', 'get', [])['values'] as $membershipType) {
       $membershipTypes[$membershipType['id']] = $membershipType['name'];
     }
     $this->assign('membershipTypes', $membershipTypes);
-
-    // since Civi 4.7, wysiwyg/ckeditor is a default core resource
-    if (version_compare(CRM_Utils_System::version(), '4.7', '<')) {
-      CRM_Core_Resources::singleton()->addScriptFile('civicrm', 'packages/ckeditor/ckeditor.js');
-    }
 
     // hide some columns
     $this->assign('hide_columns', $adjustments->getHiddenColumnIndices());

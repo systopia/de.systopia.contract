@@ -14,11 +14,17 @@ declare(strict_types = 1);
 require_once 'contract.civix.php';
 // phpcs:enable
 
+use Civi\Contract\ContractChange\ContractChangeFactory;
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\ContractChange\ContractChangeInterface;
+use Civi\Contract\EventSubscriber\CivicrmLinksSubscriber;
+use Civi\Core\ClassScanner;
 use CRM_Contract_ExtensionUtil as E;
 use Civi\Contract\ContractManager;
 use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
 use Civi\Contract\SearchDisplayLinks;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -27,17 +33,29 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container/
  */
 function contract_civicrm_container(ContainerBuilder $container): void {
+  $container->addResource(new FileResource(__FILE__));
+
   if (class_exists('\Civi\Contract\ContainerSpecs')) {
     $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
   }
 
-  $container->autowire(ContractManager::class);
+  $container->autowire(ContractManager::class)
+    ->setPublic(TRUE);
   $container
     ->autowire(AddRelatedMembershipAction::class)
     ->setPublic(TRUE);
   $container
     ->autowire(EndRelatedMembershipAction::class)
     ->setPublic(TRUE);
+
+  $container->register(ContractChangeTypeContainer::class)->addArgument(
+    ClassScanner::get(['interface' => ContractChangeInterface::class])
+  )->setPublic(TRUE);
+  $container->autowire(ContractChangeFactory::class)
+    ->setPublic(TRUE);
+
+  $container->autowire(CivicrmLinksSubscriber::class)
+    ->addTag('kernel.event_subscriber');
 }
 
 /**
@@ -79,7 +97,7 @@ function contract_civicrm_pageRun(CRM_Core_Page &$page): void {
     /** @var CRM_Contact_Page_View_Summary $page */
     // this is the contact summary page
     Civi::resources()
-      ->addVars('contract', ['ce_activity_types' => CRM_Contract_Change::getActivityTypeIds()])
+      ->addVars('contract', ['ce_activity_types' => ContractChangeTypeContainer::getInstance()->getActivityTypeIds()])
       ->addScriptUrl(E::url('js/hide-ce-activity-types.js'));
 
   }
@@ -277,42 +295,6 @@ function contract_civicrm_validateForm($formName, &$fields, &$files, &$form, &$e
 /**
  * Implements hook_civicrm_links().
  */
-function contract_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
-  // Custom links for memberships
-  if ($objectName == 'Membership') {
-    if ($objectId) {
-      // load membership
-      $membership_data = civicrm_api3('Membership', 'getsingle', ['id' => $objectId]);
-
-      // alter links
-      CRM_Contract_Change::modifyActionLinks($membership_data, $links);
-    }
-
-  }
-  elseif ($op == 'contribution.selector.row') {
-    // add a Contract link to contributions that are connected to memberships
-    $contribution_id = (int) $objectId;
-    if ($contribution_id) {
-      // add 'view contract' link
-      $membership_id = CRM_Core_DAO::singleValueQuery(
-        "SELECT membership_id FROM civicrm_membership_payment WHERE contribution_id = {$contribution_id} LIMIT 1"
-      );
-      if ($membership_id) {
-        $contact_id = CRM_Core_DAO::singleValueQuery(
-          "SELECT contact_id FROM civicrm_membership WHERE id = {$membership_id} LIMIT 1"
-        );
-        if ($contact_id) {
-          $links[] = [
-            'name'  => 'Contract',
-            'title' => 'View Contract',
-            'url'   => 'civicrm/contact/view/membership',
-            'qs'    => "reset=1&id={$membership_id}&cid={$contact_id}&action=view",
-          ];
-        }
-      }
-    }
-  }
-}
 
 /**
  * Implements hook_civicrm_navigationMenu().
@@ -389,5 +371,5 @@ function contract_civicrm_permission(&$permissions) {
  */
 function contract_civicrm_scanClasses(array &$classes): void {
   // @phpstan-ignore parameterByRef.type
-  \Civi\Core\ClassScanner::scanFolders($classes, __DIR__, 'Civi/ActionProvider/Action', '\\');
+  ClassScanner::scanFolders($classes, __DIR__, 'CRM/Contract/Change', '_');
 }

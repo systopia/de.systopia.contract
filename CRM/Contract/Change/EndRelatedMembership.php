@@ -21,30 +21,22 @@ use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Change_EndRelatedMembership extends CRM_Contract_Change {
 
-  public const CONTRACT_ACTION = 'end related';
+  public static function getActivityTypeName(): string {
+    return 'Secondary_Membership_Ended';
+  }
 
-  /**
-   * @inheritDoc
-   */
-  public function execute(): void {
-    throw new \RuntimeException(
-      // phpcs:ignore Generic.Files.LineLength.TooLong
-      'Terminations of related memberships are documentary, they cannot be scheduled into the future, and therefore not executed.'
-    );
+  public static function getActivityTypeIcon(): string {
+    return 'fa-person-circle-minus';
+  }
+
+  public static function getTitle(): string {
+    return E::ts('End Secondary Membership');
   }
 
   /**
    * @inheritDoc
    */
-  public function getRequiredFields(): array {
-    // None required because change is documentary.
-    return [];
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
     return E::ts('Related membership ended');
   }
 

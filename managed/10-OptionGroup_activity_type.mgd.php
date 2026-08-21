@@ -17,11 +17,12 @@
 
 declare(strict_types = 1);
 
-use CRM_Contract_ExtensionUtil as E;
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
 
-return [
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Contract_Signed',
+$activityTypes = [];
+foreach (ContractChangeTypeContainer::getInstance()->getClassesByActivityType() as $class) {
+  $activityTypes[] = [
+    'name' => 'OptionGroup_activity_type_OptionValue_' . $class::getActivityTypeName(),
     'entity' => 'OptionValue',
     'cleanup' => 'unused',
     'update' => 'unmodified',
@@ -29,184 +30,18 @@ return [
       'version' => 4,
       'values' => [
         'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Sign Contract'),
-        'name' => 'Contract_Signed',
+        'label' => $class::getTitle(),
+        'name' => $class::getActivityTypeName(),
         'filter' => 1,
         'is_reserved' => TRUE,
-        'icon' => 'fa-dot-circle-o',
+        'icon' => $class::getActivityTypeIcon(),
       ],
       'match' => [
         'option_group_id',
         'name',
       ],
     ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Contract_Paused',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Pause Contract'),
-        'name' => 'Contract_Paused',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-pause-circle-o',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Contract_Resumed',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Resume Contract'),
-        'name' => 'Contract_Resumed',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-play-circle-o',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Contract_Updated',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Update Contract'),
-        'name' => 'Contract_Updated',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-arrow-circle-o-up',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Contract_Cancelled',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Cancel Contract'),
-        'name' => 'Contract_Cancelled',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-stop-circle-o',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Contract_Revived',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Revive Contract'),
-        'name' => 'Contract_Revived',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-play-circle-o',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Secondary_Membership_Created',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Create Secondary Membership'),
-        'name' => 'Secondary_Membership_Created',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-person-circle-plus',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Secondary_Membership_Ended',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('End Secondary Membership'),
-        'name' => 'Secondary_Membership_Ended',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-person-circle-minus',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'OptionGroup_activity_type_OptionValue_Secondary_Membership_Updated',
-    'entity' => 'OptionValue',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'option_group_id.name' => 'activity_type',
-        'label' => E::ts('Update Secondary Membership'),
-        'name' => 'Secondary_Membership_Updated',
-        'filter' => 1,
-        'is_reserved' => TRUE,
-        'icon' => 'fa-person-circle-exclamation',
-      ],
-      'match' => [
-        'option_group_id',
-        'name',
-      ],
-    ],
-  ],
-];
+  ];
+}
+
+return $activityTypes;
