@@ -71,7 +71,7 @@ class GetFieldsAction extends BasicGetFieldsAction {
         'data_type' => 'Date',
         'input_type' => 'Date',
         'input_attrs' => [
-          'time' => 0,
+          'time' => FALSE,
         ],
       ],
       [
@@ -80,7 +80,7 @@ class GetFieldsAction extends BasicGetFieldsAction {
         'data_type' => 'Date',
         'input_type' => 'Date',
         'input_attrs' => [
-          'time' => 0,
+          'time' => FALSE,
         ],
       ],
     ];
