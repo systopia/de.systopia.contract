@@ -70,14 +70,18 @@ class GetFieldsAction extends BasicGetFieldsAction {
         'title' => E::ts('Start Date'),
         'data_type' => 'Date',
         'input_type' => 'Date',
-        'input_attrs' => [],
+        'input_attrs' => [
+          'time' => 0,
+        ],
       ],
       [
         'name' => 'end_date',
         'title' => E::ts('End Date'),
         'data_type' => 'Date',
         'input_type' => 'Date',
-        'input_attrs' => [],
+        'input_attrs' => [
+          'time' => 0,
+        ],
       ],
     ];
   }
