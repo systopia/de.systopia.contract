@@ -114,9 +114,11 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
     }
     catch (Exception $ex) {
       // verification failed
-      $result['failed'][] = $change->getID();
-      $result['error_details'][$change->getID()] = CRM_Contract_Utils::formatExceptionForApi($ex);
-      $result['error_details_test'][$change->getID()] = CRM_Contract_Utils::formatExceptionForTest($ex);
+      $changeId = $change->getID();
+      assert(NULL !== $changeId);
+      $result['failed'][] = $changeId;
+      $result['error_details'][$changeId] = CRM_Contract_Utils::formatExceptionForApi($ex);
+      $result['error_details_test'][$changeId] = CRM_Contract_Utils::formatExceptionForTest($ex);
       $change->setStatus('Failed');
       $change->setParameter('details', CRM_Contract_Utils::formatExceptionForActivityDetails($ex));
       $change->save();
@@ -140,9 +142,11 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
     }
     catch (Exception $ex) {
       // something went wrong...
-      $result['failed'][] = $change->getID();
-      $result['error_details'][$change->getID()] = CRM_Contract_Utils::formatExceptionForApi($ex);
-      $result['error_details_test'][$change->getID()] = CRM_Contract_Utils::formatExceptionForTest($ex);
+      $changeId = $change->getID();
+      assert(NULL !== $changeId);
+      $result['failed'][] = $changeId;
+      $result['error_details'][$changeId] = CRM_Contract_Utils::formatExceptionForApi($ex);
+      $result['error_details_test'][$changeId] = CRM_Contract_Utils::formatExceptionForTest($ex);
       $change->setStatus('Failed');
       $change->setParameter('details', CRM_Contract_Utils::formatExceptionForActivityDetails($ex));
       $change->save();
