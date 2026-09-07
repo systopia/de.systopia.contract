@@ -8,12 +8,19 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ActionMenuEntry;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Revive Membership" change
  */
 class CRM_Contract_Change_Revive extends CRM_Contract_Change_UpdateBase {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-refresh')
+      ->setWeight(30);
+  }
 
   public static function getActionName(): string {
     return 'revive';
@@ -25,6 +32,10 @@ class CRM_Contract_Change_Revive extends CRM_Contract_Change_UpdateBase {
 
   public static function getActivityTypeIcon(): string {
     return 'fa-play-circle-o';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['Cancelled'];
   }
 
   public static function getTitle(): string {
@@ -39,37 +50,6 @@ class CRM_Contract_Change_Revive extends CRM_Contract_Change_UpdateBase {
     $updates['end_date'] = '';
     $updates['status_id:name'] = 'Current';
     parent::updateContract($updates);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function getStartStatusList(): array {
-    return ['Cancelled'];
-  }
-
-  /**
-   * Modify action links provided to the user for a given membership
-   *
-   * @param array<int, array<string, mixed>> $links currently given links
-   * @param string $current_status_name membership status as a string
-   * @param array<string, mixed> $membership_data all known information on the membership in question
-   */
-  public static function modifyMembershipActionLinks(
-    array &$links,
-    string $current_status_name,
-    array $membership_data
-  ): void {
-    if (in_array($current_status_name, self::getStartStatusList(), TRUE)) {
-      $links[] = [
-        'name'  => E::ts('Revive'),
-        'title' => self::getTitle(),
-        'url'   => 'civicrm/contract/modify',
-        'bit'   => CRM_Core_Action::UPDATE,
-        'qs'    => 'modify_action=revive&id=%%id%%',
-        'weight' => 30,
-      ];
-    }
   }
 
 }

@@ -10,6 +10,7 @@ declare(strict_types = 1);
 
 use Civi\Api4\Activity;
 use Civi\Api4\MembershipStatus;
+use Civi\Contract\ContractChange\ActionMenuEntry;
 use Civi\Contract\ContractChange\ContractChangeTypeContainer;
 use CRM_Contract_ExtensionUtil as E;
 
@@ -21,6 +22,13 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
   private const MEMBERSHIP_CANCEL_REASON = 'membership_cancellation.membership_cancel_reason';
   private const MEMBERSHIP_CANCEL_DATE   = 'membership_cancellation.membership_cancel_date';
 
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-times')
+      ->setWeight(1000)
+      ->setStyle('danger');
+  }
+
   public static function getActionName(): string {
     return 'cancel';
   }
@@ -31,6 +39,10 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
 
   public static function getActivityTypeIcon(): string {
     return 'fa-stop-circle-o';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['New', 'Grace', 'Current', 'Pending'];
   }
 
   public static function getTitle(): string {
@@ -183,37 +195,6 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
         ]
       )
       : E::ts('Contract cancelled');
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function getStartStatusList(): array {
-    return ['New', 'Grace', 'Current', 'Pending'];
-  }
-
-  /**
-   * Modify action links provided to the user for a given membership
-   *
-   * @param array<int, array<string, mixed>> $links currently given links
-   * @param string $current_status_name membership status as a string
-   * @param array<string, mixed> $membership_data all known information on the membership in question
-   */
-  public static function modifyMembershipActionLinks(
-    array &$links,
-    string $current_status_name,
-    array $membership_data
-  ): void {
-    if (in_array($current_status_name, self::getStartStatusList(), TRUE)) {
-      $links[] = [
-        'name'  => E::ts('Cancel'),
-        'title' => self::getTitle(),
-        'url'   => 'civicrm/contract/modify',
-        'bit'   => CRM_Core_Action::UPDATE,
-        'qs'    => 'modify_action=cancel&id=%%id%%',
-        'weight' => 40,
-      ];
-    }
   }
 
 }

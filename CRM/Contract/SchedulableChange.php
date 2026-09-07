@@ -8,6 +8,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ActionMenuEntry;
 use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
 
 /**
@@ -15,6 +16,13 @@ use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
  */
 // phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing, Generic.Files.LineLength.TooLong
 abstract class CRM_Contract_SchedulableChange extends CRM_Contract_Change implements SchedulableContractChangeInterface {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return new ActionMenuEntry(
+      static::getTitle(),
+      'civicrm/contract/modify?reset=1&id=[id]&modify_action=' . static::getActionName(),
+    );
+  }
 
   /**
    * @inheritDoc

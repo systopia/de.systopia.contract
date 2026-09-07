@@ -8,12 +8,19 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ActionMenuEntry;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Resume Membership" change
  */
 class CRM_Contract_Change_Resume extends CRM_Contract_SchedulableChange {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-play')
+      ->setWeight(20);
+  }
 
   public static function getActionName(): string {
     return 'resume';
@@ -25,6 +32,10 @@ class CRM_Contract_Change_Resume extends CRM_Contract_SchedulableChange {
 
   public static function getActivityTypeIcon(): string {
     return 'fa-play-circle-o';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['Paused'];
   }
 
   public static function getTitle(): string {
@@ -70,13 +81,6 @@ class CRM_Contract_Change_Resume extends CRM_Contract_SchedulableChange {
       return E::ts('Resume contract');
     }
     return E::ts('Contract resumed');
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function getStartStatusList(): array {
-    return ['Paused'];
   }
 
 }

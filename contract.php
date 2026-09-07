@@ -14,16 +14,18 @@ declare(strict_types = 1);
 require_once 'contract.civix.php';
 // phpcs:enable
 
-use Civi\Contract\ContractChange\ContractChangeFactory;
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
-use Civi\Contract\ContractChange\ContractChangeInterface;
-use Civi\Contract\EventSubscriber\CivicrmLinksSubscriber;
-use Civi\Core\ClassScanner;
-use CRM_Contract_ExtensionUtil as E;
-use Civi\Contract\ContractManager;
 use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
-use Civi\Contract\SearchDisplayLinks;
+use Civi\Contract\ContainerSpecs;
+use Civi\Contract\ContractChange\ContractChangeFactory;
+use Civi\Contract\ContractChange\ContractChangeInterface;
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\ContractManager;
+use Civi\Contract\EventSubscriber\ContributionLinksSubscriber;
+use Civi\Contract\EventSubscriber\MembershipLinksSubscriber;
+use Civi\Contract\EventSubscriber\MembershipSearchDisplayLinksSubscriber;
+use Civi\Core\ClassScanner;
+use CRM_Contract_ExtensionUtil as E;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -35,9 +37,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 function contract_civicrm_container(ContainerBuilder $container): void {
   $container->addResource(new FileResource(__FILE__));
 
-  if (class_exists('\Civi\Contract\ContainerSpecs')) {
-    $container->addCompilerPass(new \Civi\Contract\ContainerSpecs());
-  }
+  $container->addCompilerPass(new ContainerSpecs());
 
   $container->autowire(ContractManager::class)
     ->setPublic(TRUE);
@@ -54,7 +54,11 @@ function contract_civicrm_container(ContainerBuilder $container): void {
   $container->autowire(ContractChangeFactory::class)
     ->setPublic(TRUE);
 
-  $container->autowire(CivicrmLinksSubscriber::class)
+  $container->autowire(ContributionLinksSubscriber::class)
+    ->addTag('kernel.event_subscriber');
+  $container->autowire(MembershipLinksSubscriber::class)
+    ->addTag('kernel.event_subscriber');
+  $container->autowire(MembershipSearchDisplayLinksSubscriber::class)
     ->addTag('kernel.event_subscriber');
 }
 
@@ -63,8 +67,6 @@ function contract_civicrm_container(ContainerBuilder $container): void {
  */
 function contract_civicrm_config(\CRM_Core_Config &$config): void {
   _contract_civix_civicrm_config($config);
-
-  \Civi::dispatcher()->addSubscriber(new SearchDisplayLinks());
 }
 
 /**

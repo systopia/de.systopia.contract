@@ -20,7 +20,7 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\ContractChange;
 
-interface SchedulableContractChangeInterface extends ContractChangeInterface {
+interface SchedulableContractChangeInterface extends ActionMenuAwareContractChangeTypeInterface {
 
   /**
    * Get the internal action name
@@ -61,11 +61,5 @@ interface SchedulableContractChangeInterface extends ContractChangeInterface {
    * @throws \Exception if status change is not possible.
    */
   public function verifyStatusChange(): void;
-
-  /**
-   * @return list<string>
-   *   Membership status names that this change can be applied to.
-   */
-  public static function getStartStatusList(): array;
 
 }

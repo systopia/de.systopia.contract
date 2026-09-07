@@ -8,6 +8,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ActionMenuEntry;
 use Civi\Contract\ContractChange\ContractChangeFactory;
 use CRM_Contract_ExtensionUtil as E;
 
@@ -15,6 +16,12 @@ use CRM_Contract_ExtensionUtil as E;
  * "Pause Membership" change
  */
 class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-pause')
+      ->setWeight(20);
+  }
 
   public static function getActionName(): string {
     return 'pause';
@@ -26,6 +33,10 @@ class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
 
   public static function getActivityTypeIcon(): string {
     return 'fa-pause-circle-o';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['New', 'Grace', 'Current'];
   }
 
   public static function getTitle(): string {
@@ -155,37 +166,6 @@ class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
     return $resume
       ? E::ts('Contract paused until %1', [1 => date('Y-m-d', strtotime($resume))])
       : E::ts('Contract paused');
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function getStartStatusList(): array {
-    return ['New', 'Grace', 'Current'];
-  }
-
-  /**
-   * Modify action links provided to the user for a given membership
-   *
-   * @param array<int, array<string, mixed>> $links currently given links
-   * @param string $current_status_name membership status as a string
-   * @param array<string, mixed> $membership_data all known information on the membership in question
-   */
-  public static function modifyMembershipActionLinks(
-    array &$links,
-    string $current_status_name,
-    array $membership_data
-  ): void {
-    if (in_array($current_status_name, self::getStartStatusList(), TRUE)) {
-      $links[] = [
-        'name'  => E::ts('Pause'),
-        'title' => self::getTitle(),
-        'url'   => 'civicrm/contract/modify',
-        'bit'   => CRM_Core_Action::UPDATE,
-        'qs'    => 'modify_action=pause&id=%%id%%',
-        'weight' => 20,
-      ];
-    }
   }
 
 }

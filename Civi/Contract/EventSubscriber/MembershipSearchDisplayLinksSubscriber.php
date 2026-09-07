@@ -1,31 +1,43 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2026 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
 
-namespace Civi\Contract;
+namespace Civi\Contract\EventSubscriber;
 
 use Civi\API\Event\RespondEvent;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
-use CRM_Contract_ExtensionUtil as E;
+use Civi\Api4\MembershipStatus;
+use Civi\Contract\ContractChange\ActionMenuAwareContractChangeTypeInterface;
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Injects contract change actions (Update / Cancel / Pause / Resume / Revive)
- * into the SearchKit-driven membership tab on the contact summary page.
+ * Injects contract change actions into the SearchKit-driven membership tab on
+ * the contact summary page.
  *
  * CiviCRM 6 replaced the legacy hook_civicrm_links-rendered membership table
  * with a SearchKit display (Contact_Summary_Memberships_Active / _Inactive),
  * which does not consult hook_civicrm_links. This subscriber appends our
  * action links to that display at runtime.
  */
-class SearchDisplayLinks implements EventSubscriberInterface {
+class MembershipSearchDisplayLinksSubscriber implements EventSubscriberInterface {
 
   private const ACTIVE_DISPLAY = 'Contact_Summary_Memberships_Active';
   private const INACTIVE_DISPLAY = 'Contact_Summary_Memberships_Inactive';
@@ -59,19 +71,15 @@ class SearchDisplayLinks implements EventSubscriberInterface {
       return;
     }
 
-    $changed = FALSE;
     foreach ($response as $index => $display) {
       if (!is_array($display)) {
         continue;
       }
-      $modified = self::applyLinks($display);
-      if (NULL !== $modified) {
-        $response[$index] = $modified;
-        $changed = TRUE;
+
+      $modifiedDisplay = self::applyLinks($display);
+      if (NULL !== $modifiedDisplay) {
+        $response[$index] = $modifiedDisplay;
       }
-    }
-    if ($changed) {
-      $event->setResponse($response);
     }
   }
 
@@ -118,8 +126,8 @@ class SearchDisplayLinks implements EventSubscriberInterface {
    */
   private static function linksForDisplay(string $name): ?array {
     return match ($name) {
-      self::ACTIVE_DISPLAY => self::getActiveDisplayLinks(),
-      self::INACTIVE_DISPLAY => self::getInactiveDisplayLinks(),
+      self::ACTIVE_DISPLAY => self::getDisplayLinks(TRUE),
+      self::INACTIVE_DISPLAY => self::getDisplayLinks(FALSE),
       default => NULL,
     };
   }
@@ -153,71 +161,43 @@ class SearchDisplayLinks implements EventSubscriberInterface {
 
   /**
    * @return list<array<string, mixed>>
-   */
-  private static function getActiveDisplayLinks(): array {
-    return [
-      self::link(
-        \CRM_Contract_Change_Update::getActionName(),
-        \CRM_Contract_Change_Update::getTitle(),
-        'fa-pencil',
-        ['status_id:name', 'IN', \CRM_Contract_Change_Update::getStartStatusList()]
-      ),
-      self::link(
-        \CRM_Contract_Change_Pause::getActionName(),
-        \CRM_Contract_Change_Pause::getTitle(),
-        'fa-pause',
-        ['status_id:name', 'IN', \CRM_Contract_Change_Pause::getStartStatusList()]
-      ),
-      self::link(
-        \CRM_Contract_Change_Resume::getActionName(),
-        \CRM_Contract_Change_Resume::getTitle(),
-        'fa-play',
-        ['status_id:name', 'IN', \CRM_Contract_Change_Resume::getStartStatusList()]
-      ),
-      self::link(
-        \CRM_Contract_Change_Cancel::getActionName(),
-        \CRM_Contract_Change_Cancel::getTitle(),
-        'fa-times',
-        ['status_id:name', 'IN', \CRM_Contract_Change_Cancel::getStartStatusList()],
-        'danger'
-      ),
-    ];
-  }
-
-  /**
-   * @return list<array<string, mixed>>
-   */
-  private static function getInactiveDisplayLinks(): array {
-    return [
-      self::link('revive', E::ts('Revive Contract'), 'fa-rotate-left',
-        ['status_id:name', 'IN', \CRM_Contract_Change_Revive::getStartStatusList()]),
-    ];
-  }
-
-  /**
-   * @param array<int, mixed> $condition
    *
-   * @return array<string, mixed>
+   * @throws \CRM_Core_Exception
    */
-  private static function link(
-    string $action,
-    string $text,
-    string $icon,
-    array $condition,
-    string $style = 'default'
-  ): array {
-    return [
-      'path' => "civicrm/contract/modify?reset=1&id=[id]&modify_action={$action}",
-      'icon' => $icon,
-      'text' => $text,
-      'style' => $style,
-      'condition' => $condition,
-      'task' => '',
-      'entity' => '',
-      'action' => '',
-      'join' => '',
-      'target' => '',
-    ];
+  private static function getDisplayLinks(bool $active): array {
+    $statusNames = MembershipStatus::get(FALSE)
+      ->addSelect('name')
+      ->addWhere('is_current_member', '=', $active)
+      ->execute()
+      ->column('name');
+
+    $linksByWeight = [];
+
+    foreach (ContractChangeTypeContainer::getInstance()->getClassesByActivityType() as $changeTypeClass) {
+      if ($changeTypeClass instanceof ActionMenuAwareContractChangeTypeInterface) {
+        if ([] !== array_intersect($statusNames, $changeTypeClass::getStartStatusList())) {
+          $menuEntry = $changeTypeClass::getActionMenuEntry();
+          $linksByWeight[$menuEntry->weight][] = [
+            'path' => $menuEntry->path,
+            'icon' => $menuEntry->icon,
+            'text' => $menuEntry->title,
+            'style' => $menuEntry->style,
+            'condition' => ['status_id:name', 'IN', $changeTypeClass::getStartStatusList()],
+            'task' => '',
+            'entity' => '',
+            'action' => '',
+            'join' => '',
+            'target' => '',
+          ];
+        }
+      }
+    }
+
+    ksort($linksByWeight);
+
+    return array_values(
+      array_reduce($linksByWeight, fn ($links, $weightedLinks) => array_merge($links, $weightedLinks), [])
+    );
   }
 
 }
