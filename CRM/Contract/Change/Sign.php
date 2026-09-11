@@ -15,54 +15,32 @@ use CRM_Contract_ExtensionUtil as E;
  */
 class CRM_Contract_Change_Sign extends CRM_Contract_Change {
 
-  /**
-   * Get a list of required fields for this type
-   *
-   * @phpstan-return list<string>
-   */
-  public function getRequiredFields(): array {
-    // none required because change is documentary
-    return [];
+  public static function getActivityTypeName(): string {
+    return 'Contract_Signed';
   }
 
-  /**
-   * Apply the given change to the contract
-   *
-   * @throws Exception should anything go wrong in the execution
-   */
-  public function execute(): void {
-    throw new \RuntimeException(
-      'New membership sign-ups are documentary, they cannot be scheduled into the future, and therefore not executed.'
-    );
+  public static function getActivityTypeIcon(): string {
+    return 'fa-dot-circle-o';
+  }
+
+  public static function getTitle(): string {
+    return E::ts('Sign Contract');
   }
 
   /**
    * Derive/populate additional data
    */
-  public function populateData() {
+  public function populateData(): void {
     parent::populateData();
     $contract = $this->getContract(TRUE);
     $this->data['contract_updates.ch_annual_diff'] = $contract['membership_payment.membership_annual'] ?? 0.0;
   }
 
   /**
-   * Check whether this change activity should actually be created
-   *
-   * CANCEL activities should not be created, if there is another one already there
-   *
-   * @throws Exception if the creation should be disallowed
-   */
-  public function shouldBeAccepted() {
-    parent::shouldBeAccepted();
-
-    // TODO: check if the parameters are good
-  }
-
-  /**
    * @inheritDoc
    */
-  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL):string {
-    $c = (array) $contract_after;
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL):string {
+    $c = (array) $contractAfter;
     $parts = [];
     $type = isset($c['membership_type_id'])
       ? $this->labelValue($c['membership_type_id'], 'membership_type_id')
@@ -93,24 +71,6 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
     }
     $suffix = [] !== $parts ? (' — ' . implode(' • ', $parts)) : '';
     return E::ts('New membership contract') . $suffix;
-  }
-
-  /**
-   * Get a (human readable) title of this change
-   *
-   * @return string title
-   */
-  public static function getChangeTitle() {
-    return E::ts('Sign Contract');
-  }
-
-  /**
-   * Get a list of the status names that this change can be applied to
-   *
-   * @return array list of membership status names
-   */
-  public static function getStartStatusList() {
-    return [];
   }
 
 }

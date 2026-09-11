@@ -10,6 +10,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
 use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Form_Modify extends CRM_Core_Form {
@@ -20,7 +21,12 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
   protected ?array $membership = NULL;
 
-  protected ?string $change_class = NULL;
+  /**
+   * @var class-string<\Civi\Contract\ContractChange\SchedulableContractChangeInterface>
+   *
+   * @phpstan-ignore property.uninitialized
+   */
+  protected string $change_class;
 
   protected ?array $contact = NULL;
 
@@ -73,17 +79,15 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     }
 
     // Process the requested action
-    $this->modify_action = $this->get('modify_action')
+    /** @var string $modifyAction */
+    $modifyAction = $this->modify_action = $this->get('modify_action')
       ?? strtolower(CRM_Utils_Request::retrieve('modify_action', 'String'));
-    $this->set('modify_action', $this->modify_action);
-    $this->assign('modificationActivity', $this->modify_action);
-    $this->change_class = CRM_Contract_Change::getClassByAction($this->modify_action);
-    if (empty($this->change_class)) {
-      throw new \RuntimeException(E::ts("Unknown action '%1'.", [1 => $this->modify_action]));
-    }
+    $this->set('modify_action', $modifyAction);
+    $this->assign('modificationActivity', $modifyAction);
+    $this->change_class = ContractChangeTypeContainer::getInstance()->getClassForAction($modifyAction);
 
     // set title
-    CRM_Utils_System::setTitle($this->change_class::getChangeTitle());
+    CRM_Utils_System::setTitle($this->change_class::getTitle());
 
     // Set the destination for the form
     $this->controller->_destination = CRM_Utils_System::url(
@@ -105,7 +109,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
     // Validate that the contract has a valid start status
     $membershipStatus = CRM_Contract_Utils::getMembershipStatusName($this->membership['status_id']);
-    if (!in_array($membershipStatus, $this->change_class::getStartStatusList())) {
+    if (!in_array($membershipStatus, $this->change_class::getStartStatusList(), TRUE)) {
       throw new \RuntimeException("Invalid modification for status '{$membershipStatus}'.");
     }
   }
@@ -149,7 +153,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     $this->addButtons([
     // since Cancel looks bad when viewed next to the Cancel action
       ['type' => 'cancel', 'name' => E::ts('Discard changes'), 'submitOnce' => TRUE],
-      ['type' => 'submit', 'name' => $this->change_class::getChangeTitle(), 'isDefault' => TRUE, 'submitOnce' => TRUE],
+      ['type' => 'submit', 'name' => $this->change_class::getTitle(), 'isDefault' => TRUE, 'submitOnce' => TRUE],
     ]);
 
     $this->setDefaults();

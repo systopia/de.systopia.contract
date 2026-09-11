@@ -7,6 +7,9 @@
 +--------------------------------------------------------------*/
 
 declare(strict_types = 1);
+
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
 use Civi\Contract\ContractManager;
 
 /**
@@ -50,7 +53,6 @@ function civicrm_api3_Contract_modify($params) {
     $params['date'] = 'now';
   }
 
-  // use activity_type_id instead of modify_action
   $params['action'] = $params['modify_action'];
 
   // also: revert REST-like '.' -> '_' conversion
@@ -73,7 +75,8 @@ function civicrm_api3_Contract_modify($params) {
   }
 
   // modify data to match internal structure
-  $params['activity_type_id'] = $params['action'];
+  $params['activity_type_id:name'] = ContractChangeTypeContainer::getInstance()
+    ->getClassForAction($params['action'])::getActivityTypeName();
   $params['activity_date_time'] = date('Y-m-d H:i:s', $requested_execution_time);
   $params['contract_activity.contract_id'] = (int) $params['id'];
   $params['source_record_id'] = (int) $params['id'];
@@ -83,11 +86,12 @@ function civicrm_api3_Contract_modify($params) {
   }
 
   // generate change (activity)
-  $contractManager = new ContractManager();
+  $contractManager = ContractManager::getInstance();
   $change = $contractManager->createContractChange(
     $params['contract_activity.contract_id'],
     $params
   );
+  assert($change instanceof SchedulableContractChangeInterface);
 
   // make sure any newly created conflicts are marked
   $change->checkForConflicts();

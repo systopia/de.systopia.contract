@@ -61,12 +61,11 @@ function civicrm_api3_Contract_create($params) {
   }
 
   // create 'sign' activity
-  $params['activity_type_id'] = 'sign';
-  $contractManager = new ContractManager();
+  $params['activity_type_id:name'] = CRM_Contract_Change_Sign::getActivityTypeName();
+  $contractManager = ContractManager::getInstance();
   $change = $contractManager->createContractChange(
     (int) $membership['id'],
-    $params,
-    'Completed'
+    $params
   );
 
   // also derive contract fields

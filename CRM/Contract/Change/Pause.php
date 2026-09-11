@@ -8,12 +8,40 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ActionMenuEntry;
+use Civi\Contract\ContractChange\ContractChangeFactory;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Pause Membership" change
  */
-class CRM_Contract_Change_Pause extends CRM_Contract_Change {
+class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-pause')
+      ->setWeight(20);
+  }
+
+  public static function getActionName(): string {
+    return 'pause';
+  }
+
+  public static function getActivityTypeName(): string {
+    return 'Contract_Paused';
+  }
+
+  public static function getActivityTypeIcon(): string {
+    return 'fa-pause-circle-o';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['New', 'Grace', 'Current'];
+  }
+
+  public static function getTitle(): string {
+    return E::ts('Pause Contract');
+  }
 
   /**
    * Get a list of required fields for this type
@@ -34,7 +62,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
   /**
    * Derive/populate additional data
    */
-  public function populateData() {
+  public function populateData(): void {
     $contract = $this->getContract();
 
     $resume_date = $this->getParameter('resume_date');
@@ -53,13 +81,15 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
   /**
    * In this case, don't only just save the pause, but also the resume!
    */
-  public function save() {
+  public function save(): void {
     if ($this->isNew()) {
       // create resume change activity:
       $resume_date = $this->getParameter('resume_date');
       if ($resume_date) {
         $contract = $this->getContract();
-        $resume_change = CRM_Contract_Change::getChangeForData(['activity_type_id' => 'Contract_Resumed']);
+        $resume_change = ContractChangeFactory::getInstance()->create([
+          'activity_type_id:name' => CRM_Contract_Change_Resume::getActivityTypeName(),
+        ]);
         $resume_change->setParameter('activity_date_time', $resume_date);
         $resume_change->setParameter('contract_activity.contract_id', $this->getContractID());
         $resume_change->setParameter('source_record_id', $this->getContractID());
@@ -83,7 +113,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
 
     // pause the mandate
     $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
-    if ($payment_contract_id) {
+    if (NULL !== $payment_contract_id) {
       CRM_Contract_SepaLogic::pauseSepaMandate($payment_contract_id);
       $this->updateContract(['status_id:name' => 'Paused']);
     }
@@ -100,7 +130,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
    *
    * @throws Exception if the data is not valid
    */
-  public function verifyData() {
+  public function verifyData(): void {
     parent::verifyData();
 
     // check that the resume date is not on the same day as the pause
@@ -118,7 +148,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
    *
    * @throws Exception if the creation should be disallowed
    */
-  public function shouldBeAccepted() {
+  public function shouldBeAccepted(): void {
     // TODO: any restrictions?
     parent::shouldBeAccepted();
   }
@@ -126,7 +156,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
   /**
    * @inheritDoc
    */
-  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
     $resume = $this->getParameter('resume_date');
     if ($this->isNew()) {
       return $resume
@@ -136,44 +166,6 @@ class CRM_Contract_Change_Pause extends CRM_Contract_Change {
     return $resume
       ? E::ts('Contract paused until %1', [1 => date('Y-m-d', strtotime($resume))])
       : E::ts('Contract paused');
-  }
-
-  /**
-   * Get a list of the status names that this change can be applied to
-   *
-   * @return array list of membership status names
-   */
-  public static function getStartStatusList() {
-    return ['New', 'Grace', 'Current'];
-  }
-
-  /**
-   * Get a (human readable) title of this change
-   *
-   * @return string title
-   */
-  public static function getChangeTitle() {
-    return E::ts('Pause Contract');
-  }
-
-  /**
-   * Modify action links provided to the user for a given membership
-   *
-   * @param $links                array  currently given links
-   * @param $current_status_name  string membership status as a string
-   * @param $membership_data      array  all known information on the membership in question
-   */
-  public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
-    if (in_array($current_status_name, self::getStartStatusList())) {
-      $links[] = [
-        'name'  => E::ts('Pause'),
-        'title' => self::getChangeTitle(),
-        'url'   => 'civicrm/contract/modify',
-        'bit'   => CRM_Core_Action::UPDATE,
-        'qs'    => 'modify_action=pause&id=%%id%%',
-        'weight' => 20,
-      ];
-    }
   }
 
 }

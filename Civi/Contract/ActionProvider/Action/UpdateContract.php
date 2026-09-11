@@ -208,21 +208,6 @@ class UpdateContract extends AbstractAction {
   }
 
   /**
-   * Get a list of all modify actions
-   */
-  protected function getModifyActions() {
-    $modify_actions = [
-      'sign' => 'sign',
-      'cancel' => 'cancel',
-      'update' => 'update',
-      'resume' => 'resume',
-      'revive' => 'revive',
-      'pause' => 'pause',
-    ];
-    return $modify_actions;
-  }
-
-  /**
    * Get a list of all membership types
    */
   protected function getMembershipTypes() {

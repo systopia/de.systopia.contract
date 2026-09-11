@@ -12,6 +12,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+
 class CRM_Contract_Handler_ModificationConflicts {
 
   /**
@@ -121,14 +123,13 @@ class CRM_Contract_Handler_ModificationConflicts {
     $pauseActivity  = current($this->scheduledModifications);
     $resumeActivity = next($this->scheduledModifications);
 
+    $typeContainer = ContractChangeTypeContainer::getInstance();
     if (
-      (int) $pauseActivity['activity_type_id'] === CRM_Contract_Change::getActivityIdForClass(
-        'CRM_Contract_Change_Pause'
-      )
+      (int) $pauseActivity['activity_type_id'] === $typeContainer
+        ->getActivityTypeId(CRM_Contract_Change_Pause::getActivityTypeName())
       && FALSE !== $resumeActivity
-      && (int) $resumeActivity['activity_type_id'] === CRM_Contract_Change::getActivityIdForClass(
-        'CRM_Contract_Change_Resume'
-      )
+      && (int) $resumeActivity['activity_type_id'] === $typeContainer
+        ->getActivityTypeId(CRM_Contract_Change_Resume::getActivityTypeName())
     ) {
       $this->scheduledModifications = [];
     }
