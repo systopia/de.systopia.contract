@@ -30,7 +30,7 @@ class RenderChangeSubjectEvent extends AbstractConfigurationEvent {
   public const EVENT_NAME = 'de.contract.renderchangesubject';
 
   /**
-   * @var string|null the raw contract data after
+   * @var string|null the rendered subject
    */
   protected ?string $subject = NULL;
 
