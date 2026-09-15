@@ -11,20 +11,18 @@ declare(strict_types = 1);
 use Civi\Api4\ContributionRecur;
 use CRM_Contract_ExtensionUtil as E;
 
-/**
- * "Upgrade Membership" change
- */
-class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
+// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
+abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableChange {
 
   /**
-   * Get a list of required fields for this type
+   * @inheritDoc
    */
   public function getRequiredFields(): array {
     return [];
   }
 
   /**
-   * Derive/populate additional data
+   * @inheritDoc
    */
   public function populateData(): void {
     if ($this->isNew()) {
@@ -157,9 +155,8 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
     ];
   }
 
-// phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function execute(): void {
-// phpcs:enable
     $contract_before = $this->getContract(TRUE);
     $contract_update = [];
 
@@ -271,7 +268,7 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       $contract,
       $this->data,
       $this->data,
-      $this->getActionName()
+      $this::getActionName()
     );
   }
 
@@ -378,13 +375,13 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
   /**
    * @inheritDoc
    */
-  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
     if ($this->isNew()) {
       return E::ts('Update contract scheduled');
     }
 
-    $before = (array) ($contract_before ?? []);
-    $after  = (array) $contract_after;
+    $before = (array) ($contractBefore ?? []);
+    $after  = (array) $contractAfter;
 
     $map = [
       'membership_type_id'                      => E::ts('Type'),
@@ -418,43 +415,6 @@ class CRM_Contract_Change_Upgrade extends CRM_Contract_Change {
       return E::ts('Contract updated');
     }
     return E::ts('Contract updated') . ' — ' . implode('; ', $changes);
-  }
-
-  /**
-   * Get a list of the status names that this change can be applied to
-   *
-   * @return array list of membership status names
-   */
-  public static function getStartStatusList() {
-    return ['New', 'Grace', 'Current'];
-  }
-
-  /**
-   * Get a (human readable) title of this change
-   *
-   * @return string title
-   */
-  public static function getChangeTitle() {
-    return E::ts('Update Contract');
-  }
-
-  /**
-   * Modify action links provided to the user for a given membership
-   *
-   * @param list<array<string, mixed>> $links currently given links
-   * @param string $current_status_name membership status as a string
-   * @param array<string, mixed> $membership_data all known information on the membership in question
-   */
-  public static function modifyMembershipActionLinks(&$links, $current_status_name, $membership_data) {
-    if (in_array($current_status_name, self::getStartStatusList())) {
-      $links[] = [
-        'name'  => E::ts('Update'),
-        'title' => self::getChangeTitle(),
-        'url'   => 'civicrm/contract/modify',
-        'bit'   => CRM_Core_Action::UPDATE,
-        'qs'    => 'modify_action=update&id=%%id%%',
-      ];
-    }
   }
 
 }

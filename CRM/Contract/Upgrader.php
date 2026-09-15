@@ -10,6 +10,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
 use CRM_Contract_ExtensionUtil as E;
 use Civi\Api4\Activity;
 use Civi\Api4\OptionValue;
@@ -62,7 +63,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     /** @var int $maxActivityId */
     $maxActivityId = Activity::get(FALSE)
       ->addSelect('MAX(id) AS max_id')
-      ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
+      ->addWhere('activity_type_id:name', 'IN', ContractChangeTypeContainer::getInstance()->getActivityTypes())
       ->execute()
       ->first()['max_id'] ?? 0;
     for ($fromId = 0; $fromId < $maxActivityId; $fromId += self::CONTRACT_REFERENCE_BATCH_SIZE) {
@@ -86,7 +87,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     $contractIds = Activity::get(FALSE)
       ->addSelect('id', 'source_record_id', 'membership.id')
       ->addJoin('Membership AS membership', 'LEFT', NULL, ['membership.id', '=', 'source_record_id'])
-      ->addWhere('activity_type_id', 'IN', \CRM_Contract_Change::getActivityTypeIds())
+      ->addWhere('activity_type_id:name', 'IN', ContractChangeTypeContainer::getInstance()->getActivityTypes())
       ->addWhere('source_record_id', 'IS NOT NULL')
       ->addWhere('contract_activity.contract_id', 'IS NULL')
       ->addWhere('id', '>', $fromId)

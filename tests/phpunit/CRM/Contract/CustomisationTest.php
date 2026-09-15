@@ -35,7 +35,7 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
   public function testRenderSubjectCustomisation(): void {
     $contract = $this->createNewContract(['is_sepa' => 1]);
     $last_change = $this->getLastChangeActivity($contract['id']);
-    static::assertEquals('TEST-sign', $last_change['subject'], 'The customisation hook failed.');
+    static::assertEquals('TEST-Contract_Signed', $last_change['subject'], 'The customisation hook failed.');
 
     // cancel contract
     $this->modifyContract($contract['id'], 'cancel', 'tomorrow', [
@@ -43,7 +43,7 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
     ]);
     $this->runContractEngine($contract['id'], '+2 days');
     $last_change = $this->getLastChangeActivity($contract['id']);
-    static::assertEquals('TEST-cancel', $last_change['subject'], 'The customisation hook failed.');
+    static::assertEquals('TEST-Contract_Cancelled', $last_change['subject'], 'The customisation hook failed.');
   }
 
   /**
@@ -55,7 +55,7 @@ class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
    * @see https://projekte.systopia.de/issues/18511#note-10
    */
   public static function renderSubjectTest1(RenderChangeSubjectEvent $event) {
-    $event->setRenderedSubject('TEST-' . $event->getActivityAction());
+    $event->setRenderedSubject('TEST-' . $event->getActivityTypeName());
   }
 
 }

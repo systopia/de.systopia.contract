@@ -300,12 +300,6 @@ parameters:
 			path: CRM/Contract/BankingLogic.php
 
 		-
-			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
-			identifier: function.strict
-			count: 2
-			path: CRM/Contract/Change.php
-
-		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
 			count: 1
@@ -314,137 +308,11 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 8
+			count: 5
 			path: CRM/Contract/Change.php
 
 		-
 			message: '#^In method "CRM_Contract_Change\:\:derivePaymentData", caught "Exception" must be rethrown\. Either catch a more specific exception, add a "throw" clause in the "catch" block to propagate the exception or add a "// @ignoreException" comment\.$#'
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:checkForConflicts\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:convertContract2ChangeData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:convertContract2ChangeData\(\) has parameter \$data with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:convertContract2ChangeData\(\) has parameter \$reverse with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:derivePaymentData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:derivePaymentData\(\) has parameter \$contract with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getActionLabels\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getActionName\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getActivityIdForClass\(\) should return int but returns int\|string\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getActivityTypeId2Class\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getActivityTypeIds\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getChangeTypes\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getClassByAction\(\) has parameter \$action with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getClassByAction\(\) should return string but returns string\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getContract\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getContract\(\) should return array but returns array\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getCustomFieldList\(\) should return list\<string\> but returns list\<mixed\>\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getID\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:getSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:isNew\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: CRM/Contract/Change.php
 
@@ -485,48 +353,6 @@ parameters:
 			path: CRM/Contract/Change.php
 
 		-
-			message: '#^Method CRM_Contract_Change\:\:modifyActionLinks\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:modifyActionLinks\(\) has parameter \$links with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:modifyActionLinks\(\) has parameter \$membership_data with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:populateData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:renderChangeSubject\(\) has parameter \$change with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:renderChangeSubject\(\) has parameter \$contract_after with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:renderChangeSubject\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
 			message: '#^Method CRM_Contract_Change\:\:resolveValue\(\) has parameter \$field_name with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -551,166 +377,16 @@ parameters:
 			path: CRM/Contract/Change.php
 
 		-
-			message: '#^Method CRM_Contract_Change\:\:save\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Part \$contract\[''membership_payment\.membership_recurring_contribution''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
 			count: 1
 			path: CRM/Contract/Change.php
 
 		-
-			message: '#^Method CRM_Contract_Change\:\:setParameter\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:shouldBeAccepted\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:updateContract\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:updateContract\(\) has parameter \$updates with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:verifyData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:verifyStatusChange\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Property CRM_Contract_Change\:\:\$_type_id2label type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Static call to instance method stdClass\:\:modifyMembershipActionLinks\(\)\.$#'
-			identifier: method.staticCall
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
-			identifier: function.strict
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
 			count: 1
 			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:getStartStatusList\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:modifyMembershipActionLinks\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:modifyMembershipActionLinks\(\) has parameter \$current_status_name with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:modifyMembershipActionLinks\(\) has parameter \$links with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:modifyMembershipActionLinks\(\) has parameter \$membership_data with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:populateData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Cancel\:\:shouldBeAccepted\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
-			identifier: function.strict
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:getStartStatusList\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:modifyMembershipActionLinks\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:modifyMembershipActionLinks\(\) has parameter \$current_status_name with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:modifyMembershipActionLinks\(\) has parameter \$links with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:modifyMembershipActionLinks\(\) has parameter \$membership_data with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:populateData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:save\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:shouldBeAccepted\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Pause\:\:verifyData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Pause.php
 
 		-
 			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
@@ -749,63 +425,9 @@ parameters:
 			path: CRM/Contract/Change/Pause.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Resume\:\:getStartStatusList\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change/Resume.php
-
-		-
-			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
-			identifier: function.strict
-			count: 1
-			path: CRM/Contract/Change/Revive.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Revive\:\:getStartStatusList\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change/Revive.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Revive\:\:modifyMembershipActionLinks\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Revive.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Revive\:\:updateContract\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Revive.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Revive\:\:updateContract\(\) has parameter \$updates with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/Revive.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 4
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Sign\:\:getStartStatusList\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Sign\:\:populateData\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Sign\:\:shouldBeAccepted\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
 			path: CRM/Contract/Change/Sign.php
 
 		-
@@ -821,160 +443,148 @@ parameters:
 			path: CRM/Contract/Change/Sign.php
 
 		-
-			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
-			identifier: function.strict
-			count: 1
-			path: CRM/Contract/Change/Upgrade.php
-
-		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
 			count: 2
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 5
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Identical\: Possible insane comparison between null and non\-empty\-string\.$#'
 			identifier: voku.Identical
 			count: 2
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Loose comparison via "\!\=" is not allowed\.$#'
 			identifier: notEqual.notAllowed
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:assignExistingRecurringContribution\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:assignExistingRecurringContribution\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:assignExistingRecurringContribution\(\) has parameter \$contract_before with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:assignExistingRecurringContribution\(\) has parameter \$contract_before with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:assignExistingRecurringContribution\(\) has parameter \$to with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:assignExistingRecurringContribution\(\) has parameter \$to with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createNonSepaRecurring\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createNonSepaRecurring\(\) has parameter \$amount with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$amount with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createNonSepaRecurring\(\) has parameter \$contract with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$contract with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createNonSepaRecurring\(\) has parameter \$paymentInstrumentIdOrName with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$paymentInstrumentIdOrName with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createNonSepaRecurring\(\) has parameter \$payment_types with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$payment_types with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createSepaMandate\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createSepaMandate\(\) has parameter \$contract with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has parameter \$contract with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createSepaMandate\(\) has parameter \$paymentInstrumentId with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has parameter \$paymentInstrumentId with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:createSepaMandate\(\) has parameter \$payment_types with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has parameter \$payment_types with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:getStartStatusList\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Change/Upgrade.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:modifyMembershipActionLinks\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:terminateSepaMandate\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:terminateSepaMandate\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/Upgrade.php
-
-		-
-			message: '#^Method CRM_Contract_Change_Upgrade\:\:terminateSepaMandate\(\) has parameter \$contract with no type specified\.$#'
+			message: '#^Method CRM_Contract_Change_UpdateBase\:\:terminateSepaMandate\(\) has parameter \$contract with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Only booleans are allowed in a negated boolean, int given\.$#'
 			identifier: booleanNot.exprNotBoolean
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Only booleans are allowed in a ternary operator condition, int\<1, max\> given\.$#'
 			identifier: ternary.condNotBoolean
 			count: 2
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
+
+		-
+			message: '#^Parameter \#1 \$id of method CRM_Contract_Change_UpdateBase\:\:classifyPaymentInstrument\(\) expects int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Parameter \#5 \$paymentOption of static method CRM_Contract_RecurringContribution\:\:createRecurringContribution\(\) expects string, int\|string given\.$#'
 			identifier: argument.type
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Parameter \#7 \$frequencyInterval of static method CRM_Contract_RecurringContribution\:\:createRecurringContribution\(\) expects int, float\|int\<1, 12\> given\.$#'
 			identifier: argument.type
 			count: 1
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 2
-			path: CRM/Contract/Change/Upgrade.php
+			path: CRM/Contract/Change/UpdateBase.php
 
 		-
 			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
@@ -1171,7 +781,7 @@ parameters:
 		-
 			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
 			identifier: function.strict
-			count: 2
+			count: 1
 			path: CRM/Contract/Form/Modify.php
 
 		-
@@ -1181,15 +791,9 @@ parameters:
 			path: CRM/Contract/Form/Modify.php
 
 		-
-			message: '#^Cannot call static method getChangeTitle\(\) on string\|null\.$#'
-			identifier: staticMethod.nonObject
-			count: 1
-			path: CRM/Contract/Form/Modify.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 16
+			count: 15
 			path: CRM/Contract/Form/Modify.php
 
 		-
@@ -1930,12 +1534,6 @@ parameters:
 		-
 			message: '#^Cannot access offset mixed on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/Page/Review.php
-
-		-
-			message: '#^Method CRM_Contract_Page_Review\:\:run\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: CRM/Contract/Page/Review.php
 
@@ -3010,9 +2608,27 @@ parameters:
 			path: CRM/Contract/Validation/ContractNumber.php
 
 		-
+			message: '#^Call to method setCheckPermissions\(\) on an unknown class Civi\\Contract\\Api4\\Action\\Contract\\SuspendPaymentAction\.$#'
+			identifier: class.notFound
+			count: 1
+			path: Civi/Api4/Contract.php
+
+		-
 			message: '#^Cannot call method setCheckPermissions\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 2
+			path: Civi/Api4/Contract.php
+
+		-
+			message: '#^Instantiated class Civi\\Contract\\Api4\\Action\\Contract\\SuspendPaymentAction not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: Civi/Api4/Contract.php
+
+		-
+			message: '#^Method Civi\\Api4\\Contract\:\:suspendPayment\(\) has invalid return type Civi\\Contract\\Api4\\Action\\Contract\\SuspendPaymentAction\.$#'
+			identifier: class.notFound
+			count: 1
 			path: Civi/Api4/Contract.php
 
 		-
@@ -3320,12 +2936,6 @@ parameters:
 			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
 
 		-
-			message: '#^Method Civi\\Contract\\ActionProvider\\Action\\UpdateContract\:\:getModifyActions\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
-
-		-
 			message: '#^Method Civi\\Contract\\ActionProvider\\Action\\UpdateContract\:\:yesNoOptions\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -3470,54 +3080,6 @@ parameters:
 			path: Civi/Contract/Event/DisplayChangeTitle.php
 
 		-
-			message: '#^Method Civi\\Contract\\Event\\DisplayChangeTitle\:\:renderDisplayChangeTitleAndHoverText\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\DisplayChangeTitle\:\:setDisplayHoverTitle\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\DisplayChangeTitle\:\:setDisplayHoverTitle\(\) has parameter \$title with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\DisplayChangeTitle\:\:setDisplayTitle\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\DisplayChangeTitle\:\:setDisplayTitle\(\) has parameter \$title with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
-			message: '#^PHPDoc tag @return has invalid value \(DisplayChangeTitle;\)\: Unexpected token ";", expected TOKEN_HORIZONTAL_WS at offset 274 on line 10$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method CRM_Contract_CustomData\:\:labelCustomFields\(\) expects array\<int\|string, mixed\>, array\|int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
-			message: '#^Property Civi\\Contract\\Event\\DisplayChangeTitle\:\:\$change_activity_data \(array\) does not accept array\|int\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: Civi/Contract/Event/DisplayChangeTitle.php
-
-		-
 			message: '#^Property Civi\\Contract\\Event\\DisplayChangeTitle\:\:\$change_activity_data type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3608,31 +3170,7 @@ parameters:
 			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
 
 		-
-			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:__construct\(\) has parameter \$contract_data_after with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:__construct\(\) has parameter \$contract_data_before with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
 			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:getCancelReason\(\) should return string but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:getExecutionDate\(\) has parameter \$date_format with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:getMembershipPaymentFrequency\(\) should return string but returns mixed\.$#'
 			identifier: return.type
 			count: 1
 			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
@@ -3644,33 +3182,9 @@ parameters:
 			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
 
 		-
-			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:renderCustomChangeSubject\(\) has parameter \$contract_data_after with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:renderCustomChangeSubject\(\) has parameter \$contract_data_before with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Method Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:setRenderedSubject\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
 			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
 			identifier: booleanNot.exprNotBoolean
 			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, array given\.$#'
-			identifier: if.condNotBoolean
-			count: 2
 			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
 
 		-
@@ -3692,56 +3206,8 @@ parameters:
 			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
 
 		-
-			message: '#^Parameter \#2 \$contract_data_before of class Civi\\Contract\\Event\\RenderChangeSubjectEvent constructor expects array, array\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Parameter \#2 \$value of static method CRM_Contract_Utils\:\:lookupOptionValue\(\) expects string, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
 			message: '#^Parameter \#2 \$value of static method CRM_Contract_Utils\:\:lookupOptionValue\(\) expects string, mixed given\.$#'
 			identifier: argument.type
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Parameter \#3 \$contract_data_after of class Civi\\Contract\\Event\\RenderChangeSubjectEvent constructor expects array, array\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Property Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:\$change_data \(array\) does not accept null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Property Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:\$change_data type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Property Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:\$contract_data_after type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Property Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:\$contract_data_before type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
-
-		-
-			message: '#^Property Civi\\Contract\\Event\\RenderChangeSubjectEvent\:\:\$subject \(string\) does not accept null\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: Civi/Contract/Event/RenderChangeSubjectEvent.php
 
@@ -3962,6 +3428,12 @@ parameters:
 			path: api/v3/Contract/Modify.php
 
 		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: array.invalidKey
+			count: 1
+			path: api/v3/Contract/Modify.php
+
+		-
 			message: '#^Call to CRM_Contract_Configuration\:\:disableMonitoring\(\) on a separate line has no effect\.$#'
 			identifier: staticMethod.resultUnused
 			count: 1
@@ -4135,48 +3607,6 @@ parameters:
 			path: contract.php
 
 		-
-			message: '#^Function contract_civicrm_links\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function contract_civicrm_links\(\) has parameter \$links with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function contract_civicrm_links\(\) has parameter \$mask with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function contract_civicrm_links\(\) has parameter \$objectId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function contract_civicrm_links\(\) has parameter \$objectName with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function contract_civicrm_links\(\) has parameter \$op with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
-			message: '#^Function contract_civicrm_links\(\) has parameter \$values with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: contract.php
-
-		-
 			message: '#^Function contract_civicrm_navigationMenu\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4251,25 +3681,13 @@ parameters:
 		-
 			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
 			identifier: equal.notAllowed
-			count: 11
-			path: contract.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, int given\.$#'
-			identifier: if.condNotBoolean
-			count: 1
+			count: 9
 			path: contract.php
 
 		-
 			message: '#^Only booleans are allowed in an if condition, mixed given\.$#'
 			identifier: if.condNotBoolean
 			count: 1
-			path: contract.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, string\|null given\.$#'
-			identifier: if.condNotBoolean
-			count: 2
 			path: contract.php
 
 		-

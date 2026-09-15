@@ -8,12 +8,39 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ActionMenuEntry;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Resume Membership" change
  */
-class CRM_Contract_Change_Resume extends CRM_Contract_Change {
+class CRM_Contract_Change_Resume extends CRM_Contract_SchedulableChange {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-play')
+      ->setWeight(20);
+  }
+
+  public static function getActionName(): string {
+    return 'resume';
+  }
+
+  public static function getActivityTypeName(): string {
+    return 'Contract_Resumed';
+  }
+
+  public static function getActivityTypeIcon(): string {
+    return 'fa-play-circle-o';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['Paused'];
+  }
+
+  public static function getTitle(): string {
+    return E::ts('Resume Contract');
+  }
 
   /**
    * Get a list of required fields for this type
@@ -34,7 +61,7 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
 
     // pause the mandate
     $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
-    if ($payment_contract_id) {
+    if (NULL !== $payment_contract_id) {
       CRM_Contract_SepaLogic::resumeSepaMandate($payment_contract_id);
       $this->updateContract(['status_id:name' => 'Current']);
     }
@@ -49,29 +76,11 @@ class CRM_Contract_Change_Resume extends CRM_Contract_Change {
   /**
    * @inheritDoc
    */
-  public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string {
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
     if ($this->isNew()) {
       return E::ts('Resume contract');
     }
     return E::ts('Contract resumed');
-  }
-
-  /**
-   * Get a list of the status names that this change can be applied to
-   *
-   * @return array list of membership status names
-   */
-  public static function getStartStatusList() {
-    return ['Paused'];
-  }
-
-  /**
-   * Get a (human readable) title of this change
-   *
-   * @return string title
-   */
-  public static function getChangeTitle() {
-    return E::ts('Resume Contract');
   }
 
 }

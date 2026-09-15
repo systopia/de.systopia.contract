@@ -20,6 +20,9 @@ declare(strict_types = 1);
 namespace Civi\Contract;
 
 use Civi\Api4\Membership;
+use Civi\Contract\ContractChange\ContractChangeFactory;
+use Civi\Contract\ContractChange\ContractChangeInterface;
+use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
 
 /**
  * @phpstan-import-type changeT from \CRM_Contract_Change
@@ -30,6 +33,15 @@ class ContractManager {
    * @phpstan-var array<int, \Civi\Contract\Contract>
    */
   private array $contracts = [];
+
+  public static function getInstance(): self {
+    /** @var self */
+    return \Civi::service(self::class);
+  }
+
+  public function __construct(
+    private readonly ContractChangeFactory $contractChangeFactory
+  ) {}
 
   public function getContract(int $membershipId): Contract {
     if (!isset($this->contracts[$membershipId])) {
@@ -79,10 +91,9 @@ class ContractManager {
     $this->createContractChange(
       $contract->getMembershipId(),
       [
-        'activity_type_id' => \CRM_Contract_Change_AddRelatedMembership::CONTRACT_ACTION,
+        'activity_type_id:name' => \CRM_Contract_Change_AddRelatedMembership::getActivityTypeName(),
         'activity_date_time' => $startDate->format('Y-m-d H:i:s'),
-      ],
-      'Completed'
+      ]
     );
 
     return $relatedMembership['id'];
@@ -99,33 +110,32 @@ class ContractManager {
     $this->createContractChange(
       $contract->getMembershipId(),
       [
-        'activity_type_id' => \CRM_Contract_Change_EndRelatedMembership::CONTRACT_ACTION,
+        'activity_type_id:name' => \CRM_Contract_Change_EndRelatedMembership::getActivityTypeName(),
         'activity_date_time' => $endDate->format('Y-m-d H:i:s'),
-      ],
-      'Completed'
+      ]
     );
   }
 
   /**
    * @phpstan-param changeT $changeData
+   *
+   * @throws \CRM_Core_Exception
    */
   public function createContractChange(
     int $membershipId,
-    array $changeData,
-    string $status = 'Scheduled'
-  ): \CRM_Contract_Change {
-    $change = \CRM_Contract_Change::getChangeForData($changeData);
-    if (isset($changeData['activity_date_time'])) {
-      $change->setParameter('activity_date_time', $changeData['activity_date_time']);
-    }
+    array $changeData
+  ): ContractChangeInterface {
+    $change = $this->contractChangeFactory->create($changeData);
     $change->setParameter('source_contact_id', \CRM_Contract_Configuration::getUserID());
     $change->setParameter('contract_activity.contract_id', $membershipId);
     $change->setParameter('source_record_id', $membershipId);
     $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
-    $change->setStatus($status);
+    $change->setStatus($change instanceof SchedulableContractChangeInterface ? 'Scheduled' : 'Completed');
     $change->populateData();
-    $change->verifyData();
-    $change->shouldBeAccepted();
+    if ($change instanceof SchedulableContractChangeInterface) {
+      $change->verifyData();
+      $change->shouldBeAccepted();
+    }
     $change->save();
     return $change;
   }

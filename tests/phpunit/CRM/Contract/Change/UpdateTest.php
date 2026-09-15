@@ -20,9 +20,9 @@ declare(strict_types = 1);
 /**
  * @group headless
  *
- * @covers \CRM_Contract_Change_Upgrade
+ * @covers \CRM_Contract_Change_Update
  */
-class CRM_Contract_Change_UpgradeTest extends CRM_Contract_ContractTestBase {
+class CRM_Contract_Change_UpdateTest extends CRM_Contract_ContractTestBase {
 
   public function testExecute_WithIncreaseAcrossThousands_StoresCorrectDiff(): void {
     $contract = $this->createNewContract(['is_sepa' => 1, 'amount' => '96.00']);

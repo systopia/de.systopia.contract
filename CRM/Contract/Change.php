@@ -11,11 +11,9 @@ declare(strict_types = 1);
 use Civi\Api4\Activity;
 use Civi\Api4\ContributionRecur;
 use Civi\Api4\Membership;
-use Civi\Api4\OptionValue;
 use Civi\Contract\Api4\Helper\FieldNameHelper;
+use Civi\Contract\ContractChange\ContractChangeInterface;
 use Civi\Contract\Event\RenderChangeSubjectEvent;
-use CRM_Contract_ExtensionUtil as E;
-use Webmozart\Assert\Assert;
 
 /**
  * Base class for contract changes. These are tracked changes to
@@ -24,8 +22,12 @@ use Webmozart\Assert\Assert;
  * This new 'Change' concept is the replacement for the CRM_Contract_ModificationActivity
  *  and the CRM_Contract_Handlers
  *
+ * Note: When data was fetched via APIv3 integers might be given as numeric
+ * strings.
  * @phpstan-type changeT array{
- *   activity_type_id: int|string,
+ *   id?: int,
+ *   "activity_type_id:name"?: string,
+ *   activity_type_id?: int,
  *   activity_date_time?: string,
  *   campaign_id?: int,
  *   membership_type_id?: int,
@@ -41,10 +43,11 @@ use Webmozart\Assert\Assert;
  *   "membership_payment.membership_recurring_contribution"?: int,
  *   "membership_payment.payment_instrument"?: int,
  *   "membership_cancellation.membership_cancel_reason"?: string,
+ *   ...
  *  }
  */
 // phpcs:disable Generic.NamingConventions.AbstractClassNamePrefix.Missing
-abstract class CRM_Contract_Change {
+abstract class CRM_Contract_Change implements ContractChangeInterface {
 // phpcs:enable
 
   /**
@@ -57,45 +60,6 @@ abstract class CRM_Contract_Change {
    * Contract data (cached)
    */
   protected ?array $contract = NULL;
-
-  /**
-   * List of known changes,
-   *  activity_type_name => change class
-   */
-  protected const TYPE2CLASS = [
-    'Contract_Signed' => 'CRM_Contract_Change_Sign',
-    'Contract_Cancelled' => 'CRM_Contract_Change_Cancel',
-    'Contract_Updated' => 'CRM_Contract_Change_Upgrade',
-    'Contract_Resumed' => 'CRM_Contract_Change_Resume',
-    'Contract_Revived' => 'CRM_Contract_Change_Revive',
-    'Contract_Paused' => 'CRM_Contract_Change_Pause',
-    'Secondary_Membership_Created' => 'CRM_Contract_Change_AddRelatedMembership',
-    'Secondary_Membership_Ended' => 'CRM_Contract_Change_EndRelatedMembership',
-  ];
-
-  /**
-   * List of known actions,
-   *  activity_type_name => change class
-   */
-  protected const ACTION2CLASS = [
-    'sign' => 'CRM_Contract_Change_Sign',
-    'cancel' => 'CRM_Contract_Change_Cancel',
-    'update' => 'CRM_Contract_Change_Upgrade',
-    'resume' => 'CRM_Contract_Change_Resume',
-    'revive' => 'CRM_Contract_Change_Revive',
-    'pause' => 'CRM_Contract_Change_Pause',
-    'add related' => 'CRM_Contract_Change_AddRelatedMembership',
-    'end related' => 'CRM_Contract_Change_EndRelatedMembership',
-  ];
-
-  /**
-   * @phpstan-var array<int|string, string>
-   * List of activity_type_id => change class
-   * Will be be populated on demand
-   */
-  protected static ?array $_type_id2class = NULL;
-
-  protected static ?array $_type_id2label = NULL;
 
   /**
    * Maps the contract fields to the change activity fields
@@ -117,100 +81,22 @@ abstract class CRM_Contract_Change {
   /**
    * @phpstan-param changeT $data
    */
-  protected function __construct(array $data) {
+  public function __construct(array $data) {
     $this->data = $data;
-    // make sure activity_type_id is numeric
-    $this->data['activity_type_id'] = $this->getActvityTypeID();
-  }
-
-  ################################################################################
-  ##                          ABSTRACT FUNCTIONS                                ##
-  ################################################################################
-
-  /**
-   * Apply the given change to the contract
-   *
-   * @throws Exception should anything go wrong in the execution
-   */
-  abstract public function execute(): void;
-
-  /**
-   * Get a list of required fields for this type
-   *
-   * @return list<string>
-   */
-  abstract public function getRequiredFields(): array;
-
-  /**
-   * Get action name for
-   *
-   * @phpstan-param array<string, mixed>|null $contract_after
-   *   Data of the contract after.
-   * @phpstan-param array<string, mixed>|null $contract_before
-   *   Data of the contract before.
-   * @return string
-   *   The subject line.
-   */
-  abstract public function renderDefaultSubject(?array $contract_after, ?array $contract_before = NULL): string;
-
-  ################################################################################
-  ##                           COMMON FUNCTIONS                                 ##
-  ################################################################################
-
-  /**
-   * Check whether this change activity should actually be created
-   *
-   * @throws Exception if the creation should be disallowed
-   */
-  public function shouldBeAccepted() {}
-
-  /**
-   * Make sure that the data for this change is valid
-   *
-   * @throws Exception if the data is not valid
-   */
-  public function verifyData() {
-    // simply check if all required fields are there
-    // ...anything else needs to be checked in the specific class...
-    $required_fields = $this->getRequiredFields();
-    foreach ($required_fields as $required_field) {
-      if (!isset($this->data[$required_field])) {
-        throw new \RuntimeException("Parameter '{$required_field}' missing.");
-      }
-    }
-  }
-
-  public function verifyStatusChange() {
-    $class = get_class($this);
-    if (!method_exists($class, 'getStartStatusList')) {
-      return;
-    }
-    $contract = $this->getContract();
-    $status_name = CRM_Contract_Utils::getMembershipStatusName($contract['status_id']);
-    if (!in_array($status_name, $class::getStartStatusList())) {
-      throw new \RuntimeException("Cannot {$this->getActionName()} a membership when its status is '{$status_name}'.");
-    }
+    $this->data['activity_type_id:name'] = $this::getActivityTypeName();
   }
 
   /**
    * Get the change ID
    */
-  public function getID() {
+  public function getID(): ?int {
     return $this->data['id'] ?? NULL;
-  }
-
-  /**
-   * Get the internal action name
-   */
-  public function getActionName() {
-    $class2action = array_flip(self::ACTION2CLASS);
-    return $class2action[get_class($this)];
   }
 
   /**
    * Get the contract ID
    */
-  public function getContractID(): ?int {
+  public function getContractID(): int {
     if (isset($this->data['contract_activity.contract_id'])) {
       $contractId = $this->data['contract_activity.contract_id'];
     }
@@ -224,13 +110,18 @@ abstract class CRM_Contract_Change {
         ->single()['id'];
       $contractId = $this->data['custom_' . $contractReferenceFieldId] ?? NULL;
     }
-    return NULL !== $contractId ? (int) $contractId : NULL;
+
+    if (NULL === $contractId) {
+      throw new RuntimeException('Contract ID not fond');
+    }
+
+    return (int) $contractId;
   }
 
   /**
    * Derive/populate additional data
    */
-  public function populateData() {
+  public function populateData(): void {
     // populate parameters
     $contract = $this->getContract(TRUE);
 
@@ -248,43 +139,41 @@ abstract class CRM_Contract_Change {
   }
 
   /**
-   * Get the contract data
-   *
-   * @param boolean $with_payment_data
-   * @return array contract data
+   * @inheritDoc
    */
-  public function getContract($with_payment_data = FALSE) {
-    $contract_id = $this->getContractID();
-    if ($this->contract === NULL || (int) $this->contract['id'] !== $contract_id) {
+  public function getContract(bool $withPaymentData = FALSE): array {
+    $contractId = $this->getContractID();
+    if ($this->contract === NULL || (int) $this->contract['id'] !== $contractId) {
       // (re)load contract
       try {
         $this->contract = Membership::get(FALSE)
           ->addSelect('*', 'custom.*')
-          ->addWhere('id', '=', $contract_id)
+          ->addWhere('id', '=', $contractId)
           ->execute()
           ->single();
       }
       catch (Exception $ex) {
-        throw new \RuntimeException("Contract [{$contract_id}] not found!", $ex->getCode(), $ex);
+        throw new \RuntimeException("Contract [{$contractId}] not found!", $ex->getCode(), $ex);
       }
     }
 
     // add the payment data, if requested
-    if ($with_payment_data) {
-      if (empty($this->contract['membership_payment.membership_frequency'])) {
+    if ($withPaymentData) {
+      if (!isset($this->contract['membership_payment.membership_frequency'])) {
         $this->derivePaymentData($this->contract);
       }
     }
 
+    // @phpstan-ignore return.type (phpstan assumes that contract might be NULL)
     return $this->contract;
   }
 
   /**
    * Enrich the given contact with payment data
    *
-   * @param $contract array contract data
+   * @param array<string, mixed> $contract contract data
    */
-  public function derivePaymentData(&$contract) {
+  public function derivePaymentData(array &$contract): void {
     if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
       // we have a recurring contribution!
       try {
@@ -354,32 +243,12 @@ abstract class CRM_Contract_Change {
   }
 
   /**
-   * Get the (numeric) activity type ID
-   *
-   * @return int activity type ID
-   */
-  public function getActvityTypeID() {
-    if (is_numeric($this->data['activity_type_id'] ?? NULL)) {
-      return (int) $this->data['activity_type_id'];
-    }
-
-    // otherwise translate class to ID
-    $id2class = self::getActivityTypeId2Class();
-    $class2id = array_flip($id2class);
-    if (!isset($class2id[get_class($this)])) {
-      throw new CRM_Core_Exception('Missing contract change activity type: ' . get_class($this));
-    }
-    $activity_type_id = $class2id[get_class($this)];
-    return $activity_type_id;
-  }
-
-  /**
    * Update the contract with the given data
    *
    * @param $updates array changes: attribute->value
    * @throws Exception
    */
-  public function updateContract($updates) {
+  public function updateContract(array $updates): void {
     // make sure the ID is there
     $updates['id'] = $this->getContractID();
 
@@ -394,32 +263,23 @@ abstract class CRM_Contract_Change {
   }
 
   /**
-   * Calculate the subject line for this activity
-   *
-   * @param $contract_before array contract before update
-   * @param $contract_after  array contract after update
-   *
-   * @return string subject line
+   * @inheritDoc
    */
-  public function getSubject($contract_after, $contract_before = NULL) {
-    return $this->renderChangeSubject($this, $contract_before, $contract_after);
+  final public function getSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
+    return RenderChangeSubjectEvent::renderCustomChangeSubject(
+      $this,
+      $contractBefore,
+      $contractAfter
+    ) ?? $this->renderSubject($contractAfter, $contractBefore);
   }
 
   /**
-   * Calculate the activities subject
-   *
-   * @param $change                CRM_Contract_Change the change object
-   * @param $contract_before       array  data of the contract before
-   * @param $contract_after        array  data of the contract after
-   * @return                       string the subject line
+   * @phpstan-param array<string, mixed>|null $contractAfter
+   *   Data of the contract after the change.
+   * @phpstan-param array<string, mixed>|null $contractBefore
+   *   Data of the contract before the change.
    */
-  public function renderChangeSubject($change, $contract_before, $contract_after) {
-    return RenderChangeSubjectEvent::renderCustomChangeSubject(
-      $change->getActionName(),
-      $contract_before,
-      $contract_after
-    ) ?? $change->renderDefaultSubject($contract_after, $contract_before);
-  }
+  abstract protected function renderSubject(?array $contractAfter, ?array $contractBefore): string;
 
   /**
    * Calculate annual amount
@@ -462,24 +322,17 @@ abstract class CRM_Contract_Change {
   }
 
   /**
-   * Set a parameter with the activity
-   *
-   * @param string $key property name
-   * @param mixed $value value to set
+   * @inheritDoc
    */
-  public function setParameter($key, $value) {
+  public function setParameter(string $key, mixed $value): void {
     // @phpstan-ignore assign.propertyType
     $this->data[$key] = $value;
   }
 
   /**
-   * Get a parameter from the activity
-   *
-   * @param string $key property name
-   * @param mixed $default default to return if not set
-   * @return mixed value in the activity data
+   * @inheritDoc
    */
-  public function getParameter($key, $default = NULL) {
+  public function getParameter(string $key, mixed $default = NULL): mixed {
     return $this->data[$key]
       ?? CRM_Utils_Request::retrieve($key, 'String')
       ?? $default;
@@ -488,7 +341,7 @@ abstract class CRM_Contract_Change {
   /**
    * Save data to the DB (activity)
    */
-  public function save() {
+  public function save(): void {
     // make sure all custom fields are transformed into the 'custom_[id]' notation
     $mitigation_ch_defer_payment_start_value = $this->data['membership_payment.defer_payment_start'] ?? 0;
 
@@ -527,8 +380,8 @@ abstract class CRM_Contract_Change {
   /**
    * Check if this change is new, i.e. has not yet been saved to the DB
    */
-  public function isNew() {
-    return empty($this->data['id']);
+  public function isNew(): bool {
+    return !isset($this->data['id']);
   }
 
   /**
@@ -536,14 +389,8 @@ abstract class CRM_Contract_Change {
    *
    * @param string $status valid activity status
    */
-  public function setStatus($status): void {
+  public function setStatus(string $status): void {
     $this->data['status_id'] = $status;
-  }
-
-  public function checkForConflicts() {
-    // TODO: refactor CRM_Contract_Handler_ModificationConflicts
-    $conflictHandler = new CRM_Contract_Handler_ModificationConflicts();
-    $conflictHandler->checkForConflicts($this->getContractID());
   }
 
   /**
@@ -711,226 +558,6 @@ abstract class CRM_Contract_Change {
       default:
         return $value;
     }
-  }
-
-  ################################################################################
-  ##                           STATIC FUNCTIONS                                 ##
-  ################################################################################
-
-  /**
-   * @param $membership_data
-   * @param $links
-   */
-  public static function modifyActionLinks($membership_data, &$links) {
-    // first remove the default ones that shouldn't be used any more
-    $obsolete_actions = [
-      CRM_Core_Action::RENEW,
-      CRM_Core_Action::FOLLOWUP,
-      CRM_Core_Action::DELETE,
-      CRM_Core_Action::UPDATE,
-    ];
-    foreach ($links as $key => $link) {
-      if (in_array($link['bit'], $obsolete_actions)) {
-        unset($links[$key]);
-      }
-    }
-
-    // add the replacement actions
-    $status_name = CRM_Contract_Utils::getMembershipStatusName($membership_data['status_id']);
-    foreach (self::getActivityTypeId2Class() as $change_class) {
-      if (method_exists($change_class, 'modifyMembershipActionLinks')) {
-        $change_class::modifyMembershipActionLinks($links, $status_name, $membership_data);
-      }
-    }
-  }
-
-  /**
-   * Get the class for the given activity type
-   *
-   * @param int|string $activity_type
-   *   Acitivity type ID, name, or change action name.
-   */
-  public static function getClassByActivityType($activity_type): ?string {
-    // check name -> class mapping first
-    if (isset(self::TYPE2CLASS[$activity_type])) {
-      return self::TYPE2CLASS[$activity_type];
-    }
-
-    // check action -> class mapping second
-    if (isset(self::ACTION2CLASS[$activity_type])) {
-      return self::ACTION2CLASS[$activity_type];
-    }
-
-    // then try ID -> class
-    $type_id2class = self::getActivityTypeId2Class();
-    if (isset($type_id2class[$activity_type])) {
-      return $type_id2class[$activity_type];
-    }
-
-    // not found? not one of ours!
-    return NULL;
-  }
-
-  public static function getActionLabels(): array {
-    if (!isset(self::$_type_id2label)) {
-      self::$_type_id2label = Civi\Api4\OptionValue::get(FALSE)
-        ->addSelect('value', 'label')
-        ->addWhere('name', 'IN', array_keys(\CRM_Contract_Change::TYPE2CLASS))
-        ->execute()
-        ->indexBy('value')
-        ->column('label');
-    }
-    return self::$_type_id2label;
-  }
-
-  /**
-   * Get the class for the given activity type
-   *
-   * @param $action string action name, e.g. 'cancel'
-   * @return string class name
-   */
-  public static function getClassByAction($action) {
-    return self::ACTION2CLASS[strtolower($action)] ?? NULL;
-  }
-
-  /**
-   * Get the action name for the given class name.
-   *
-   * @param string $className
-   *   Action class name.
-   *
-   * @return string|null
-   *   Action name, e.g. 'cancel'.
-   */
-  public static function getActionByClass(string $className): ?string {
-    return array_flip(self::ACTION2CLASS)[$className] ?? NULL;
-  }
-
-  /**
-   * Get the list of activity type ID to class
-   *
-   * @return array activity_type_id => class name
-   */
-  public static function getActivityTypeId2Class() {
-    if (self::$_type_id2class === NULL) {
-      // populate on demand:
-      self::$_type_id2class = [];
-      /** @var \ArrayObject<int, array{value: string, name: string}> $activityTypes */
-      $activityTypes = OptionValue::get(FALSE)
-        ->addSelect('value', 'name')
-        ->addWhere('option_group_id.name', '=', 'activity_type')
-        ->addWhere('name', 'IN', array_keys(self::TYPE2CLASS))
-        ->execute();
-      foreach ($activityTypes as $entry) {
-        self::$_type_id2class[$entry['value']] = self::TYPE2CLASS[$entry['name']];
-      }
-    }
-    return self::$_type_id2class;
-  }
-
-  /**
-   * Get the list of valid activity type IDs representing changes
-   */
-  public static function getActivityTypeIds() {
-    $id2class = self::getActivityTypeId2Class();
-    return array_keys($id2class);
-  }
-
-  /**
-   * Get the activity type ID for the given change class
-   *
-   * @param string $change_class the change classe
-   * @return int associated activity type ID
-   */
-  public static function getActivityIdForClass($change_class) {
-    $class2id = array_flip(self::getActivityTypeId2Class());
-    return $class2id[$change_class] ?? NULL;
-  }
-
-  /**
-   * Get a list of all change (activity) types with label
-   *
-   * @return array [activity_type_id => activity label]
-   */
-  public static function getChangeTypes() {
-    static $changeTypes = NULL;
-    if ($changeTypes === NULL) {
-      $changeTypes = [];
-      /** @var \ArrayObject<int, array{value: string, label: string}> $activityTypes */
-      $activityTypes = OptionValue::get(FALSE)
-        ->addSelect('value', 'label')
-        ->addWhere('option_group_id.name', '=', 'activity_type')
-        ->addWhere('value', 'IN', self::getActivityTypeIds())
-        ->execute();
-      foreach ($activityTypes as $activityType) {
-        $changeTypes[$activityType['value']] = $activityType['label'];
-      }
-    }
-    return $changeTypes;
-  }
-
-  /**
-   * Get a change with data
-   *
-   * @param changeT $data
-   * @return \CRM_Contract_Change change entity
-   * @throws \RuntimeException if the change type couldn't be detected from the activity_type_id
-   */
-  public static function getChangeForData($data) {
-    if (empty($data['activity_type_id'])) {
-      throw new \RuntimeException('No activity_type_id given.');
-    }
-
-    /** @var class-string<\CRM_Contract_Change>|null $change_class */
-    $change_class = self::getClassByActivityType($data['activity_type_id']);
-    if (NULL === $change_class) {
-      throw new \RuntimeException(
-        "Activity type ID '{$data['activity_type_id']}' is not a valid contract change type."
-      );
-    }
-
-    // make sure we're using the descriptive indices, not the custom_[id] ones
-    CRM_Contract_CustomData::labelCustomFields($data);
-
-    // finally: create a change object on the data
-    return new $change_class($data);
-  }
-
-  /**
-   * Get a comma separated list of all change activity custom fields
-   *
-   * @phpstan-return list<string>
-   *   list of field names
-   */
-  public static function getCustomFieldList() {
-    $field_names = [];
-    $fields = CRM_Contract_CustomData::getCustomFieldsForGroups(['contract_cancellation', 'contract_updates']);
-    return array_column($fields, 'name');
-  }
-
-  /**
-   * Convert the given contract data and convert it to change activity data
-   *
-   * @param $data array       the data
-   * @param $reverse boolean  reverse the transition
-   */
-  public static function convertContract2ChangeData($data, $reverse = FALSE) {
-    $mapping = self::FIELD_MAPPING_CHANGE_CONTRACT;
-    if ($reverse) {
-      $mapping = array_flip($mapping);
-    }
-
-    foreach ($mapping as $old_attribute => $new_attribute) {
-      if (isset($data[$old_attribute])) {
-        $data[$new_attribute] = $data[$old_attribute];
-        unset($data[$old_attribute]);
-      }
-    }
-    return $data;
-  }
-
-  public function __toString() {
-    return $this->getActionName();
   }
 
 }

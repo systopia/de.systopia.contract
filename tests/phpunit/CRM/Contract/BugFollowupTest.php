@@ -10,6 +10,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+
 /**
  * Bug reproduction and follow-up tests
  *
@@ -200,24 +202,24 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
       'membership_payment.membership_recurring_contribution' => $payment['id'],
       'contact_id' => $payment['contact_id'],
     ]);
-    $initial_change_activity = $this->getLastChangeActivity($contract['id']);
 
     // modify contract and check again
     $this->modifyContract($contract['id'], 'update', 'now', [
       'membership_payment.membership_annual' => '480.00',
     ]);
-    $upgrade_change_type = CRM_Contract_Change::getActivityIdForClass('CRM_Contract_Change_Upgrade');
-    $change_activity = $this->getLastChangeActivity($contract['id'], [$upgrade_change_type]);
+    $updateChangeType = ContractChangeTypeContainer::getInstance()
+      ->getActivityTypeId(CRM_Contract_Change_Update::getActivityTypeName());
+    $changeActivity = $this->getLastChangeActivity($contract['id'], [$updateChangeType]);
 
     // reload contract
     $updated_contract = $this->getContract($contract['id']);
-    self::assertNotEmpty($change_activity, 'There should be a change activity.');
-    self::assertNotEmpty($change_activity['subject'], 'There should be a change activity subject.');
+    self::assertNotEmpty($changeActivity, 'There should be a change activity.');
+    self::assertNotEmpty($changeActivity['subject'], 'There should be a change activity subject.');
     if ($this->isExtensionActive('tazcontract')) {
-      $this->assertStringContainsOtherString('1,320.00', $change_activity['subject']);
+      $this->assertStringContainsOtherString('1,320.00', $changeActivity['subject']);
     }
     else {
-      self::assertStringContainsOtherString('Update contract scheduled', $change_activity['subject']);
+      self::assertStringContainsOtherString('Update contract scheduled', $changeActivity['subject']);
     }
   }
 
