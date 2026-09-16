@@ -20,14 +20,14 @@ declare(strict_types = 1);
 namespace Civi\Contract;
 
 use Civi\Api4\Membership;
-use Civi\Contract\ContractChange\ContractChangeFactory;
-use Civi\Contract\ContractChange\ContractChangeInterface;
-use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
-use Civi\Contract\ContractChange\Types\ContractChangeAddRelatedMembership;
-use Civi\Contract\ContractChange\Types\ContractChangeEndRelatedMembership;
+use Civi\Contract\Change\ContractChangeFactory;
+use Civi\Contract\Change\ContractChangeInterface;
+use Civi\Contract\Change\SchedulableContractChangeInterface;
+use Civi\Contract\Change\Type\ContractChangeAddRelatedMembership;
+use Civi\Contract\Change\Type\ContractChangeEndRelatedMembership;
 
 /**
- * @phpstan-import-type changeT from \Civi\Contract\ContractChange\AbstractContractChange
+ * @phpstan-import-type changeT from \Civi\Contract\Change\AbstractContractChange
  */
 class ContractManager {
 

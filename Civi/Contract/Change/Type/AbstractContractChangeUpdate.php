@@ -18,11 +18,11 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange\Types;
+namespace Civi\Contract\Change\Type;
 
 use Civi\Api4\ContributionRecur;
-use Civi\Contract\ContractChange\AbstractContractChange;
-use Civi\Contract\ContractChange\AbstractSchedulableContractChange;
+use Civi\Contract\Change\AbstractContractChange;
+use Civi\Contract\Change\AbstractSchedulableContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
 abstract class AbstractContractChangeUpdate extends AbstractSchedulableContractChange {

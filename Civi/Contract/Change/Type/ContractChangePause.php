@@ -18,11 +18,11 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange\Types;
+namespace Civi\Contract\Change\Type;
 
-use Civi\Contract\ContractChange\AbstractSchedulableContractChange;
-use Civi\Contract\ContractChange\ActionMenuEntry;
-use Civi\Contract\ContractChange\ContractChangeFactory;
+use Civi\Contract\Change\AbstractSchedulableContractChange;
+use Civi\Contract\Change\ActionMenuEntry;
+use Civi\Contract\Change\ContractChangeFactory;
 use CRM_Contract_ExtensionUtil as E;
 
 /**

@@ -11,7 +11,7 @@
 declare(strict_types = 1);
 
 use Civi\Api4\Activity;
-use Civi\Contract\ContractChange\Types\ContractChangeSign;
+use Civi\Contract\Change\Type\ContractChangeSign;
 
 /**
  * @group headless

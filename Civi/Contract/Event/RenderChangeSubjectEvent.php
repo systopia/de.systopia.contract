@@ -10,8 +10,8 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
-use Civi\Contract\ContractChange\ContractChangeInterface;
-use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
+use Civi\Contract\Change\ContractChangeInterface;
+use Civi\Contract\Change\SchedulableContractChangeInterface;
 use CRM_Contract_ExtensionUtil as E;
 use CRM_Contract_CustomData as CRM_Contract_CustomData;
 

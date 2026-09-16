@@ -12,9 +12,9 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
-use Civi\Contract\ContractChange\Types\ContractChangePause;
-use Civi\Contract\ContractChange\Types\ContractChangeResume;
+use Civi\Contract\Change\ContractChangeTypeContainer;
+use Civi\Contract\Change\Type\ContractChangePause;
+use Civi\Contract\Change\Type\ContractChangeResume;
 
 class CRM_Contract_Handler_ModificationConflicts {
 

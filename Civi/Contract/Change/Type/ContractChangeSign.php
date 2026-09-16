@@ -18,9 +18,9 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange\Types;
+namespace Civi\Contract\Change\Type;
 
-use Civi\Contract\ContractChange\AbstractContractChange;
+use Civi\Contract\Change\AbstractContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
 /**

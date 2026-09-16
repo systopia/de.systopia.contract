@@ -18,12 +18,12 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\Change\Types;
+namespace Civi\Contract\Change\Type;
 
 /**
  * @group headless
  *
- * @covers \Civi\Contract\ContractChange\Types\ContractChangeUpdate
+ * @covers \Civi\Contract\Change\Type\ContractChangeUpdate
  */
 class ContractChangeUpdateTest extends \CRM_Contract_ContractTestBase {
 

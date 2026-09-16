@@ -18,7 +18,7 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange;
+namespace Civi\Contract\Change;
 
 /**
  * Base class for schedulable contract changes.

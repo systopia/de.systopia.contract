@@ -21,8 +21,8 @@ declare(strict_types = 1);
 namespace Civi\Contract\EventSubscriber;
 
 use Civi\Api4\Membership;
-use Civi\Contract\ContractChange\ActionMenuAwareContractChangeTypeInterface;
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\ActionMenuAwareContractChangeTypeInterface;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 use Civi\Core\Event\GenericHookEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

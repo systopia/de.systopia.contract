@@ -10,8 +10,8 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
-use Civi\Contract\ContractChange\Types\ContractChangeUpdate;
+use Civi\Contract\Change\ContractChangeTypeContainer;
+use Civi\Contract\Change\Type\ContractChangeUpdate;
 
 /**
  * Bug reproduction and follow-up tests

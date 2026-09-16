@@ -18,50 +18,30 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange\Types;
+namespace Civi\Contract\Change\Type;
 
-use Civi\Contract\ContractChange\ActionMenuEntry;
+use Civi\Contract\Change\AbstractContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
-/**
- * "Revive Membership" change
- */
-class ContractChangeRevive extends AbstractContractChangeUpdate {
-
-  public static function getActionMenuEntry(): ActionMenuEntry {
-    return parent::getActionMenuEntry()
-      ->setIcon('fa-refresh')
-      ->setWeight(30);
-  }
-
-  public static function getActionName(): string {
-    return 'revive';
-  }
+class ContractChangeEndRelatedMembership extends AbstractContractChange {
 
   public static function getActivityTypeName(): string {
-    return 'Contract_Revived';
+    return 'Secondary_Membership_Ended';
   }
 
   public static function getActivityTypeIcon(): string {
-    return 'fa-play-circle-o';
-  }
-
-  public static function getStartStatusList(): array {
-    return ['Cancelled'];
+    return 'fa-person-circle-minus';
   }
 
   public static function getTitle(): string {
-    return E::ts('Revive Contract');
+    return E::ts('End Secondary Membership');
   }
 
   /**
    * @inheritDoc
    */
-  public function updateContract(array $updates): void {
-    // Revive does all the same things as Upgrade, except it also removes end_date and sets status
-    $updates['end_date'] = '';
-    $updates['status_id:name'] = 'Current';
-    parent::updateContract($updates);
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
+    return E::ts('Related membership ended');
   }
 
 }

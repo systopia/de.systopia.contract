@@ -18,30 +18,30 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange\Types;
+namespace Civi\Contract\Change\Type;
 
-use Civi\Contract\ContractChange\AbstractContractChange;
+use Civi\Contract\Change\AbstractContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
-class ContractChangeEndRelatedMembership extends AbstractContractChange {
+class ContractChangeAddRelatedMembership extends AbstractContractChange {
 
   public static function getActivityTypeName(): string {
-    return 'Secondary_Membership_Ended';
+    return 'Secondary_Membership_Created';
   }
 
   public static function getActivityTypeIcon(): string {
-    return 'fa-person-circle-minus';
+    return 'fa-person-circle-plus';
   }
 
   public static function getTitle(): string {
-    return E::ts('End Secondary Membership');
+    return E::ts('Create Secondary Membership');
   }
 
   /**
    * @inheritDoc
    */
   public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
-    return E::ts('Related membership ended');
+    return E::ts('New related membership');
   }
 
 }

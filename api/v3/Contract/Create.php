@@ -10,7 +10,7 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\Types\ContractChangeSign;
+use Civi\Contract\Change\Type\ContractChangeSign;
 use Civi\Contract\ContractManager;
 use CRM_Contract_ExtensionUtil as E;
 

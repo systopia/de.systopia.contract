@@ -18,30 +18,40 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange\Types;
+namespace Civi\Contract\Change\Type;
 
-use Civi\Contract\ContractChange\AbstractContractChange;
+use Civi\Contract\Change\ActionMenuEntry;
 use CRM_Contract_ExtensionUtil as E;
 
-class ContractChangeAddRelatedMembership extends AbstractContractChange {
+/**
+ * "Update Membership" change
+ */
+class ContractChangeUpdate extends AbstractContractChangeUpdate {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-pencil')
+      ->setWeight(0);
+  }
+
+  public static function getActionName(): string {
+    return 'update';
+  }
 
   public static function getActivityTypeName(): string {
-    return 'Secondary_Membership_Created';
+    return 'Contract_Updated';
   }
 
   public static function getActivityTypeIcon(): string {
-    return 'fa-person-circle-plus';
+    return 'fa-arrow-circle-o-up';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['New', 'Grace', 'Current'];
   }
 
   public static function getTitle(): string {
-    return E::ts('Create Secondary Membership');
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
-    return E::ts('New related membership');
+    return E::ts('Update Contract');
   }
 
 }

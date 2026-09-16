@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
-use Civi\Contract\ContractChange\Types\ContractChangeUpdate;
+use Civi\Contract\Change\Type\ContractChangeUpdate;
 use Civi\Contract\Support\AbstractSetupHeadless;
 
 /**

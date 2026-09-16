@@ -17,9 +17,9 @@ require_once 'contract.civix.php';
 use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
 use Civi\Contract\ContainerSpecs;
-use Civi\Contract\ContractChange\ContractChangeFactory;
-use Civi\Contract\ContractChange\ContractChangeInterface;
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\ContractChangeFactory;
+use Civi\Contract\Change\ContractChangeInterface;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 use Civi\Contract\ContractManager;
 use Civi\Contract\EventSubscriber\ContributionLinksSubscriber;
 use Civi\Contract\EventSubscriber\MembershipLinksSubscriber;
@@ -373,5 +373,5 @@ function contract_civicrm_permission(&$permissions) {
  */
 function contract_civicrm_scanClasses(array &$classes): void {
   // @phpstan-ignore parameterByRef.type
-  ClassScanner::scanFolders($classes, __DIR__, 'Civi/Contract/ContractChange/Types', '\\');
+  ClassScanner::scanFolders($classes, __DIR__, 'Civi/Contract/Change/Type', '\\');
 }
