@@ -64,7 +64,7 @@ final class MembershipLinksSubscriber implements EventSubscriberInterface {
    */
   private function addActions(string $statusName, array &$links): void {
     foreach ($this->changeTypeContainer->getClassesByActivityType() as $changeTypeClass) {
-      if ($changeTypeClass instanceof ActionMenuAwareContractChangeTypeInterface) {
+      if (is_a($changeTypeClass, ActionMenuAwareContractChangeTypeInterface::class, TRUE)) {
         if (in_array($statusName, $changeTypeClass::getStartStatusList(), TRUE)) {
           $menuEntry = $changeTypeClass::getActionMenuEntry();
           [$path, $query] = explode('?', str_replace('[id]', '%%id%%', $menuEntry->path), 2) + ['', ''];

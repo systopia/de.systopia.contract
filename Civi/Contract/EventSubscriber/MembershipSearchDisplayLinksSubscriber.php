@@ -174,7 +174,7 @@ class MembershipSearchDisplayLinksSubscriber implements EventSubscriberInterface
     $linksByWeight = [];
 
     foreach (ContractChangeTypeContainer::getInstance()->getClassesByActivityType() as $changeTypeClass) {
-      if ($changeTypeClass instanceof ActionMenuAwareContractChangeTypeInterface) {
+      if (is_a($changeTypeClass, ActionMenuAwareContractChangeTypeInterface::class, TRUE)) {
         if ([] !== array_intersect($statusNames, $changeTypeClass::getStartStatusList())) {
           $menuEntry = $changeTypeClass::getActionMenuEntry();
           $linksByWeight[$menuEntry->weight][] = [
