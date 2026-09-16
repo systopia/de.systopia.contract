@@ -11,8 +11,8 @@ declare(strict_types = 1);
 namespace Civi\Contract\Event;
 
 use Civi;
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
-use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
+use Civi\Contract\Change\ContractChangeTypeContainer;
+use Civi\Contract\Change\SchedulableContractChangeInterface;
 
 /**
  * Class DisplayChangeTitle
@@ -180,7 +180,7 @@ class DisplayChangeTitle extends AbstractConfigurationEvent {
   }
 
   /**
-   * @return class-string<\Civi\Contract\ContractChange\ContractChangeInterface>
+   * @return class-string<\Civi\Contract\Change\ContractChangeInterface>
    *
    * @throws \CRM_Core_Exception
    */

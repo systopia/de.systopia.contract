@@ -18,7 +18,7 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange;
+namespace Civi\Contract\Change;
 
 /**
  * Represents an entry for the membership actions menu.
