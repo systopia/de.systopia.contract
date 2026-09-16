@@ -300,293 +300,6 @@ parameters:
 			path: CRM/Contract/BankingLogic.php
 
 		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
-			count: 5
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^In method "CRM_Contract_Change\:\:derivePaymentData", caught "Exception" must be rethrown\. Either catch a more specific exception, add a "throw" clause in the "catch" block to propagate the exception or add a "// @ignoreException" comment\.$#'
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:labelValue\(\) has parameter \$field_name with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:labelValue\(\) has parameter \$value with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:labelValue\(\) should return string but returns mixed\.$#'
-			identifier: return.type
-			count: 4
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:lookupValue\(\) has parameter \$attribute with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:lookupValue\(\) has parameter \$entity with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:lookupValue\(\) has parameter \$query with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:resolveValue\(\) has parameter \$field_name with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:resolveValue\(\) has parameter \$value with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:resolveValue\(\) should return string but returns float\|int\|string\.$#'
-			identifier: return.type
-			count: 5
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Method CRM_Contract_Change\:\:resolveValue\(\) should return string but returns mixed\.$#'
-			identifier: return.type
-			count: 4
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Part \$contract\[''membership_payment\.membership_recurring_contribution''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: CRM/Contract/Change.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: CRM/Contract/Change/Cancel.php
-
-		-
-			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
-			identifier: booleanNot.exprNotBoolean
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Only booleans are allowed in a ternary operator condition, mixed given\.$#'
-			identifier: ternary.condNotBoolean
-			count: 2
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, mixed given\.$#'
-			identifier: if.condNotBoolean
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Parameter \#1 \$datetime of function strtotime expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 4
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Parameter \#2 \$timestamp of function date expects int\|null, int\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Part \$resume_date \(mixed\) of encapsed string cannot be cast to string\.$#'
-			identifier: encapsedStringPart.nonString
-			count: 1
-			path: CRM/Contract/Change/Pause.php
-
-		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
-			count: 4
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, string given\.$#'
-			identifier: if.condNotBoolean
-			count: 2
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, string\|null given\.$#'
-			identifier: if.condNotBoolean
-			count: 1
-			path: CRM/Contract/Change/Sign.php
-
-		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 2
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
-			identifier: empty.notAllowed
-			count: 5
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Identical\: Possible insane comparison between null and non\-empty\-string\.$#'
-			identifier: voku.Identical
-			count: 2
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Loose comparison via "\!\=" is not allowed\.$#'
-			identifier: notEqual.notAllowed
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:assignExistingRecurringContribution\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:assignExistingRecurringContribution\(\) has parameter \$contract_before with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:assignExistingRecurringContribution\(\) has parameter \$to with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$amount with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$contract with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$paymentInstrumentIdOrName with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createNonSepaRecurring\(\) has parameter \$payment_types with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has parameter \$contract with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has parameter \$paymentInstrumentId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:createSepaMandate\(\) has parameter \$payment_types with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:terminateSepaMandate\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Method CRM_Contract_Change_UpdateBase\:\:terminateSepaMandate\(\) has parameter \$contract with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Only booleans are allowed in a negated boolean, int given\.$#'
-			identifier: booleanNot.exprNotBoolean
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Only booleans are allowed in a ternary operator condition, int\<1, max\> given\.$#'
-			identifier: ternary.condNotBoolean
-			count: 2
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Parameter \#1 \$id of method CRM_Contract_Change_UpdateBase\:\:classifyPaymentInstrument\(\) expects int\|string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Parameter \#5 \$paymentOption of static method CRM_Contract_RecurringContribution\:\:createRecurringContribution\(\) expects string, int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Parameter \#7 \$frequencyInterval of static method CRM_Contract_RecurringContribution\:\:createRecurringContribution\(\) expects int, float\|int\<1, 12\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 2
-			path: CRM/Contract/Change/UpdateBase.php
-
-		-
 			message: '#^Call to function in_array\(\) requires parameter \#3 to be set\.$#'
 			identifier: function.strict
 			count: 1
@@ -2976,6 +2689,216 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: Civi/Contract/Api4/Action/Contract/ModifyFullAction.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 4
+			path: Civi/Contract/ContractChange/AbstractContractChange.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 4
+			path: Civi/Contract/ContractChange/AbstractContractChange.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 5
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Loose comparison via "\!\=" is not allowed\.$#'
+			identifier: notEqual.notAllowed
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:assignExistingRecurringContribution\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:assignExistingRecurringContribution\(\) has parameter \$contract_before with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:assignExistingRecurringContribution\(\) has parameter \$to with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createNonSepaRecurring\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createNonSepaRecurring\(\) has parameter \$amount with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createNonSepaRecurring\(\) has parameter \$contract with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createNonSepaRecurring\(\) has parameter \$paymentInstrumentIdOrName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createNonSepaRecurring\(\) has parameter \$payment_types with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createSepaMandate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createSepaMandate\(\) has parameter \$contract with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createSepaMandate\(\) has parameter \$paymentInstrumentId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:createSepaMandate\(\) has parameter \$payment_types with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:terminateSepaMandate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:terminateSepaMandate\(\) has parameter \$contract with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, int given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Only booleans are allowed in a ternary operator condition, int\<1, max\> given\.$#'
+			identifier: ternary.condNotBoolean
+			count: 2
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Parameter \#1 \$id of method Civi\\Contract\\ContractChange\\Types\\AbstractContractChangeUpdate\:\:classifyPaymentInstrument\(\) expects int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Parameter \#5 \$paymentOption of static method CRM_Contract_RecurringContribution\:\:createRecurringContribution\(\) expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Parameter \#7 \$frequencyInterval of static method CRM_Contract_RecurringContribution\:\:createRecurringContribution\(\) expects int, float\|int\<1, 12\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 2
+			path: Civi/Contract/ContractChange/Types/AbstractContractChangeUpdate.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: Civi/Contract/ContractChange/Types/ContractChangeCancel.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 1
+			path: Civi/Contract/ContractChange/Types/ContractChangePause.php
+
+		-
+			message: '#^Only booleans are allowed in a ternary operator condition, mixed given\.$#'
+			identifier: ternary.condNotBoolean
+			count: 2
+			path: Civi/Contract/ContractChange/Types/ContractChangePause.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, mixed given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: Civi/Contract/ContractChange/Types/ContractChangePause.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of function strtotime expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 4
+			path: Civi/Contract/ContractChange/Types/ContractChangePause.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function date expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Civi/Contract/ContractChange/Types/ContractChangePause.php
+
+		-
+			message: '#^Part \$resume_date \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: Civi/Contract/ContractChange/Types/ContractChangePause.php
+
+		-
+			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
+			identifier: empty.notAllowed
+			count: 4
+			path: Civi/Contract/ContractChange/Types/ContractChangeSign.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, string\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: Civi/Contract/ContractChange/Types/ContractChangeSign.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Civi\\Contract\\ContractChange\\AbstractContractChange\:\:labelValue\(\) expects bool\|float\|int\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: Civi/Contract/ContractChange/Types/ContractChangeSign.php
 
 		-
 			message: '#^Method Civi\\Contract\\Event\\AdjustContractReviewEvent\:\:getHiddenColumnIndices\(\) return type has no value type specified in iterable type array\.$#'

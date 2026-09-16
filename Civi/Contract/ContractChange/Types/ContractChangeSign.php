@@ -1,19 +1,32 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2019 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
 
+namespace Civi\Contract\ContractChange\Types;
+
+use Civi\Contract\ContractChange\AbstractContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "New Membership Signed" record
  */
-class CRM_Contract_Change_Sign extends CRM_Contract_Change {
+class ContractChangeSign extends AbstractContractChange {
 
   public static function getActivityTypeName(): string {
     return 'Contract_Signed';
@@ -53,7 +66,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
         $c['membership_payment.membership_frequency'],
         'membership_payment.membership_frequency'
       );
-      if ($freq) {
+      if ('' !== $freq) {
         $parts[] = $freq;
       }
     }
@@ -62,7 +75,7 @@ class CRM_Contract_Change_Sign extends CRM_Contract_Change {
     }
     if (!empty($c['membership_payment.payment_instrument'])) {
       $pi = $this->labelValue($c['membership_payment.payment_instrument'], 'membership_payment.payment_instrument');
-      if ($pi) {
+      if ('' !== $pi) {
         $parts[] = $pi;
       }
     }

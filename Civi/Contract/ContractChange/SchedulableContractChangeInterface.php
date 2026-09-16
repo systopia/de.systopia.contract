@@ -20,6 +20,10 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\ContractChange;
 
+/**
+ * Shouldn't be implemented. {@link AbstractSchedulableContractChange} should be
+ * extended instead.
+ */
 interface SchedulableContractChangeInterface extends ActionMenuAwareContractChangeTypeInterface {
 
   /**

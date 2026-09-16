@@ -1,13 +1,26 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2019 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
 
+namespace Civi\Contract\ContractChange\Types;
+
+use Civi\Contract\ContractChange\AbstractSchedulableContractChange;
 use Civi\Contract\ContractChange\ActionMenuEntry;
 use Civi\Contract\ContractChange\ContractChangeFactory;
 use CRM_Contract_ExtensionUtil as E;
@@ -15,7 +28,7 @@ use CRM_Contract_ExtensionUtil as E;
 /**
  * "Pause Membership" change
  */
-class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
+class ContractChangePause extends AbstractSchedulableContractChange {
 
   public static function getActionMenuEntry(): ActionMenuEntry {
     return parent::getActionMenuEntry()
@@ -88,7 +101,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
       if ($resume_date) {
         $contract = $this->getContract();
         $resume_change = ContractChangeFactory::getInstance()->create([
-          'activity_type_id:name' => CRM_Contract_Change_Resume::getActivityTypeName(),
+          'activity_type_id:name' => ContractChangeResume::getActivityTypeName(),
         ]);
         $resume_change->setParameter('activity_date_time', $resume_date);
         $resume_change->setParameter('contract_activity.contract_id', $this->getContractID());
@@ -104,9 +117,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
   }
 
   /**
-   * Apply the given change to the contract
-   *
-   * @throws Exception should anything go wrong in the execution
+   * @inheritDoc
    */
   public function execute(): void {
     $contract = $this->getContract(TRUE);
@@ -114,7 +125,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
     // pause the mandate
     $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
     if (NULL !== $payment_contract_id) {
-      CRM_Contract_SepaLogic::pauseSepaMandate($payment_contract_id);
+      \CRM_Contract_SepaLogic::pauseSepaMandate($payment_contract_id);
       $this->updateContract(['status_id:name' => 'Paused']);
     }
 
@@ -126,9 +137,7 @@ class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
   }
 
   /**
-   * Make sure that the data for this change is valid
-   *
-   * @throws Exception if the data is not valid
+   * @inheritDoc
    */
   public function verifyData(): void {
     parent::verifyData();
@@ -139,18 +148,6 @@ class CRM_Contract_Change_Pause extends CRM_Contract_SchedulableChange {
     if ($pause_date >= $resume_date) {
       throw new \RuntimeException(E::ts('Resume date cannot be before or on the same day as the pause.'));
     }
-  }
-
-  /**
-   * Check whether this change activity should actually be created
-   *
-   * CANCEL activities should not be created, if there is another one already there
-   *
-   * @throws Exception if the creation should be disallowed
-   */
-  public function shouldBeAccepted(): void {
-    // TODO: any restrictions?
-    parent::shouldBeAccepted();
   }
 
   /**

@@ -1,18 +1,29 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2019 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
+
+namespace Civi\Contract\ContractChange;
 
 use Civi\Api4\Activity;
 use Civi\Api4\ContributionRecur;
 use Civi\Api4\Membership;
 use Civi\Contract\Api4\Helper\FieldNameHelper;
-use Civi\Contract\ContractChange\ContractChangeInterface;
 use Civi\Contract\Event\RenderChangeSubjectEvent;
 
 /**
@@ -46,9 +57,7 @@ use Civi\Contract\Event\RenderChangeSubjectEvent;
  *   ...
  *  }
  */
-// phpcs:disable Generic.NamingConventions.AbstractClassNamePrefix.Missing
-abstract class CRM_Contract_Change implements ContractChangeInterface {
-// phpcs:enable
+abstract class AbstractContractChange implements ContractChangeInterface {
 
   /**
    * @phpstan-var changeT
@@ -112,7 +121,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
     }
 
     if (NULL === $contractId) {
-      throw new RuntimeException('Contract ID not fond');
+      throw new \RuntimeException('Contract ID not fond');
     }
 
     return (int) $contractId;
@@ -126,7 +135,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
     $contract = $this->getContract(TRUE);
 
     // propagate derived fields
-    foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
+    foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
       if (empty($this->data[$change_attribute])) {
         $this->data[$change_attribute] = $contract[$contract_attribute] ?? '';
       }
@@ -143,6 +152,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
    */
   public function getContract(bool $withPaymentData = FALSE): array {
     $contractId = $this->getContractID();
+    // @phpstan-ignore cast.int
     if ($this->contract === NULL || (int) $this->contract['id'] !== $contractId) {
       // (re)load contract
       try {
@@ -152,7 +162,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
           ->execute()
           ->single();
       }
-      catch (Exception $ex) {
+      catch (\Exception $ex) {
         throw new \RuntimeException("Contract [{$contractId}] not found!", $ex->getCode(), $ex);
       }
     }
@@ -174,7 +184,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
    * @param array<string, mixed> $contract contract data
    */
   public function derivePaymentData(array &$contract): void {
-    if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
+    if (isset($contract['membership_payment.membership_recurring_contribution'])) {
       // we have a recurring contribution!
       try {
         /**
@@ -205,12 +215,12 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
         ]);
         if (1 === $sepaMandateResult['count']) {
           $sepaMandate = $sepaMandateResult['values'][$sepaMandateResult['id']];
-          $contract['membership_payment.from_ba'] = CRM_Contract_BankingLogic::getOrCreateBankAccount(
+          $contract['membership_payment.from_ba'] = \CRM_Contract_BankingLogic::getOrCreateBankAccount(
             $sepaMandate['contact_id'],
             $sepaMandate['iban'],
             $sepaMandate['bic']
           );
-          $contract['membership_payment.to_ba']   = CRM_Contract_BankingLogic::getCreditorBankAccount();
+          $contract['membership_payment.to_ba']   = \CRM_Contract_BankingLogic::getCreditorBankAccount();
           $contract['membership_payment.from_name'] = $sepaMandate['account_holder'] ?? '';
 
         }
@@ -219,7 +229,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
           [
             $from_ba,
             $to_ba,
-          ] = CRM_Contract_BankingLogic::getAccountsFromRecurringContribution(
+          ] = \CRM_Contract_BankingLogic::getAccountsFromRecurringContribution(
             $contributionRecur['id']
           );
           $contract['membership_payment.from_ba'] = $from_ba;
@@ -234,19 +244,19 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
 
         }
       }
-      catch (Exception $ex) {
-        Civi::log()->debug(
+      catch (\Exception $ex) {
+        \Civi::log()->error(
+          // @phpstan-ignore encapsedStringPart.nonString
           "Couldn't load recurring contribution [{$contract['membership_payment.membership_recurring_contribution']}]"
         );
+
+        throw $ex;
       }
     }
   }
 
   /**
-   * Update the contract with the given data
-   *
-   * @param $updates array changes: attribute->value
-   * @throws Exception
+   * @inheritDoc
    */
   public function updateContract(array $updates): void {
     // make sure the ID is there
@@ -297,9 +307,9 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
    * @param array{frequency_interval: int, frequency_unit: "year"|"month"|null, ...} $contributionRecur
    *    recurring contribution data
    * @return int payment frequency (in months)
-   * @throws Exception if the unit is not recognised ('month' or 'year')
+   * @throws \RuntimeException if the unit is not recognised ('month' or 'year')
    */
-  protected function calcPaymentFrequency(array $contributionRecur) {
+  protected function calcPaymentFrequency(array $contributionRecur): int {
     if (empty($contributionRecur['frequency_interval'])) {
       // unable to calculate
       return 0;
@@ -334,7 +344,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
    */
   public function getParameter(string $key, mixed $default = NULL): mixed {
     return $this->data[$key]
-      ?? CRM_Utils_Request::retrieve($key, 'String')
+      ?? \CRM_Utils_Request::retrieve($key, 'String')
       ?? $default;
   }
 
@@ -363,7 +373,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
 
     // mitigation: there seems to be cases where the boolean value will not be written to ch_defer_payment_start
     // todo: extract table/column name from specs? Should be identical...
-    CRM_Core_DAO::singleValueQuery(
+    \CRM_Core_DAO::singleValueQuery(
         'UPDATE civicrm_value_contract_updates SET ch_defer_payment_start = %1 WHERE entity_id = %2',
         [
           1 => [$mitigation_ch_defer_payment_start_value, 'Int'],
@@ -396,51 +406,50 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
   /**
    * Cached query for API lookups
    *
-   * @param $entity    string entity
-   * @param $query     array query options
-   * @param $attribute string attribute having the desired value
-   * @return mixed value
+   * @param string $entity entity
+   * @param string $attribute attribute having the desired value
+   * @param array<string, mixed> $query query options
    */
-  protected function lookupValue($entity, $attribute, $query) {
-    return CRM_Contract_Utils::lookupValue($entity, $attribute, $query);
+  protected function lookupValue(string $entity, string $attribute, array $query): mixed {
+    return \CRM_Contract_Utils::lookupValue($entity, $attribute, $query);
   }
 
   /**
    * Provide a universal function to label a internal ID with the corresponding label where applicable
    *
-   * @param $value       string current value
-   * @param $field_name  string field this value is from
-   * @return string      string labelled value
+   * @param scalar|null $value current value
+   * @param string $field_name field this value is from
+   *
+   * @return string string labelled value
    */
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
-  public function labelValue($value, $field_name) {
-  // phpcs:enable
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+  protected function labelValue(string|int|float|bool|null $value, string $field_name): string {
     switch ($field_name) {
       case 'membership_type_id':
       case 'contract_updates.ch_membership_type':
         if (is_numeric($value)) {
-          return $this->lookupValue('MembershipType', 'name', ['id' => $value]);
+          return (string) $this->lookupValue('MembershipType', 'name', ['id' => $value]);
         }
         else {
-          return $value;
+          return (string) $value;
         }
 
       case 'membership_payment.membership_annual':
         /** @var \Civi\Core\Format $format */
-        $format = Civi::service('format');
-        return $format->money($value);
+        $format = \Civi::service('format');
+        return $format->money((string) $value);
 
       case 'membership_payment.membership_frequency':
       case 'contract_updates.ch_frequency':
         if (is_numeric($value)) {
-          return $this->lookupValue(
+          return (string) $this->lookupValue(
             'OptionValue',
             'label',
             ['value' => $value, 'option_group_id' => 'payment_frequency']
           );
         }
         else {
-          return $value;
+          return (string) $value;
         }
 
       case 'membership_payment.from_ba':
@@ -448,52 +457,51 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
       case 'membership_payment.to_ba':
       case 'contract_updates.ch_to_ba':
         if (is_numeric($value)) {
-          return CRM_Contract_BankingLogic::getIBANforBankAccount($value);
+          return \CRM_Contract_BankingLogic::getIBANforBankAccount($value);
         }
         else {
-          return $value;
+          return (string) $value;
         }
 
       case 'membership_payment.payment_instrument':
       case 'contract_updates.ch_payment_instrument':
         if (is_numeric($value)) {
-          return $this->lookupValue(
+          return (string) $this->lookupValue(
             'OptionValue',
             'label',
             ['value' => $value, 'option_group_id' => 'payment_instrument']
           );
         }
         else {
-          return $value;
+          return (string) $value;
         }
 
       case 'membership_cancellation.membership_cancel_reason':
       case 'contract_cancellation.contact_history_cancel_reason':
         if (is_numeric($value)) {
-          return $this->lookupValue(
+          return (string) $this->lookupValue(
             'OptionValue',
             'label',
             ['value' => $value, 'option_group_id' => 'contract_cancel_reason']
           );
         }
         else {
-          return $value;
+          return (string) $value;
         }
 
       default:
-        return $value;
+        return (string) $value;
     }
   }
 
   /**
    * Provide a universal function to resolve the identity of a label
    *
-   * @param $value       string current label
-   * @param $field_name  string field this value is from
-   * @return string      string labelled value
+   * @param string|int $value current label
+   * @param string $field_name field this value is from
    */
   // phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
-  protected function resolveValue($value, $field_name) {
+  protected function resolveValue(string|int $value, string $field_name): int|string|null {
   // phpcs:enable
     switch ($field_name) {
       case 'membership_type_id':
@@ -502,6 +510,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
           return $value;
         }
         else {
+          /** @var string|null */
           return $this->lookupValue('MembershipType', 'id', ['name' => $value]);
         }
 
@@ -511,6 +520,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
           return $value;
         }
         else {
+          /** @var string|null */
           return $this->lookupValue(
             'OptionValue',
             'value',
@@ -535,6 +545,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
           return $value;
         }
         else {
+          /** @var string|null */
           return $this->lookupValue(
             'OptionValue',
             'value',
@@ -548,6 +559,7 @@ abstract class CRM_Contract_Change implements ContractChangeInterface {
           return $value;
         }
         else {
+          /** @var string|null */
           return $this->lookupValue(
             'OptionValue',
             'value',

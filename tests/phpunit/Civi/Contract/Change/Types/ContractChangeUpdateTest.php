@@ -2,27 +2,30 @@
 /*
  * Copyright (C) 2026 SYSTOPIA GmbH
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as published by
- *  the Free Software Foundation in version 3.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 declare(strict_types = 1);
 
+namespace Civi\Contract\Change\Types;
+
 /**
  * @group headless
  *
- * @covers \CRM_Contract_Change_Update
+ * @covers \Civi\Contract\ContractChange\Types\ContractChangeUpdate
  */
-class CRM_Contract_Change_UpdateTest extends CRM_Contract_ContractTestBase {
+class ContractChangeUpdateTest extends \CRM_Contract_ContractTestBase {
 
   public function testExecute_WithIncreaseAcrossThousands_StoresCorrectDiff(): void {
     $contract = $this->createNewContract(['is_sepa' => 1, 'amount' => '96.00']);
@@ -43,7 +46,7 @@ class CRM_Contract_Change_UpdateTest extends CRM_Contract_ContractTestBase {
   private function updateAnnualAmount(int $contractId, string $annual): float {
     $this->modifyContract($contractId, 'update', 'tomorrow', [
       'membership_payment.membership_annual' => $annual,
-      'contract_updates.ch_payment_instrument' => CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR'),
+      'contract_updates.ch_payment_instrument' => \CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR'),
     ]);
     $this->runContractEngine($contractId, '+2 days');
 

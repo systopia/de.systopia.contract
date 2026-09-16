@@ -20,6 +20,10 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\ContractChange;
 
+/**
+ * Shouldn't be implemented. {@link AbstractContractChange} should be extended
+ * instead.
+ */
 interface ContractChangeInterface {
 
   public static function getActivityTypeName(): string;

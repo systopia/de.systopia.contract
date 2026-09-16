@@ -11,6 +11,7 @@
 declare(strict_types = 1);
 
 use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\ContractChange\Types\ContractChangeUpdate;
 
 /**
  * Bug reproduction and follow-up tests
@@ -208,7 +209,7 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
       'membership_payment.membership_annual' => '480.00',
     ]);
     $updateChangeType = ContractChangeTypeContainer::getInstance()
-      ->getActivityTypeId(CRM_Contract_Change_Update::getActivityTypeName());
+      ->getActivityTypeId(ContractChangeUpdate::getActivityTypeName());
     $changeActivity = $this->getLastChangeActivity($contract['id'], [$updateChangeType]);
 
     // reload contract

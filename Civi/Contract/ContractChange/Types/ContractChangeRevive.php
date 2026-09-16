@@ -1,12 +1,24 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2019 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
+
+namespace Civi\Contract\ContractChange\Types;
 
 use Civi\Contract\ContractChange\ActionMenuEntry;
 use CRM_Contract_ExtensionUtil as E;
@@ -14,7 +26,7 @@ use CRM_Contract_ExtensionUtil as E;
 /**
  * "Revive Membership" change
  */
-class CRM_Contract_Change_Revive extends CRM_Contract_Change_UpdateBase {
+class ContractChangeRevive extends AbstractContractChangeUpdate {
 
   public static function getActionMenuEntry(): ActionMenuEntry {
     return parent::getActionMenuEntry()

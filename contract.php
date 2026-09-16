@@ -373,5 +373,5 @@ function contract_civicrm_permission(&$permissions) {
  */
 function contract_civicrm_scanClasses(array &$classes): void {
   // @phpstan-ignore parameterByRef.type
-  ClassScanner::scanFolders($classes, __DIR__, 'CRM/Contract/Change', '_');
+  ClassScanner::scanFolders($classes, __DIR__, 'Civi/Contract/ContractChange/Types', '\\');
 }
