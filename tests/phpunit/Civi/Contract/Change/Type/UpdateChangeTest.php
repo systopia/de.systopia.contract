@@ -23,9 +23,9 @@ namespace Civi\Contract\Change\Type;
 /**
  * @group headless
  *
- * @covers \Civi\Contract\Change\Type\ContractChangeUpdate
+ * @covers \Civi\Contract\Change\Type\UpdateChange
  */
-class ContractChangeUpdateTest extends \CRM_Contract_ContractTestBase {
+class UpdateChangeTest extends \CRM_Contract_ContractTestBase {
 
   public function testExecute_WithIncreaseAcrossThousands_StoresCorrectDiff(): void {
     $contract = $this->createNewContract(['is_sepa' => 1, 'amount' => '96.00']);

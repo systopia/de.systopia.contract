@@ -25,7 +25,7 @@ use Civi\Contract\Change\AbstractContractChange;
 use Civi\Contract\Change\AbstractSchedulableContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
-abstract class AbstractContractChangeUpdate extends AbstractSchedulableContractChange {
+abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
 
   /**
    * @inheritDoc

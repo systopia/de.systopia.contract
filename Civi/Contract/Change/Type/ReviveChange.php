@@ -20,28 +20,48 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Change\Type;
 
-use Civi\Contract\Change\AbstractContractChange;
+use Civi\Contract\Change\ActionMenuEntry;
 use CRM_Contract_ExtensionUtil as E;
 
-class ContractChangeAddRelatedMembership extends AbstractContractChange {
+/**
+ * "Revive Membership" change
+ */
+class ReviveChange extends AbstractUpdateChange {
+
+  public static function getActionMenuEntry(): ActionMenuEntry {
+    return parent::getActionMenuEntry()
+      ->setIcon('fa-refresh')
+      ->setWeight(30);
+  }
+
+  public static function getActionName(): string {
+    return 'revive';
+  }
 
   public static function getActivityTypeName(): string {
-    return 'Secondary_Membership_Created';
+    return 'Contract_Revived';
   }
 
   public static function getActivityTypeIcon(): string {
-    return 'fa-person-circle-plus';
+    return 'fa-play-circle-o';
+  }
+
+  public static function getStartStatusList(): array {
+    return ['Cancelled'];
   }
 
   public static function getTitle(): string {
-    return E::ts('Create Secondary Membership');
+    return E::ts('Revive Contract');
   }
 
   /**
    * @inheritDoc
    */
-  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
-    return E::ts('New related membership');
+  public function updateContract(array $updates): void {
+    // Revive does all the same things as Upgrade, except it also removes end_date and sets status
+    $updates['end_date'] = '';
+    $updates['status_id:name'] = 'Current';
+    parent::updateContract($updates);
   }
 
 }

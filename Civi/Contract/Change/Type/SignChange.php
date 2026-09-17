@@ -26,7 +26,7 @@ use CRM_Contract_ExtensionUtil as E;
 /**
  * "New Membership Signed" record
  */
-class ContractChangeSign extends AbstractContractChange {
+class SignChange extends AbstractContractChange {
 
   public static function getActivityTypeName(): string {
     return 'Contract_Signed';

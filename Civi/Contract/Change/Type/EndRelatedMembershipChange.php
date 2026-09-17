@@ -23,7 +23,7 @@ namespace Civi\Contract\Change\Type;
 use Civi\Contract\Change\AbstractContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
-class ContractChangeEndRelatedMembership extends AbstractContractChange {
+class EndRelatedMembershipChange extends AbstractContractChange {
 
   public static function getActivityTypeName(): string {
     return 'Secondary_Membership_Ended';

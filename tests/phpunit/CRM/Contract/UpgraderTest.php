@@ -11,7 +11,7 @@
 declare(strict_types = 1);
 
 use Civi\Api4\Activity;
-use Civi\Contract\Change\Type\ContractChangeSign;
+use Civi\Contract\Change\Type\SignChange;
 
 /**
  * @group headless
@@ -70,7 +70,7 @@ class CRM_Contract_UpgraderTest extends CRM_Contract_ContractTestBase {
 
   private function createUnmigratedContractActivity(int $sourceRecordId): int {
     $activity = Activity::create(FALSE)
-      ->addValue('activity_type_id:name', ContractChangeSign::getActivityTypeName())
+      ->addValue('activity_type_id:name', SignChange::getActivityTypeName())
       ->addValue('source_record_id', $sourceRecordId)
       ->addValue('source_contact_id', $this->createContactWithRandomEmail()['id'])
       ->addValue('subject', 'Upgrader test activity')

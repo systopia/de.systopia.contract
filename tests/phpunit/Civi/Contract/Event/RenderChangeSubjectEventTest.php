@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
-use Civi\Contract\Change\Type\ContractChangeUpdate;
+use Civi\Contract\Change\Type\UpdateChange;
 use Civi\Contract\Support\AbstractSetupHeadless;
 
 /**
@@ -15,7 +15,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
 
   public function testGetMembershipIncreaseAmount_WithFloatValues_CalculatesDiff(): void {
     $event = new RenderChangeSubjectEvent(
-      new ContractChangeUpdate([]),
+      new UpdateChange([]),
       ['membership_payment.membership_annual' => 77379.0],
       ['membership_payment.membership_annual' => 77500.0]
     );
@@ -25,7 +25,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
 
   public function testGetMembershipIncreaseAmount_WithFloatValues_CalculatesReduction(): void {
     $event = new RenderChangeSubjectEvent(
-      new ContractChangeUpdate([]),
+      new UpdateChange([]),
       ['membership_payment.membership_annual' => 120.0],
       ['membership_payment.membership_annual' => 60.0]
     );
@@ -35,7 +35,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
 
   public function testGetMembershipIncreaseAmount_WithFormattedStrings_StripsThousandSeparator(): void {
     $event = new RenderChangeSubjectEvent(
-      new ContractChangeUpdate([]),
+      new UpdateChange([]),
       ['membership_payment.membership_annual' => '1.200,00'],
       ['membership_payment.membership_annual' => '1.500,00']
     );
@@ -44,7 +44,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
   }
 
   public function testGetMembershipIncreaseAmount_WithoutContractData_ReturnsZero(): void {
-    $event = new RenderChangeSubjectEvent(new ContractChangeUpdate([]), [], []);
+    $event = new RenderChangeSubjectEvent(new UpdateChange([]), [], []);
 
     self::assertEqualsWithDelta(0.0, $event->getMembershipIncreaseAmount(), 0.001);
   }

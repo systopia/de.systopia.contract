@@ -23,8 +23,8 @@ use Civi\Api4\Membership;
 use Civi\Contract\Change\ContractChangeFactory;
 use Civi\Contract\Change\ContractChangeInterface;
 use Civi\Contract\Change\SchedulableContractChangeInterface;
-use Civi\Contract\Change\Type\ContractChangeAddRelatedMembership;
-use Civi\Contract\Change\Type\ContractChangeEndRelatedMembership;
+use Civi\Contract\Change\Type\AddRelatedMembershipChange;
+use Civi\Contract\Change\Type\EndRelatedMembershipChange;
 
 /**
  * @phpstan-import-type changeT from \Civi\Contract\Change\AbstractContractChange
@@ -93,7 +93,7 @@ class ContractManager {
     $this->createContractChange(
       $contract->getMembershipId(),
       [
-        'activity_type_id:name' => ContractChangeAddRelatedMembership::getActivityTypeName(),
+        'activity_type_id:name' => AddRelatedMembershipChange::getActivityTypeName(),
         'activity_date_time' => $startDate->format('Y-m-d H:i:s'),
       ]
     );
@@ -112,7 +112,7 @@ class ContractManager {
     $this->createContractChange(
       $contract->getMembershipId(),
       [
-        'activity_type_id:name' => ContractChangeEndRelatedMembership::getActivityTypeName(),
+        'activity_type_id:name' => EndRelatedMembershipChange::getActivityTypeName(),
         'activity_date_time' => $endDate->format('Y-m-d H:i:s'),
       ]
     );

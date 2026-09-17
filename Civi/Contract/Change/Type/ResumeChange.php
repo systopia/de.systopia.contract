@@ -20,26 +20,27 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Change\Type;
 
+use Civi\Contract\Change\AbstractSchedulableContractChange;
 use Civi\Contract\Change\ActionMenuEntry;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
- * "Revive Membership" change
+ * "Resume Membership" change
  */
-class ContractChangeRevive extends AbstractContractChangeUpdate {
+class ResumeChange extends AbstractSchedulableContractChange {
 
   public static function getActionMenuEntry(): ActionMenuEntry {
     return parent::getActionMenuEntry()
-      ->setIcon('fa-refresh')
-      ->setWeight(30);
+      ->setIcon('fa-play')
+      ->setWeight(20);
   }
 
   public static function getActionName(): string {
-    return 'revive';
+    return 'resume';
   }
 
   public static function getActivityTypeName(): string {
-    return 'Contract_Revived';
+    return 'Contract_Resumed';
   }
 
   public static function getActivityTypeIcon(): string {
@@ -47,21 +48,50 @@ class ContractChangeRevive extends AbstractContractChangeUpdate {
   }
 
   public static function getStartStatusList(): array {
-    return ['Cancelled'];
+    return ['Paused'];
   }
 
   public static function getTitle(): string {
-    return E::ts('Revive Contract');
+    return E::ts('Resume Contract');
+  }
+
+  /**
+   * Get a list of required fields for this type
+   *
+   * @phpstan-return list<string>
+   */
+  public function getRequiredFields(): array {
+    return [];
   }
 
   /**
    * @inheritDoc
    */
-  public function updateContract(array $updates): void {
-    // Revive does all the same things as Upgrade, except it also removes end_date and sets status
-    $updates['end_date'] = '';
-    $updates['status_id:name'] = 'Current';
-    parent::updateContract($updates);
+  public function execute(): void {
+    $contract = $this->getContract(TRUE);
+
+    // pause the mandate
+    $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
+    if (NULL !== $payment_contract_id) {
+      \CRM_Contract_SepaLogic::resumeSepaMandate($payment_contract_id);
+      $this->updateContract(['status_id:name' => 'Current']);
+    }
+
+    // update change activity
+    $contract_after = $this->getContract(TRUE);
+    $this->setParameter('subject', $this->getSubject($contract_after, $contract));
+    $this->setStatus('Completed');
+    $this->save();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
+    if ($this->isNew()) {
+      return E::ts('Resume contract');
+    }
+    return E::ts('Contract resumed');
   }
 
 }

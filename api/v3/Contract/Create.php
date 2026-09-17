@@ -10,7 +10,7 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\Change\Type\ContractChangeSign;
+use Civi\Contract\Change\Type\SignChange;
 use Civi\Contract\ContractManager;
 use CRM_Contract_ExtensionUtil as E;
 
@@ -62,7 +62,7 @@ function civicrm_api3_Contract_create($params) {
   }
 
   // create 'sign' activity
-  $params['activity_type_id:name'] = ContractChangeSign::getActivityTypeName();
+  $params['activity_type_id:name'] = SignChange::getActivityTypeName();
   $contractManager = ContractManager::getInstance();
   $change = $contractManager->createContractChange(
     (int) $membership['id'],

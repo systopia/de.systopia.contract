@@ -26,7 +26,7 @@ use CRM_Contract_ExtensionUtil as E;
 /**
  * "Update Membership" change
  */
-class ContractChangeUpdate extends AbstractContractChangeUpdate {
+class UpdateChange extends AbstractUpdateChange {
 
   public static function getActionMenuEntry(): ActionMenuEntry {
     return parent::getActionMenuEntry()

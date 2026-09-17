@@ -28,7 +28,7 @@ use CRM_Contract_ExtensionUtil as E;
 /**
  * "Pause Membership" change
  */
-class ContractChangePause extends AbstractSchedulableContractChange {
+class PauseChange extends AbstractSchedulableContractChange {
 
   public static function getActionMenuEntry(): ActionMenuEntry {
     return parent::getActionMenuEntry()
@@ -101,7 +101,7 @@ class ContractChangePause extends AbstractSchedulableContractChange {
       if ($resume_date) {
         $contract = $this->getContract();
         $resume_change = ContractChangeFactory::getInstance()->create([
-          'activity_type_id:name' => ContractChangeResume::getActivityTypeName(),
+          'activity_type_id:name' => ResumeChange::getActivityTypeName(),
         ]);
         $resume_change->setParameter('activity_date_time', $resume_date);
         $resume_change->setParameter('contract_activity.contract_id', $this->getContractID());

@@ -30,7 +30,7 @@ use CRM_Contract_ExtensionUtil as E;
 /**
  * "Cancel Membership" change
  */
-class ContractChangeCancel extends AbstractSchedulableContractChange {
+class CancelChange extends AbstractSchedulableContractChange {
 
   private const MEMBERSHIP_CANCEL_REASON = 'membership_cancellation.membership_cancel_reason';
   private const MEMBERSHIP_CANCEL_DATE   = 'membership_cancellation.membership_cancel_date';
