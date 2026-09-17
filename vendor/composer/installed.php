@@ -1,26 +1,22 @@
 <?php return array(
     'root' => array(
         'name' => 'systopia/de.systopia.contract',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => 'e8cb9577860a75b33ddb161bd5fbb1a34deae29a',
+        'pretty_version' => '2.0.x-dev',
+        'version' => '2.0.9999999.9999999-dev',
+        'reference' => '3b897cef29c85d757eba24263efe5e17c8bb3b00',
         'type' => 'civicrm-ext',
         'install_path' => __DIR__ . '/../../',
-        'aliases' => array(
-            0 => '2.1.x-dev',
-        ),
+        'aliases' => array(),
         'dev' => false,
     ),
     'versions' => array(
         'systopia/de.systopia.contract' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'e8cb9577860a75b33ddb161bd5fbb1a34deae29a',
+            'pretty_version' => '2.0.x-dev',
+            'version' => '2.0.9999999.9999999-dev',
+            'reference' => '3b897cef29c85d757eba24263efe5e17c8bb3b00',
             'type' => 'civicrm-ext',
             'install_path' => __DIR__ . '/../../',
-            'aliases' => array(
-                0 => '2.1.x-dev',
-            ),
+            'aliases' => array(),
             'dev_requirement' => false,
         ),
     ),
