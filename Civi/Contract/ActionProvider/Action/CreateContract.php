@@ -407,8 +407,8 @@ class CreateContract extends AbstractContractAction {
       $mandateData['start_date'] = date('YmdHis', $earliestStartDate);
     }
 
-    // if not set, calculate the closest cycle day
-    if (!isset($mandateData['cycle_day']) || '' === $mandateData['cycle_day']) {
+    // If not set to a specific day, calculate the closest cycle day.
+    if (!is_numeric($mandateData['cycle_day'] ?? NULL) || 0 === (int) $mandateData['cycle_day']) {
       $mandateData['cycle_day'] = static::calculateSoonestCycleDay($mandateData);
     }
 
