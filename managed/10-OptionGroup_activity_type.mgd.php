@@ -17,7 +17,7 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 
 $activityTypes = [];
 foreach (ContractChangeTypeContainer::getInstance()->getClassesByActivityType() as $class) {

@@ -18,7 +18,7 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange;
+namespace Civi\Contract\Change;
 
 use Civi\Api4\OptionValue;
 
@@ -127,7 +127,7 @@ final class ContractChangeTypeContainer {
   }
 
   /**
-   * @return array<string, class-string<\Civi\Contract\ContractChange\ContractChangeInterface>>
+   * @return array<string, class-string<\Civi\Contract\Change\ContractChangeInterface>>
    */
   public function getClassesByActivityType(): array {
     return $this->classesByActivityType;

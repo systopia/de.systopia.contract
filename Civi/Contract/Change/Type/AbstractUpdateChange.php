@@ -1,18 +1,31 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2019 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
 
+namespace Civi\Contract\Change\Type;
+
 use Civi\Api4\ContributionRecur;
+use Civi\Contract\Change\AbstractContractChange;
+use Civi\Contract\Change\AbstractSchedulableContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
-// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing
-abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableChange {
+abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
 
   /**
    * @inheritDoc
@@ -30,7 +43,7 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
       $contract_after_execution = $contract;
 
       // copy submitted changes to change activity
-      foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
+      foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
         if (!empty($this->data[$contract_attribute])) {
           $this->data[$change_attribute] = $this->data[$contract_attribute];
           $contract_after_execution[$contract_attribute] = $this->data[$contract_attribute] ?? NULL;
@@ -183,7 +196,7 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
       : $from;
 
     if ($hasExplicitPaymentInstrumentChange) {
-      $payment_types = CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
+      $payment_types = \CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
       $fromType = $this->classifyPaymentInstrument($from, $payment_types);
       $toType   = $this->classifyPaymentInstrument($to, $payment_types);
 
@@ -204,15 +217,15 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
     $this->updateContract($contract_update);
 
     $contract_after = $this->getContract();
-    foreach (CRM_Contract_Change::FIELD_MAPPING_CHANGE_CONTRACT as $membership_field => $change_field) {
+    foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $membership_field => $change_field) {
       if (isset($contract_after[$membership_field])) {
         $this->setParameter($change_field, $contract_after[$membership_field]);
       }
     }
     $this->setParameter(
       'contract_updates.ch_annual_diff',
-      (float) CRM_Contract_SepaLogic::formatMoney($contract_after['membership_payment.membership_annual'] ?? 0)
-      - (float) CRM_Contract_SepaLogic::formatMoney($contract_before['membership_payment.membership_annual'] ?? 0)
+      (float) \CRM_Contract_SepaLogic::formatMoney($contract_after['membership_payment.membership_annual'] ?? 0)
+      - (float) \CRM_Contract_SepaLogic::formatMoney($contract_before['membership_payment.membership_annual'] ?? 0)
     );
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
     $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name'] ?? '');
@@ -232,7 +245,7 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
       case $payment_types['EFT']:
         return 'non-SEPA';
 
-      case isset($payment_types['None']) ? $payment_types['None'] : '9':
+      case $payment_types['None'] ?? '9':
       case '9':
         return 'None';
 
@@ -243,7 +256,7 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
 
   private function terminateSepaMandate($contract) {
     if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
-      CRM_Contract_SepaLogic::terminateSepaMandate($contract['membership_payment.membership_recurring_contribution']);
+      \CRM_Contract_SepaLogic::terminateSepaMandate($contract['membership_payment.membership_recurring_contribution']);
     }
   }
 
@@ -257,13 +270,13 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
     if (!empty($contract['membership_payment.membership_recurring_contribution'])) {
       ContributionRecur::cancelSubscription(FALSE)
         ->addWhere('id', '=', $contract['membership_payment.membership_recurring_contribution'])
-        ->addWhere('contribution_status_id:name', '!=', 'Cancelled',)
+        ->addWhere('contribution_status_id:name', '!=', 'Cancelled')
         ->execute();
     }
   }
 
   private function createSepaMandate($contract, $paymentInstrumentId, $payment_types) {
-    return CRM_Contract_SepaLogic::updateSepaMandate(
+    return \CRM_Contract_SepaLogic::updateSepaMandate(
       $this->getContractID(),
       $contract,
       $this->data,
@@ -295,10 +308,10 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
         ?? $this->data['membership_payment.membership_annual']
         ?? $contract['membership_payment.membership_annual']
         ?? 0;
-      $annual = CRM_Contract_SepaLogic::formatMoney($annual);
+      $annual = \CRM_Contract_SepaLogic::formatMoney($annual);
       $amount = $freq ? (float) $annual / $freq : 0;
     }
-    $amount = CRM_Contract_SepaLogic::formatMoney($amount);
+    $amount = \CRM_Contract_SepaLogic::formatMoney($amount);
 
     $cycleDay = (int) (
       $this->getParameter('contract_updates.ch_cycle_day')
@@ -307,7 +320,7 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
       ?? 1
     );
     if ($cycleDay < 1 || $cycleDay > 30) {
-      $cycleDay = CRM_Contract_SepaLogic::nextCycleDay();
+      $cycleDay = \CRM_Contract_SepaLogic::nextCycleDay();
     }
 
     $accountHolder = $this->getParameter('contract_updates.ch_from_name')
@@ -322,7 +335,7 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
 
     $interval = $freq ? 12 / $freq : 0;
 
-    return CRM_Contract_RecurringContribution::createRecurringContribution(
+    return \CRM_Contract_RecurringContribution::createRecurringContribution(
       (int) $contract['contact_id'],
       (string) $amount,
       date('Y-m-d'),
@@ -367,7 +380,7 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
     $this->setParameter('contract_updates.ch_frequency', $this->calcPaymentFrequency($rc));
     $this->setParameter('contract_updates.ch_cycle_day', $rc['cycle_day'] ?? 0);
 
-    CRM_Contract_SepaLogic::setContractPaymentLink($contract_before['id'], $rcId);
+    \CRM_Contract_SepaLogic::setContractPaymentLink($contract_before['id'], $rcId);
 
     return NULL;
   }
@@ -380,9 +393,6 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
       return E::ts('Update contract scheduled');
     }
 
-    $before = (array) ($contractBefore ?? []);
-    $after  = (array) $contractAfter;
-
     $map = [
       'membership_type_id'                      => E::ts('Type'),
       'membership_payment.membership_annual'    => E::ts('Annual amount'),
@@ -394,15 +404,17 @@ abstract class CRM_Contract_Change_UpdateBase extends CRM_Contract_SchedulableCh
 
     $changes = [];
     foreach ($map as $field => $label) {
-      $rawBefore = $before[$field] ?? NULL;
-      $rawAfter  = $after[$field] ?? NULL;
+      /** @var scalar|null $rawBefore */
+      $rawBefore = $contractBefore[$field] ?? NULL;
+      /** @var scalar|null $rawAfter */
+      $rawAfter  = $contractAfter[$field] ?? NULL;
       $valBefore = $this->labelValue($rawBefore, $field);
-      $valAfter  = $this->labelValue($rawAfter, $field);
+      $valAfter = $this->labelValue($rawAfter, $field);
       if ($valBefore !== $valAfter) {
-        if ($valBefore === '' || $valBefore === NULL) {
+        if ($valBefore === '') {
           $changes[] = "{$label}: {$valAfter}";
         }
-        elseif ($valAfter === '' || $valAfter === NULL) {
+        elseif ($valAfter === '') {
           $changes[] = "{$label}: {$valBefore} → " . E::ts('none');
         }
         else {

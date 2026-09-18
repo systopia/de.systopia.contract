@@ -1,23 +1,36 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2019 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
 
+namespace Civi\Contract\Change\Type;
+
 use Civi\Api4\Activity;
 use Civi\Api4\MembershipStatus;
-use Civi\Contract\ContractChange\ActionMenuEntry;
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\AbstractSchedulableContractChange;
+use Civi\Contract\Change\ActionMenuEntry;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Cancel Membership" change
  */
-class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
+class CancelChange extends AbstractSchedulableContractChange {
 
   private const MEMBERSHIP_CANCEL_REASON = 'membership_cancellation.membership_cancel_reason';
   private const MEMBERSHIP_CANCEL_DATE   = 'membership_cancellation.membership_cancel_date';
@@ -81,9 +94,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
   }
 
   /**
-   * Apply the given change to the contract
-   *
-   * @throws Exception should anything go wrong in the execution
+   * @inheritDoc
    */
   public function execute(): void {
     $contract = $this->getContract();
@@ -101,7 +112,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
     $this->updateContract($contract_update);
 
     // also: cancel the mandate/recurring contribution
-    CRM_Contract_SepaLogic::terminateSepaMandate(
+    \CRM_Contract_SepaLogic::terminateSepaMandate(
       $contract['membership_payment.membership_recurring_contribution'],
       // @phpstan-ignore offsetAccess.notFound
       $this->data[self::MEMBERSHIP_CANCEL_REASON]
@@ -115,11 +126,7 @@ class CRM_Contract_Change_Cancel extends CRM_Contract_SchedulableChange {
   }
 
   /**
-   * Check whether this change activity should actually be created
-   *
-   * CANCEL activities should not be created, if there is another one already there
-   *
-   * @throws Exception if the creation should be disallowed
+   * @inheritDoc
    */
   public function shouldBeAccepted(): void {
     parent::shouldBeAccepted();

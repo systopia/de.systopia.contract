@@ -10,7 +10,7 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Form_Modify extends CRM_Core_Form {
@@ -22,7 +22,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
   protected ?array $membership = NULL;
 
   /**
-   * @var class-string<\Civi\Contract\ContractChange\SchedulableContractChangeInterface>
+   * @var class-string<\Civi\Contract\Change\SchedulableContractChangeInterface>
    *
    * @phpstan-ignore property.uninitialized
    */

@@ -18,10 +18,10 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange;
+namespace Civi\Contract\Change;
 
 /**
- * @phpstan-import-type changeT from \CRM_Contract_Change
+ * @phpstan-import-type changeT from \Civi\Contract\Change\AbstractContractChange
  */
 final class ContractChangeFactory {
 

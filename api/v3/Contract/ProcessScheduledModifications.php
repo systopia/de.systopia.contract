@@ -8,8 +8,8 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\ContractChangeFactory;
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\ContractChangeFactory;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 
 const CE_ENGINE_PROCESSING_LIMIT = 500;
 

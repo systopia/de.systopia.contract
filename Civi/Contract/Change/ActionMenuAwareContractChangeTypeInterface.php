@@ -18,7 +18,7 @@
 
 declare(strict_types = 1);
 
-namespace Civi\Contract\ContractChange;
+namespace Civi\Contract\Change;
 
 /**
  * For types that shall be added to the membership actions menu.
@@ -26,7 +26,7 @@ namespace Civi\Contract\ContractChange;
 interface ActionMenuAwareContractChangeTypeInterface extends ContractChangeInterface {
 
   /**
-   * @return \Civi\Contract\ContractChange\ActionMenuEntry
+   * @return \Civi\Contract\Change\ActionMenuEntry
    *   Object describing an entry for the membership actions menu.
    */
   public static function getActionMenuEntry(): ActionMenuEntry;
