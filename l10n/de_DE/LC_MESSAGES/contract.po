@@ -25,8 +25,16 @@ msgid "%2 [%1] from %3 to %4"
 msgstr "%2 [%1] von %3 bis %4"
 
 #: CRM/Contract/Change/AddRelatedMembership.php
+msgid "Create Secondary Membership"
+msgstr "Sekundäre Mitgliedschaft erstellen"
+
+#: CRM/Contract/Change/AddRelatedMembership.php
 msgid "New related membership"
 msgstr "Abgeleitete Mitgliedschaft hinzufügen"
+
+#: CRM/Contract/Change/Cancel.php
+msgid "Cancel Contract"
+msgstr "Vertrag beenden"
 
 #: CRM/Contract/Change/Cancel.php
 msgid "Contract cancellation scheduled"
@@ -40,19 +48,17 @@ msgstr "Vertrag beendet (%1)"
 msgid "Contract cancelled"
 msgstr "Vertrag beendet"
 
-#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Cancel Contract"
-msgstr "Vertrag beenden"
-
-#: CRM/Contract/Change/Cancel.php CRM/Contract/Form/Create.php
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-msgid "Cancel"
-msgstr "Beenden"
+#: CRM/Contract/Change/EndRelatedMembership.php
+msgid "End Secondary Membership"
+msgstr "Sekundäre Mitgliedschaft beenden"
 
 #: CRM/Contract/Change/EndRelatedMembership.php
 msgid "Related membership ended"
 msgstr "Abgeleitete Mitgliedschaft beendet"
+
+#: CRM/Contract/Change/Pause.php
+msgid "Pause Contract"
+msgstr "Vertrag pausieren"
 
 #: CRM/Contract/Change/Pause.php
 msgid "Resume date cannot be before or on the same day as the pause."
@@ -76,16 +82,9 @@ msgstr "Vertrag pausiert bis %1"
 msgid "Contract paused"
 msgstr "Vertrag pausiert"
 
-#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Pause Contract"
-msgstr "Vertrag pausieren"
-
-#: CRM/Contract/Change/Pause.php
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-#: managed/90-SavedSearch_Related_Memberships.mgd.php
-msgid "Pause"
-msgstr "Pausieren"
+#: CRM/Contract/Change/Resume.php
+msgid "Resume Contract"
+msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
 
 #: CRM/Contract/Change/Resume.php
 msgid "Resume contract"
@@ -95,20 +94,13 @@ msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
 msgid "Contract resumed"
 msgstr "Vertrag wiederaufgenommen (nach Pausierung)"
 
-#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Resume Contract"
-msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
-
-#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php
-#: managed/10-OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Revive.php
 msgid "Revive Contract"
 msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
 
-#: CRM/Contract/Change/Revive.php
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-msgid "Revive"
-msgstr "Wiederaufnehmen (nach Beendigung)"
+#: CRM/Contract/Change/Sign.php
+msgid "Sign Contract"
+msgstr "Vertrag unterschreiben"
 
 #: CRM/Contract/Change/Sign.php
 msgid "Annual %1"
@@ -122,28 +114,28 @@ msgstr "Einzugstag %1"
 msgid "New membership contract"
 msgstr "Neuer Mitgliedschaftsvertrag"
 
-#: CRM/Contract/Change/Sign.php managed/10-OptionGroup_activity_type.mgd.php
-msgid "Sign Contract"
-msgstr "Vertrag unterschreiben"
+#: CRM/Contract/Change/Update.php
+msgid "Update Contract"
+msgstr "Vertrag aktualisieren"
 
-#: CRM/Contract/Change/Upgrade.php
+#: CRM/Contract/Change/UpdateBase.php
 msgid "Update contract scheduled"
 msgstr "Vertrag aktualisieren geplant"
 
-#: CRM/Contract/Change/Upgrade.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/Change/UpdateBase.php templates/CRM/Contract/Page/Review.tpl
 msgid "Type"
 msgstr "Typ"
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Modify.php
+#: CRM/Contract/Change/UpdateBase.php CRM/Contract/Form/Modify.php
 #: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
 msgid "Annual amount"
 msgstr "Jahresbetrag"
 
-#: CRM/Contract/Change/Upgrade.php
+#: CRM/Contract/Change/UpdateBase.php
 msgid "Payment frequency"
 msgstr "Zahlungsturnus"
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php
+#: CRM/Contract/Change/UpdateBase.php CRM/Contract/Form/Create.php
 #: CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: managed/20-CustomGroup_membership_payment.mgd.php
@@ -151,7 +143,7 @@ msgstr "Zahlungsturnus"
 msgid "Cycle day"
 msgstr "Einzugstag"
 
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php
+#: CRM/Contract/Change/UpdateBase.php CRM/Contract/RecurringContribution.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: js/contract_modify_tools.js
 #: managed/20-CustomGroup_membership_payment.mgd.php
@@ -159,28 +151,17 @@ msgstr "Einzugstag"
 msgid "Payment method"
 msgstr "Zahlungsart"
 
-#: CRM/Contract/Change/Upgrade.php
+#: CRM/Contract/Change/UpdateBase.php
 msgid "Defer payment start"
 msgstr "Zahlungsbeginn aufschieben"
 
-#: CRM/Contract/Change/Upgrade.php
+#: CRM/Contract/Change/UpdateBase.php
 msgid "none"
 msgstr "keine"
 
-#: CRM/Contract/Change/Upgrade.php
+#: CRM/Contract/Change/UpdateBase.php
 msgid "Contract updated"
 msgstr "Vertrag aktualisiert"
-
-#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Update Contract"
-msgstr "Vertrag aktualisieren"
-
-#: CRM/Contract/Change/Upgrade.php
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-#: managed/90-SavedSearch_Related_Memberships.mgd.php
-msgid "Update"
-msgstr "Ändern"
 
 #: CRM/Contract/Configuration.php CRM/Contract/Form/Create.php
 #: CRM/Contract/Form/Modify.php CRM/Contract/FormUtils.php
@@ -321,6 +302,11 @@ msgid "Notes"
 msgstr "Notizen"
 
 #: CRM/Contract/Form/Create.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Cancel"
+msgstr "Beenden"
+
+#: CRM/Contract/Form/Create.php
 msgid "Create"
 msgstr "Erstellen"
 
@@ -348,10 +334,6 @@ msgstr ""
 #: CRM/Contract/Form/Modify.php
 msgid "Scheduled updates exist!"
 msgstr "Weitere Anstehende Änderungen!"
-
-#: CRM/Contract/Form/Modify.php
-msgid "Unknown action '%1'."
-msgstr "Unbekannte Aktion '%1'."
 
 #: CRM/Contract/Form/Modify.php
 msgid "Schedule date"
@@ -981,6 +963,20 @@ msgstr "Kündigungsgrund"
 msgid "Error Message"
 msgstr "Fehlermeldung"
 
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Update"
+msgstr "Ändern"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Revive"
+msgstr "Wiederaufnehmen (nach Beendigung)"
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Pause"
+msgstr "Pausieren"
+
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "directly process scheduled changes"
 msgstr "Vertragsänderungen direkt verarbeiten"
@@ -1194,18 +1190,6 @@ msgstr "Prüfung erforderlich"
 #: managed/10-OptionGroup_activity_status.mgd.php
 msgid "Failed"
 msgstr "Fehlgeschlagen"
-
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Create Secondary Membership"
-msgstr "Sekundäre Mitgliedschaft erstellen"
-
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "End Secondary Membership"
-msgstr "Sekundäre Mitgliedschaft beenden"
-
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Update Secondary Membership"
-msgstr "Sekundäre Mitgliedschaft aktualisieren"
 
 #: managed/10-OptionGroup_contact_channel.mgd.php
 msgid "Channel"
@@ -1654,6 +1638,12 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
+
+#~ msgid "Unknown action '%1'."
+#~ msgstr "Unbekannte Aktion '%1'."
+
+#~ msgid "Update Secondary Membership"
+#~ msgstr "Sekundäre Mitgliedschaft aktualisieren"
 
 #~ msgid "Organisation's Bank Account"
 #~ msgstr "Organisationskonto"

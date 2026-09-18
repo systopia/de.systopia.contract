@@ -11,7 +11,15 @@ msgid "%2 [%1] from %3 to %4"
 msgstr ""
 
 #: CRM/Contract/Change/AddRelatedMembership.php
+msgid "Create Secondary Membership"
+msgstr ""
+
+#: CRM/Contract/Change/AddRelatedMembership.php
 msgid "New related membership"
+msgstr ""
+
+#: CRM/Contract/Change/Cancel.php
+msgid "Cancel Contract"
 msgstr ""
 
 #: CRM/Contract/Change/Cancel.php
@@ -26,16 +34,16 @@ msgstr ""
 msgid "Contract cancelled"
 msgstr ""
 
-#: CRM/Contract/Change/Cancel.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
-msgid "Cancel Contract"
-msgstr ""
-
-#: CRM/Contract/Change/Cancel.php CRM/Contract/Form/Create.php Civi/Contract/ActionProvider/Action/ModifyContract.php
-msgid "Cancel"
+#: CRM/Contract/Change/EndRelatedMembership.php
+msgid "End Secondary Membership"
 msgstr ""
 
 #: CRM/Contract/Change/EndRelatedMembership.php
 msgid "Related membership ended"
+msgstr ""
+
+#: CRM/Contract/Change/Pause.php
+msgid "Pause Contract"
 msgstr ""
 
 #: CRM/Contract/Change/Pause.php
@@ -58,12 +66,8 @@ msgstr ""
 msgid "Contract paused"
 msgstr ""
 
-#: CRM/Contract/Change/Pause.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
-msgid "Pause Contract"
-msgstr ""
-
-#: CRM/Contract/Change/Pause.php Civi/Contract/ActionProvider/Action/ModifyContract.php managed/90-SavedSearch_Related_Memberships.mgd.php
-msgid "Pause"
+#: CRM/Contract/Change/Resume.php
+msgid "Resume Contract"
 msgstr ""
 
 #: CRM/Contract/Change/Resume.php
@@ -74,16 +78,12 @@ msgstr ""
 msgid "Contract resumed"
 msgstr ""
 
-#: CRM/Contract/Change/Resume.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
-msgid "Resume Contract"
-msgstr ""
-
-#: CRM/Contract/Change/Revive.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Revive.php
 msgid "Revive Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Revive.php Civi/Contract/ActionProvider/Action/ModifyContract.php
-msgid "Revive"
+#: CRM/Contract/Change/Sign.php
+msgid "Sign Contract"
 msgstr ""
 
 #: CRM/Contract/Change/Sign.php
@@ -98,52 +98,44 @@ msgstr ""
 msgid "New membership contract"
 msgstr ""
 
-#: CRM/Contract/Change/Sign.php managed/10-OptionGroup_activity_type.mgd.php
-msgid "Sign Contract"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php
-msgid "Update contract scheduled"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php templates/CRM/Contract/Page/Review.tpl
-msgid "Type"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
-msgid "Annual amount"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php
-msgid "Payment frequency"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
-msgid "Cycle day"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
-msgid "Payment method"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php
-msgid "Defer payment start"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php
-msgid "none"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php
-msgid "Contract updated"
-msgstr ""
-
-#: CRM/Contract/Change/Upgrade.php Civi/Contract/SearchDisplayLinks.php managed/10-OptionGroup_activity_type.mgd.php
+#: CRM/Contract/Change/Update.php
 msgid "Update Contract"
 msgstr ""
 
-#: CRM/Contract/Change/Upgrade.php Civi/Contract/ActionProvider/Action/ModifyContract.php managed/90-SavedSearch_Related_Memberships.mgd.php
-msgid "Update"
+#: CRM/Contract/Change/UpdateBase.php
+msgid "Update contract scheduled"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php templates/CRM/Contract/Page/Review.tpl
+msgid "Type"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+msgid "Annual amount"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php
+msgid "Payment frequency"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
+msgid "Cycle day"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php js/contract_modify_tools.js managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
+msgid "Payment method"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php
+msgid "Defer payment start"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php
+msgid "none"
+msgstr ""
+
+#: CRM/Contract/Change/UpdateBase.php
+msgid "Contract updated"
 msgstr ""
 
 #: CRM/Contract/Configuration.php CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php CRM/Contract/FormUtils.php
@@ -254,6 +246,10 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
+#: CRM/Contract/Form/Create.php Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Cancel"
+msgstr ""
+
 #: CRM/Contract/Form/Create.php
 msgid "Create"
 msgstr ""
@@ -276,10 +272,6 @@ msgstr ""
 
 #: CRM/Contract/Form/Modify.php
 msgid "Scheduled updates exist!"
-msgstr ""
-
-#: CRM/Contract/Form/Modify.php
-msgid "Unknown action '%1'."
 msgstr ""
 
 #: CRM/Contract/Form/Modify.php
@@ -794,6 +786,18 @@ msgstr ""
 msgid "Error Message"
 msgstr ""
 
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Update"
+msgstr ""
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+msgid "Revive"
+msgstr ""
+
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Pause"
+msgstr ""
+
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "directly process scheduled changes"
 msgstr ""
@@ -992,18 +996,6 @@ msgstr ""
 
 #: managed/10-OptionGroup_activity_status.mgd.php
 msgid "Failed"
-msgstr ""
-
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Create Secondary Membership"
-msgstr ""
-
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "End Secondary Membership"
-msgstr ""
-
-#: managed/10-OptionGroup_activity_type.mgd.php
-msgid "Update Secondary Membership"
 msgstr ""
 
 #: managed/10-OptionGroup_contact_channel.mgd.php
