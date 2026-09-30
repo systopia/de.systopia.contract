@@ -1,21 +1,30 @@
 <?php
-/*-------------------------------------------------------------+
-| SYSTOPIA Contract Extension                                  |
-| Copyright (C) 2019 SYSTOPIA                                  |
-| Author: B. Endres (endres -at- systopia.de)                  |
-| http://www.systopia.de/                                      |
-+--------------------------------------------------------------*/
+/*
+ * Copyright (C) 2026 SYSTOPIA GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\ActionMenuEntry;
-use Civi\Contract\ContractChange\SchedulableContractChangeInterface;
+namespace Civi\Contract\Change;
 
 /**
  * Base class for schedulable contract changes.
  */
-// phpcs:ignore Generic.NamingConventions.AbstractClassNamePrefix.Missing, Generic.Files.LineLength.TooLong
-abstract class CRM_Contract_SchedulableChange extends CRM_Contract_Change implements SchedulableContractChangeInterface {
+// phpcs:ignore Generic.Files.LineLength.TooLong
+abstract class AbstractSchedulableContractChange extends AbstractContractChange implements SchedulableContractChangeInterface {
 
   public static function getActionMenuEntry(): ActionMenuEntry {
     return new ActionMenuEntry(
@@ -48,7 +57,7 @@ abstract class CRM_Contract_SchedulableChange extends CRM_Contract_Change implem
    */
   public function verifyStatusChange(): void {
     $contract = $this->getContract();
-    $status_name = CRM_Contract_Utils::getMembershipStatusName($contract['status_id']);
+    $status_name = \CRM_Contract_Utils::getMembershipStatusName($contract['status_id']);
     if (!in_array($status_name, $this::getStartStatusList(), TRUE)) {
       throw new \RuntimeException("Cannot {$this::getActionName()} a membership when its status is '{$status_name}'.");
     }
@@ -56,7 +65,7 @@ abstract class CRM_Contract_SchedulableChange extends CRM_Contract_Change implem
 
   public function checkForConflicts(): void {
     // TODO: refactor CRM_Contract_Handler_ModificationConflicts
-    $conflictHandler = new CRM_Contract_Handler_ModificationConflicts();
+    $conflictHandler = new \CRM_Contract_Handler_ModificationConflicts();
     $conflictHandler->checkForConflicts($this->getContractID());
   }
 

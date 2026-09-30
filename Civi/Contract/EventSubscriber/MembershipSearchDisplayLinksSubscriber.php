@@ -24,8 +24,8 @@ use Civi\API\Event\RespondEvent;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\MembershipStatus;
-use Civi\Contract\ContractChange\ActionMenuAwareContractChangeTypeInterface;
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\ActionMenuAwareContractChangeTypeInterface;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**

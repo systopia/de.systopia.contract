@@ -10,7 +10,7 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\ContractChange\ContractChangeTypeContainer;
+use Civi\Contract\Change\ContractChangeTypeContainer;
 use Civi\Contract\Event\DisplayChangeTitle as DisplayChangeTitle;
 
 class CRM_Contract_Page_Review extends CRM_Core_Page {
