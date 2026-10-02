@@ -18,24 +18,25 @@
 declare(strict_types = 1);
 
 use Civi\Contract\Change\ContractChangeTypeContainer;
+use Civi\Contract\Change\Type\PaymentSuspendedChange;
 use CRM_Contract_ExtensionUtil as E;
 
 return [
   [
-    'name' => 'CustomGroup_contract_activity',
+    'name' => 'CustomGroup_contract_payment_suspended',
     'entity' => 'CustomGroup',
     'cleanup' => 'unused',
     'update' => 'always',
     'params' => [
       'version' => 4,
       'values' => [
-        'name' => 'contract_activity',
-        'table_name' => 'civicrm_value_contract_activity',
-        'title' => E::ts('Contract Activity'),
+        'name' => 'contract_payment_suspended',
+        'table_name' => 'civicrm_value_contract_payment_suspended',
+        'title' => E::ts('Contract: Payment Suspended'),
         'extends' => 'Activity',
-        'extends_entity_column_value:name' => array_keys(
-          ContractChangeTypeContainer::getInstance()->getClassesByActivityType()
-        ),
+        'extends_entity_column_value:name' => [
+          PaymentSuspendedChange::getActivityTypeName(),
+        ],
         'style' => 'Inline',
         'collapse_display' => FALSE,
         'help_pre' => '',
@@ -44,33 +45,56 @@ return [
         'is_active' => TRUE,
         'is_multiple' => FALSE,
         'collapse_adv_display' => TRUE,
-        'is_reserved' => FALSE,
+        'is_reserved' => TRUE,
         'is_public' => FALSE,
         'icon' => '',
       ],
     ],
   ],
   [
-    'name' => 'CustomField_contract_activity.contract_id',
+    'name' => 'CustomGroup_contract_payment_suspended_CustomField_contribution_recur_id',
     'entity' => 'CustomField',
     'cleanup' => 'never',
     'update' => 'unmodified',
     'params' => [
       'version' => 4,
       'values' => [
-        'custom_group_id.name' => 'contract_activity',
-        'name' => 'contract_id',
-        'label' => E::ts('Contract'),
+        'custom_group_id.name' => 'contract_payment_suspended',
+        'name' => 'contribution_recur_id',
+        'label' => E::ts('Recurring Contribution'),
         'data_type' => 'EntityReference',
         'html_type' => 'Autocomplete-Select',
         'is_reserved' => FALSE,
         'is_required' => TRUE,
         'is_searchable' => TRUE,
         'is_search_range' => TRUE,
-        'column_name' => 'contract_id',
+        'column_name' => 'contribution_recur_id',
         'in_selector' => FALSE,
-        'fk_entity' => 'Membership',
-        'fk_entity_on_delete' => 'cascade',
+        'fk_entity' => 'ContributionRecur',
+      ],
+      'match' => [
+        'custom_group_id',
+        'name',
+      ],
+    ],
+  ],
+  [
+    'name' => 'CustomGroup_contract_payment_suspended_CustomField_reason',
+    'entity' => 'CustomField',
+    'cleanup' => 'unused',
+    'update' => 'unmodified',
+    'params' => [
+      'version' => 4,
+      'values' => [
+        'custom_group_id.name' => 'contract_payment_suspended',
+        'name' => 'reason',
+        'column_name' => 'reason',
+        'label' => E::ts('Payment Suspension Reason'),
+        'html_type' => 'Select',
+        'is_searchable' => TRUE,
+        'is_search_range' => TRUE,
+        'option_group_id.name' => 'contract_payment_suspension_reason',
+        'in_selector' => TRUE,
       ],
       'match' => [
         'custom_group_id',
