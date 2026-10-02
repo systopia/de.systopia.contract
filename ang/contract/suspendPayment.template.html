@@ -1,0 +1,44 @@
+<h1 crm-page-title>Suspend Payment</h1>
+
+<p>
+  {{ ts('Suspend payment for contract of %1.', {1: membership['contact_id.display_name']}) }}
+</p>
+
+<div class="alert alert-info" ng-show="false === isCurrent">
+  {{::ts('Payment can only be suspended for current contracts.')}}
+</div>
+
+<div class="alert alert-info" ng-show="false === usesSepaMandate">
+  {{::ts('Payment can only be suspended for contracts with SEPA mandate.')}}
+</div>
+
+<form name="suspendPaymentForm" class="form-horizontal" ng-submit="submit()">
+  <fieldset>
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="reason">
+        {{:: ts('Reason') }} <span class="crm-marker" title="{{::ts('Required')}}">*</span>
+      </label>
+      <div class="col-sm-10">
+        <select id="reason" class="form-control" ng-model="reason" ng-required="true">
+          <option ng-repeat="(value, label) in reasons" value="{{ value }}">{{ label }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label row-no-gutters" for="notes">{{:: ts('Notes') }}</label>
+      <div class="col-sm-10">
+        <textarea id="notes" class="form-control" rows="5" ng-model="notes"></textarea>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="button" class="btn" crm-icon="fa-times" ng-disabled="running" ng-click="close()">{{:: ts('Cancel') }}</button>
+      <button type="submit" class="btn btn-success" crm-icon="fa-check" ng-disabled="running || !isCurrent || !usesSepaMandate || suspendPaymentForm.$invalid">
+        {{:: ts('Suspend payment') }}
+      </button>
+    </div>
+  </div>
+</form>

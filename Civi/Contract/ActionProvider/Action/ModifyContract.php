@@ -8,6 +8,10 @@ use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\Specification;
 use Civi\ActionProvider\Parameter\SpecificationBag;
 use Civi\Api4\Contract;
+use Civi\Contract\Change\Type\CancelChange;
+use Civi\Contract\Change\Type\PauseChange;
+use Civi\Contract\Change\Type\ReviveChange;
+use Civi\Contract\Change\Type\UpdateChange;
 use CRM_Contract_ExtensionUtil as E;
 
 class ModifyContract extends AbstractContractAction {
@@ -216,10 +220,10 @@ class ModifyContract extends AbstractContractAction {
    */
   protected function getActions(): array {
     return [
-      'update' => E::ts('Update'),
-      'revive' => E::ts('Revive'),
-      'cancel' => E::ts('Cancel'),
-      'pause' => E::ts('Pause'),
+      UpdateChange::getActionName() => UpdateChange::getTitle(),
+      ReviveChange::getActionName() => ReviveChange::getTitle(),
+      CancelChange::getActionName() => CancelChange::getTitle(),
+      PauseChange::getActionName() => PauseChange::getTitle(),
     ];
   }
 
