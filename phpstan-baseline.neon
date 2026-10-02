@@ -1239,12 +1239,6 @@ parameters:
 			path: CRM/Contract/Handler/ModificationConflicts.php
 
 		-
-			message: '#^Cannot access offset ''values'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
-			path: CRM/Contract/Page/Review.php
-
-		-
 			message: '#^Cannot access offset mixed on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -2321,27 +2315,9 @@ parameters:
 			path: CRM/Contract/Validation/ContractNumber.php
 
 		-
-			message: '#^Call to method setCheckPermissions\(\) on an unknown class Civi\\Contract\\Api4\\Action\\Contract\\SuspendPaymentAction\.$#'
-			identifier: class.notFound
-			count: 1
-			path: Civi/Api4/Contract.php
-
-		-
 			message: '#^Cannot call method setCheckPermissions\(\) on mixed\.$#'
 			identifier: method.nonObject
 			count: 2
-			path: Civi/Api4/Contract.php
-
-		-
-			message: '#^Instantiated class Civi\\Contract\\Api4\\Action\\Contract\\SuspendPaymentAction not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: Civi/Api4/Contract.php
-
-		-
-			message: '#^Method Civi\\Api4\\Contract\:\:suspendPayment\(\) has invalid return type Civi\\Contract\\Api4\\Action\\Contract\\SuspendPaymentAction\.$#'
-			identifier: class.notFound
-			count: 1
 			path: Civi/Api4/Contract.php
 
 		-
