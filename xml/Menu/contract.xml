@@ -30,6 +30,11 @@
     <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
+    <path>civicrm/contract/suspend-payment</path>
+    <page_callback>CRM_Contract_Page_SuspendPayment</page_callback>
+    <access_arguments>edit memberships</access_arguments>
+  </item>
+  <item>
     <path>civicrm/admin/contract</path>
     <page_callback>CRM_Contract_Form_Settings</page_callback>
     <title>Contract Engine Settings</title>
