@@ -10,7 +10,12 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Activity;
+use Civi\Api4\Contact;
+use Civi\Api4\ContributionRecur;
+use Civi\Api4\MembershipType;
 use Civi\Contract\Change\ContractChangeTypeContainer;
+use Civi\Contract\Event\AdjustContractReviewEvent;
 use Civi\Contract\Event\DisplayChangeTitle as DisplayChangeTitle;
 
 class CRM_Contract_Page_Review extends CRM_Core_Page {
@@ -19,10 +24,10 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
   public function run(): void {
   // phpcs:enable
     // get the adjustments
-    $adjustments = \Civi\Contract\Event\AdjustContractReviewEvent::getContractReviewAdjustments();
+    $adjustments = AdjustContractReviewEvent::getContractReviewAdjustments();
 
     if (!$id = CRM_Utils_Request::retrieve('id', 'Positive')) {
-      throw new \RuntimeException('Missing a valid contract ID');
+      throw new RuntimeException('Missing a valid contract ID');
     }
 
     // get contract currency from currently active recurring contribution
@@ -36,18 +41,24 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
     ]));
 
     /** @phpstan-var array<int, array<string, mixed>> $activities */
-    $activities = \Civi\Api4\Activity::get(FALSE)
+    $activities = Activity::get(FALSE)
       ->addSelect(
         'activity_date_time',
         'status_id',
+        'status_id:name',
+        'status_id:label',
         'activity_type_id',
         'target_contact_id',
         'source_contact_id',
         'details',
         'campaign_id',
-        'medium_id',
-        'contract_cancellation.*',
+        'campaign_id.title',
+        'medium_id:label',
+        'contract_cancellation.contact_history_cancel_reason:label',
+        'contract_payment_suspended.contribution_recur_id',
+        'contract_payment_suspended.reason:label',
         'contract_updates.*',
+        'contract_updates.ch_frequency:label',
       )
       ->addWhere('contract_activity.contract_id', '=', $id)
       ->addWhere('status_id:name', 'NOT IN', ['Cancelled'])
@@ -58,151 +69,93 @@ class CRM_Contract_Page_Review extends CRM_Core_Page {
       ->indexBy('id')
       ->getArrayCopy();
 
-    // Friendlify custom field names
-    CRM_Contract_Utils::warmCustomFieldCache();
-    $customFieldIndex = array_flip(CRM_Contract_Utils::$customFieldCache);
-    $customFieldIndex = str_replace('.', '_', $customFieldIndex);
+    // Note: Selecting "source_contact_id.display_name" doesn't work so we use an extra call.
+    /** @var array<int, int> $contactIds */
+    $contactIds = array_column($activities, 'source_contact_id', 'source_contact_id');
+    $contacts = Contact::get(FALSE)
+      ->addSelect('id', 'display_name')
+      ->addWhere('id', 'IN', $contactIds)
+      ->execute()
+      ->indexBy('id')
+      ->column('display_name');
+    $this->assign('contacts', $contacts);
 
-    // To collect the campaign ids that we need to get the names of
-    $campaigns = [];
-    $contacts = [];
-    $cancelReasons = [];
-
-    // todo: refactor for better performance
     foreach ($activities as $activityId => $activity) {
-      foreach ($activity as $fieldName => $field) {
-        $newFieldName = str_replace('.', '_', $fieldName);
-        if ($newFieldName !== $fieldName) {
-          unset($activities[$activityId][$fieldName]);
-          $activities[$activityId][$newFieldName] = $field;
-        }
-      }
-      if (
-        isset($activities[$activityId]['contract_updates_ch_recurring_contribution'])
-        && $activities[$activityId]['contract_updates_ch_recurring_contribution']
-      ) {
-        /** @phpstan-var array<string, mixed> $rc */
-        $rc = civicrm_api3(
-          'ContributionRecur',
-          'getsingle',
-          ['id' => $activities[$activityId]['contract_updates_ch_recurring_contribution']]
-        );
-        $activities[$activityId]['payment_instrument_id'] = $rc['payment_instrument_id'];
-        $activities[$activityId]['recurring_contribution_contact_id'] = $rc['contact_id'];
-      }
-      if (
-        isset($activities[$activityId]['contract_updates_ch_annual'])
-        && isset($activities[$activityId]['contract_updates_ch_frequency'])
-        && $activities[$activityId]['contract_updates_ch_annual']
-        && $activities[$activityId]['contract_updates_ch_frequency']
-      ) {
-        $activities[$activityId]['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
-            $activities[$activityId]['contract_updates_ch_annual']
-          ) / $activities[$activityId]['contract_updates_ch_frequency'];
-        $activities[$activityId]['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
-          $activities[$activityId]['contract_updates_ch_amount']
-        );
-      }
-      if (isset($activities[$activityId]['campaign_id'])) {
-        $campaigns[] = $activities[$activityId]['campaign_id'];
-      }
-      if (isset($activities[$activityId]['contract_cancellation_contact_history_cancel_reason'])) {
-        $cancelReasons[] = $activities[$activityId]['contract_cancellation_contact_history_cancel_reason'];
-      }
-      if (isset($activities[$activityId]['source_contact_id'])) {
-        $contacts[] = $activities[$activityId]['source_contact_id'];
-      }
-
-      // add title/hover title
-      $display_titles = DisplayChangeTitle::renderDisplayChangeTitleAndHoverText(
-                            $activities[$activityId]['activity_type_id'], $activities[$activityId]['id']);
-      $activities[$activityId]['display_title'] = $display_titles->getDisplayTitle();
-      $activities[$activityId]['display_hover_title'] = $display_titles->getDisplayHover();
+      $activities[$activityId] = $this->adjustActivity($activity);
     }
 
     $this->assign('activities', $activities);
 
-    // Get campaigns
-    if ([] !== $campaigns) {
-      foreach (civicrm_api3('Campaign', 'get', ['id' => ['IN' => array_unique($campaigns)]])['values'] as $campaign) {
-        $campaigns[$campaign['id']] = $campaign['title'];
-      }
-    }
-    $this->assign('campaigns', $campaigns);
-    if ([] !== $cancelReasons) {
-      foreach (civicrm_api3(
-        'OptionValue',
-        'get',
-        [
-          'option_group_id' => 'contract_cancel_reason',
-          'value' => ['IN' => array_unique($cancelReasons)],
-        ]
-      )['values'] as $campaign) {
-        $cancelReasons[$campaign['value']] = $campaign['label'];
-      }
-    }
-    $this->assign('cancelReasons', $cancelReasons);
-
-    foreach (civicrm_api3('Contact', 'get', ['id' => ['IN' => array_unique($contacts)]])['values'] as $contact) {
-      $contacts[$contact['id']] = $contact['display_name'];
-    }
-    $this->assign('contacts', $contacts);
-
-    $mediums = [];
-    foreach (civicrm_api3(
-      'OptionValue',
-      'get',
-      ['option_group_id' => 'encounter_medium', 'return' => ['value', 'label']]
-    )['values'] as $medium) {
-      $mediums[$medium['value']] = $medium['label'];
-    }
-    $this->assign('mediums', $mediums);
-
-    $paymentInstruments = [];
-    foreach (civicrm_api3(
-      'OptionValue',
-      'get',
-      [
-        'option_group_id' => 'payment_instrument',
-        'return' => ['value', 'label'],
-      ]
-    )['values'] as $paymentInstrument) {
-      $paymentInstruments[$paymentInstrument['value']] = $paymentInstrument['label'];
-    }
-    $this->assign('paymentInstruments', $paymentInstruments);
-
-    // Get activity statuses
-    $activityStatuses = [];
-    foreach (civicrm_api3(
-      'OptionValue',
-      'get',
-      ['option_group_id' => 'activity_status', 'return' => ['value', 'label']]
-    )['values'] as $activityStatus) {
-      $activityStatuses[$activityStatus['value']] = $activityStatus['label'];
-    }
-    $this->assign('activityStatuses', $activityStatuses);
-
-    $paymentFrequencies = [];
-    foreach (civicrm_api3(
-      'OptionValue',
-      'get',
-      ['option_group_id' => 'payment_frequency', 'return' => ['value', 'label']]
-    )['values'] as $paymentFrequency) {
-      $paymentFrequencies[$paymentFrequency['value']] = $paymentFrequency['label'];
-    }
-    $this->assign('paymentFrequencies', $paymentFrequencies);
-
-    // Get membership types
-    $membershipTypes = [];
-    foreach (civicrm_api3('MembershipType', 'get', [])['values'] as $membershipType) {
-      $membershipTypes[$membershipType['id']] = $membershipType['name'];
-    }
+    $membershipTypes = MembershipType::get(FALSE)
+      ->addSelect('id', 'title')
+      ->execute()
+      ->indexBy('id')
+      ->column('title');
     $this->assign('membershipTypes', $membershipTypes);
 
     // hide some columns
     $this->assign('hide_columns', $adjustments->getHiddenColumnIndices());
 
     parent::run();
+  }
+
+  /**
+   * @param array<string, mixed> $activity
+   *
+   * @return array<string, mixed>
+   *
+   * @throws \CRM_Core_Exception
+   */
+  private function adjustActivity(array $activity): array {
+    $activity['reason_label'] = $activity['contract_payment_suspended.reason:label']
+      ?? $activity['contract_cancellation.contact_history_cancel_reason:label']
+      ?? NULL;
+
+    foreach ($activity as $fieldName => $field) {
+      $newFieldName = str_replace(['.', ':'], '_', $fieldName);
+      if ($newFieldName !== $fieldName) {
+        unset($activity[$fieldName]);
+        $activity[$newFieldName] = $field;
+      }
+    }
+    if (
+      isset($activity['contract_updates_ch_recurring_contribution'])
+      || isset($activity['contract_payment_suspended_contribution_recur_id'])
+    ) {
+      $contributionRecurId = $activity['recurring_contribution_id'] =
+        $activity['contract_updates_ch_recurring_contribution']
+        ?? $activity['contract_payment_suspended_contribution_recur_id'];
+
+      /** @var array{contact_id: int, "payment_instrument_id:label": string} $contributionRecur */
+      $contributionRecur = ContributionRecur::get(FALSE)
+        ->addSelect('contact_id', 'payment_instrument_id:label')
+        ->addWhere('id', '=', $contributionRecurId)
+        ->execute()
+        ->single();
+      $activity['payment_instrument_id_label'] = $contributionRecur['payment_instrument_id:label'];
+      $activity['recurring_contribution_contact_id'] = $contributionRecur['contact_id'];
+    }
+    if (
+      isset($activity['contract_updates_ch_annual'])
+      && isset($activity['contract_updates_ch_frequency'])
+      && $activity['contract_updates_ch_annual'] > 0
+      && $activity['contract_updates_ch_frequency'] > 0
+    ) {
+      $activity['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
+          $activity['contract_updates_ch_annual']
+        ) / $activity['contract_updates_ch_frequency'];
+      $activity['contract_updates_ch_amount'] = CRM_Contract_SepaLogic::formatMoney(
+        $activity['contract_updates_ch_amount']
+      );
+    }
+
+    // add title/hover title
+    $display_titles = DisplayChangeTitle::renderDisplayChangeTitleAndHoverText(
+      $activity['activity_type_id'], $activity['id']);
+    $activity['display_title'] = $display_titles->getDisplayTitle();
+    $activity['display_hover_title'] = $display_titles->getDisplayHover();
+
+    return $activity;
   }
 
 }

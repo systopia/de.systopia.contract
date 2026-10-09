@@ -17,129 +17,29 @@
 
 declare(strict_types = 1);
 
-use CRM_Contract_ExtensionUtil as E;
+use Civi\Contract\MembershipStatusEnum;
 
-return [
-  [
-    'name' => 'MembershipStatus_New',
+$membershipStatuses = [];
+foreach (MembershipStatusEnum::cases() as $status) {
+  $membershipStatuses[] = [
+    'name' => 'MembershipStatus_' . $status->name,
     'entity' => 'MembershipStatus',
     'cleanup' => 'unused',
     'update' => 'unmodified',
     'params' => [
       'version' => 4,
       'values' => [
-        'name' => 'New',
-        'label' => E::ts('New'),
-        'is_current_member' => TRUE,
-        'is_active' => FALSE,
+        'name' => $status->name,
+        'label' => $status->label(),
+        'is_current_member' => $status->isCurrentMember(),
+        'is_active' => $status->isActive(),
+        'is_reserved' => $status->isReserved(),
       ],
       'match' => [
         'name',
       ],
     ],
-  ],
-  [
-    'name' => 'MembershipStatus_Current',
-    'entity' => 'MembershipStatus',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'name' => 'Current',
-        'label' => E::ts('Current'),
-        'is_current_member' => TRUE,
-      ],
-      'match' => [
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'MembershipStatus_Grace',
-    'entity' => 'MembershipStatus',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'name' => 'Grace',
-        'label' => E::ts('Grace'),
-        'is_current_member' => TRUE,
-        'is_active' => FALSE,
-      ],
-      'match' => [
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'MembershipStatus_Pending',
-    'entity' => 'MembershipStatus',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'name' => 'Pending',
-        'label' => E::ts('Pending'),
-        'is_current_member' => TRUE,
-        'is_reserved' => TRUE,
-      ],
-      'match' => [
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'MembershipStatus_Cancelled',
-    'entity' => 'MembershipStatus',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'name' => 'Cancelled',
-        'label' => E::ts('Cancelled'),
-        'is_current_member' => FALSE,
-      ],
-      'match' => [
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'MembershipStatus_Deceased',
-    'entity' => 'MembershipStatus',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'name' => 'Deceased',
-        'label' => E::ts('Deceased'),
-        'is_current_member' => FALSE,
-      ],
-      'match' => [
-        'name',
-      ],
-    ],
-  ],
-  [
-    'name' => 'MembershipStatus_Paused',
-    'entity' => 'MembershipStatus',
-    'cleanup' => 'unused',
-    'update' => 'unmodified',
-    'params' => [
-      'version' => 4,
-      'values' => [
-        'name' => 'Paused',
-        'label' => E::ts('Paused'),
-        'is_current_member' => TRUE,
-      ],
-      'match' => [
-        'name',
-      ],
-    ],
-  ],
-];
+  ];
+}
+
+return $membershipStatuses;
