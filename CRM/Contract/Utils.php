@@ -326,11 +326,6 @@ class CRM_Contract_Utils {
     return $e->getMessage() . "\r\n" . $e->getTraceAsString();
   }
 
-  public static function formatExceptionForTest(Exception $e): string {
-    /** @var string */
-    return CRM_Core_Error::formatter('text')->formatException($e);
-  }
-
   /**
    * Strip all custom_* elements from $data unless they're contract activity fields
    *

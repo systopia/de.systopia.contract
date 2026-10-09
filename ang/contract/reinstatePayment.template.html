@@ -1,0 +1,130 @@
+<h1 crm-page-title>Reinstate Payment</h1>
+
+<p>
+  {{ ts('Reinstate payment for contract of %1.', {1: membership['contact_id.display_name']}) }}
+</p>
+
+<div class="alert alert-info" ng-show="false === isPaymentSuspended">
+  {{::ts('Payment can only be reinstated for contracts with suspended payment.')}}
+</div>
+
+<div class="alert alert-info" ng-show="false === usesSepaMandate">
+  {{::ts('Payment can only be reinstated for contracts with SEPA mandate.')}}
+</div>
+
+<form name="reinstatePaymentForm" class="form-horizontal" ng-submit="submit()">
+  <fieldset>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">{{:: ts('Payment Preview')}}</label>
+      <div class="col-sm-10">
+        {{ ts('Frequency: %1', {1: paymentFrequencies[paymentFrequency]}) }}<br>
+        {{ ts('Annual amount: %1', {1: contractCurrencyFilter(paymentFrequency * paymentAmount, currency)}) }}<br>
+        {{ ts('Installment amount: %1', {1: contractCurrencyFilter(paymentAmount, currency)}) }}<br>
+        {{ ts('Outstanding amount: %1', {
+        1: outstandingAmount == 0
+                ? ts('none')
+                : collectOutstanding
+                        ? contractCurrencyFilter(outstandingAmount, currency)
+                        : ts('not collected')
+      }) }}<br>
+      </div>
+    </div>
+
+    <div class="form-group" ng-show="outstandingAmount > 0">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="collectOutstandingAmounts" ng-model="collectOutstanding" ng-value="true">
+            {{:: ts('Collect outstanding amounts of suspended contributions') }} {{ outstandingAmount|contractCurrency:currency }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="replaceSepaMandate"  ng-model="replaceSepaMandate" ng-value="true">
+            {{:: ts('Replace SEPA mandate')}}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div ng-show="replaceSepaMandate">
+      <div class="form-group">
+        <label for="iban" class="col-sm-2 control-label">
+          {{:: ts('IBAN') }} <span class="crm-marker" title="{{::ts('Required')}}">*</span>
+        </label>
+        <div class="col-sm-10">
+          <input type="text" id="iban" class="form-control" ng-model="iban" ng-required="replaceSepaMandate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="bic" class="col-sm-2 control-label">
+          {{:: ts('BIC') }}
+        </label>
+        <div class="col-sm-10">
+          <input type="text" id="bic" class="form-control" ng-model="bic">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="accountHolder" class="col-sm-2 control-label">
+          {{:: ts('Account Holder') }} <span class="crm-marker" title="{{::ts('Required')}}">*</span>
+        </label>
+        <div class="col-sm-10">
+          <input type="text" id="accountHolder" class="form-control" ng-model="accountHolder" ng-required="replaceSepaMandate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cycleDay" class="col-sm-2 control-label">
+          {{:: ts('Cycle Day') }} <span class="crm-marker" title="{{::ts('Required')}}">*</span>
+        </label>
+        <div class="col-sm-10">
+          <input type="text" id="cycleDay" class="form-control" ng-model="cycleDay" ng-required="replaceSepaMandate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentAmount" class="col-sm-2 control-label">
+          {{:: ts('Installment Amount') }} <span class="crm-marker" title="{{::ts('Required')}}">*</span>
+        </label>
+        <div class="col-sm-10">
+          <input type="number" step=".01" id="paymentAmount" class="form-control" ng-model="paymentAmount" ng-required="replaceSepaMandate">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentFrequency" class="col-sm-2 control-label">
+          {{:: ts('Payment Frequency') }} <span class="crm-marker" title="{{::ts('Required')}}">*</span>
+        </label>
+        <div class="col-sm-10">
+          <select id="paymentFrequency" class="form-control" ng-model="paymentFrequency" ng-required="replaceSepaMandate">
+            <option ng-repeat="(value, label) in paymentFrequencies" value="{{ value }}">{{ label }}</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="form-group">
+      <label for="notes" class="col-sm-2 control-label">{{:: ts('Notes') }}</label>
+      <div class="col-sm-10">
+        <textarea id="notes" class="form-control" rows="5" ng-model="notes"></textarea>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="button" class="btn" crm-icon="fa-times" ng-disabled="running" ng-click="close()">{{:: ts('Cancel') }}</button>
+      <button type="submit" class="btn btn-success" crm-icon="fa-check" ng-disabled="running || !isPaymentSuspended || !usesSepaMandate || reinstatePaymentForm.$invalid">
+        {{:: ts('Reinstate payment') }}
+      </button>
+    </div>
+  </div>
+</form>

@@ -33,7 +33,7 @@ function _civicrm_api3_Contract_modify_spec(&$params) {
   $params['medium_id'] = [
     'name'         => 'medium_id',
     'title'        => 'Medium ID',
-    'api.required' => 1,
+    'api.required' => 0,
     'description'  => 'How was the modification received',
   ];
   $params['date'] = [

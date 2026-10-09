@@ -89,7 +89,13 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
   }
 
   // run query
-  $result  = [];
+  $result  = [
+    'order' => [],
+    'completed' => [],
+    'failed' => [],
+    'error_details' => [],
+    'error_messages' => [],
+  ];
   $counter = 0;
   /** @phpstan-var list<array<string, mixed>> $scheduled_activities */
   $scheduled_activities = $scheduledActivitiesQuery
@@ -118,7 +124,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
       assert(NULL !== $changeId);
       $result['failed'][] = $changeId;
       $result['error_details'][$changeId] = CRM_Contract_Utils::formatExceptionForApi($ex);
-      $result['error_details_test'][$changeId] = CRM_Contract_Utils::formatExceptionForTest($ex);
+      $result['error_messages'][$changeId] = $ex->getMessage();
       $change->setStatus('Failed');
       $change->setParameter('details', CRM_Contract_Utils::formatExceptionForActivityDetails($ex));
       $change->save();
@@ -146,7 +152,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
       assert(NULL !== $changeId);
       $result['failed'][] = $changeId;
       $result['error_details'][$changeId] = CRM_Contract_Utils::formatExceptionForApi($ex);
-      $result['error_details_test'][$changeId] = CRM_Contract_Utils::formatExceptionForTest($ex);
+      $result['error_messages'][$changeId] = $ex->getMessage();
       $change->setStatus('Failed');
       $change->setParameter('details', CRM_Contract_Utils::formatExceptionForActivityDetails($ex));
       $change->save();
