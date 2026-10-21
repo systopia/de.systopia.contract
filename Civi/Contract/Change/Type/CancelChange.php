@@ -29,6 +29,25 @@ use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Cancel Membership" change
+ *
+ * @phpstan-type changeT array{
+ *   id?: int,
+ *   "activity_type_id:name"?: string,
+ *   activity_type_id?: int,
+ *   activity_date_time?: string,
+ *   status_id?: int|string,
+ *   source_record_id?: int,
+ *   source_contact_id?: int,
+ *   target_contact_id?: int,
+ *   subject?: string,
+ *   details?: string,
+ *   "contract_activity.contract_id"?: int,
+ *   activity_date_time: string,
+ *   "contract_cancellation.contact_history_cancel_reason"?: string,
+ *   "membership_cancellation.membership_cancel_reason"?: string,
+ * }
+ *
+ * @extends AbstractSchedulableContractChange<changeT>
  */
 class CancelChange extends AbstractSchedulableContractChange {
 
@@ -78,18 +97,16 @@ class CancelChange extends AbstractSchedulableContractChange {
    */
   public function populateData(): void {
     if ($this->isNew()) {
-      $this->setParameter(
-        'contract_cancellation.contact_history_cancel_reason',
-        $this->getParameter(self::MEMBERSHIP_CANCEL_REASON)
-      );
+      $cancelReason = $this->getParameter(self::MEMBERSHIP_CANCEL_REASON);
+      assert(NULL !== $cancelReason);
+      $this->setParameter('contract_cancellation.contact_history_cancel_reason', $cancelReason);
       $this->setParameter('subject', $this->getSubject(NULL));
     }
     else {
       parent::populateData();
-      $this->setParameter(
-        self::MEMBERSHIP_CANCEL_REASON,
-        $this->getParameter('contract_cancellation.contact_history_cancel_reason')
-      );
+      $cancelReason = $this->getParameter('contract_cancellation.contact_history_cancel_reason');
+      assert(NULL !== $cancelReason);
+      $this->setParameter(self::MEMBERSHIP_CANCEL_REASON, $cancelReason);
     }
   }
 
@@ -133,7 +150,6 @@ class CancelChange extends AbstractSchedulableContractChange {
 
     // check for OTHER CANCELLATION REQUEST for the same day
     //  @see https://redmine.greenpeace.at/issues/1190
-    // @phpstan-ignore offsetAccess.notFound
     $activityDateTime = strtotime($this->data['activity_date_time']);
     if (FALSE === $activityDateTime) {
       throw new \RuntimeException('Invalid activity date.');

@@ -23,6 +23,22 @@ namespace Civi\Contract\Change;
 /**
  * Shouldn't be implemented. {@link AbstractContractChange} should be extended
  * instead.
+ *
+ * @phpstan-type changeT array{
+ *   id?: int,
+ *   "activity_type_id:name"?: string,
+ *   activity_type_id?: int,
+ *   activity_date_time?: string,
+ *   status_id?: int|string,
+ *   source_record_id?: int,
+ *   source_contact_id?: int,
+ *   target_contact_id?: int,
+ *   subject?: string,
+ *   details?: string,
+ *   "contract_activity.contract_id"?: int,
+ * }
+ *
+ * @template T of changeT = changeT
  */
 interface ContractChangeInterface {
 
@@ -75,11 +91,23 @@ interface ContractChangeInterface {
 
   /**
    * Set a parameter with the activity.
+   *
+   * @template TKey of key-of<T>
+   *
+   * @phpstan-param TKey $key
+   * @phpstan-param T[TKey] $value
    */
   public function setParameter(string $key, mixed $value): void;
 
   /**
    * Get a parameter from the activity
+   *
+   * @template TKey of key-of<T>
+   *
+   * @phpstan-param TKey $key
+   * @phpstan-param T[TKey]|null $default
+   *
+   * @phpstan-return T[TKey]|null
    */
   public function getParameter(string $key, mixed $default = NULL): mixed;
 

@@ -23,6 +23,24 @@ namespace Civi\Contract\Change;
 /**
  * Shouldn't be implemented. {@link AbstractSchedulableContractChange} should be
  * extended instead.
+ *
+ * @phpstan-type changeT array{
+ *   id?: int,
+ *   "activity_type_id:name"?: string,
+ *   activity_type_id?: int,
+ *   activity_date_time?: string,
+ *   status_id?: int|string,
+ *   source_record_id?: int,
+ *   source_contact_id?: int,
+ *   target_contact_id?: int,
+ *   subject?: string,
+ *   details?: string,
+ *   "contract_activity.contract_id"?: int,
+ *   activity_date_time: string,
+ * }
+ *
+ * @template T of changeT = changeT
+ * @extends ActionMenuAwareContractChangeTypeInterface<T>
  */
 interface SchedulableContractChangeInterface extends ActionMenuAwareContractChangeTypeInterface {
 
