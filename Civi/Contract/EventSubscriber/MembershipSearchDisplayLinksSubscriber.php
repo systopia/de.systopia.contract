@@ -195,6 +195,7 @@ class MembershipSearchDisplayLinksSubscriber implements EventSubscriberInterface
 
     ksort($linksByWeight);
 
+    // @phpstan-ignore return.type (For phpstan this results in list<mixed>)
     return array_values(
       array_reduce($linksByWeight, fn ($links, $weightedLinks) => array_merge($links, $weightedLinks), [])
     );
