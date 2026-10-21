@@ -15,7 +15,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
 
   public function testGetMembershipIncreaseAmount_WithFloatValues_CalculatesDiff(): void {
     $event = new RenderChangeSubjectEvent(
-      new UpdateChange([]),
+      new UpdateChange(['activity_date_time' => '2026-10-21 01:02:03']),
       ['membership_payment.membership_annual' => 77379.0],
       ['membership_payment.membership_annual' => 77500.0]
     );
@@ -25,7 +25,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
 
   public function testGetMembershipIncreaseAmount_WithFloatValues_CalculatesReduction(): void {
     $event = new RenderChangeSubjectEvent(
-      new UpdateChange([]),
+      new UpdateChange(['activity_date_time' => '2026-10-21 01:02:03']),
       ['membership_payment.membership_annual' => 120.0],
       ['membership_payment.membership_annual' => 60.0]
     );
@@ -35,7 +35,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
 
   public function testGetMembershipIncreaseAmount_WithFormattedStrings_StripsThousandSeparator(): void {
     $event = new RenderChangeSubjectEvent(
-      new UpdateChange([]),
+      new UpdateChange(['activity_date_time' => '2026-10-21 01:02:03']),
       ['membership_payment.membership_annual' => '1.200,00'],
       ['membership_payment.membership_annual' => '1.500,00']
     );
@@ -44,7 +44,7 @@ final class RenderChangeSubjectEventTest extends AbstractSetupHeadless {
   }
 
   public function testGetMembershipIncreaseAmount_WithoutContractData_ReturnsZero(): void {
-    $event = new RenderChangeSubjectEvent(new UpdateChange([]), [], []);
+    $event = new RenderChangeSubjectEvent(new UpdateChange(['activity_date_time' => '2026-10-21 01:02:03']), [], []);
 
     self::assertEqualsWithDelta(0.0, $event->getMembershipIncreaseAmount(), 0.001);
   }

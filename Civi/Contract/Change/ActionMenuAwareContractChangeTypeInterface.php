@@ -22,6 +22,11 @@ namespace Civi\Contract\Change;
 
 /**
  * For types that shall be added to the membership actions menu.
+ *
+ * @phpstan-import-type changeT from ContractChangeInterface
+ *
+ * @template T of changeT = changeT
+ * @extends ContractChangeInterface<T>
  */
 interface ActionMenuAwareContractChangeTypeInterface extends ContractChangeInterface {
 
