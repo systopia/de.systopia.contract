@@ -71,9 +71,7 @@ function civicrm_api3_Contract_process_scheduled_modifications($params) {
       'status_id',
       'activity_date_time',
       'subject',
-      'contract_activity.contract_id',
-      'contract_cancellation.*',
-      'contract_updates.*',
+      'custom.*',
     )
     ->addWhere('activity_type_id:name', 'IN', ContractChangeTypeContainer::getInstance()->getActivityTypes())
     ->addWhere('status_id:name', '=', 'Scheduled')
