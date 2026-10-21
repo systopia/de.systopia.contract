@@ -35,32 +35,16 @@ use Civi\Contract\Event\RenderChangeSubjectEvent;
  *
  * Note: When data was fetched via APIv3 integers might be given as numeric
  * strings.
- * @phpstan-type changeT array{
- *   id?: int,
- *   "activity_type_id:name"?: string,
- *   activity_type_id?: int,
- *   activity_date_time?: string,
- *   campaign_id?: int,
- *   membership_type_id?: int,
- *   status_id?: int|string,
- *   "contract_activity.contract_id"?: int,
- *   "membership_payment.cycle_day"?: int,
- *   "membership_payment.defer_payment_start"?: int,
- *   "membership_payment.from_name"?: string,
- *   "membership_payment.from_ba"?: string,
- *   "membership_payment.to_ba"?: string,
- *   "membership_payment.membership_annual"?: float,
- *   "membership_payment.membership_frequency"?: int,
- *   "membership_payment.membership_recurring_contribution"?: int,
- *   "membership_payment.payment_instrument"?: int,
- *   "membership_cancellation.membership_cancel_reason"?: string,
- *   ...
- *  }
+ *
+ * @phpstan-import-type changeT from ContractChangeInterface
+ *
+ * @template T of changeT = changeT
+ * @implements ContractChangeInterface<T>
  */
 abstract class AbstractContractChange implements ContractChangeInterface {
 
   /**
-   * @phpstan-var changeT
+   * @phpstan-var T
    */
   protected array $data;
 
@@ -88,10 +72,11 @@ abstract class AbstractContractChange implements ContractChangeInterface {
   ];
 
   /**
-   * @phpstan-param changeT $data
+   * @phpstan-param T $data
    */
   public function __construct(array $data) {
     $this->data = $data;
+    // @phpstan-ignore assign.propertyType (phpstan allows T to differ from changeT)
     $this->data['activity_type_id:name'] = $this::getActivityTypeName();
   }
 
@@ -137,6 +122,7 @@ abstract class AbstractContractChange implements ContractChangeInterface {
     // propagate derived fields
     foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
       if (empty($this->data[$change_attribute])) {
+        // @phpstan-ignore assign.propertyType (phpstan allows T to differ from changeT)
         $this->data[$change_attribute] = $contract[$contract_attribute] ?? '';
       }
     }
@@ -335,7 +321,7 @@ abstract class AbstractContractChange implements ContractChangeInterface {
    * @inheritDoc
    */
   public function setParameter(string $key, mixed $value): void {
-    // @phpstan-ignore assign.propertyType
+    // @phpstan-ignore assign.propertyType (phpstan allows T to differ from changeT)
     $this->data[$key] = $value;
   }
 
@@ -344,7 +330,6 @@ abstract class AbstractContractChange implements ContractChangeInterface {
    */
   public function getParameter(string $key, mixed $default = NULL): mixed {
     return $this->data[$key]
-      ?? \CRM_Utils_Request::retrieve($key, 'String')
       ?? $default;
   }
 
@@ -383,7 +368,8 @@ abstract class AbstractContractChange implements ContractChangeInterface {
 
     // make sure we store the activity ID (if this is the first time)
     if (empty($this->data['id'])) {
-      $this->data['id'] = $result['id'];
+      // @phpstan-ignore assign.propertyType (phpstan allows T to differ from changeT)
+      $this->data['id'] = (int) $result['id'];
     }
   }
 
@@ -400,6 +386,7 @@ abstract class AbstractContractChange implements ContractChangeInterface {
    * @param string $status valid activity status
    */
   public function setStatus(string $status): void {
+    // @phpstan-ignore assign.propertyType (phpstan allows T to differ from changeT)
     $this->data['status_id'] = $status;
   }
 

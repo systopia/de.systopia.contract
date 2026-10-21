@@ -56,6 +56,7 @@ class SignChange extends AbstractContractChange {
     $c = (array) $contractAfter;
     $parts = [];
     $type = isset($c['membership_type_id'])
+      // @phpstan-ignore argument.type
       ? $this->labelValue($c['membership_type_id'], 'membership_type_id')
       : NULL;
     if ($type) {
@@ -63,6 +64,7 @@ class SignChange extends AbstractContractChange {
     }
     if (!empty($c['membership_payment.membership_frequency'])) {
       $freq = $this->labelValue(
+        // @phpstan-ignore argument.type
         $c['membership_payment.membership_frequency'],
         'membership_payment.membership_frequency'
       );
@@ -74,6 +76,7 @@ class SignChange extends AbstractContractChange {
       $parts[] = E::ts('Annual %1', [1 => $c['membership_payment.membership_annual']]);
     }
     if (!empty($c['membership_payment.payment_instrument'])) {
+      // @phpstan-ignore argument.type
       $pi = $this->labelValue($c['membership_payment.payment_instrument'], 'membership_payment.payment_instrument');
       if ('' !== $pi) {
         $parts[] = $pi;

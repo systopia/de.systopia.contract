@@ -27,7 +27,7 @@ use Civi\Contract\Change\Type\AddRelatedMembershipChange;
 use Civi\Contract\Change\Type\EndRelatedMembershipChange;
 
 /**
- * @phpstan-import-type changeT from \Civi\Contract\Change\AbstractContractChange
+ * @phpstan-import-type changeT from \Civi\Contract\Change\ContractChangeInterface
  */
 class ContractManager {
 
@@ -131,6 +131,7 @@ class ContractManager {
     $change->setParameter('source_contact_id', \CRM_Contract_Configuration::getUserID());
     $change->setParameter('contract_activity.contract_id', $membershipId);
     $change->setParameter('source_record_id', $membershipId);
+    // @phpstan-ignore argument.type
     $change->setParameter('target_contact_id', $change->getContract()['contact_id']);
     $change->setStatus($change instanceof SchedulableContractChangeInterface ? 'Scheduled' : 'Completed');
     $change->populateData();

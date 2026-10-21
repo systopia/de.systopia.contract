@@ -27,6 +27,23 @@ use CRM_Contract_ExtensionUtil as E;
 
 /**
  * "Pause Membership" change
+ *
+ * @phpstan-type changeT array{
+ *   id?: int,
+ *   "activity_type_id:name"?: string,
+ *   activity_type_id?: int,
+ *   activity_date_time?: string,
+ *   status_id?: int|string,
+ *   source_record_id?: int,
+ *   source_contact_id?: int,
+ *   target_contact_id?: int,
+ *   subject?: string,
+ *   "contract_activity.contract_id"?: int,
+ *   activity_date_time: string,
+ *   resume_date?: string,
+ * }
+ *
+ * @extends AbstractSchedulableContractChange<changeT>
  */
 class PauseChange extends AbstractSchedulableContractChange {
 
@@ -78,10 +95,12 @@ class PauseChange extends AbstractSchedulableContractChange {
   public function populateData(): void {
     $contract = $this->getContract();
 
-    $resume_date = $this->getParameter('resume_date');
-    if (!$resume_date) {
-      $resume_date = $this->getParameter('activity_date_time', date('Y-m-d'));
-      $this->setParameter('resume_date', date('Y-m-d', strtotime("{$resume_date} + 1 day")));
+    $resumeDate = $this->getParameter('resume_date', '');
+    if ('' === $resumeDate) {
+      $resumeDate = $this->getParameter('activity_date_time', date('Y-m-d'));
+      /** @var int $resumeTime */
+      $resumeTime = strtotime("{$resumeDate} + 1 day");
+      $this->setParameter('resume_date', date('Y-m-d', $resumeTime));
     }
 
     $this->setParameter('subject', $this->getSubject($contract));
@@ -97,20 +116,23 @@ class PauseChange extends AbstractSchedulableContractChange {
   public function save(): void {
     if ($this->isNew()) {
       // create resume change activity:
-      $resume_date = $this->getParameter('resume_date');
-      if ($resume_date) {
+      /** @var string $resumeDate */
+      $resumeDate = $this->getParameter('resume_date', '');
+      if ('' !== $resumeDate) {
         $contract = $this->getContract();
-        $resume_change = ContractChangeFactory::getInstance()->create([
+        $resumeChange = ContractChangeFactory::getInstance()->create([
           'activity_type_id:name' => ResumeChange::getActivityTypeName(),
         ]);
-        $resume_change->setParameter('activity_date_time', $resume_date);
-        $resume_change->setParameter('contract_activity.contract_id', $this->getContractID());
-        $resume_change->setParameter('source_record_id', $this->getContractID());
-        $resume_change->setParameter('source_contact_id', $this->getParameter('source_contact_id'));
-        $resume_change->setParameter('target_contact_id', $contract['contact_id']);
-        $resume_change->setParameter('subject', $resume_change->getSubject($contract));
-        $resume_change->setStatus('Scheduled');
-        $resume_change->save();
+        $resumeChange->setParameter('activity_date_time', $resumeDate);
+        $resumeChange->setParameter('contract_activity.contract_id', $this->getContractID());
+        $resumeChange->setParameter('source_record_id', $this->getContractID());
+        // @phpstan-ignore argument.type
+        $resumeChange->setParameter('source_contact_id', $this->getParameter('source_contact_id'));
+        // @phpstan-ignore argument.type
+        $resumeChange->setParameter('target_contact_id', $contract['contact_id']);
+        $resumeChange->setParameter('subject', $resumeChange->getSubject($contract));
+        $resumeChange->setStatus('Scheduled');
+        $resumeChange->save();
       }
     }
     parent::save();
@@ -123,15 +145,15 @@ class PauseChange extends AbstractSchedulableContractChange {
     $contract = $this->getContract(TRUE);
 
     // pause the mandate
-    $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
-    if (NULL !== $payment_contract_id) {
-      \CRM_Contract_SepaLogic::pauseSepaMandate($payment_contract_id);
+    $paymentContractId = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
+    if (NULL !== $paymentContractId) {
+      \CRM_Contract_SepaLogic::pauseSepaMandate($paymentContractId);
       $this->updateContract(['status_id:name' => 'Paused']);
     }
 
     // update change activity
-    $contract_after = $this->getContract(TRUE);
-    $this->setParameter('subject', $this->getSubject($contract_after, $contract));
+    $contractAfter = $this->getContract(TRUE);
+    $this->setParameter('subject', $this->getSubject($contractAfter, $contract));
     $this->setStatus('Completed');
     $this->save();
   }
@@ -141,12 +163,17 @@ class PauseChange extends AbstractSchedulableContractChange {
    */
   public function verifyData(): void {
     parent::verifyData();
-
-    // check that the resume date is not on the same day as the pause
-    $pause_date  = date('Y-m-d', strtotime($this->getParameter('activity_date_time')));
-    $resume_date = date('Y-m-d', strtotime($this->getParameter('resume_date')));
-    if ($pause_date >= $resume_date) {
-      throw new \RuntimeException(E::ts('Resume date cannot be before or on the same day as the pause.'));
+    /** @var string $resumeDate */
+    $resumeDate = $this->getParameter('resume_date', '');
+    if ('' !== $resumeDate) {
+      // check that the resume date is not on the same day as the pause
+      // @phpstan-ignore argument.type
+      $pauseDate = date('Y-m-d', strtotime($this->data['activity_date_time']));
+      // @phpstan-ignore argument.type
+      $resumeDate = date('Y-m-d', strtotime($resumeDate));
+      if ($pauseDate >= $resumeDate) {
+        throw new \RuntimeException(E::ts('Resume date cannot be before or on the same day as the pause.'));
+      }
     }
   }
 
@@ -156,12 +183,18 @@ class PauseChange extends AbstractSchedulableContractChange {
   public function renderSubject(?array $contractAfter, ?array $contractBefore = NULL): string {
     $resume = $this->getParameter('resume_date');
     if ($this->isNew()) {
-      return $resume
-        ? E::ts('Pause contract until %1', [1 => date('Y-m-d', strtotime($resume))])
+      return NULL !== $resume
+        ? E::ts('Pause contract until %1', [
+          // @phpstan-ignore argument.type
+          1 => date('Y-m-d', strtotime($resume)),
+        ])
         : E::ts('Pause contract');
     }
-    return $resume
-      ? E::ts('Contract paused until %1', [1 => date('Y-m-d', strtotime($resume))])
+    return NULL !== $resume
+      ? E::ts('Contract paused until %1', [
+        // @phpstan-ignore argument.type
+        1 => date('Y-m-d', strtotime($resume)),
+      ])
       : E::ts('Contract paused');
   }
 
