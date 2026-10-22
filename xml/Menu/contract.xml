@@ -35,6 +35,11 @@
     <access_arguments>edit memberships</access_arguments>
   </item>
   <item>
+    <path>civicrm/contract/reinstate-payment</path>
+    <page_callback>CRM_Contract_Page_ReinstatePayment</page_callback>
+    <access_arguments>edit memberships</access_arguments>
+  </item>
+  <item>
     <path>civicrm/admin/contract</path>
     <page_callback>CRM_Contract_Form_Settings</page_callback>
     <title>Contract Engine Settings</title>
