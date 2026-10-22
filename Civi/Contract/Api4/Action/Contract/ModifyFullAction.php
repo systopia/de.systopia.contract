@@ -24,7 +24,16 @@ use Civi\Api4\ContributionRecur;
 use Civi\Api4\Generic\BasicUpdateAction;
 use Civi\Api4\Membership;
 
+/**
+ * @method bool getThrowExceptionOnFailure()
+ * @method $this setThrowExceptionOnFailure(bool $throwExceptionOnFailure)
+ */
 class ModifyFullAction extends BasicUpdateAction {
+
+  /**
+   * @var bool
+   */
+  protected bool $throwExceptionOnFailure = FALSE;
 
   public function __construct() {
     parent::__construct(Contract::getEntityName(), 'modifyFull');
@@ -39,10 +48,8 @@ class ModifyFullAction extends BasicUpdateAction {
   /**
    * @inheritDoc
    */
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
-  protected function writeRecord($item) {
-
-    // phpcs:enable
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
+  protected function writeRecord($item): array {
     $membership = Membership::get(FALSE)
       ->addSelect('contact_id')
       ->addWhere('id', '=', $item['id'])
@@ -52,7 +59,7 @@ class ModifyFullAction extends BasicUpdateAction {
     $params = [
       'id' => $item['id'],
       'action' => $item['action'],
-      'medium_id' => $item['medium_id'],
+      'medium_id' => $item['medium_id'] ?? NULL,
       'note' => $item['note'],
     ];
 
@@ -158,12 +165,12 @@ class ModifyFullAction extends BasicUpdateAction {
       $params['campaign_id'] = $item['campaign_id'];
     }
     // If this is a cancellation
-    elseif ($item['action'] == 'cancel') {
+    elseif ($item['action'] === 'cancel') {
       $params['membership_cancellation.membership_cancel_reason'] = $item['cancel_reason'];
 
     }
     // If this is a pause
-    elseif ($item['action'] == 'pause') {
+    elseif ($item['action'] === 'pause') {
       $params['resume_date'] = \CRM_Utils_Date::processDate($item['resume_date'], NULL, FALSE, 'Y-m-d');
     }
 
@@ -171,7 +178,22 @@ class ModifyFullAction extends BasicUpdateAction {
     /** @phpstan-var array<string, mixed> $result */
 
     $result = civicrm_api3('Contract', 'modify', $params);
-    civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']]);
+    /**
+     * @var array{
+     *   order: list<int>,
+     *   completed: list<int>,
+     *   failed: list<int>,
+     *   error_details: array<int, string>,
+     *   error_messages: array<int, string>,
+     * } $processResult
+     */
+    // @phpstan-ignore offsetAccess.nonOffsetAccessible
+    $processResult = civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']])['values'];
+
+    if ($this->throwExceptionOnFailure && [] !== $processResult['failed']) {
+      throw new \CRM_Core_Exception(implode(', ', $processResult['error_messages']));
+    }
+
     return $result;
   }
 

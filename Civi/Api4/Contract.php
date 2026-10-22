@@ -25,6 +25,7 @@ use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\CreateFullAction;
 use Civi\Contract\Api4\Action\Contract\GetFieldsAction;
 use Civi\Contract\Api4\Action\Contract\ModifyFullAction;
+use Civi\Contract\Api4\Action\Contract\ReinstatePaymentAction;
 use Civi\Contract\Api4\Action\Contract\SuspendPaymentAction;
 
 class Contract extends AbstractEntity {
@@ -60,6 +61,10 @@ class Contract extends AbstractEntity {
 
   public static function endRelatedMembership(bool $checkPermissions = TRUE): EndRelatedMembershipAction {
     return \Civi::service(EndRelatedMembershipAction::class)->setCheckPermissions($checkPermissions);
+  }
+
+  public static function reinstatePayment(bool $checkPermissions = TRUE): ReinstatePaymentAction {
+    return (new ReinstatePaymentAction())->setCheckPermissions($checkPermissions);
   }
 
   public static function suspendPayment(bool $checkPermissions = TRUE): SuspendPaymentAction {
