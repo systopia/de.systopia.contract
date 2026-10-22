@@ -17,6 +17,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\Change\ContractChangeTypeContainer;
 use CRM_Contract_ExtensionUtil as E;
 
 return [
@@ -32,14 +33,9 @@ return [
         'table_name' => 'civicrm_value_contract_activity',
         'title' => E::ts('Contract Activity'),
         'extends' => 'Activity',
-        'extends_entity_column_value:name' => [
-          'Contract_Signed',
-          'Contract_Paused',
-          'Contract_Resumed',
-          'Contract_Updated',
-          'Contract_Cancelled',
-          'Contract_Revived',
-        ],
+        'extends_entity_column_value:name' => array_keys(
+          ContractChangeTypeContainer::getInstance()->getClassesByActivityType()
+        ),
         'style' => 'Inline',
         'collapse_display' => FALSE,
         'help_pre' => '',

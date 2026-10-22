@@ -14,6 +14,7 @@ parameters:
 			core:
 				- api/v3/Membership.php
 	paths:
+		- ang
 		- api
 		- Civi
 		- CRM

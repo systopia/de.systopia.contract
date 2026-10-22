@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: CRM/Contract/BAO/ContractPaymentLink.php
 msgid "unknown"
@@ -23,145 +23,6 @@ msgstr "%2 [%1] seit %3"
 #: CRM/Contract/BAO/ContractPaymentLink.php
 msgid "%2 [%1] from %3 to %4"
 msgstr "%2 [%1] von %3 bis %4"
-
-#: CRM/Contract/Change/AddRelatedMembership.php
-msgid "Create Secondary Membership"
-msgstr "Sekundäre Mitgliedschaft erstellen"
-
-#: CRM/Contract/Change/AddRelatedMembership.php
-msgid "New related membership"
-msgstr "Abgeleitete Mitgliedschaft hinzufügen"
-
-#: CRM/Contract/Change/Cancel.php
-msgid "Cancel Contract"
-msgstr "Vertrag beenden"
-
-#: CRM/Contract/Change/Cancel.php
-msgid "Contract cancellation scheduled"
-msgstr "Vertrag beenden geplant"
-
-#: CRM/Contract/Change/Cancel.php
-msgid "Contract cancelled (%1)"
-msgstr "Vertrag beendet (%1)"
-
-#: CRM/Contract/Change/Cancel.php
-msgid "Contract cancelled"
-msgstr "Vertrag beendet"
-
-#: CRM/Contract/Change/EndRelatedMembership.php
-msgid "End Secondary Membership"
-msgstr "Sekundäre Mitgliedschaft beenden"
-
-#: CRM/Contract/Change/EndRelatedMembership.php
-msgid "Related membership ended"
-msgstr "Abgeleitete Mitgliedschaft beendet"
-
-#: CRM/Contract/Change/Pause.php
-msgid "Pause Contract"
-msgstr "Vertrag pausieren"
-
-#: CRM/Contract/Change/Pause.php
-msgid "Resume date cannot be before or on the same day as the pause."
-msgstr ""
-"Wiederaufnahmedatum kann nicht vor oder am selben Tag sein wie die "
-"Pausierung."
-
-#: CRM/Contract/Change/Pause.php
-msgid "Pause contract until %1"
-msgstr "Vertrag pausieren bis %1"
-
-#: CRM/Contract/Change/Pause.php
-msgid "Pause contract"
-msgstr "Vertrag pausieren"
-
-#: CRM/Contract/Change/Pause.php
-msgid "Contract paused until %1"
-msgstr "Vertrag pausiert bis %1"
-
-#: CRM/Contract/Change/Pause.php
-msgid "Contract paused"
-msgstr "Vertrag pausiert"
-
-#: CRM/Contract/Change/Resume.php
-msgid "Resume Contract"
-msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
-
-#: CRM/Contract/Change/Resume.php
-msgid "Resume contract"
-msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
-
-#: CRM/Contract/Change/Resume.php
-msgid "Contract resumed"
-msgstr "Vertrag wiederaufgenommen (nach Pausierung)"
-
-#: CRM/Contract/Change/Revive.php
-msgid "Revive Contract"
-msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
-
-#: CRM/Contract/Change/Sign.php
-msgid "Sign Contract"
-msgstr "Vertrag unterschreiben"
-
-#: CRM/Contract/Change/Sign.php
-msgid "Annual %1"
-msgstr "Jährlich %1"
-
-#: CRM/Contract/Change/Sign.php
-msgid "Cycle day %1"
-msgstr "Einzugstag %1"
-
-#: CRM/Contract/Change/Sign.php
-msgid "New membership contract"
-msgstr "Neuer Mitgliedschaftsvertrag"
-
-#: CRM/Contract/Change/Update.php
-msgid "Update Contract"
-msgstr "Vertrag aktualisieren"
-
-#: CRM/Contract/Change/UpdateBase.php
-msgid "Update contract scheduled"
-msgstr "Vertrag aktualisieren geplant"
-
-#: CRM/Contract/Change/UpdateBase.php templates/CRM/Contract/Page/Review.tpl
-msgid "Type"
-msgstr "Typ"
-
-#: CRM/Contract/Change/UpdateBase.php CRM/Contract/Form/Modify.php
-#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
-msgid "Annual amount"
-msgstr "Jahresbetrag"
-
-#: CRM/Contract/Change/UpdateBase.php
-msgid "Payment frequency"
-msgstr "Zahlungsturnus"
-
-#: CRM/Contract/Change/UpdateBase.php CRM/Contract/Form/Create.php
-#: CRM/Contract/Form/Modify.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php
-#: managed/20-CustomGroup_membership_payment.mgd.php
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Cycle day"
-msgstr "Einzugstag"
-
-#: CRM/Contract/Change/UpdateBase.php CRM/Contract/RecurringContribution.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php
-#: js/contract_modify_tools.js
-#: managed/20-CustomGroup_membership_payment.mgd.php
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Payment method"
-msgstr "Zahlungsart"
-
-#: CRM/Contract/Change/UpdateBase.php
-msgid "Defer payment start"
-msgstr "Zahlungsbeginn aufschieben"
-
-#: CRM/Contract/Change/UpdateBase.php
-msgid "none"
-msgstr "keine"
-
-#: CRM/Contract/Change/UpdateBase.php
-msgid "Contract updated"
-msgstr "Vertrag aktualisiert"
 
 #: CRM/Contract/Configuration.php CRM/Contract/Form/Create.php
 #: CRM/Contract/Form/Modify.php CRM/Contract/FormUtils.php
@@ -204,6 +65,14 @@ msgstr "Neuen Vertrag für %1 erstellen"
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 msgid "Payment"
 msgstr "Zahlungsart"
+
+#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+#: managed/20-CustomGroup_membership_payment.mgd.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Cycle day"
+msgstr "Einzugstag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
@@ -298,13 +167,13 @@ msgid "Membership channel"
 msgstr "Anwerbekanal"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: ang/contract/suspendPayment.template.html
 msgid "Notes"
 msgstr "Notizen"
 
-#: CRM/Contract/Form/Create.php
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: CRM/Contract/Form/Create.php ang/contract/suspendPayment.template.html
 msgid "Cancel"
-msgstr "Beenden"
+msgstr "Abbrechen"
 
 #: CRM/Contract/Form/Create.php
 msgid "Create"
@@ -409,6 +278,12 @@ msgstr "Zahlungsart: SEPA Direct Debit"
 #: js/contract_modify_tools.js templates/CRM/Contract/Page/Review.tpl
 msgid "Frequency"
 msgstr "Zahlungsrhytmus"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+#: js/contract_modify_tools.js
+msgid "Annual amount"
+msgstr "Jahresbetrag"
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
 msgid "Next debit"
@@ -637,6 +512,15 @@ msgstr "Daten-Fehler"
 #: CRM/Contract/RecurringContribution.php
 msgid "SEPA"
 msgstr "SEPA"
+
+#: CRM/Contract/RecurringContribution.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+#: js/contract_modify_tools.js
+#: managed/20-CustomGroup_membership_payment.mgd.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Payment method"
+msgstr "Zahlungsart"
 
 #: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
 msgid "Paid by"
@@ -952,6 +836,7 @@ msgid "Payment Amount"
 msgstr "Zahlungsbetrag"
 
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
+#: managed/20-CustomGroup_contract_payment_suspended.mgd.php
 msgid "Recurring Contribution"
 msgstr "Wiederkehrende Zuwendung"
 
@@ -962,20 +847,6 @@ msgstr "Kündigungsgrund"
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Error Message"
 msgstr "Fehlermeldung"
-
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-#: managed/90-SavedSearch_Related_Memberships.mgd.php
-msgid "Update"
-msgstr "Ändern"
-
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-msgid "Revive"
-msgstr "Wiederaufnehmen (nach Beendigung)"
-
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-#: managed/90-SavedSearch_Related_Memberships.mgd.php
-msgid "Pause"
-msgstr "Pausieren"
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "directly process scheduled changes"
@@ -1023,6 +894,134 @@ msgstr "Aktivitäts-Medium"
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Membership ID"
 msgstr "Mitgliedschafts-ID"
+
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+msgid "Update contract scheduled"
+msgstr "Vertrag aktualisieren geplant"
+
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Type"
+msgstr "Typ"
+
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+msgid "Payment frequency"
+msgstr "Zahlungsturnus"
+
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+msgid "Defer payment start"
+msgstr "Zahlungsbeginn aufschieben"
+
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+msgid "none"
+msgstr "keine"
+
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+msgid "Contract updated"
+msgstr "Vertrag aktualisiert"
+
+#: Civi/Contract/Change/Type/AddRelatedMembershipChange.php
+msgid "Create Secondary Membership"
+msgstr "Sekundäre Mitgliedschaft erstellen"
+
+#: Civi/Contract/Change/Type/AddRelatedMembershipChange.php
+msgid "New related membership"
+msgstr "Abgeleitete Mitgliedschaft hinzufügen"
+
+#: Civi/Contract/Change/Type/CancelChange.php
+msgid "Cancel Contract"
+msgstr "Vertrag beenden"
+
+#: Civi/Contract/Change/Type/CancelChange.php
+msgid "Contract cancellation scheduled"
+msgstr "Vertrag beenden geplant"
+
+#: Civi/Contract/Change/Type/CancelChange.php
+msgid "Contract cancelled (%1)"
+msgstr "Vertrag beendet (%1)"
+
+#: Civi/Contract/Change/Type/CancelChange.php
+msgid "Contract cancelled"
+msgstr "Vertrag beendet"
+
+#: Civi/Contract/Change/Type/EndRelatedMembershipChange.php
+msgid "End Secondary Membership"
+msgstr "Sekundäre Mitgliedschaft beenden"
+
+#: Civi/Contract/Change/Type/EndRelatedMembershipChange.php
+msgid "Related membership ended"
+msgstr "Abgeleitete Mitgliedschaft beendet"
+
+#: Civi/Contract/Change/Type/PauseChange.php
+msgid "Pause Contract"
+msgstr "Vertrag pausieren"
+
+#: Civi/Contract/Change/Type/PauseChange.php
+msgid "Resume date cannot be before or on the same day as the pause."
+msgstr ""
+"Wiederaufnahmedatum kann nicht vor oder am selben Tag sein wie die "
+"Pausierung."
+
+#: Civi/Contract/Change/Type/PauseChange.php
+msgid "Pause contract until %1"
+msgstr "Vertrag pausieren bis %1"
+
+#: Civi/Contract/Change/Type/PauseChange.php
+msgid "Pause contract"
+msgstr "Vertrag pausieren"
+
+#: Civi/Contract/Change/Type/PauseChange.php
+msgid "Contract paused until %1"
+msgstr "Vertrag pausiert bis %1"
+
+#: Civi/Contract/Change/Type/PauseChange.php
+msgid "Contract paused"
+msgstr "Vertrag pausiert"
+
+#: Civi/Contract/Change/Type/PaymentSuspendedChange.php
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "Payment Suspended"
+msgstr "Zahlung ausgesetzt"
+
+#: Civi/Contract/Change/Type/PaymentSuspendedChange.php
+msgid "Suspend Payment"
+msgstr "Zahlung aussetzen"
+
+#: Civi/Contract/Change/Type/ResumeChange.php
+msgid "Resume Contract"
+msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
+
+#: Civi/Contract/Change/Type/ResumeChange.php
+msgid "Resume contract"
+msgstr "Vertrag wiederaufnehmen (nach Pausierung)"
+
+#: Civi/Contract/Change/Type/ResumeChange.php
+msgid "Contract resumed"
+msgstr "Vertrag wiederaufgenommen (nach Pausierung)"
+
+#: Civi/Contract/Change/Type/ReviveChange.php
+msgid "Revive Contract"
+msgstr "Vertrag wiederaufnehmen (nach Beendigung)"
+
+#: Civi/Contract/Change/Type/SignChange.php
+msgid "Sign Contract"
+msgstr "Vertrag unterschreiben"
+
+#: Civi/Contract/Change/Type/SignChange.php
+msgid "Annual %1"
+msgstr "Jährlich %1"
+
+#: Civi/Contract/Change/Type/SignChange.php
+msgid "Cycle day %1"
+msgstr "Einzugstag %1"
+
+#: Civi/Contract/Change/Type/SignChange.php
+msgid "New membership contract"
+msgstr "Neuer Mitgliedschaftsvertrag"
+
+#: Civi/Contract/Change/Type/UpdateChange.php
+msgid "Update Contract"
+msgstr "Vertrag aktualisieren"
 
 #: Civi/Contract/ContainerSpecs.php
 msgid "Contract: Create"
@@ -1078,6 +1077,34 @@ msgstr "Da Formular für die vorhanden"
 msgid "(not found)"
 msgstr "(nicht gefunden)"
 
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "New"
+msgstr "Neu"
+
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "Current"
+msgstr "Laufend"
+
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "Grace"
+msgstr "Zahlungsfrist"
+
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "Cancelled"
+msgstr "Beendet"
+
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "Deceased"
+msgstr "Verstorben"
+
+#: Civi/Contract/MembershipStatusEnum.php
+msgid "Paused"
+msgstr "Pausiert"
+
 #: afformEntities/ContractRelatedMembership.php
 #: ang/afformAddRelatedMembershipContract.aff.php
 msgid "Related Membership (Contract)"
@@ -1096,6 +1123,35 @@ msgstr "Primäre und sekundäre Mitgliedschaften"
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Related Memberships"
 msgstr ""
+
+#: ang/contract/suspendPayment.directive.js
+msgid "contract"
+msgstr ""
+
+#: ang/contract/suspendPayment.template.html
+msgid "Suspend payment for contract of %1."
+msgstr "Zahlung für Vertrag von %1 aussetzen."
+
+#: ang/contract/suspendPayment.template.html
+msgid "Payment can only be suspended for current contracts."
+msgstr "Die Zahlung kann nur für aktive Verträge ausgesetzt werden."
+
+#: ang/contract/suspendPayment.template.html
+msgid "Payment can only be suspended for contracts with SEPA mandate."
+msgstr "Die Zahlung kann nur für Verträge mit SEPA-Mandat ausgesetzt werden."
+
+#: ang/contract/suspendPayment.template.html
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Reason"
+msgstr "Grund"
+
+#: ang/contract/suspendPayment.template.html
+msgid "Required"
+msgstr "Erforderlich"
+
+#: ang/contract/suspendPayment.template.html
+msgid "Suspend payment"
+msgstr "Zahlung aussetzen"
 
 #: api/v3/Contract/Create.php
 msgid "Date/Time of \"Sign\" activity"
@@ -1155,34 +1211,6 @@ msgstr "Keine"
 msgid "de.systopia.contract"
 msgstr "de.systopia.contract"
 
-#: managed/10-MembershipStatus.mgd.php
-msgid "New"
-msgstr "Neu"
-
-#: managed/10-MembershipStatus.mgd.php
-msgid "Current"
-msgstr "Laufend"
-
-#: managed/10-MembershipStatus.mgd.php
-msgid "Grace"
-msgstr "Zahlungsfrist"
-
-#: managed/10-MembershipStatus.mgd.php
-msgid "Pending"
-msgstr "Ausstehend"
-
-#: managed/10-MembershipStatus.mgd.php
-msgid "Cancelled"
-msgstr "Beendet"
-
-#: managed/10-MembershipStatus.mgd.php
-msgid "Deceased"
-msgstr "Verstorben"
-
-#: managed/10-MembershipStatus.mgd.php
-msgid "Paused"
-msgstr "Pausiert"
-
 #: managed/10-OptionGroup_activity_status.mgd.php
 msgid "Needs Review"
 msgstr "Prüfung erforderlich"
@@ -1197,6 +1225,7 @@ msgstr "Kanal"
 
 #: managed/10-OptionGroup_contact_channel.mgd.php
 #: managed/10-OptionGroup_contract_cancel_reason.mgd.php
+#: managed/10-OptionGroup_contract_payment_suspension_reason.mgd.php
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -1207,6 +1236,14 @@ msgstr "Beendigungsgrund"
 #: managed/10-OptionGroup_contract_cancel_reason.mgd.php
 msgid "Dropdown options for Contract cancellation reasons"
 msgstr ""
+
+#: managed/10-OptionGroup_contract_payment_suspension_reason.mgd.php
+msgid "Contract: Payment Suspension Reason"
+msgstr "Vertrag: Zahlungsaussetzungsgrund"
+
+#: managed/10-OptionGroup_contract_payment_suspension_reason.mgd.php
+msgid "Options for contract payment suspension reasons"
+msgstr "Optionen für Zahlungsaussetzungsgründe"
 
 #: managed/10-OptionGroup_order_type.mgd.php
 msgid "Order Type"
@@ -1243,6 +1280,14 @@ msgstr "Vertragsaktivität"
 #: managed/20-CustomGroup_contract_cancellation.mgd.php
 msgid "Contract Cancellation"
 msgstr "Vertrag Beenden"
+
+#: managed/20-CustomGroup_contract_payment_suspended.mgd.php
+msgid "Contract: Payment Suspended"
+msgstr "Vertrag: Zahlung ausgesetzt"
+
+#: managed/20-CustomGroup_contract_payment_suspended.mgd.php
+msgid "Payment Suspension Reason"
+msgstr "Zahlungsaussetzungsgrund"
 
 #: managed/20-CustomGroup_contract_updates.mgd.php
 msgid "Contract Updates"
@@ -1335,6 +1380,14 @@ msgstr "Status"
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "View"
 msgstr ""
+
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Update"
+msgstr "Ändern"
+
+#: managed/90-SavedSearch_Related_Memberships.mgd.php
+msgid "Pause"
+msgstr "Pausieren"
 
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "End"
@@ -1616,10 +1669,6 @@ msgid "Modification"
 msgstr "Änderung"
 
 #: templates/CRM/Contract/Page/Review.tpl
-msgid "Cancel reason"
-msgstr "Kündigungsgrund"
-
-#: templates/CRM/Contract/Page/Review.tpl
 msgid "Added by"
 msgstr "Erfasst von"
 
@@ -1638,12 +1687,3 @@ msgstr "Zahlung für Mitgliedschaft / Vertrag"
 #: templates/CRM/Contribute/Page/ContributionRecur/ContractPaymentLink.tpl
 msgid "Used to Pay for Contract"
 msgstr "Zahlte Vertrag"
-
-#~ msgid "Unknown action '%1'."
-#~ msgstr "Unbekannte Aktion '%1'."
-
-#~ msgid "Update Secondary Membership"
-#~ msgstr "Sekundäre Mitgliedschaft aktualisieren"
-
-#~ msgid "Organisation's Bank Account"
-#~ msgstr "Organisationskonto"

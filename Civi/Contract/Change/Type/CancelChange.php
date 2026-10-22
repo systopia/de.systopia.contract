@@ -55,7 +55,7 @@ class CancelChange extends AbstractSchedulableContractChange {
   }
 
   public static function getStartStatusList(): array {
-    return ['New', 'Grace', 'Current', 'Pending'];
+    return ['New', 'Grace', 'Current', 'Pending', 'PaymentSuspended'];
   }
 
   public static function getTitle(): string {
