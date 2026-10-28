@@ -50,8 +50,8 @@ msgstr ""
 msgid "Payment"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/Change/Type/AbstractUpdateChange.php managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
-msgid "Cycle day"
+#: CRM/Contract/Form/Create.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php ang/contract/reinstatePayment.template.html managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Cycle Day"
 msgstr ""
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/GetSepaRcur.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php ang/contract/reinstatePayment.template.html
@@ -62,12 +62,12 @@ msgstr ""
 msgid "BIC"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "Members Bank Account"
+#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/CreateContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php ang/contract/reinstatePayment.template.html managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Account Holder"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
-msgid "Installment amount"
+#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php ang/contract/reinstatePayment.template.html
+msgid "Installment Amount"
 msgstr ""
 
 #: CRM/Contract/Form/Create.php
@@ -102,20 +102,20 @@ msgstr ""
 msgid "Membership type"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
-msgid "Source media"
+#: CRM/Contract/Form/Create.php
+msgid "Source Media"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php
-msgid "Reference number"
+#: CRM/Contract/Form/Create.php managed/20-CustomGroup_membership_general.mgd.php
+msgid "Reference Number"
 msgstr ""
 
 #: CRM/Contract/Form/Create.php
 msgid "Membership Number"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php
-msgid "Membership channel"
+#: CRM/Contract/Form/Create.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/20-CustomGroup_membership_general.mgd.php
+msgid "Membership Channel"
 msgstr ""
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php ang/contract/reinstatePayment.template.html ang/contract/suspendPayment.template.html
@@ -159,15 +159,15 @@ msgid "now"
 msgstr ""
 
 #: CRM/Contract/Form/Modify.php
+msgid "Source media"
+msgstr ""
+
+#: CRM/Contract/Form/Modify.php
 msgid "Discard changes"
 msgstr ""
 
-#: CRM/Contract/Form/Modify.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php ang/contract/reinstatePayment.template.html
-msgid "Account Holder"
-msgstr ""
-
-#: CRM/Contract/Form/Modify.php ang/contract/reinstatePayment.template.html
-msgid "Installment Amount"
+#: CRM/Contract/Form/Modify.php Civi/Contract/Change/Type/AbstractUpdateChange.php templates/CRM/Contract/Page/Review.tpl
+msgid "Cycle day"
 msgstr ""
 
 #: CRM/Contract/Form/Modify.php
@@ -216,6 +216,10 @@ msgstr ""
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php Civi/Contract/Change/Type/AbstractUpdateChange.php js/contract_modify_tools.js
 msgid "Annual amount"
+msgstr ""
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
+msgid "Installment amount"
 msgstr ""
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
@@ -426,7 +430,7 @@ msgstr ""
 msgid "SEPA"
 msgstr ""
 
-#: CRM/Contract/RecurringContribution.php Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/Change/Type/AbstractUpdateChange.php js/contract_modify_tools.js managed/20-CustomGroup_membership_payment.mgd.php templates/CRM/Contract/Page/Review.tpl
+#: CRM/Contract/RecurringContribution.php Civi/Contract/Change/Type/AbstractUpdateChange.php js/contract_modify_tools.js templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr ""
 
@@ -456,14 +460,6 @@ msgstr ""
 
 #: CRM/Contract/SepaLogic.php
 msgid "Serious Configuration Issue"
-msgstr ""
-
-#: CRM/Contract/Upgrader.php
-msgid "Migrate contract references for activities from \"source_record_id\" to entity reference field"
-msgstr ""
-
-#: CRM/Contract/Upgrader.php
-msgid "Referenced contract does not exist, deleting referencing activity %1."
 msgstr ""
 
 #: CRM/Contract/Validation/ContractNumber.php
@@ -599,11 +595,15 @@ msgid "Payment Interval"
 msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_membership_payment.mgd.php
-msgid "Recurring contribution/mandate"
+msgid "Recurring Contribution/Mandate"
 msgstr ""
 
-#: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_membership_payment.mgd.php
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Donor's Bank Account"
+msgstr ""
+
+#: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Payment Method"
 msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php Civi/Contract/ActionProvider/Action/ModifyContract.php Civi/Contract/ActionProvider/Action/ReviveContract.php Civi/Contract/ActionProvider/Action/UpdateContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
@@ -688,14 +688,6 @@ msgstr ""
 
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Membership Contract"
-msgstr ""
-
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/20-CustomGroup_membership_general.mgd.php
-msgid "Membership Channel"
-msgstr ""
-
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php ang/contract/reinstatePayment.template.html managed/20-CustomGroup_contract_updates.mgd.php
-msgid "Cycle Day"
 msgstr ""
 
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
@@ -1158,24 +1150,12 @@ msgstr ""
 msgid "Increase"
 msgstr ""
 
-#: managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
-msgid "Donor's Account Name"
-msgstr ""
-
 #: managed/20-CustomGroup_contract_updates.mgd.php templates/CRM/Contract/Form/Create.tpl
 msgid "Payment Contract"
 msgstr ""
 
 #: managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Organization's Bank Account"
-msgstr ""
-
-#: managed/20-CustomGroup_contract_updates.mgd.php
-msgid "Member's Bank Account"
-msgstr ""
-
-#: managed/20-CustomGroup_contract_updates.mgd.php
-msgid "Payment Method"
 msgstr ""
 
 #: managed/20-CustomGroup_membership_cancellation.mgd.php
@@ -1188,10 +1168,6 @@ msgstr ""
 
 #: managed/20-CustomGroup_membership_general.mgd.php
 msgid "General Information"
-msgstr ""
-
-#: managed/20-CustomGroup_membership_general.mgd.php
-msgid "Reference Number"
 msgstr ""
 
 #: managed/20-CustomGroup_membership_general.mgd.php

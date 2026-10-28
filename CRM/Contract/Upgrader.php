@@ -10,10 +10,10 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\Change\ContractChangeTypeContainer;
-use CRM_Contract_ExtensionUtil as E;
 use Civi\Api4\Activity;
 use Civi\Api4\OptionValue;
+use Civi\Contract\Change\ContractChangeTypeContainer;
+use CRM_Contract_ExtensionUtil as E;
 
 /**
  * Collection of upgrade steps.
@@ -68,7 +68,7 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
       ->first()['max_id'] ?? 0;
     for ($fromId = 0; $fromId < $maxActivityId; $fromId += self::CONTRACT_REFERENCE_BATCH_SIZE) {
       $this->addTask(
-        E::ts('Migrate contract references for activities from "source_record_id" to entity reference field'),
+        'Migrate contract references for activities from "source_record_id" to entity reference field',
         'migrateContractReferences',
         $fromId,
         $fromId + self::CONTRACT_REFERENCE_BATCH_SIZE
@@ -99,10 +99,12 @@ class CRM_Contract_Upgrader extends CRM_Extension_Upgrader_Base {
     foreach ($contractIds as $activityId => $contractId) {
       if (NULL === $contractId) {
         // Cascaded deletion is configured for field contract_activity.contract_id.
-        $this->ctx->log->warning(E::ts(
-          'Referenced contract does not exist, deleting referencing activity %1.',
-          [1 => $activityId]
-        ));
+        $this->ctx->log->warning(
+          sprintf(
+            'Referenced contract does not exist, deleting referencing activity %s.',
+            $activityId
+          )
+        );
         Activity::delete(FALSE)
           ->addWhere('id', '=', $activityId)
           ->execute();

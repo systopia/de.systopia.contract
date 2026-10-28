@@ -92,7 +92,7 @@ class UpdateContract extends AbstractAction {
         $this->getCollectionDays()
       ),
       new Specification('date', 'Date', E::ts('Date'), FALSE, date('Y-m-d H:i:s')),
-      new Specification('account_holder', 'String', E::ts('Members Bank Account'), FALSE),
+      new Specification('account_holder', 'String', E::ts('Account Holder'), FALSE),
     ]);
   }
 

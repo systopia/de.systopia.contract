@@ -66,12 +66,13 @@ msgstr "Neuen Vertrag für %1 erstellen"
 msgid "Payment"
 msgstr "Zahlungsart"
 
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: CRM/Contract/Form/Create.php
 #: Civi/Contract/ActionProvider/Action/GetContract.php
-#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: ang/contract/reinstatePayment.template.html
+#: managed/20-CustomGroup_contract_updates.mgd.php
 #: managed/20-CustomGroup_membership_payment.mgd.php
-#: templates/CRM/Contract/Page/Review.tpl
-msgid "Cycle day"
+msgid "Cycle Day"
 msgstr "Einzugstag"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
@@ -95,15 +96,20 @@ msgstr "IBAN"
 msgid "BIC"
 msgstr "BIC"
 
-#: CRM/Contract/Form/Create.php
+#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
+#: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "Members Bank Account"
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: ang/contract/reinstatePayment.template.html
+#: managed/20-CustomGroup_contract_updates.mgd.php
+#: managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Account Holder"
 msgstr "Kontoinhaber"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
-#: CRM/Contract/RecurringContribution.php js/contract_modify_tools.js
-msgid "Installment amount"
+#: ang/contract/reinstatePayment.template.html
+msgid "Installment Amount"
 msgstr "Betrag"
 
 #: CRM/Contract/Form/Create.php
@@ -153,12 +159,13 @@ msgstr "Kampagne"
 msgid "Membership type"
 msgstr "Mitgliedschaftstyp"
 
-#: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
-msgid "Source media"
+#: CRM/Contract/Form/Create.php
+msgid "Source Media"
 msgstr "Kanal Kontaktaufnahme"
 
 #: CRM/Contract/Form/Create.php
-msgid "Reference number"
+#: managed/20-CustomGroup_membership_general.mgd.php
+msgid "Reference Number"
 msgstr "Referenznummer"
 
 #: CRM/Contract/Form/Create.php
@@ -166,7 +173,9 @@ msgid "Membership Number"
 msgstr "Mitgliedsnummer"
 
 #: CRM/Contract/Form/Create.php
-msgid "Membership channel"
+#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: managed/20-CustomGroup_membership_general.mgd.php
+msgid "Membership Channel"
 msgstr "Anwerbekanal"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
@@ -218,19 +227,18 @@ msgid "now"
 msgstr "jetzt"
 
 #: CRM/Contract/Form/Modify.php
+msgid "Source media"
+msgstr "Kanal Kontaktaufnahme"
+
+#: CRM/Contract/Form/Modify.php
 msgid "Discard changes"
 msgstr "Änderungen verwerfen"
 
 #: CRM/Contract/Form/Modify.php
-#: Civi/Contract/ActionProvider/Action/ModifyContract.php
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
-#: ang/contract/reinstatePayment.template.html
-msgid "Account Holder"
-msgstr "Kontoinhaber"
-
-#: CRM/Contract/Form/Modify.php ang/contract/reinstatePayment.template.html
-msgid "Installment Amount"
-msgstr "Betrag"
+#: Civi/Contract/Change/Type/AbstractUpdateChange.php
+#: templates/CRM/Contract/Page/Review.tpl
+msgid "Cycle day"
+msgstr "Einzugstag"
 
 #: CRM/Contract/Form/Modify.php
 msgid "Start Collection"
@@ -290,6 +298,11 @@ msgstr "Häufigkeit"
 #: js/contract_modify_tools.js
 msgid "Annual amount"
 msgstr "Jahresbetrag"
+
+#: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
+#: js/contract_modify_tools.js
+msgid "Installment amount"
+msgstr "Betrag"
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
 msgid "Next debit"
@@ -520,11 +533,8 @@ msgid "SEPA"
 msgstr "SEPA"
 
 #: CRM/Contract/RecurringContribution.php
-#: Civi/Contract/ActionProvider/Action/GetContract.php
 #: Civi/Contract/Change/Type/AbstractUpdateChange.php
-#: js/contract_modify_tools.js
-#: managed/20-CustomGroup_membership_payment.mgd.php
-#: templates/CRM/Contract/Page/Review.tpl
+#: js/contract_modify_tools.js templates/CRM/Contract/Page/Review.tpl
 msgid "Payment method"
 msgstr "Zahlungsart"
 
@@ -561,16 +571,6 @@ msgstr "Bitte mindestens einen CiviSEPA Kreditor konfigurieren!"
 #: CRM/Contract/SepaLogic.php
 msgid "Serious Configuration Issue"
 msgstr "Konfigurationsproblem"
-
-#: CRM/Contract/Upgrader.php
-msgid ""
-"Migrate contract references for activities from \"source_record_id\" to "
-"entity reference field"
-msgstr ""
-
-#: CRM/Contract/Upgrader.php
-msgid "Referenced contract does not exist, deleting referencing activity %1."
-msgstr ""
 
 #: CRM/Contract/Validation/ContractNumber.php
 msgid "Reference '%1' is already in use!"
@@ -771,13 +771,20 @@ msgstr "Zahlungsintervall"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: managed/20-CustomGroup_membership_payment.mgd.php
-msgid "Recurring contribution/mandate"
-msgstr "Wiederkehrende Zuwendung / Mandat"
+msgid "Recurring Contribution/Mandate"
+msgstr "Wiederkehrende/s Zuwendung/Mandat"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/20-CustomGroup_contract_updates.mgd.php
 #: managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Donor's Bank Account"
-msgstr "Konto der Spender_in"
+msgstr "Bankkonto des Geldgebers"
+
+#: Civi/Contract/ActionProvider/Action/GetContract.php
+#: managed/20-CustomGroup_contract_updates.mgd.php
+#: managed/20-CustomGroup_membership_payment.mgd.php
+msgid "Payment Method"
+msgstr "Zahlungsart"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
@@ -873,17 +880,6 @@ msgstr "Mitgliedsreferenz"
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Membership Contract"
 msgstr "Mitgliedschaftsvertrag"
-
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
-#: managed/20-CustomGroup_membership_general.mgd.php
-msgid "Membership Channel"
-msgstr "Anwerbekanal"
-
-#: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
-#: ang/contract/reinstatePayment.template.html
-#: managed/20-CustomGroup_contract_updates.mgd.php
-msgid "Cycle Day"
-msgstr "Einzugstag"
 
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
 msgid "Campaign ID"
@@ -1138,7 +1134,7 @@ msgstr "Primäre und sekundäre Mitgliedschaften"
 #: ang/afsearchRelatedMemberships.aff.php
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Related Memberships"
-msgstr ""
+msgstr "Abgeleitete Mitgliedschaften"
 
 #: ang/contract/reinstatePayment.directive.js
 #: ang/contract/suspendPayment.directive.js
@@ -1266,7 +1262,7 @@ msgstr ""
 
 #: js/contract_modify_tools.js
 msgid "Member account"
-msgstr "Kontoinhaber"
+msgstr "Mitgliedskonto"
 
 #: js/contract_modify_tools.js
 msgid "Next collection"
@@ -1372,27 +1368,14 @@ msgid "Increase"
 msgstr "Erhöhung"
 
 #: managed/20-CustomGroup_contract_updates.mgd.php
-#: managed/20-CustomGroup_membership_payment.mgd.php
-msgid "Donor's Account Name"
-msgstr "Kontoinhaber"
-
-#: managed/20-CustomGroup_contract_updates.mgd.php
 #: templates/CRM/Contract/Form/Create.tpl
 msgid "Payment Contract"
-msgstr "Vertrag pausieren"
+msgstr "Zahlungsvertrag"
 
 #: managed/20-CustomGroup_contract_updates.mgd.php
 #: managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Organization's Bank Account"
 msgstr "Organisationskonto"
-
-#: managed/20-CustomGroup_contract_updates.mgd.php
-msgid "Member's Bank Account"
-msgstr "Kontoinhaber"
-
-#: managed/20-CustomGroup_contract_updates.mgd.php
-msgid "Payment Method"
-msgstr "Zahlungsart"
 
 #: managed/20-CustomGroup_membership_cancellation.mgd.php
 msgid "Cancellation Information"
@@ -1405,10 +1388,6 @@ msgstr "Kündigungsdatum"
 #: managed/20-CustomGroup_membership_general.mgd.php
 msgid "General Information"
 msgstr "Allgemeine Informationen"
-
-#: managed/20-CustomGroup_membership_general.mgd.php
-msgid "Reference Number"
-msgstr "Referenznummer"
 
 #: managed/20-CustomGroup_membership_general.mgd.php
 msgid "Contract Number"
@@ -1449,7 +1428,7 @@ msgstr "Status"
 
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "View"
-msgstr ""
+msgstr "Anischt"
 
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Update"
@@ -1461,7 +1440,7 @@ msgstr "Pausieren"
 
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "End"
-msgstr ""
+msgstr "Ende"
 
 #: managed/90-SavedSearch_Related_Memberships.mgd.php
 msgid "Contact"

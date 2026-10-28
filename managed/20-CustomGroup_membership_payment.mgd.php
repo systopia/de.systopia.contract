@@ -96,7 +96,7 @@ return [
       'values' => [
         'custom_group_id.name' => 'membership_payment',
         'name' => 'membership_recurring_contribution',
-        'label' => E::ts('Recurring contribution/mandate'),
+        'label' => E::ts('Recurring Contribution/Mandate'),
         'data_type' => 'EntityReference',
         'html_type' => 'Autocomplete-Select',
         'is_searchable' => TRUE,
@@ -146,7 +146,7 @@ return [
       'values' => [
         'custom_group_id.name' => 'membership_payment',
         'name' => 'from_name',
-        'label' => E::ts("Donor's Account Name"),
+        'label' => E::ts('Account Holder'),
         'html_type' => 'Text',
         'is_searchable' => TRUE,
         'column_name' => 'from_name',
@@ -193,7 +193,7 @@ return [
       'values' => [
         'custom_group_id.name' => 'membership_payment',
         'name' => 'cycle_day',
-        'label' => E::ts('Cycle day'),
+        'label' => E::ts('Cycle Day'),
         'data_type' => 'Int',
         'html_type' => 'Text',
         'is_searchable' => TRUE,
@@ -216,7 +216,7 @@ return [
       'values' => [
         'custom_group_id.name' => 'membership_payment',
         'name' => 'payment_instrument',
-        'label' => E::ts('Payment method'),
+        'label' => E::ts('Payment Method'),
         'html_type' => 'Select',
         'is_searchable' => TRUE,
         'column_name' => 'payment_instrument',

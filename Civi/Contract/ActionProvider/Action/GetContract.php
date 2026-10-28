@@ -133,7 +133,7 @@ class GetContract extends AbstractAction {
       new Specification(
         'membership_recurring_contribution',
         'Integer',
-        E::ts('Recurring contribution/mandate'),
+        E::ts('Recurring Contribution/Mandate'),
         FALSE,
         NULL,
         NULL,
@@ -143,7 +143,7 @@ class GetContract extends AbstractAction {
       new Specification(
         'from_ba',
         'Integer',
-        E::ts('Donor\'s Bank Account'),
+        E::ts("Donor's Bank Account"),
         FALSE,
         NULL,
         NULL,
@@ -153,7 +153,7 @@ class GetContract extends AbstractAction {
       new Specification(
         'cycle_day',
         'Integer',
-        E::ts('Cycle day'),
+        E::ts('Cycle Day'),
         FALSE,
         NULL,
         NULL,
@@ -163,7 +163,7 @@ class GetContract extends AbstractAction {
       new Specification(
         'payment_instrument',
         'Integer',
-        E::ts('Payment method'),
+        E::ts('Payment Method'),
         FALSE,
         NULL,
         NULL,
