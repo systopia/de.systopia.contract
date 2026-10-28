@@ -29,10 +29,13 @@ use Civi\Api4\SepaMandate;
 use Civi\Contract\Change\Type\ReinstatePaymentChange;
 use Civi\Contract\Change\Type\UpdateChange;
 use Civi\Contract\ContractManager;
+use Civi\Contract\Event\PaymentReinstatedEvent;
 
 /**
  * @method bool getCollectOutstanding()
  * @method $this setCollectOutstanding(bool $collectOutstanding)
+ * @method array<string, mixed> getCustom()
+ * @method $this setCustom(array<string, mixed> $custom)
  * @method int getId()
  * @method $this setId(int $id)
  * @method string getNotes()
@@ -53,6 +56,15 @@ final class ReinstatePaymentAction extends AbstractAction {
    * @var bool
    */
   protected bool $collectOutstanding = FALSE;
+
+  /**
+   * @var array
+   * @phpstan-var array<string, mixed>
+   *
+   * Can be used for third party values that are dispatched in
+   * {@link PaymentReinstatedEvent}.
+   */
+  protected array $custom = [];
 
   /**
    * @var int
@@ -93,6 +105,7 @@ final class ReinstatePaymentAction extends AbstractAction {
     /**
      * @phpstan-var array{
      *   id: int,
+     *   contact_id: int,
      *   campaign_id: ?int,
      *   membership_type_id: int,
      *   "status_id:name": string,
@@ -103,6 +116,7 @@ final class ReinstatePaymentAction extends AbstractAction {
     $membership = Membership::get($this->getCheckPermissions())
       ->addSelect(
         'id',
+        'contact_id',
         'campaign_id',
         'membership_type_id',
         'status_id:name',
@@ -131,6 +145,7 @@ final class ReinstatePaymentAction extends AbstractAction {
   /**
    * @phpstan-param array{
    *   id: int,
+   *   contact_id: int,
    *   campaign_id: ?int,
    *   membership_type_id: int,
    *   "status_id:name": string,
@@ -191,6 +206,26 @@ final class ReinstatePaymentAction extends AbstractAction {
       'activity_type_id:name' => ReinstatePaymentChange::getActivityTypeName(),
       'details' => str_replace("\n", '<br>', htmlentities($this->getNotes(), ENT_SUBSTITUTE)),
     ]);
+
+    \Civi::dispatcher()->dispatch(
+      PaymentReinstatedEvent::class,
+      new PaymentReinstatedEvent(
+        $membership['id'],
+        $membership['contact_id'],
+        $membership['membership_payment.membership_recurring_contribution'],
+        $sepaMandate['id'],
+        $this->collectOutstanding,
+        $this->notes,
+        $this->replaceSepaMandate,
+        $this->iban,
+        $this->bic,
+        $this->accountHolder,
+        $this->paymentAmount,
+        $this->paymentFrequency,
+        $this->cycleDay,
+        $this->custom
+      )
+    );
 
     return [
       'id' => $membership['id'],

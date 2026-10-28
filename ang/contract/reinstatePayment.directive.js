@@ -99,6 +99,10 @@
             }
           }
 
+        // Other extensions can inject fields via hook_civicrm_alterAngular
+        // that puts values into custom. Those values are dispatched in an
+        // event in the Contract.reinstatePayment action.
+        $scope.custom = {};
           $scope.submit = function() {
             $scope.running = true;
             crmStatus(
@@ -114,6 +118,7 @@
                 paymentFrequency: $scope.paymentFrequency,
                 cycleDay: $scope.cycleDay,
                 notes: $scope.notes,
+                custom: $scope.custom,
               })
             ).then(function (result) {
               $element.trigger('crmFormSuccess', {

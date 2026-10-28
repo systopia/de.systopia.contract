@@ -70,6 +70,10 @@
             }
           }
 
+          // Other extensions can inject fields via hook_civicrm_alterAngular
+          // that puts values into custom. Those values are dispatched in an
+          // event in the Contract.suspendPayment action.
+          $scope.custom = {};
           $scope.submit = function() {
             $scope.running = true;
             crmStatus(
@@ -78,6 +82,7 @@
                 id: $scope.membership.id,
                 reason: $scope.reason,
                 notes: $scope.notes,
+                custom: $scope.custom,
               })
             ).then(function (result) {
               $element.trigger('crmFormSuccess', {
