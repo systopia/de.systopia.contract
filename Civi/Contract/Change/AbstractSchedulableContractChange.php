@@ -21,7 +21,13 @@ declare(strict_types = 1);
 namespace Civi\Contract\Change;
 
 /**
+ * @phpstan-import-type changeT from SchedulableContractChangeInterface
+ *
  * Base class for schedulable contract changes.
+ *
+ * @template T of changeT = changeT
+ * @extends AbstractContractChange<T>
+ * @implements SchedulableContractChangeInterface<T>
  */
 // phpcs:ignore Generic.Files.LineLength.TooLong
 abstract class AbstractSchedulableContractChange extends AbstractContractChange implements SchedulableContractChangeInterface {

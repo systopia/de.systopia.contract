@@ -25,6 +25,48 @@ use Civi\Contract\Change\AbstractContractChange;
 use Civi\Contract\Change\AbstractSchedulableContractChange;
 use CRM_Contract_ExtensionUtil as E;
 
+/**
+ * @phpstan-type changeT array{
+ *   id?: int,
+ *   "activity_type_id:name"?: string,
+ *   activity_type_id?: int,
+ *   activity_date_time?: string,
+ *   status_id?: int|string,
+ *   source_record_id?: int,
+ *   source_contact_id?: int,
+ *   target_contact_id?: int,
+ *   subject?: string,
+ *   details?: string,
+ *   "contract_activity.contract_id"?: int,
+ *   activity_date_time: string,
+ *   membership_type_id?: int|numeric-string,
+ *   campaign_id?: int|numeric-string|null,
+ *   "membership_payment.cycle_day"?: int|numeric-string,
+ *   "membership_payment.defer_payment_start"?: int|numeric-string,
+ *   "membership_payment.from_name"?: string,
+ *   "membership_payment.from_ba"?: string,
+ *   "membership_payment.to_ba"?: string,
+ *   "membership_payment.membership_annual"?: float|numeric-string,
+ *   "membership_payment.membership_frequency"?: int|numeric-string,
+ *   "membership_payment.membership_recurring_contribution"?: int|numeric-string,
+ *   "membership_payment.payment_instrument"?: int|numeric-string,
+ *   "membership_cancellation.membership_cancel_reason"?: string,
+ *   "contract_updates.ch_membership_type"?: int|numeric-string,
+ *   "contract_updates.ch_campaign_id"?: int|numeric-string|null,
+ *   "contract_updates.ch_recurring_contribution"?: int|numeric-string,
+ *   "contract_updates.ch_payment_instrument"?: int|numeric-string,
+ *   "contract_updates.ch_annual"?: float,
+ *   "contract_updates.ch_frequency"?: int|numeric-string,
+ *   "contract_updates.ch_from_ba"?: string,
+ *   "contract_updates.ch_to_ba"?: string,
+ *   "contract_updates.ch_cycle_day"?: int|numeric-string,
+ *   "contract_updates.ch_defer_payment_start"?: string,
+ *   "contract_updates.ch_from_name"?: string,
+ *   "contract_updates.ch_annual_diff"?: float|numeric-string,
+ * }
+ *
+ * @extends AbstractSchedulableContractChange<changeT>
+ */
 abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
 
   /**
@@ -45,6 +87,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
       // copy submitted changes to change activity
       foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
         if (!empty($this->data[$contract_attribute])) {
+          // @phpstan-ignore assign.propertyType
           $this->data[$change_attribute] = $this->data[$contract_attribute];
           $contract_after_execution[$contract_attribute] = $this->data[$contract_attribute] ?? NULL;
         }
@@ -219,6 +262,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
     $contract_after = $this->getContract();
     foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $membership_field => $change_field) {
       if (isset($contract_after[$membership_field])) {
+        // @phpstan-ignore argument.type
         $this->setParameter($change_field, $contract_after[$membership_field]);
       }
     }
@@ -228,6 +272,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
       - (float) \CRM_Contract_SepaLogic::formatMoney($contract_before['membership_payment.membership_annual'] ?? 0)
     );
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
+    // @phpstan-ignore argument.type
     $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name'] ?? '');
     $this->setStatus('Completed');
     $this->save();
@@ -349,7 +394,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
 
   private function assignExistingRecurringContribution($contract_before, $to) {
     $rcId = (int) $this->getParameter('contract_updates.ch_recurring_contribution');
-    if (!$rcId) {
+    if (0 === $rcId) {
       return NULL;
     }
 
