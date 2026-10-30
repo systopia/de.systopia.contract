@@ -232,6 +232,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
       $contract_update['membership_type_id'] = (int) $membershipTypeId;
     }
 
+    /** @var int|numeric-string|null $from */
     $from = $contract_before['membership_payment.payment_instrument'] ?? NULL;
     if (NULL !== $from) {
       $from = (int) $from;
@@ -241,7 +242,6 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
       ? $this->getParameter('contract_updates.ch_payment_instrument')
       : $from;
     if (NULL !== $to) {
-      // @phpstan-ignore cast.int
       $to = (int) $to;
     }
 
@@ -400,7 +400,6 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
   }
 
   private function assignExistingRecurringContribution($contract_before, $to) {
-    // @phpstan-ignore cast.int
     $rcId = (int) $this->getParameter('contract_updates.ch_recurring_contribution');
     if (0 === $rcId) {
       return NULL;
