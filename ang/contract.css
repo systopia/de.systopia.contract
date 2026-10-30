@@ -1,0 +1,8 @@
+#bootstrap-theme .control-label .crm-marker {
+  margin-right: 0;
+}
+
+#bootstrap-theme .form-group [class*="col-"] {
+  padding-left: 2px;
+  padding-right: 2px;
+}
