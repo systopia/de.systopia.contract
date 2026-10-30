@@ -168,7 +168,7 @@ return [
       'values' => [
         'custom_group_id.name' => 'membership_payment',
         'name' => 'from_ba',
-        'label' => E::ts("Donor's Bank Account"),
+        'label' => E::ts("Payer's Bank Account"),
         'data_type' => 'EntityReference',
         'html_type' => 'Autocomplete-Select',
         'is_searchable' => TRUE,

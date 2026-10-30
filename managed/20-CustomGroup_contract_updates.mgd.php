@@ -220,7 +220,7 @@ return [
         'custom_group_id.name' => 'contract_updates',
         'name' => 'ch_from_ba',
         'column_name' => 'ch_from_ba',
-        'label' => E::ts("Donor's Bank Account"),
+        'label' => E::ts("Payer's Bank Account"),
         'data_type' => 'Int',
         'html_type' => 'Text',
         'is_searchable' => TRUE,

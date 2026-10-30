@@ -214,7 +214,7 @@
   function renderContractPreview(debitor_name, iban, creditor, frequency_label, annual, installment, next_collection, mode) {
     let iban_account_line = '';
     if (typeof iban === 'string' && iban.length > 0) {
-      iban_account_line = ts('Member account', []) + ': ' + iban + '<br/>';
+      iban_account_line = ts("Payer account", []) + ': ' + iban + '<br/>';
     }
     return '<div>' +
       ts('Paid by', []) + ': ' + debitor_name + '<br/>' +

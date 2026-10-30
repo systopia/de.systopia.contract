@@ -777,8 +777,8 @@ msgstr "Wiederkehrende/s Zuwendung/Mandat"
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: managed/20-CustomGroup_contract_updates.mgd.php
 #: managed/20-CustomGroup_membership_payment.mgd.php
-msgid "Donor's Bank Account"
-msgstr "Bankkonto des Geldgebers"
+msgid "Payer's Bank Account"
+msgstr "Bankkonto des Zahlers"
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php
 #: managed/20-CustomGroup_contract_updates.mgd.php
@@ -1261,8 +1261,8 @@ msgstr ""
 "Erlaubt das Bearbeiten von Mitgliedschaftern über die CiviCRM Kernfunktionen"
 
 #: js/contract_modify_tools.js
-msgid "Member account"
-msgstr "Mitgliedskonto"
+msgid "Payer account"
+msgstr "Zahlerkonto"
 
 #: js/contract_modify_tools.js
 msgid "Next collection"

@@ -599,7 +599,7 @@ msgid "Recurring Contribution/Mandate"
 msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
-msgid "Donor's Bank Account"
+msgid "Payer's Bank Account"
 msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/GetContract.php managed/20-CustomGroup_contract_updates.mgd.php managed/20-CustomGroup_membership_payment.mgd.php
@@ -1047,7 +1047,7 @@ msgid "Allow editing memberships using the core membership form"
 msgstr ""
 
 #: js/contract_modify_tools.js
-msgid "Member account"
+msgid "Payer account"
 msgstr ""
 
 #: js/contract_modify_tools.js

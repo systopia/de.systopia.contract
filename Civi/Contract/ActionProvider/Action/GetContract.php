@@ -143,7 +143,7 @@ class GetContract extends AbstractAction {
       new Specification(
         'from_ba',
         'Integer',
-        E::ts("Donor's Bank Account"),
+        E::ts("Payer's Bank Account"),
         FALSE,
         NULL,
         NULL,
