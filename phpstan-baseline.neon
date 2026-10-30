@@ -2643,12 +2643,6 @@ parameters:
 			path: Civi/Contract/Api4/Action/Contract/CreateFullAction.php
 
 		-
-			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
-			identifier: equal.notAllowed
-			count: 2
-			path: Civi/Contract/Api4/Action/Contract/ModifyFullAction.php
-
-		-
 			message: '#^Method Civi\\Contract\\Api4\\Action\\Contract\\ModifyFullAction\:\:validateValues\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2777,12 +2771,6 @@ parameters:
 		-
 			message: '#^Only booleans are allowed in a ternary operator condition, int\<1, max\> given\.$#'
 			identifier: ternary.condNotBoolean
-			count: 2
-			path: Civi/Contract/Change/Type/AbstractUpdateChange.php
-
-		-
-			message: '#^Parameter \#1 \$id of method Civi\\Contract\\Change\\Type\\AbstractUpdateChange\:\:classifyPaymentInstrument\(\) expects int\|string\|null, mixed given\.$#'
-			identifier: argument.type
 			count: 2
 			path: Civi/Contract/Change/Type/AbstractUpdateChange.php
 
