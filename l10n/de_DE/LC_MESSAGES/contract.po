@@ -81,6 +81,7 @@ msgstr "Einzugstag"
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: ang/contract/reinstatePayment.template.html
 msgid "IBAN"
 msgstr "IBAN"
 
@@ -90,6 +91,7 @@ msgstr "IBAN"
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: ang/contract/reinstatePayment.template.html
 msgid "BIC"
 msgstr "BIC"
 
@@ -111,8 +113,9 @@ msgstr "Betrag"
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: ang/contract/reinstatePayment.template.html
 msgid "Payment Frequency"
-msgstr "Turnus"
+msgstr "Zahlungsrhythmus"
 
 #: CRM/Contract/Form/Create.php
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
@@ -167,11 +170,13 @@ msgid "Membership channel"
 msgstr "Anwerbekanal"
 
 #: CRM/Contract/Form/Create.php CRM/Contract/Form/Modify.php
+#: ang/contract/reinstatePayment.template.html
 #: ang/contract/suspendPayment.template.html
 msgid "Notes"
 msgstr "Notizen"
 
-#: CRM/Contract/Form/Create.php ang/contract/suspendPayment.template.html
+#: CRM/Contract/Form/Create.php ang/contract/reinstatePayment.template.html
+#: ang/contract/suspendPayment.template.html
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -219,10 +224,11 @@ msgstr "Änderungen verwerfen"
 #: CRM/Contract/Form/Modify.php
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: ang/contract/reinstatePayment.template.html
 msgid "Account Holder"
 msgstr "Kontoinhaber"
 
-#: CRM/Contract/Form/Modify.php
+#: CRM/Contract/Form/Modify.php ang/contract/reinstatePayment.template.html
 msgid "Installment Amount"
 msgstr "Betrag"
 
@@ -277,7 +283,7 @@ msgstr "Zahlungsart: SEPA Direct Debit"
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
 #: js/contract_modify_tools.js templates/CRM/Contract/Page/Review.tpl
 msgid "Frequency"
-msgstr "Zahlungsrhytmus"
+msgstr "Häufigkeit"
 
 #: CRM/Contract/Form/Modify.php CRM/Contract/RecurringContribution.php
 #: Civi/Contract/Change/Type/AbstractUpdateChange.php
@@ -666,25 +672,25 @@ msgstr "Fehlermeldung (falls Erstellung fehlgeschlagen)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Creditor (default)"
-msgstr "Kreditor (default)"
+msgstr "Kreditor (Standard)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Financial Type (default)"
-msgstr "Zuwendungsart (default)"
+msgstr "Zuwendungsart (Standard)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Campaign (default)"
-msgstr "Kampagne (default)"
+msgstr "Kampagne (Standard)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Frequency (default)"
-msgstr "Zahlungsrhytmus (default)"
+msgstr "Häufigkeit (Standard)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Collection Day (default)"
-msgstr "Einzugstag (default)"
+msgstr "Einzugstag (Standard)"
 
 #: Civi/Contract/ActionProvider/Action/CreateContract.php
 msgid "Buffer Days"
@@ -809,7 +815,7 @@ msgstr "Zahlungsoption (Standard)"
 
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Payment Frequency (default)"
-msgstr "Zahlungsrhytmus (Standard)"
+msgstr "Zahlungsrhythmus (Standard)"
 
 #: Civi/Contract/ActionProvider/Action/ModifyContract.php
 msgid "Action"
@@ -874,6 +880,7 @@ msgid "Membership Channel"
 msgstr "Anwerbekanal"
 
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
+#: ang/contract/reinstatePayment.template.html
 #: managed/20-CustomGroup_contract_updates.mgd.php
 msgid "Cycle Day"
 msgstr "Einzugstag"
@@ -906,13 +913,14 @@ msgstr "Typ"
 
 #: Civi/Contract/Change/Type/AbstractUpdateChange.php
 msgid "Payment frequency"
-msgstr "Zahlungsturnus"
+msgstr "Zahlungsrhythmus"
 
 #: Civi/Contract/Change/Type/AbstractUpdateChange.php
 msgid "Defer payment start"
 msgstr "Zahlungsbeginn aufschieben"
 
 #: Civi/Contract/Change/Type/AbstractUpdateChange.php
+#: ang/contract/reinstatePayment.template.html
 msgid "none"
 msgstr "keine"
 
@@ -977,6 +985,14 @@ msgstr "Vertrag pausiert bis %1"
 #: Civi/Contract/Change/Type/PauseChange.php
 msgid "Contract paused"
 msgstr "Vertrag pausiert"
+
+#: Civi/Contract/Change/Type/ReinstatePaymentChange.php
+msgid "Reinstate Payment"
+msgstr "Zahlung wiederaufnehmen"
+
+#: Civi/Contract/Change/Type/ReinstatePaymentChange.php
+msgid "Payment Reinstated"
+msgstr "Zahlung wiederaufgenommen"
 
 #: Civi/Contract/Change/Type/ResumeChange.php
 msgid "Resume Contract"
@@ -1124,9 +1140,67 @@ msgstr "Primäre und sekundäre Mitgliedschaften"
 msgid "Related Memberships"
 msgstr ""
 
+#: ang/contract/reinstatePayment.directive.js
 #: ang/contract/suspendPayment.directive.js
 msgid "contract"
 msgstr ""
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Reinstate payment for contract of %1."
+msgstr "Zahlung für Vertrag von %1 wiederaufnehmen."
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Payment can only be reinstated for contracts with suspended payment."
+msgstr ""
+"Die Zahlung kann nur für Verträge mit ausgesetzter Zahlung wiederaufgenommen "
+"werden."
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Payment can only be reinstated for contracts with SEPA mandate."
+msgstr ""
+"Die Zahlung kann nur für Verträge mit SEPA-Mandat wiederaufgenommen werden."
+
+#: ang/contract/reinstatePayment.template.html
+#: templates/CRM/Contract/Form/Modify.tpl
+msgid "Payment Preview"
+msgstr "Zahlungsvorschau"
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Payment frequency: %1"
+msgstr "Zahlungsrhythmus: %1"
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Annual amount: %1"
+msgstr "Jahresbetrag: %1"
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Installment amount: %1"
+msgstr "Einzugsbetrag: %1"
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Outstanding amount: %1"
+msgstr ""
+
+#: ang/contract/reinstatePayment.template.html
+msgid "not collected"
+msgstr "nicht erhoben"
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Collect outstanding amounts of suspended contributions"
+msgstr ""
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Replace SEPA mandate"
+msgstr ""
+
+#: ang/contract/reinstatePayment.template.html
+#: ang/contract/suspendPayment.template.html
+msgid "Required"
+msgstr "Erforderlich"
+
+#: ang/contract/reinstatePayment.template.html
+msgid "Reinstate payment"
+msgstr "Zahlung wiederaufnehmen"
 
 #: ang/contract/suspendPayment.template.html
 msgid "Suspend payment for contract of %1."
@@ -1144,10 +1218,6 @@ msgstr "Die Zahlung kann nur für Verträge mit SEPA-Mandat ausgesetzt werden."
 #: templates/CRM/Contract/Page/Review.tpl
 msgid "Reason"
 msgstr "Grund"
-
-#: ang/contract/suspendPayment.template.html
-msgid "Required"
-msgstr "Erforderlich"
 
 #: ang/contract/suspendPayment.template.html
 msgid "Suspend payment"
@@ -1552,10 +1622,6 @@ msgstr "Dieses Feld wird benötigt."
 #: templates/CRM/Contract/Form/Create.tpl
 msgid "Add Note"
 msgstr "Notiz hinzufügen"
-
-#: templates/CRM/Contract/Form/Modify.tpl
-msgid "Payment Preview"
-msgstr "Vorschau Zahlung"
 
 #: templates/CRM/Contract/Form/Modify.tpl
 msgid "(currently: %1)"

@@ -211,7 +211,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
     ];
   }
 
-  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
   public function execute(): void {
     $contract_before = $this->getContract(TRUE);
     $contract_update = [];
@@ -233,10 +233,17 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
     }
 
     $from = $contract_before['membership_payment.payment_instrument'] ?? NULL;
+    if (NULL !== $from) {
+      $from = (int) $from;
+    }
     $hasExplicitPaymentInstrumentChange = array_key_exists('contract_updates.ch_payment_instrument', $this->data);
     $to = $hasExplicitPaymentInstrumentChange
       ? $this->getParameter('contract_updates.ch_payment_instrument')
       : $from;
+    if (NULL !== $to) {
+      // @phpstan-ignore cast.int
+      $to = (int) $to;
+    }
 
     if ($hasExplicitPaymentInstrumentChange) {
       $payment_types = \CRM_Contract_Configuration::getSupportedPaymentTypes(TRUE);
@@ -393,6 +400,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
   }
 
   private function assignExistingRecurringContribution($contract_before, $to) {
+    // @phpstan-ignore cast.int
     $rcId = (int) $this->getParameter('contract_updates.ch_recurring_contribution');
     if (0 === $rcId) {
       return NULL;
