@@ -25,7 +25,9 @@
         id: '=',
       },
       templateUrl: '~/contract/suspendPayment.template.html',
-      controller: ['$scope', '$element', 'crmApi4', 'crmStatus', function ($scope, $element, crmApi4, crmStatus) {
+      controller: [
+        '$scope', '$element', 'crmApi4', 'crmStatus',
+        function ($scope, $element, crmApi4, crmStatus) {
           $scope.ts = CRM.ts('contract');
 
           $scope.running = false;
@@ -71,9 +73,9 @@
           }
 
           // Other extensions can inject fields via hook_civicrm_alterAngular
-          // that puts values into custom. Those values are dispatched in an
-          // event in the Contract.suspendPayment action.
-          $scope.custom = {};
+          // that puts values into extraValues. Those values are dispatched in
+          // an event in the Contract.suspendPayment action.
+          $scope.extraValues = {};
           $scope.submit = function() {
             $scope.running = true;
             crmStatus(
@@ -82,7 +84,7 @@
                 id: $scope.membership.id,
                 reason: $scope.reason,
                 notes: $scope.notes,
-                custom: $scope.custom,
+                extraValues: $scope.extraValues,
               })
             ).then(function (result) {
               $element.trigger('crmFormSuccess', {

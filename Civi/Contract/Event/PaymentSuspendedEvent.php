@@ -20,10 +20,10 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
-final class PaymentSuspendedEvent extends AbstractContractChangeEvent {
+final class PaymentSuspendedEvent extends AbstractContractChangedEvent {
 
   /**
-   * @param array<string, mixed> $custom
+   * @param array<string, mixed> $extraValues
    */
   public function __construct(
     int $membershipId,
@@ -32,7 +32,7 @@ final class PaymentSuspendedEvent extends AbstractContractChangeEvent {
     public readonly int $sepaMandateId,
     public readonly string $notes,
     public readonly string $reason,
-    public readonly array $custom,
+    public readonly array $extraValues,
   ) {
     parent::__construct($membershipId, $contactId);
   }

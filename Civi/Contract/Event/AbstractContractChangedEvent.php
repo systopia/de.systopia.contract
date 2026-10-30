@@ -20,7 +20,7 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Event;
 
-abstract class AbstractContractChangeEvent {
+abstract class AbstractContractChangedEvent {
 
   public function __construct(
     public readonly int $membershipId,

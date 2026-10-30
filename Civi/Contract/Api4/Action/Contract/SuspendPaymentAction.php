@@ -29,8 +29,8 @@ use Civi\Contract\ContractManager;
 use Civi\Contract\Event\PaymentSuspendedEvent;
 
 /**
- * @method array<string, mixed> getCustom()
- * @method $this setCustom(array<string, mixed> $custom)
+ * @method array<string, mixed> getExtraValues()
+ * @method $this setExtraValues(array<string, mixed> $extraValues)
  * @method int getId()
  * @method $this setId(int $id)
  * @method string getNotes()
@@ -47,7 +47,7 @@ final class SuspendPaymentAction extends AbstractAction {
    * Can be used for third party values that are dispatched in
    * {@link PaymentSuspendedEvent}.
    */
-  protected array $custom = [];
+  protected array $extraValues = [];
 
   /**
    * @var int
@@ -149,7 +149,7 @@ final class SuspendPaymentAction extends AbstractAction {
         $sepaMandate['id'],
         $this->getNotes(),
         $this->getReason(),
-        $this->getCustom()
+        $this->getExtraValues()
       )
     );
 

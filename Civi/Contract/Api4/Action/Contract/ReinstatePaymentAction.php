@@ -34,8 +34,8 @@ use Civi\Contract\Event\PaymentReinstatedEvent;
 /**
  * @method bool getCollectOutstanding()
  * @method $this setCollectOutstanding(bool $collectOutstanding)
- * @method array<string, mixed> getCustom()
- * @method $this setCustom(array<string, mixed> $custom)
+ * @method array<string, mixed> getExtraValues()
+ * @method $this setExtraValues(array<string, mixed> $extraValues)
  * @method int getId()
  * @method $this setId(int $id)
  * @method string getNotes()
@@ -64,7 +64,7 @@ final class ReinstatePaymentAction extends AbstractAction {
    * Can be used for third party values that are dispatched in
    * {@link PaymentReinstatedEvent}.
    */
-  protected array $custom = [];
+  protected array $extraValues = [];
 
   /**
    * @var int
@@ -223,7 +223,7 @@ final class ReinstatePaymentAction extends AbstractAction {
         $this->paymentAmount,
         $this->paymentFrequency,
         $this->cycleDay,
-        $this->custom
+        $this->extraValues
       )
     );
 
