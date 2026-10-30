@@ -26,8 +26,11 @@ use Civi\Api4\Membership;
 use Civi\Api4\SepaMandate;
 use Civi\Contract\Change\Type\SuspendPaymentChange;
 use Civi\Contract\ContractManager;
+use Civi\Contract\Event\PaymentSuspendedEvent;
 
 /**
+ * @method array<string, mixed> getExtraValues()
+ * @method $this setExtraValues(array<string, mixed> $extraValues)
  * @method int getId()
  * @method $this setId(int $id)
  * @method string getNotes()
@@ -36,6 +39,15 @@ use Civi\Contract\ContractManager;
  * @method $this setReason(string $reason)
  */
 final class SuspendPaymentAction extends AbstractAction {
+
+  /**
+   * @var array
+   * @phpstan-var array<string, mixed>
+   *
+   * Can be used for third party values that are dispatched in
+   * {@link PaymentSuspendedEvent}.
+   */
+  protected array $extraValues = [];
 
   /**
    * @var int
@@ -59,12 +71,13 @@ final class SuspendPaymentAction extends AbstractAction {
     /**
      * @phpstan-var array{
      *   id: int,
+     *   contact_id: int,
      *   "status_id:name": string,
      *   "membership_payment.membership_recurring_contribution": ?int,
      * }|null $membership
      */
     $membership = Membership::get($this->getCheckPermissions())
-      ->addSelect('id', 'status_id:name', 'membership_payment.membership_recurring_contribution')
+      ->addSelect('id', 'contact_id', 'status_id:name', 'membership_payment.membership_recurring_contribution')
       ->addWhere('id', '=', $this->id)
       ->execute()
       ->first();
@@ -79,6 +92,7 @@ final class SuspendPaymentAction extends AbstractAction {
   /**
    * @phpstan-param array{
    *   id: int,
+   *   contact_id: int,
    *   "status_id:name": string,
    *   "membership_payment.membership_recurring_contribution": ?int,
    * } $membership
@@ -125,6 +139,19 @@ final class SuspendPaymentAction extends AbstractAction {
       'details' => str_replace("\n", '<br>', htmlentities($this->getNotes(), ENT_SUBSTITUTE)),
       'contract_payment_suspended.reason' => $this->getReason(),
     ]);
+
+    \Civi::dispatcher()->dispatch(
+      PaymentSuspendedEvent::class,
+      new PaymentSuspendedEvent(
+        $membership['id'],
+        $membership['contact_id'],
+        $membership['membership_payment.membership_recurring_contribution'],
+        $sepaMandate['id'],
+        $this->getNotes(),
+        $this->getReason(),
+        $this->getExtraValues()
+      )
+    );
 
     return [
       'id' => $membership['id'],
