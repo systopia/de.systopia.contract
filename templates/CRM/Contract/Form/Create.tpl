@@ -105,6 +105,18 @@
     <div class="clear"></div>
   </div>
 
+  {if count($customFields) > 0}
+    <h3>{ts}Additional Fields{/ts}</h3>
+
+    {foreach $customFields as $fieldName => $customField}
+      <div class="crm-section">
+        <div class="label">{$form.$fieldName.label}</div>
+        <div class="content">{$form.$fieldName.html}</div>
+        <div class="clear"></div>
+      </div>
+    {/foreach}
+  {/if}
+
   <h3 class="id-notes" onClick="cj('div.membership-create-notes').show();">{ts}Add Note{/ts}</h3>
 
   <div class="crm-section membership-create-notes" style="display:none;" >
@@ -112,6 +124,7 @@
     <div class="content">{$form.activity_details.html}</div>
     <div class="clear"></div>
   </div>
+
   <hr />
 
   <div class="crm-submit-buttons">
