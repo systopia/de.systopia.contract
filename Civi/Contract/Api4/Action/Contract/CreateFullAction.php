@@ -43,6 +43,13 @@ class CreateFullAction extends BasicCreateAction {
   // phpcs:enable
     $params = [];
 
+    // Add custom fields.
+    foreach ($item as $fieldName => $value) {
+      if (str_contains($fieldName, '.')) {
+        $params[$fieldName] = $value;
+      }
+    }
+
     // Add core membership fields.
     $params['contact_id'] = $item['contact_id'];
     $params['membership_type_id'] = $item['membership_type_id'];
