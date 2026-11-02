@@ -8,6 +8,7 @@ use Civi\Api4\CustomGroup;
 use Civi\Api4\MembershipType;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
+use Civi\Contract\Form\Field\CustomFormField;
 use CRM_Contract_ContractTestBase as ContractTestBase;
 use CRM_Contract_Form_Create as CreateForm;
 
@@ -312,7 +313,7 @@ class CreateFormTest extends ContractTestBase {
       ->getMock();
 
     $form->method('exportValues')->willReturn($validValues);
-
+    // @phpstan-ignore assign.propertyType
     $form->controller = new class($cid) {
 
       public ?string $_destination = NULL;
@@ -379,35 +380,7 @@ class CreateFormTest extends ContractTestBase {
   }
 
   private function runFormSubmissionCreatesContract(string $paymentOption, mixed $paymentAmount): void {
-    /** @var int $cid */
-    $cid = $this->contact['id'];
-    $form = new CreateForm();
-
-    $form->controller = new class($cid) {
-
-      public ?string $_destination = NULL;
-
-      private int $cid;
-
-      public function __construct(int $cid) {
-        $this->cid = $cid;
-      }
-
-      public function set(string $k, mixed $v = NULL): void {}
-
-      public function get(string $k): mixed {
-        return $k === 'cid' ? $this->cid : NULL;
-      }
-
-      public function setDestination(string $url): void {
-        $this->_destination = $url;
-      }
-
-    };
-
-    $form->set('cid', $this->contact['id']);
-    $form->preProcess();
-    $form->buildQuickForm();
+    $form = $this->createForm();
 
     $submissionValues = [
       'payment_option' => $paymentOption,
@@ -450,6 +423,67 @@ class CreateFormTest extends ContractTestBase {
 
   public function testFormSubmissionCreatesContract_RCUR_120(): void {
     $this->runFormSubmissionCreatesContract('RCUR', 120);
+  }
+
+  public function testCustomField(): void {
+    $form = $this->createForm();
+
+    $customField = (new CustomFormField('my_group.my_field', 'text', 'Test'))
+      ->setDefault('default')
+      ->setRequired(TRUE)
+      ->setValidateCallback(function($value, array $values): string {
+        static::assertSame('abc', $value);
+        static::assertSame('abc', $values['my_group__my_field']);
+
+        return 'error';
+      });
+
+    $form->addCustomField($customField);
+
+    static::assertTrue($form->isElementRequired('my_group__my_field'));
+    $formElement = $form->getElement('my_group__my_field');
+    static::assertSame('text', $formElement->getType());
+    static::assertSame('Test', $formElement->getLabel());
+    static::assertSame('default', $formElement->getValue());
+
+    static::assertSame(
+      ['my_group__my_field' => $customField],
+      $form->getTemplateVars('customFields')
+    );
+
+    $form->_submitValues = ['my_group__my_field' => 'abc'];
+    static::assertFalse($form->validate());
+    static::assertSame('error', $form->getElementError('my_group__my_field'));
+  }
+
+  private function createForm(): CreateForm {
+    /** @var int $cid */
+    $cid = $this->contact['id'];
+    $form = new CreateForm();
+    // @phpstan-ignore assign.propertyType
+    $form->controller = new class($cid) {
+
+      public ?string $_destination = NULL;
+
+      public function __construct(private int $cid) {}
+
+      public function set(string $k, mixed $v = NULL): void {}
+
+      public function get(string $k): mixed {
+        return $k === 'cid' ? $this->cid : NULL;
+      }
+
+      public function setDestination(string $url): void {
+        $this->_destination = $url;
+      }
+
+    };
+
+    $form->set('cid', $this->contact['id']);
+    $form->preProcess();
+    $form->buildQuickForm();
+
+    return $form;
   }
 
 }
