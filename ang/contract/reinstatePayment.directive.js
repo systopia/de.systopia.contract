@@ -25,7 +25,9 @@
         id: '=',
       },
       templateUrl: '~/contract/reinstatePayment.template.html',
-      controller: ['$scope', '$element', 'crmApi4', 'crmStatus', 'contractCurrencyFilter', function ($scope, $element, crmApi4, crmStatus, contractCurrencyFilter) {
+      controller: [
+        '$scope', '$element', 'crmApi4', 'crmStatus', 'contractCurrencyFilter',
+        function ($scope, $element, crmApi4, crmStatus, contractCurrencyFilter) {
           $scope.ts = CRM.ts('contract');
           $scope.contractCurrencyFilter = contractCurrencyFilter;
 
@@ -99,6 +101,10 @@
             }
           }
 
+          // Other extensions can inject fields via hook_civicrm_alterAngular
+          // that puts values into extraValues. Those values are dispatched in
+          // an event in the Contract.reinstatePayment action.
+          $scope.extraValues = {};
           $scope.submit = function() {
             $scope.running = true;
             crmStatus(
@@ -114,6 +120,7 @@
                 paymentFrequency: $scope.paymentFrequency,
                 cycleDay: $scope.cycleDay,
                 notes: $scope.notes,
+                extraValues: $scope.extraValues,
               })
             ).then(function (result) {
               $element.trigger('crmFormSuccess', {
