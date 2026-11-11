@@ -21,8 +21,6 @@ final class ModifyFullActionTest extends AbstractSetupHeadless {
 
   protected function setUp(): void {
     parent::setUp();
-
-    FixtureEntityStore::reset();
     \CRM_Sepa_Logic_Settings::setSetting(NULL, 'batching_default_creditor');
   }
 

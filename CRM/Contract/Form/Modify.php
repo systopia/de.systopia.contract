@@ -81,7 +81,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     // Process the requested action
     /** @var string $modifyAction */
     $modifyAction = $this->modify_action = $this->get('modify_action')
-      ?? strtolower(CRM_Utils_Request::retrieve('modify_action', 'String'));
+      ?? strtolower(CRM_Utils_Request::retrieve('modify_action', 'String', abort: TRUE));
     $this->set('modify_action', $modifyAction);
     $this->assign('modificationActivity', $modifyAction);
     $this->change_class = ContractChangeTypeContainer::getInstance()->getClassForAction($modifyAction);
@@ -316,7 +316,6 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
   }
 
   public function addCancelFields() {
-
     // Cancel reason
     $cancelOptions = [];
     foreach (civicrm_api3('OptionValue', 'get', [
@@ -418,9 +417,8 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
     if (empty($submitted['activity_date'])) {
       $submitted['activity_date'] = date('Y-m-d');
     }
-    $activityDate = CRM_Utils_Date::processDate($submitted['activity_date'], $submitted['activity_date_time'] ?? NULL);
-    $midnightThisMorning = date('Ymd000000');
-    if ($activityDate < $midnightThisMorning) {
+    $activityDate = $submitted['activity_date'];
+    if ($activityDate < date('Y-m-d')) {
       HTML_QuickForm::setElementError('activity_date',
         'Activity date must be either today (which will execute the change now) or in the future');
     }
@@ -562,12 +560,7 @@ class CRM_Contract_Form_Modify extends CRM_Core_Form {
 
     //If the date was set, convert it to the necessary format
     if ($submitted['activity_date']) {
-      $params['date'] = CRM_Utils_Date::processDate(
-        $submitted['activity_date'],
-        $submitted['activity_date_time'],
-        FALSE,
-        'Y-m-d H:i:s'
-      );
+      $params['date'] = $submitted['activity_date'];
     }
 
     \Civi\Api4\Contract::modifyFull()

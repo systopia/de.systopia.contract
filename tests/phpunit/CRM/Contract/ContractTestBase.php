@@ -10,6 +10,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Contract;
+use Civi\Api4\Membership;
 use Civi\Contract\Support\AbstractSetupHeadless;
 use Civi\Test\Api3TestTrait;
 
@@ -29,13 +31,11 @@ use Civi\Test\Api3TestTrait;
  */
 class CRM_Contract_ContractTestBase extends AbstractSetupHeadless {
 
-  use Api3TestTrait {
-    callAPISuccess as public traitCallAPISuccess;
-  }
-
   protected static int $counter = 0;
 
-  public function setUp() : void {
+  use Api3TestTrait;
+
+  protected function setUp(): void {
     parent::setUp();
 
     // make sure the date check is in compatibility mode
@@ -57,10 +57,6 @@ class CRM_Contract_ContractTestBase extends AbstractSetupHeadless {
     // check again
     $default_creditor_id = (int) CRM_Sepa_Logic_Settings::getSetting('batching_default_creditor');
     self::assertNotEmpty($default_creditor_id, 'There is no default SEPA creditor set');
-  }
-
-  public function tearDown() : void {
-    parent::tearDown();
   }
 
   /**
@@ -198,14 +194,17 @@ class CRM_Contract_ContractTestBase extends AbstractSetupHeadless {
 
   /**
    * Simply load the contract by ID
-   * @param $contract_id integer contract ID
-   * @return array contract data
+   *
+   * @param int $id contract ID
+   *
+   * @return array<string, mixed> contract data
    */
-  public function getContract($contract_id) {
-    $contract = $this->callAPISuccess('Membership', 'getsingle', ['id' => $contract_id]);
-    CRM_Contract_CustomData::labelCustomFields($contract);
-    $contract['id'] = (int) $contract['id'];
-    return $contract;
+  public function getContract(int $id): array {
+    return Membership::get(FALSE)
+      ->addSelect('*', 'custom.*')
+      ->addWhere('id', '=', $id)
+      ->execute()
+      ->single();
   }
 
   /**
@@ -324,21 +323,19 @@ class CRM_Contract_ContractTestBase extends AbstractSetupHeadless {
   /**
    * Modify a contract
    *
-   * @param $contract_id integer contract ID
-   * @param $action      string  one of 'cancel', 'revive', 'update', ...
-   * @param $date        string  date string
-   * @param $params      array   update parameters, incl 'date'
-   *
-   * @return array API result
+   * @param int $id contract ID
+   * @param string $action one of 'cancel', 'revive', 'update', ...
+   * @param string $date Requested execution date
+   * @param array<string, mixed> $values update parameters
    */
-  public function modifyContract($contract_id, $action, $date = 'now', $params = []) {
-    $params['id'] = $contract_id;
-    $params['modify_action'] = $action;
-    $params['date'] = date('Y-m-d H:i:s', strtotime($date));
-    if (empty($params['medium_id'])) {
-      $params['medium_id'] = 1;
-    }
-    return $this->callAPISuccess('Contract', 'modify', $params);
+  public function modifyContract(int $id, string $action, string $date = 'now', array $values = []): void {
+    Contract::modify(FALSE)
+      ->setId($id)
+      ->setAction($action)
+      ->setDate($date)
+      ->setValues($values)
+      ->execute()
+      ->single();
   }
 
   /**
@@ -511,44 +508,6 @@ class CRM_Contract_ContractTestBase extends AbstractSetupHeadless {
     }
 
     return $membership_status2id[$status_name] ?? NULL;
-  }
-
-  /**
-   * Remove 'xdebug' result key set by Civi\API\Subscriber\XDebugSubscriber
-   *
-   * This breaks some tests when xdebug is present, and we don't need it.
-   *
-   * @param $entity
-   * @param $action
-   * @param $params
-   * @param null $checkAgainst
-   *
-   * @return array|int
-   */
-  public function callAPISuccess($entity, $action, $params, $checkAgainst = NULL) {
-    $result = $this->traitCallAPISuccess($entity, $action, $params, $checkAgainst);
-    if (is_array($result)) {
-      unset($result['xdebug']);
-    }
-    return $result;
-  }
-
-  /**
-   * Define which flavour for change activities should be used
-   * @param $type string flavour type
-   */
-  public function setActivityFlavour($type) {
-    // TODO: this needs to be implemented when other flavours are available
-  }
-
-  /**
-   * Check if the given extension is installed
-   *
-   * @return bool
-   *   is the extension installed
-   */
-  public function isExtensionActive($extension_key) : bool {
-    return function_exists("_{$extension_key}_civix_civicrm_enable");
   }
 
 }

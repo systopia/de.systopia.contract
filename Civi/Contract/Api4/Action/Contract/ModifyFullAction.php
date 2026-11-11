@@ -24,22 +24,13 @@ use Civi\Api4\ContributionRecur;
 use Civi\Api4\Generic\BasicUpdateAction;
 use Civi\Api4\Membership;
 
-/**
- * @method bool getThrowExceptionOnFailure()
- * @method $this setThrowExceptionOnFailure(bool $throwExceptionOnFailure)
- */
 class ModifyFullAction extends BasicUpdateAction {
-
-  /**
-   * @var bool
-   */
-  protected bool $throwExceptionOnFailure = FALSE;
 
   public function __construct() {
     parent::__construct(Contract::getEntityName(), 'modifyFull');
   }
 
-  protected function validateValues() {
+  protected function validateValues(): void {
     parent::validateValues();
 
     // TODO: Validate required parameters per payment option
@@ -56,9 +47,7 @@ class ModifyFullAction extends BasicUpdateAction {
       ->execute()
       ->single();
 
-    $params = [
-      'id' => $item['id'],
-      'action' => $item['action'],
+    $values = [
       'medium_id' => $item['medium_id'] ?? NULL,
       'note' => $item['note'],
     ];
@@ -71,7 +60,7 @@ class ModifyFullAction extends BasicUpdateAction {
         // select a new recurring contribution
         case 'select':
           $rcId = (int) $item['recurring_contribution'];
-          $params['membership_payment.membership_recurring_contribution'] = $rcId;
+          $values['membership_payment.membership_recurring_contribution'] = $rcId;
 
           $rc = ContributionRecur::get(FALSE)
             ->addSelect(
@@ -94,10 +83,10 @@ class ModifyFullAction extends BasicUpdateAction {
             ((float) $rc['amount']) * $freq
           );
 
-          $params['membership_payment.membership_annual'] = $annual;
-          $params['membership_payment.membership_frequency'] = $freq;
-          $params['membership_payment.cycle_day'] = (int) ($rc['cycle_day'] ?? 0);
-          $params['membership_payment.payment_instrument'] = (int) ($rc['payment_instrument_id'] ?? 0);
+          $values['membership_payment.membership_annual'] = $annual;
+          $values['membership_payment.membership_frequency'] = $freq;
+          $values['membership_payment.cycle_day'] = (int) ($rc['cycle_day'] ?? 0);
+          $values['membership_payment.payment_instrument'] = (int) ($rc['payment_instrument_id'] ?? 0);
           break;
 
         case 'nochange':
@@ -106,8 +95,8 @@ class ModifyFullAction extends BasicUpdateAction {
         case 'None':
           $pi = $types['None'] ?? \CRM_Contract_Configuration::getPaymentInstrumentIdByName('None');
           if ($pi) {
-            $params['membership_payment.payment_instrument'] = $pi;
-            $params['contract_updates.ch_payment_instrument'] = $pi;
+            $values['membership_payment.payment_instrument'] = $pi;
+            $values['contract_updates.ch_payment_instrument'] = $pi;
           }
           break;
 
@@ -122,14 +111,14 @@ class ModifyFullAction extends BasicUpdateAction {
           );
           $pi = $types['RCUR'] ?? \CRM_Contract_Configuration::getPaymentInstrumentIdByName('RCUR');
           if ($pi) {
-            $params['contract_updates.ch_payment_instrument'] = $pi;
+            $values['contract_updates.ch_payment_instrument'] = $pi;
           }
-          $params['contract_updates.ch_annual'] = $annual;
-          $params['contract_updates.ch_frequency'] = $item['payment_frequency'];
-          $params['contract_updates.ch_cycle_day'] = $item['cycle_day'];
-          $params['contract_updates.ch_from_ba'] = $from_ba;
-          $params['contract_updates.ch_from_name'] = $item['account_holder'];
-          $params['contract_updates.ch_defer_payment_start']
+          $values['contract_updates.ch_annual'] = $annual;
+          $values['contract_updates.ch_frequency'] = $item['payment_frequency'];
+          $values['contract_updates.ch_cycle_day'] = $item['cycle_day'];
+          $values['contract_updates.ch_from_ba'] = $from_ba;
+          $values['contract_updates.ch_from_name'] = $item['account_holder'];
+          $values['contract_updates.ch_defer_payment_start']
             = isset($item['defer_payment_start']) && '' !== $item['defer_payment_start'] ? '1' : '0';
           break;
 
@@ -138,63 +127,49 @@ class ModifyFullAction extends BasicUpdateAction {
           $new_payment_option = $item['payment_option'];
           $payment_instrument_id = $types[$new_payment_option] ?? '';
           if ($payment_instrument_id) {
-            $params['membership_payment.payment_instrument'] = $payment_instrument_id;
-            $params['contract_updates.ch_payment_instrument'] = $payment_instrument_id;
+            $values['membership_payment.payment_instrument'] = $payment_instrument_id;
+            $values['contract_updates.ch_payment_instrument'] = $payment_instrument_id;
           }
 
           // compile other change data
-          $params['membership_payment.membership_annual'] = \CRM_Contract_SepaLogic::formatMoney(
+          $values['membership_payment.membership_annual'] = \CRM_Contract_SepaLogic::formatMoney(
             $item['payment_frequency'] * \CRM_Contract_SepaLogic::formatMoney($item['payment_amount'])
           );
-          $params['membership_payment.membership_frequency'] = $item['payment_frequency'];
-          $params['membership_payment.cycle_day'] = $item['cycle_day'];
-          $params['membership_payment.to_ba'] = \CRM_Contract_BankingLogic::getCreditorBankAccount();
-          $params['membership_payment.from_ba'] = \CRM_Contract_BankingLogic::getOrCreateBankAccount(
+          $values['membership_payment.membership_frequency'] = $item['payment_frequency'];
+          $values['membership_payment.cycle_day'] = $item['cycle_day'];
+          $values['membership_payment.to_ba'] = \CRM_Contract_BankingLogic::getCreditorBankAccount();
+          $values['membership_payment.from_ba'] = \CRM_Contract_BankingLogic::getOrCreateBankAccount(
             $membership['contact_id'],
             $item['iban'],
             $item['bic']
           );
-          $params['membership_payment.from_name'] = $item['account_holder'];
-          $params['membership_payment.defer_payment_start']
+          $values['membership_payment.from_name'] = $item['account_holder'];
+          $values['membership_payment.defer_payment_start']
             = isset($item['defer_payment_start']) && '' !== $item['defer_payment_start'] ? '1' : '0';
           break;
       }
 
       // add other changes
-      $params['membership_type_id'] = $item['membership_type_id'];
-      $params['campaign_id'] = $item['campaign_id'];
+      $values['membership_type_id'] = $item['membership_type_id'];
+      $values['campaign_id'] = $item['campaign_id'];
     }
     // If this is a cancellation
     elseif ($item['action'] === 'cancel') {
-      $params['membership_cancellation.membership_cancel_reason'] = $item['cancel_reason'];
+      $values['membership_cancellation.membership_cancel_reason'] = $item['cancel_reason'];
 
     }
     // If this is a pause
     elseif ($item['action'] === 'pause') {
-      $params['resume_date'] = \CRM_Utils_Date::processDate($item['resume_date'], NULL, FALSE, 'Y-m-d');
+      $values['resume_date'] = \CRM_Utils_Date::processDate($item['resume_date'], NULL, FALSE, 'Y-m-d');
     }
 
-    \CRM_Contract_CustomData::resolveCustomFields($params);
-    /** @phpstan-var array<string, mixed> $result */
-
-    $result = civicrm_api3('Contract', 'modify', $params);
-    /**
-     * @var array{
-     *   order: list<int>,
-     *   completed: list<int>,
-     *   failed: list<int>,
-     *   error_details: array<int, string>,
-     *   error_messages: array<int, string>,
-     * } $processResult
-     */
-    // @phpstan-ignore offsetAccess.nonOffsetAccessible
-    $processResult = civicrm_api3('Contract', 'process_scheduled_modifications', ['id' => $params['id']])['values'];
-
-    if ($this->throwExceptionOnFailure && [] !== $processResult['failed']) {
-      throw new \RuntimeException(implode(', ', $processResult['error_messages']));
-    }
-
-    return $result;
+    return Contract::modify($this->getCheckPermissions())
+      ->setId($item['id'])
+      ->setAction($item['action'])
+      ->setDate($item['date'] ?? NULL)
+      ->setValues($values)
+      ->execute()
+      ->single();
   }
 
 }

@@ -32,14 +32,13 @@ use CRM_Contract_ExtensionUtil as E;
  *   id?: int,
  *   "activity_type_id:name"?: string,
  *   activity_type_id?: int,
- *   activity_date_time?: string,
+ *   activity_date_time: string,
  *   status_id?: int|string,
  *   source_record_id?: int,
  *   source_contact_id?: int,
  *   target_contact_id?: int,
  *   subject?: string,
  *   "contract_activity.contract_id"?: int,
- *   activity_date_time: string,
  *   resume_date?: string,
  * }
  *
@@ -119,17 +118,18 @@ class PauseChange extends AbstractSchedulableContractChange {
       /** @var string $resumeDate */
       $resumeDate = $this->getParameter('resume_date', '');
       if ('' !== $resumeDate) {
+        /** @var array{contact_id: int, ...} $contract */
         $contract = $this->getContract();
+        /** @var int $sourceContactId */
+        $sourceContactId = $this->getParameter('source_contact_id');
         $resumeChange = ContractChangeFactory::getInstance()->create([
           'activity_type_id:name' => ResumeChange::getActivityTypeName(),
+          'activity_date_time' => $resumeDate,
+          'contract_activity.contract_id' => $this->getContractID(),
+          'source_record_id' => $this->getContractID(),
+          'source_contact_id' => $sourceContactId,
+          'target_contact_id' => $contract['contact_id'],
         ]);
-        $resumeChange->setParameter('activity_date_time', $resumeDate);
-        $resumeChange->setParameter('contract_activity.contract_id', $this->getContractID());
-        $resumeChange->setParameter('source_record_id', $this->getContractID());
-        // @phpstan-ignore argument.type
-        $resumeChange->setParameter('source_contact_id', $this->getParameter('source_contact_id'));
-        // @phpstan-ignore argument.type
-        $resumeChange->setParameter('target_contact_id', $contract['contact_id']);
         $resumeChange->setParameter('subject', $resumeChange->getSubject($contract));
         $resumeChange->setStatus('Scheduled');
         $resumeChange->save();

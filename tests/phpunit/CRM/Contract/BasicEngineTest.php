@@ -28,10 +28,6 @@ declare(strict_types = 1);
  */
 class CRM_Contract_BasicEngineTest extends CRM_Contract_ContractTestBase {
 
-  public function setUp() : void {
-    parent::setUp();
-  }
-
   /**
    * Test a simple create
    */
