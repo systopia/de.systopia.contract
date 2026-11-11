@@ -24,6 +24,7 @@ use Civi\Contract\Api4\Action\Contract\AddRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\EndRelatedMembershipAction;
 use Civi\Contract\Api4\Action\Contract\CreateFullAction;
 use Civi\Contract\Api4\Action\Contract\GetFieldsAction;
+use Civi\Contract\Api4\Action\Contract\ModifyAction;
 use Civi\Contract\Api4\Action\Contract\ModifyFullAction;
 use Civi\Contract\Api4\Action\Contract\ReinstatePaymentAction;
 use Civi\Contract\Api4\Action\Contract\SuspendPaymentAction;
@@ -38,17 +39,21 @@ class Contract extends AbstractEntity {
   }
 
   /**
-   * @return array<string, array<string|array<string>>>
+   * @return array<string, list<string|list<string>>>
    */
   public static function permissions(): array {
     return [
       'meta' => ['access CiviCRM'],
-      'default' => ['access CiviCRM'],
+      'default' => ['access CiviCRM', 'access CiviMember', 'edit memberships'],
     ];
   }
 
   public static function createfull(bool $checkPermissions = TRUE): CreateFullAction {
     return (new CreateFullAction())->setCheckPermissions($checkPermissions);
+  }
+
+  public static function modify(bool $checkPermissions = TRUE): ModifyAction {
+    return (new ModifyAction())->setCheckPermissions($checkPermissions);
   }
 
   public static function modifyFull(bool $checkPermissions = TRUE): ModifyFullAction {

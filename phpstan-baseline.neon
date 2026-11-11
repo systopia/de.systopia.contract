@@ -324,12 +324,6 @@ parameters:
 			path: CRM/Contract/Configuration.php
 
 		-
-			message: '#^Cannot access offset ''values'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/Configuration.php
-
-		-
 			message: '#^Dynamic call to static method CRM_Core_Session\:\:getLoggedInContactID\(\)\.$#'
 			identifier: staticMethod.dynamicCall
 			count: 1
@@ -344,12 +338,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_Configuration\:\:enableMonitoring\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Contract/Configuration.php
-
-		-
-			message: '#^Method CRM_Contract_Configuration\:\:getCampaignList\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: CRM/Contract/Configuration.php
 
@@ -1569,19 +1557,7 @@ parameters:
 			path: CRM/Contract/SepaLogic.php
 
 		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: CRM/Contract/SepaLogic.php
-
-		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: CRM/Contract/SepaLogic.php
-
-		-
-			message: '#^Cannot access offset ''reference'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: CRM/Contract/SepaLogic.php
@@ -2431,12 +2407,6 @@ parameters:
 			path: Civi/Contract/ActionProvider/Action/GetSepaRcur.php
 
 		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/PauseContract.php
-
-		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -2460,12 +2430,6 @@ parameters:
 			path: Civi/Contract/ActionProvider/Action/PauseContract.php
 
 		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/ResumeContract.php
-
-		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -2487,12 +2451,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: Civi/Contract/ActionProvider/Action/ResumeContract.php
-
-		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/ReviveContract.php
 
 		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
@@ -2524,18 +2482,6 @@ parameters:
 			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
 
 		-
-			message: '#^Cannot access offset ''contract_id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
-
-		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
-
-		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 4
@@ -2544,17 +2490,11 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 9
+			count: 8
 			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
 
 		-
 			message: '#^In method "Civi\\Contract\\ActionProvider\\Action\\UpdateContract\:\:doAction", caught "Exception" must be rethrown\. Either catch a more specific exception, add a "throw" clause in the "catch" block to propagate the exception or add a "// @ignoreException" comment\.$#'
-			count: 1
-			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
-
-		-
-			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
-			identifier: equal.notAllowed
 			count: 1
 			path: Civi/Contract/ActionProvider/Action/UpdateContract.php
 
@@ -2623,12 +2563,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: Civi/Contract/Api4/Action/Contract/CreateFullAction.php
-
-		-
-			message: '#^Method Civi\\Contract\\Api4\\Action\\Contract\\ModifyFullAction\:\:validateValues\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: Civi/Contract/Api4/Action/Contract/ModifyFullAction.php
 
 		-
 			message: '#^Method Civi\\Contract\\Api4\\Action\\Contract\\ModifyFullAction\:\:writeRecord\(\) has parameter \$item with no value type specified in iterable type array\.$#'
@@ -3652,7 +3586,7 @@ parameters:
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 29
+			count: 28
 			path: tests/phpunit/CRM/Contract/ContractTestBase.php
 
 		-
@@ -3699,30 +3633,6 @@ parameters:
 		-
 			message: '#^Method CRM_Contract_ContractTestBase\:\:assertArraysEqual\(\) has parameter \$source with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:callAPISuccess\(\) has parameter \$action with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:callAPISuccess\(\) has parameter \$entity with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:callAPISuccess\(\) has parameter \$params with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:callAPISuccess\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: tests/phpunit/CRM/Contract/ContractTestBase.php
 
@@ -3871,60 +3781,6 @@ parameters:
 			path: tests/phpunit/CRM/Contract/ContractTestBase.php
 
 		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:isExtensionActive\(\) has parameter \$extension_key with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:modifyContract\(\) has parameter \$action with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:modifyContract\(\) has parameter \$contract_id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:modifyContract\(\) has parameter \$date with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:modifyContract\(\) has parameter \$params with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:modifyContract\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:modifyContract\(\) should return array but returns array\|int\.$#'
-			identifier: return.type
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:setActivityFlavour\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:setActivityFlavour\(\) has parameter \$type with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
 			message: '#^Method CRM_Contract_ContractTestBase\:\:stripActivitySubjectID\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4044,33 +3900,15 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Cannot access offset ''bic'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
 			message: '#^Cannot access offset ''contribution_status_id\:name'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Cannot access offset ''iban'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Cannot access offset ''id'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
 			message: '#^Cannot access offset ''id'' on mixed\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
+			count: 2
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
@@ -4088,13 +3926,19 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 11
+			count: 2
+			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
+
+		-
+			message: '#^Class ModifyFormTest has an uninitialized property \$contract\. Give it default value or assign it in the constructor\.$#'
+			identifier: property.uninitialized
+			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
-			count: 9
+			count: 3
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
@@ -4103,110 +3947,8 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:exportValues\(\) has parameter \$elementList with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:exportValues\(\) has parameter \$filterInternal with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:exportValues\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:exportValues\(\) has parameter \$elementList with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:exportValues\(\) has parameter \$filterInternal with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:exportValues\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:assertAssignedExistingRecurring\(\) has parameter \$contactId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:assertMandateTerminated\(\) has parameter \$contactId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:assertNewMandateCreated\(\) has parameter \$contactId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:assertNewRecurringContribution\(\) has parameter \$amount with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:assertNewRecurringContribution\(\) has parameter \$contactId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
 			message: '#^Method ModifyFormTest\:\:assertNewRecurringContribution\(\) has parameter \$opts with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:assertRecurringContributionEnded\(\) has parameter \$contactId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:ensureCampaign\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:ensureMembershipType\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:getLatestSepaMandateForContact\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:getLatestSepaMandateForContact\(\) has parameter \$contactId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Method ModifyFormTest\:\:purgeDataForContact\(\) is unused\.$#'
-			identifier: method.unused
 			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
@@ -4225,13 +3967,13 @@ parameters:
 		-
 			message: '#^Offset ''id'' might not exist on array\|null\.$#'
 			identifier: offsetAccess.notFound
-			count: 2
+			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
 			message: '#^Only booleans are allowed in &&, array\|null given on the left side\.$#'
 			identifier: booleanAnd.leftNotBoolean
-			count: 2
+			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
@@ -4249,7 +3991,7 @@ parameters:
 		-
 			message: '#^Only booleans are allowed in a negated boolean, array\|null given\.$#'
 			identifier: booleanNot.exprNotBoolean
-			count: 5
+			count: 1
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
@@ -4273,13 +4015,13 @@ parameters:
 		-
 			message: '#^Only booleans are allowed in an if condition, array\|null given\.$#'
 			identifier: if.condNotBoolean
-			count: 3
+			count: 2
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
 			message: '#^Only booleans are allowed in an if condition, int\|null given\.$#'
 			identifier: if.condNotBoolean
-			count: 3
+			count: 2
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
@@ -4295,63 +4037,9 @@ parameters:
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
-			message: '#^Property CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1176\:\:\$_submitValues type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property CRM_Contract_Form_Modify@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:679\:\:\$_submitValues type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:1185\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property CRM_Core_Form\:\:\$controller \(CRM_Core_Controller\) does not accept class@anonymous/tests/phpunit/CRM/Contract/Form/ModifyFormTest\.php\:687\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property ModifyFormTest\:\:\$campaign type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property ModifyFormTest\:\:\$contact \(array\<string, mixed\>\) does not accept array\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property ModifyFormTest\:\:\$mandate \(array\<string, mixed\>\) does not accept array\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property ModifyFormTest\:\:\$sharedCampaign type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
-			message: '#^Property ModifyFormTest\:\:\$sharedMembershipType type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
-
-		-
 			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
 			identifier: ternary.shortNotAllowed
-			count: 5
+			count: 2
 			path: tests/phpunit/CRM/Contract/Form/ModifyFormTest.php
 
 		-
