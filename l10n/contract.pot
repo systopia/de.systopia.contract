@@ -131,6 +131,10 @@ msgid "Create"
 msgstr ""
 
 #: CRM/Contract/Form/Create.php
+msgid "Please enter an amount"
+msgstr ""
+
+#: CRM/Contract/Form/Create.php
 msgid "Join date cannot be in the future."
 msgstr ""
 
@@ -1368,6 +1372,10 @@ msgstr ""
 
 #: templates/CRM/Contract/Form/Create.tpl
 msgid "This field is required."
+msgstr ""
+
+#: templates/CRM/Contract/Form/Create.tpl
+msgid "Additional Fields"
 msgstr ""
 
 #: templates/CRM/Contract/Form/Create.tpl
