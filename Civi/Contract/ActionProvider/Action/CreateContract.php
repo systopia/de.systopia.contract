@@ -185,7 +185,7 @@ class CreateContract extends AbstractContractAction {
       new Specification('validation_date', 'Date', E::ts('Validation Date'), FALSE, date('Y-m-d H:i:s')),
 
       # Contract stuff
-      new Specification('account_holder', 'String', E::ts('Members Bank Account'), FALSE),
+      new Specification('account_holder', 'String', E::ts('Account Holder'), FALSE),
     ]);
   }
 

@@ -73,7 +73,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add(
       'select',
       'cycle_day',
-      E::ts('Cycle day'),
+      E::ts('Cycle Day'),
       CRM_Contract_SepaLogic::getCycleDays(),
       FALSE,
       ['class' => 'crm-select2']
@@ -94,13 +94,13 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add(
       'text',
       'account_holder',
-      E::ts('Members Bank Account'),
+      E::ts('Account Holder'),
       ['class' => 'huge', 'placeholder' => $this->contact['display_name']]
     );
     $this->add(
       'text',
       'payment_amount',
-      E::ts('Installment amount'),
+      E::ts('Installment Amount'),
       ['size' => 6, 'placeholder' => E::ts('Installment')]
     );
     $this->add(
@@ -177,7 +177,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add(
       'select',
       'activity_medium',
-      E::ts('Source media'),
+      E::ts('Source Media'),
       ['' => E::ts('- none -')] + $mediumOptions,
       FALSE,
       ['class' => 'crm-select2']
@@ -187,7 +187,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add(
       'text',
       'membership_reference',
-      E::ts('Reference number')
+      E::ts('Reference Number')
     );
 
     // Contract number text
@@ -211,7 +211,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add(
       'select',
       'membership_channel',
-      E::ts('Membership channel'),
+      E::ts('Membership Channel'),
       ['' => E::ts('- none -')] + $membershipChannelOptions,
       FALSE,
       ['class' => 'crm-select2']);
