@@ -8,7 +8,7 @@ use Civi\Api4\CustomGroup;
 use Civi\Api4\MembershipType;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
-use Civi\Contract\Form\Field\CustomFormField;
+use Civi\Contract\Form\Field\AdditionalFormField;
 use CRM_Contract_ContractTestBase as ContractTestBase;
 use CRM_Contract_Form_Create as CreateForm;
 
@@ -425,10 +425,10 @@ class CreateFormTest extends ContractTestBase {
     $this->runFormSubmissionCreatesContract('RCUR', 120);
   }
 
-  public function testCustomField(): void {
+  public function testAdditionalField(): void {
     $form = $this->createForm();
 
-    $customField = (new CustomFormField('my_group.my_field', 'text', 'Test'))
+    $additionalField = (new AdditionalFormField('my_group.my_field', 'text', 'Test'))
       ->setDefault('default')
       ->setRequired(TRUE)
       ->setValidateCallback(function($value, array $values): string {
@@ -438,7 +438,7 @@ class CreateFormTest extends ContractTestBase {
         return 'error';
       });
 
-    $form->addCustomField($customField);
+    $form->addAdditionalField($additionalField);
 
     static::assertTrue($form->isElementRequired('my_group__my_field'));
     $formElement = $form->getElement('my_group__my_field');
@@ -447,8 +447,8 @@ class CreateFormTest extends ContractTestBase {
     static::assertSame('default', $formElement->getValue());
 
     static::assertSame(
-      ['my_group__my_field' => $customField],
-      $form->getTemplateVars('customFields')
+      ['my_group__my_field' => $additionalField],
+      $form->getTemplateVars('additionalFields')
     );
 
     $form->_submitValues = ['my_group__my_field' => 'abc'];

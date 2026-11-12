@@ -10,9 +10,9 @@
 
 declare(strict_types = 1);
 
-use Civi\Contract\Form\Field\CustomFormAutocompleteField;
-use Civi\Contract\Form\Field\CustomFormField;
-use Civi\Contract\Form\Field\CustomFormOptionField;
+use Civi\Contract\Form\Field\AdditionalAutocompleteFormField;
+use Civi\Contract\Form\Field\AdditionalFormField;
+use Civi\Contract\Form\Field\AdditionalOptionFormField;
 use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Form_Create extends CRM_Core_Form {
@@ -29,40 +29,40 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   protected ?array $contact = NULL;
 
   /**
-   * @var array<string, CustomFormField>
+   * @var array<string, AdditionalFormField>
    * Mapping of form field name to custom field object.
    */
-  private array $customFields = [];
+  private array $additionalFields = [];
 
   /**
-   * This method allows other extensions to add form fields for custom
-   * Membership fields.
+   * This method allows other extensions to add form fields for Membership
+   * fields that aren't part of the form by default.
    */
-  public function addCustomField(CustomFormField $customField): void {
-    $formFieldName = str_replace('.', '__', $customField->fieldName);
-    $this->customFields[$formFieldName] = $customField;
+  public function addAdditionalField(AdditionalFormField $field): void {
+    $formFieldName = str_replace('.', '__', $field->fieldName);
+    $this->additionalFields[$formFieldName] = $field;
 
-    if ($customField instanceof CustomFormAutocompleteField) {
-      $this->addAutocomplete($formFieldName, $customField->label, [
-        'entity' => $customField->entityName,
-        'api' => ['fieldName' => "Membership.$customField->fieldName"] + $customField->api,
-      ], $customField->required);
+    if ($field instanceof AdditionalAutocompleteFormField) {
+      $this->addAutocomplete($formFieldName, $field->label, [
+        'entity' => $field->entityName,
+        'api' => ['fieldName' => "Membership.$field->fieldName"] + $field->api,
+      ], $field->required);
     }
     else {
       $this->add(
-        $customField->inputType,
+        $field->inputType,
         $formFieldName,
-        $customField->label,
-        $customField instanceof CustomFormOptionField ? $customField->options : NULL,
-        $customField->required
+        $field->label,
+        $field instanceof AdditionalOptionFormField ? $field->options : NULL,
+        $field->required
       );
     }
 
-    if (NULL !== $customField->default) {
-      parent::setDefaults([$formFieldName => $customField->default]);
+    if (NULL !== $field->default) {
+      parent::setDefaults([$formFieldName => $field->default]);
     }
 
-    $this->assign('customFields', $this->customFields);
+    $this->assign('additionalFields', $this->additionalFields);
   }
 
   public function buildQuickForm() {
@@ -386,7 +386,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       }
     }
 
-    foreach ($this->customFields as $formFieldName => $customField) {
+    foreach ($this->additionalFields as $formFieldName => $customField) {
       if (NULL !== $customField->validateCallback && '' !== ($submitted[$formFieldName] ?? '')) {
         $message = call_user_func(
           $customField->validateCallback, $submitted[$formFieldName], $submitted
@@ -430,7 +430,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
         )
       );
 
-    foreach ($this->customFields as $formFieldName => $customField) {
+    foreach ($this->additionalFields as $formFieldName => $customField) {
       if ($customField->fieldName !== $formFieldName && array_key_exists($formFieldName, $submitted)) {
         $params[$customField->fieldName] = $submitted[$formFieldName];
         unset($submitted[$formFieldName]);

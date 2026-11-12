@@ -20,7 +20,7 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Form\Field;
 
-final class CustomFormAutocompleteField extends CustomFormField {
+final class AdditionalAutocompleteFormField extends AdditionalFormField {
 
   /**
    * @inheritDoc

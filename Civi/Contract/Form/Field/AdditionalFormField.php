@@ -20,7 +20,7 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Form\Field;
 
-class CustomFormField {
+class AdditionalFormField {
 
   public bool $required = FALSE;
 

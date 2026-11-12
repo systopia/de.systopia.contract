@@ -105,10 +105,10 @@
     <div class="clear"></div>
   </div>
 
-  {if count($customFields) > 0}
+  {if count($additionalFields) > 0}
     <h3>{ts}Additional Fields{/ts}</h3>
 
-    {foreach $customFields as $fieldName => $customField}
+    {foreach $additionalFields as $fieldName => $additionalField}
       <div class="crm-section">
         <div class="label">{$form.$fieldName.label}</div>
         <div class="content">{$form.$fieldName.html}</div>

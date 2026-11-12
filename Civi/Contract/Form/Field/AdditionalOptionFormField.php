@@ -20,7 +20,10 @@ declare(strict_types = 1);
 
 namespace Civi\Contract\Form\Field;
 
-final class CustomFormOptionField extends CustomFormField {
+/**
+ * For input fields with options, e.g. "select".
+ */
+final class AdditionalOptionFormField extends AdditionalFormField {
 
   /**
    * @inheritDoc
