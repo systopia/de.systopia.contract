@@ -138,6 +138,7 @@ final class SuspendPaymentAction extends AbstractAction {
       'activity_type_id:name' => SuspendPaymentChange::getActivityTypeName(),
       'details' => str_replace("\n", '<br>', htmlentities($this->getNotes(), ENT_SUBSTITUTE)),
       'contract_payment_suspended.reason' => $this->getReason(),
+      'activity_date_time' => date('Y-m-d H:i:s'),
     ]);
 
     \Civi::dispatcher()->dispatch(

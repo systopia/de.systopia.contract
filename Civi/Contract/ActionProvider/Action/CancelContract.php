@@ -22,6 +22,7 @@ use Civi\ActionProvider\Action\AbstractAction;
 use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\Specification;
 use Civi\ActionProvider\Parameter\SpecificationBag;
+use Civi\Api4\Contract;
 use Civi\Api4\MembershipType;
 use Civi\Api4\OptionValue;
 use CRM_Contract_ExtensionUtil as E;
@@ -124,14 +125,12 @@ class CancelContract extends AbstractAction {
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
-    $contract_data = ['action' => 'cancel'];
+    $contract_data = [];
 
     // add basic fields to contract_data
     foreach ([
       'contact_id',
-      'contract_id',
       'membership_type_id',
-      'date',
       'membership_cancellation.membership_cancel_reason',
     ] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
@@ -148,9 +147,15 @@ class CancelContract extends AbstractAction {
       $contract_data[$parameter_name] = $value;
     }
 
-    // create mandate
     try {
-      $contract = \civicrm_api3('Contract', 'modify', $contract_data);
+      $contract = Contract::modify(FALSE)
+        ->setId($parameters->getParameter('contract_id'))
+        ->setAction('cancel')
+        ->setDate($parameters->getParameter('date'))
+        ->setValues($contract_data)
+        ->execute()
+        ->single();
+
       /** @phpstan-var array<string, mixed> $contract */
       $output->setParameter('contract_id', $contract['id']);
     }

@@ -30,7 +30,7 @@ use CRM_Contract_ExtensionUtil as E;
  *   id?: int,
  *   "activity_type_id:name"?: string,
  *   activity_type_id?: int,
- *   activity_date_time?: string,
+ *   activity_date_time: string,
  *   status_id?: int|string,
  *   source_record_id?: int,
  *   source_contact_id?: int,
@@ -38,7 +38,6 @@ use CRM_Contract_ExtensionUtil as E;
  *   subject?: string,
  *   details?: string,
  *   "contract_activity.contract_id"?: int,
- *   activity_date_time: string,
  *   membership_type_id?: int|numeric-string,
  *   campaign_id?: int|numeric-string|null,
  *   "membership_payment.cycle_day"?: int|numeric-string,
@@ -227,7 +226,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
       $contract_update['campaign_id'] = empty($campaignId) ? NULL : (int) $campaignId;
     }
 
-    $membershipTypeId = $this->getParameter('membership_type_id');
+    $membershipTypeId = $this->getParameter('contract_updates.ch_membership_type');
     if (($contract_before['membership_type_id'] != $membershipTypeId)  && !empty($membershipTypeId)) {
       $contract_update['membership_type_id'] = (int) $membershipTypeId;
     }

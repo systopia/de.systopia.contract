@@ -28,7 +28,7 @@ namespace Civi\Contract\Change;
  *   id?: int,
  *   "activity_type_id:name"?: string,
  *   activity_type_id?: int,
- *   activity_date_time?: string,
+ *   activity_date_time: string,
  *   status_id?: int|string,
  *   source_record_id?: int,
  *   source_contact_id?: int,

@@ -205,6 +205,7 @@ final class ReinstatePaymentAction extends AbstractAction {
     ContractManager::getInstance()->createContractChange($membership['id'], [
       'activity_type_id:name' => ReinstatePaymentChange::getActivityTypeName(),
       'details' => str_replace("\n", '<br>', htmlentities($this->getNotes(), ENT_SUBSTITUTE)),
+      'activity_date_time' => date('Y-m-d H:i:s'),
     ]);
 
     \Civi::dispatcher()->dispatch(
@@ -259,7 +260,6 @@ final class ReinstatePaymentAction extends AbstractAction {
       ->single();
 
     Contract::modifyFull(FALSE)
-      ->setThrowExceptionOnFailure(TRUE)
       ->setValues([
         'id' => $membership['id'],
         'action' => UpdateChange::getActionName(),

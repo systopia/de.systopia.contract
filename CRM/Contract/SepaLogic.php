@@ -8,6 +8,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\SepaMandate;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -26,10 +27,16 @@ class CRM_Contract_SepaLogic {
     // TODO: fill? sanitise?
 
     // pass it to the SEPA API
-    $new_mandate = civicrm_api3('SepaMandate', 'createfull', $params);
+    $new_mandate = SepaMandate::createFull(FALSE)
+      ->setValues($params)
+      ->execute()
+      ->single();
 
     // reload to get all values
-    $new_mandate = civicrm_api3('SepaMandate', 'getsingle', ['id' => $new_mandate['id']]);
+    $new_mandate = SepaMandate::get(FALSE)
+      ->addWhere('id', '=', $new_mandate['id'])
+      ->execute()
+      ->single();
 
     // create user message
     $mandate_url = CRM_Utils_System::url('civicrm/sepa/xmandate', "mid={$new_mandate['id']}");

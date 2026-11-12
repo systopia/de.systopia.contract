@@ -21,7 +21,7 @@ use Civi\Contract\Event\RenderChangeSubjectEvent;
  */
 class CRM_Contract_CustomisationTest extends CRM_Contract_ContractTestBase {
 
-  public function setUp() : void {
+  protected function setUp(): void {
     parent::setUp();
     Civi::dispatcher()->addListener(
         RenderChangeSubjectEvent::EVENT_NAME,

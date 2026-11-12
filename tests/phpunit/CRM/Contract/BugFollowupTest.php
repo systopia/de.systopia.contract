@@ -22,10 +22,6 @@ use Civi\Contract\Change\Type\UpdateChange;
  */
 class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
 
-  public function setUp() : void {
-    parent::setUp();
-  }
-
   /**
    * Follow-up to a bug, where the cancellation info (reason/date) is not passed to the respective custom fields
    *
@@ -205,7 +201,7 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     ]);
 
     // modify contract and check again
-    $this->modifyContract($contract['id'], 'update', 'now', [
+    $this->modifyContract($contract['id'], 'update', '+1 day', [
       'membership_payment.membership_annual' => '480.00',
     ]);
     $updateChangeType = ContractChangeTypeContainer::getInstance()
@@ -216,12 +212,7 @@ class CRM_Contract_BugFollowUpTest extends CRM_Contract_ContractTestBase {
     $updated_contract = $this->getContract($contract['id']);
     self::assertNotEmpty($changeActivity, 'There should be a change activity.');
     self::assertNotEmpty($changeActivity['subject'], 'There should be a change activity subject.');
-    if ($this->isExtensionActive('tazcontract')) {
-      $this->assertStringContainsOtherString('1,320.00', $changeActivity['subject']);
-    }
-    else {
-      self::assertStringContainsOtherString('Update contract scheduled', $changeActivity['subject']);
-    }
+    self::assertStringContainsOtherString('Update contract scheduled', $changeActivity['subject']);
   }
 
 }
