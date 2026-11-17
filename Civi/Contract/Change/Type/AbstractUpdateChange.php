@@ -81,7 +81,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
    */
   public function populateData(): void {
     if ($this->isNew()) {
-      $contract = $this->getContract(TRUE);
+      $contract = $this->getContract();
       $contract_after_execution = $contract;
 
       // copy submitted changes to change activity
@@ -213,7 +213,7 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
 
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
   public function execute(): void {
-    $contract_before = $this->getContract(TRUE);
+    $contract_before = $this->getContract();
     $contract_update = [];
 
     /** @var int|numeric-string|null $campaignId */
@@ -269,7 +269,6 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
     $contract_after = $this->getContract();
     foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $membership_field => $change_field) {
       if (isset($contract_after[$membership_field])) {
-        // @phpstan-ignore argument.type
         $this->setParameter($change_field, $contract_after[$membership_field]);
       }
     }
@@ -279,7 +278,6 @@ abstract class AbstractUpdateChange extends AbstractSchedulableContractChange {
       - (float) \CRM_Contract_SepaLogic::formatMoney($contract_before['membership_payment.membership_annual'] ?? 0)
     );
     $this->setParameter('subject', $this->getSubject($contract_after, $contract_before));
-    // @phpstan-ignore argument.type
     $this->setParameter('contract_updates.ch_from_name', $contract_after['membership_payment.from_name'] ?? '');
     $this->setStatus('Completed');
     $this->save();

@@ -38,6 +38,16 @@ namespace Civi\Contract\Change;
  *   "contract_activity.contract_id"?: int,
  * }
  *
+ * @phpstan-type contractT array{
+ *   id: int,
+ *   contact_id: int,
+ *   membership_type_id: int,
+ *   status_id: int,
+ *   owner_membership_id: ?int,
+ *   "membership_payment.membership_recurring_contribution": ?int,
+ *   ...
+ * }
+ *
  * @template T of changeT = changeT
  */
 interface ContractChangeInterface {
@@ -76,18 +86,9 @@ interface ContractChangeInterface {
   /**
    * Get the contract data
    *
-   * @return array<string, mixed> contract data
+   * @return contractT contract data
    */
-  public function getContract(bool $withPaymentData = FALSE): array;
-
-  /**
-   * Update the contract with the given data
-   *
-   * @param array<string, mixed> $updates changes: attribute->value
-   *
-   * @throws \Exception
-   */
-  public function updateContract(array $updates): void;
+  public function getContract(): array;
 
   /**
    * Set a parameter with the activity.
@@ -113,6 +114,8 @@ interface ContractChangeInterface {
 
   /**
    * Save data to the DB (activity)
+   *
+   * @throws \CRM_Core_Exception
    */
   public function save(): void;
 

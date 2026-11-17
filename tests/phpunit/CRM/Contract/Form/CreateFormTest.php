@@ -434,7 +434,7 @@ class CreateFormTest extends ContractTestBase {
       'contact_id' => $this->contact['id'],
     ]);
 
-    $contract = $this->getContract($result['id']);
+    $contract = $this->getContract((int) $result['id']);
 
     self::assertEquals($this->contact['id'], $contract['contact_id']);
     self::assertEquals($this->membershipType['id'], $contract['membership_type_id']);

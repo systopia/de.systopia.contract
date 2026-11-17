@@ -10,6 +10,7 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Membership;
 use Civi\Contract\Support\AbstractSetupHeadless;
 use Civi\Test\Api3TestTrait;
 
@@ -198,14 +199,15 @@ class CRM_Contract_ContractTestBase extends AbstractSetupHeadless {
 
   /**
    * Simply load the contract by ID
-   * @param $contract_id integer contract ID
-   * @return array contract data
+   *
+   * @return array<string, mixed> contract data
    */
-  public function getContract($contract_id) {
-    $contract = $this->callAPISuccess('Membership', 'getsingle', ['id' => $contract_id]);
-    CRM_Contract_CustomData::labelCustomFields($contract);
-    $contract['id'] = (int) $contract['id'];
-    return $contract;
+  public function getContract(int $contractId): array {
+    return Membership::get(FALSE)
+      ->addSelect('*', 'custom.*')
+      ->addWhere('id', '=', $contractId)
+      ->execute()
+      ->single();
   }
 
   /**

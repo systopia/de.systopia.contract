@@ -128,7 +128,6 @@ class PauseChange extends AbstractSchedulableContractChange {
         $resumeChange->setParameter('source_record_id', $this->getContractID());
         // @phpstan-ignore argument.type
         $resumeChange->setParameter('source_contact_id', $this->getParameter('source_contact_id'));
-        // @phpstan-ignore argument.type
         $resumeChange->setParameter('target_contact_id', $contract['contact_id']);
         $resumeChange->setParameter('subject', $resumeChange->getSubject($contract));
         $resumeChange->setStatus('Scheduled');
@@ -142,7 +141,7 @@ class PauseChange extends AbstractSchedulableContractChange {
    * @inheritDoc
    */
   public function execute(): void {
-    $contract = $this->getContract(TRUE);
+    $contract = $this->getContract();
 
     // pause the mandate
     $paymentContractId = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
@@ -152,7 +151,7 @@ class PauseChange extends AbstractSchedulableContractChange {
     }
 
     // update change activity
-    $contractAfter = $this->getContract(TRUE);
+    $contractAfter = $this->getContract();
     $this->setParameter('subject', $this->getSubject($contractAfter, $contract));
     $this->setStatus('Completed');
     $this->save();
