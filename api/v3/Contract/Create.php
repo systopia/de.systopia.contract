@@ -59,19 +59,15 @@ function civicrm_api3_Contract_create($params) {
   if (!empty($params[$recurring_contribution_field_key])) {
     // link recurring contribution to contract
     CRM_Contract_SepaLogic::setContractPaymentLink($membership['id'], (int) $params[$recurring_contribution_field_key]);
+    $params['membership_payment.membership_recurring_contribution'] = $params[$recurring_contribution_field_key];
   }
 
   // create 'sign' activity
   $params['activity_type_id:name'] = SignChange::getActivityTypeName();
   $contractManager = ContractManager::getInstance();
-  $change = $contractManager->createContractChange(
+  $contractManager->createContractChange(
     (int) $membership['id'],
     $params
-  );
-
-  // also derive contract fields
-  $change->updateContract(
-    ['membership_payment.membership_recurring_contribution' => $params[$recurring_contribution_field_key]]
   );
 
   // maybe we need to do some cleanup:

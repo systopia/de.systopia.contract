@@ -2793,12 +2793,6 @@ parameters:
 			path: Civi/Contract/Change/Type/AbstractUpdateChange.php
 
 		-
-			message: '#^Cannot cast mixed to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: Civi/Contract/Change/Type/CancelChange.php
-
-		-
 			message: '#^Construct empty\(\) is not allowed\. Use more strict comparison\.$#'
 			identifier: empty.notAllowed
 			count: 4
@@ -3261,12 +3255,6 @@ parameters:
 			path: api/v3/Contract/Modify.php
 
 		-
-			message: '#^Possibly invalid array key type mixed\.$#'
-			identifier: array.invalidKey
-			count: 1
-			path: api/v3/Contract/Modify.php
-
-		-
 			message: '#^Call to CRM_Contract_Configuration\:\:disableMonitoring\(\) on a separate line has no effect\.$#'
 			identifier: staticMethod.resultUnused
 			count: 1
@@ -3676,7 +3664,7 @@ parameters:
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
-			count: 3
+			count: 2
 			path: tests/phpunit/CRM/Contract/ContractTestBase.php
 
 		-
@@ -3841,18 +3829,6 @@ parameters:
 			path: tests/phpunit/CRM/Contract/ContractTestBase.php
 
 		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:getContract\(\) has parameter \$contract_id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Method CRM_Contract_ContractTestBase\:\:getContract\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
 			message: '#^Method CRM_Contract_ContractTestBase\:\:getLastActivityID\(\) has parameter \$after_activity_id with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -3981,12 +3957,6 @@ parameters:
 		-
 			message: '#^Only booleans are allowed in an if condition, int given\.$#'
 			identifier: if.condNotBoolean
-			count: 1
-			path: tests/phpunit/CRM/Contract/ContractTestBase.php
-
-		-
-			message: '#^Parameter \#1 \$data of static method CRM_Contract_CustomData\:\:labelCustomFields\(\) expects array\<int\|string, mixed\>, array\|int given\.$#'
-			identifier: argument.type
 			count: 1
 			path: tests/phpunit/CRM/Contract/ContractTestBase.php
 

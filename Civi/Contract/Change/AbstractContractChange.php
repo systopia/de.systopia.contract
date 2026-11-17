@@ -24,6 +24,7 @@ use Civi\Api4\Activity;
 use Civi\Api4\ContributionRecur;
 use Civi\Api4\Membership;
 use Civi\Contract\Api4\Helper\FieldNameHelper;
+use Civi\Contract\Event\ContractChangedEvent;
 use Civi\Contract\Event\RenderChangeSubjectEvent;
 
 /**
@@ -37,6 +38,7 @@ use Civi\Contract\Event\RenderChangeSubjectEvent;
  * strings.
  *
  * @phpstan-import-type changeT from ContractChangeInterface
+ * @phpstan-import-type contractT from ContractChangeInterface
  *
  * @template T of changeT = changeT
  * @implements ContractChangeInterface<T>
@@ -49,7 +51,7 @@ abstract class AbstractContractChange implements ContractChangeInterface {
   protected array $data;
 
   /**
-   * @phpstan-var array<string, mixed>
+   * @phpstan-var contractT|null
    * Contract data (cached)
    */
   protected ?array $contract = NULL;
@@ -117,7 +119,7 @@ abstract class AbstractContractChange implements ContractChangeInterface {
    */
   public function populateData(): void {
     // populate parameters
-    $contract = $this->getContract(TRUE);
+    $contract = $this->getContract();
 
     // propagate derived fields
     foreach (AbstractContractChange::FIELD_MAPPING_CHANGE_CONTRACT as $contract_attribute => $change_attribute) {
@@ -136,12 +138,12 @@ abstract class AbstractContractChange implements ContractChangeInterface {
   /**
    * @inheritDoc
    */
-  public function getContract(bool $withPaymentData = FALSE): array {
+  public function getContract(): array {
     $contractId = $this->getContractID();
-    // @phpstan-ignore cast.int
-    if ($this->contract === NULL || (int) $this->contract['id'] !== $contractId) {
+    if ($this->contract === NULL || $this->contract['id'] !== $contractId) {
       // (re)load contract
       try {
+        // @phpstan-ignore assign.propertyType
         $this->contract = Membership::get(FALSE)
           ->addSelect('*', 'custom.*')
           ->addWhere('id', '=', $contractId)
@@ -153,11 +155,9 @@ abstract class AbstractContractChange implements ContractChangeInterface {
       }
     }
 
-    // add the payment data, if requested
-    if ($withPaymentData) {
-      if (!isset($this->contract['membership_payment.membership_frequency'])) {
-        $this->derivePaymentData($this->contract);
-      }
+    if (!isset($this->contract['membership_payment.membership_frequency'])) {
+      // @phpstan-ignore assign.propertyType
+      $this->derivePaymentData($this->contract);
     }
 
     // @phpstan-ignore return.type (phpstan assumes that contract might be NULL)
@@ -165,11 +165,11 @@ abstract class AbstractContractChange implements ContractChangeInterface {
   }
 
   /**
-   * Enrich the given contact with payment data
+   * Enrich the given contract with payment data
    *
-   * @param array<string, mixed> $contract contract data
+   * @phpstan-param array{"membership_payment.membership_recurring_contribution"?: ?int, ...} $contract contract data
    */
-  public function derivePaymentData(array &$contract): void {
+  protected function derivePaymentData(array &$contract): void {
     if (isset($contract['membership_payment.membership_recurring_contribution'])) {
       // we have a recurring contribution!
       try {
@@ -232,7 +232,6 @@ abstract class AbstractContractChange implements ContractChangeInterface {
       }
       catch (\Exception $ex) {
         \Civi::log()->error(
-          // @phpstan-ignore encapsedStringPart.nonString
           "Couldn't load recurring contribution [{$contract['membership_payment.membership_recurring_contribution']}]"
         );
 
@@ -242,13 +241,20 @@ abstract class AbstractContractChange implements ContractChangeInterface {
   }
 
   /**
-   * @inheritDoc
+   * Update the contract with the given data
+   *
+   * @param array<string, mixed> $updates changes: attribute->value
+   *
+   * @throws \CRM_Core_Exception
    */
-  public function updateContract(array $updates): void {
+  protected function updateContract(array $updates): void {
+    $contractBefore = $this->getContract();
+
     // make sure the ID is there
     $updates['id'] = $this->getContractID();
 
     // derive fields if possible
+    // @phpstan-ignore argument.type
     $this->derivePaymentData($updates);
 
     // finally: write through
@@ -256,6 +262,12 @@ abstract class AbstractContractChange implements ContractChangeInterface {
 
     // and delete the cached contract data (if any)
     $this->contract = NULL;
+
+    $event = new ContractChangedEvent($contractBefore, $this);
+    if (NULL !== $event->getActionName()) {
+      \Civi::dispatcher()->dispatch($event::getActionEventName($event->getActionName()), $event);
+    }
+    \Civi::dispatcher()->dispatch(ContractChangedEvent::class, $event);
   }
 
   /**
@@ -334,7 +346,7 @@ abstract class AbstractContractChange implements ContractChangeInterface {
   }
 
   /**
-   * Save data to the DB (activity)
+   * @inheritDoc
    */
   public function save(): void {
     // make sure all custom fields are transformed into the 'custom_[id]' notation
