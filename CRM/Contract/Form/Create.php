@@ -10,17 +10,60 @@
 
 declare(strict_types = 1);
 
+use Civi\Contract\Form\Field\AdditionalAutocompleteFormField;
+use Civi\Contract\Form\Field\AdditionalFormField;
+use Civi\Contract\Form\Field\AdditionalOptionFormField;
 use CRM_Contract_ExtensionUtil as E;
 
 class CRM_Contract_Form_Create extends CRM_Core_Form {
 
   /**
-   * @var ?int contact ID */
+   * @var ?int contact ID
+   */
   protected ?int $cid = NULL;
 
   /**
-   * @var array contact  data on the membership's contact */
+   * @var array<string, mixed>|null
+   * contact data on the membership's contact
+   */
   protected ?array $contact = NULL;
+
+  /**
+   * @var array<string, AdditionalFormField>
+   * Mapping of form field name to custom field object.
+   */
+  private array $additionalFields = [];
+
+  /**
+   * This method allows other extensions to add form fields for Membership
+   * fields that aren't part of the form by default.
+   */
+  public function addAdditionalField(AdditionalFormField $field): void {
+    $formFieldName = str_replace('.', '__', $field->fieldName);
+    $this->additionalFields[$formFieldName] = $field;
+
+    if ($field instanceof AdditionalAutocompleteFormField) {
+      $this->addAutocomplete($formFieldName, $field->label, [
+        'entity' => $field->entityName,
+        'api' => ['fieldName' => "Membership.$field->fieldName"] + $field->api,
+      ], $field->required);
+    }
+    else {
+      $this->add(
+        $field->inputType,
+        $formFieldName,
+        $field->label,
+        $field instanceof AdditionalOptionFormField ? $field->options : NULL,
+        $field->required
+      );
+    }
+
+    if (NULL !== $field->default) {
+      parent::setDefaults([$formFieldName => $field->default]);
+    }
+
+    $this->assign('additionalFields', $this->additionalFields);
+  }
 
   public function buildQuickForm() {
     $this->cid = CRM_Utils_Request::retrieve('cid', 'Integer');
@@ -39,6 +82,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     );
 
     $this->assign('cid', $this->get('cid'));
+    // @phpstan-ignore assign.propertyType
     $this->contact = civicrm_api3('Contact', 'getsingle', ['id' => $this->get('cid')]);
     $this->assign('contact', $this->contact);
     self::setTitle(E::ts('Create a new contract for %1', [1 => $this->contact['display_name']]));
@@ -255,9 +299,8 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   /**
    * form validation
    */
-  // phpcs:disable Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded, Drupal.WhiteSpace.ScopeIndent.IncorrectExact
   public function validate() {
-  // phpcs:enable
     $submitted = $this->exportValues();
 
     // check if the reference is not in use
@@ -274,7 +317,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
 
     if (!in_array($mode, ['existing', 'nochange', 'select', 'None'], TRUE)) {
       if (!array_key_exists('payment_amount', $submitted) || trim((string) $submitted['payment_amount']) === '') {
-        $this->setElementError('payment_amount', 'Please enter an amount');
+        $this->setElementError('payment_amount', E::ts('Please enter an amount'));
       }
     }
 
@@ -343,6 +386,17 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       }
     }
 
+    foreach ($this->additionalFields as $formFieldName => $customField) {
+      if (NULL !== $customField->validateCallback && '' !== ($submitted[$formFieldName] ?? '')) {
+        $message = call_user_func(
+          $customField->validateCallback, $submitted[$formFieldName], $submitted
+        );
+        if (NULL !== $message) {
+          $this->setElementError($formFieldName, $message);
+        }
+      }
+    }
+
     return parent::validate();
   }
 
@@ -375,6 +429,14 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
           ]
         )
       );
+
+    foreach ($this->additionalFields as $formFieldName => $customField) {
+      if ($customField->fieldName !== $formFieldName && array_key_exists($formFieldName, $submitted)) {
+        $params[$customField->fieldName] = $submitted[$formFieldName];
+        unset($submitted[$formFieldName]);
+      }
+    }
+
     \Civi\Api4\Contract::createfull()
       ->setValues($params)
       ->execute();
