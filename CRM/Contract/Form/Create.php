@@ -68,7 +68,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
       E::ts('Payment'),
       $this->getPaymentOptions(),
       TRUE,
-      ['class' => 'crm-select2']
+      ['class' => 'crm-select2', 'placeholder' => TRUE]
     );
     $this->add(
       'select',
@@ -389,10 +389,13 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
   /**
    * Get the list of eligible payment options
    *
-   * @return array
+   * @return array<string, string>
    */
-  public function getPaymentOptions() {
-    return CRM_Contract_Configuration::getPaymentOptions(TRUE, FALSE);
+  protected function getPaymentOptions(): array {
+    $options = CRM_Contract_Configuration::getPaymentOptions(TRUE, FALSE);
+    unset($options['modify']);
+
+    return $options;
   }
 
 }

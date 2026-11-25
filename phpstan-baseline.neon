@@ -438,12 +438,6 @@ parameters:
 			path: CRM/Contract/Form/Create.php
 
 		-
-			message: '#^Method CRM_Contract_Form_Create\:\:getPaymentOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Contract/Form/Create.php
-
-		-
 			message: '#^Method CRM_Contract_Form_Create\:\:postProcess\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
