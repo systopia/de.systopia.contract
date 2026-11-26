@@ -68,7 +68,7 @@ class ResumeChange extends AbstractSchedulableContractChange {
    * @inheritDoc
    */
   public function execute(): void {
-    $contract = $this->getContract(TRUE);
+    $contract = $this->getContract();
 
     // pause the mandate
     $payment_contract_id = $contract['membership_payment.membership_recurring_contribution'] ?? NULL;
@@ -78,7 +78,7 @@ class ResumeChange extends AbstractSchedulableContractChange {
     }
 
     // update change activity
-    $contract_after = $this->getContract(TRUE);
+    $contract_after = $this->getContract();
     $this->setParameter('subject', $this->getSubject($contract_after, $contract));
     $this->setStatus('Completed');
     $this->save();

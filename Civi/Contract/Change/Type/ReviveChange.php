@@ -57,7 +57,7 @@ class ReviveChange extends AbstractUpdateChange {
   /**
    * @inheritDoc
    */
-  public function updateContract(array $updates): void {
+  protected function updateContract(array $updates): void {
     // Revive does all the same things as Upgrade, except it also removes end_date and sets status
     $updates['end_date'] = '';
     $updates['status_id:name'] = 'Current';

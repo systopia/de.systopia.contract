@@ -45,7 +45,7 @@ class SignChange extends AbstractContractChange {
    */
   public function populateData(): void {
     parent::populateData();
-    $contract = $this->getContract(TRUE);
+    $contract = $this->getContract();
     $this->data['contract_updates.ch_annual_diff'] = $contract['membership_payment.membership_annual'] ?? 0.0;
   }
 
@@ -87,6 +87,15 @@ class SignChange extends AbstractContractChange {
     }
     $suffix = [] !== $parts ? (' — ' . implode(' • ', $parts)) : '';
     return E::ts('New membership contract') . $suffix;
+  }
+
+  public function save(): void {
+    parent::save();
+    // Store contract data derived from recurring contribution.
+    $this->updateContract([
+      'membership_payment.membership_recurring_contribution'
+      => $this->data['membership_payment.membership_recurring_contribution'] ?? NULL,
+    ]);
   }
 
 }
