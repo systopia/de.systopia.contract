@@ -20,11 +20,6 @@ declare(strict_types = 1);
  */
 class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
 
-  public function setUp() : void {
-    parent::setUp();
-    $this->setActivityFlavour('GP');
-  }
-
   /**
    * Check if the subject of the change activity is as requested
    *
@@ -54,40 +49,26 @@ class CRM_Contract_CompatibilityTest extends CRM_Contract_ContractTestBase {
     $change_activity = $this->getLastChangeActivity($contract['id']);
     self::assertNotEmpty($change_activity, 'There should be a change activity after the upgrade');
 
-    if ($this->isExtensionActive('tazcontract')) {
-      $this->assertStringContainsOtherString(
-        'Anpassung',
-        $change_activity['subject'],
-        "Activity subject should contain 'Anpassung'"
-      );
-      $this->assertStringContainsOtherString(
-        'erhöht',
-        $change_activity['subject'],
-        "Activity subject should contain 'erhöht'"
-      );
-    }
-    else {
-      $this->assertStringContainsOtherString(
-        'Cycle day: 25 → 3',
-        $change_activity['subject'],
-        'Activity subject should contain the changed cycle day'
-      );
-      $this->assertStringContainsOtherString(
-        'Annual amount: $144.00 → $168.00',
-        $change_activity['subject'],
-        'Activity subject should contain the changed amount'
-      );
-      $this->assertStringNotContainsOtherString(
-        'DE89370400440532013000',
-        $change_activity['subject'],
-        'Activity subject should NOT contain the unchanged IBAN'
-      );
-      $this->assertStringNotContainsOtherString(
-        'freq. 12 to 12',
-        $change_activity['subject'],
-        'Activity subject should NOT contain the unchanged frequency'
-      );
-    }
+    $this->assertStringContainsOtherString(
+      'Cycle day: 25 → 3',
+      $change_activity['subject'],
+      'Activity subject should contain the changed cycle day'
+    );
+    $this->assertStringContainsOtherString(
+      'Annual amount: $144.00 → $168.00',
+      $change_activity['subject'],
+      'Activity subject should contain the changed amount'
+    );
+    $this->assertStringNotContainsOtherString(
+      'DE89370400440532013000',
+      $change_activity['subject'],
+      'Activity subject should NOT contain the unchanged IBAN'
+    );
+    $this->assertStringNotContainsOtherString(
+      'freq. 12 to 12',
+      $change_activity['subject'],
+      'Activity subject should NOT contain the unchanged frequency'
+    );
   }
 
   /**

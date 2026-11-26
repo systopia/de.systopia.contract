@@ -34,7 +34,7 @@ use CRM_Contract_ExtensionUtil as E;
  *   id?: int,
  *   "activity_type_id:name"?: string,
  *   activity_type_id?: int,
- *   activity_date_time?: string,
+ *   activity_date_time: string,
  *   status_id?: int|string,
  *   source_record_id?: int,
  *   source_contact_id?: int,
@@ -42,7 +42,6 @@ use CRM_Contract_ExtensionUtil as E;
  *   subject?: string,
  *   details?: string,
  *   "contract_activity.contract_id"?: int,
- *   activity_date_time: string,
  *   "contract_cancellation.contact_history_cancel_reason"?: string,
  *   "membership_cancellation.membership_cancel_reason"?: string,
  * }

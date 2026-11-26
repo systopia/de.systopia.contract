@@ -47,13 +47,7 @@ class CreateFormTest extends ContractTestBase {
 
   protected ?int $recurContributionStatusId = NULL;
 
-  public static function setUpBeforeClass(): void {
-  }
-
-  public static function tearDownAfterClass(): void {
-  }
-
-  public function setUp(): void {
+  protected function setUp(): void {
     parent::setUp();
 
     $org = Contact::create(FALSE)
@@ -77,7 +71,7 @@ class CreateFormTest extends ContractTestBase {
 
     self::ensurePaymentInstrumentNone();
 
-    $statusGroup = OptionGroup::save(TRUE)
+    $statusGroup = OptionGroup::save(FALSE)
       ->addRecord([
         'name' => 'contribution_status',
         'title' => 'Contribution Status',
@@ -131,13 +125,9 @@ class CreateFormTest extends ContractTestBase {
     $this->createRequiredEntities();
   }
 
-  public function tearDown(): void {
-    parent::tearDown();
-  }
-
   private static function ensurePaymentInstrumentNone(): void {
     try {
-      $none = OptionValue::get(TRUE)
+      $none = OptionValue::get(FALSE)
         ->addWhere('option_group_id.name', '=', 'payment_instrument')
         ->addWhere('option_group_id.is_active', '=', 1)
         ->addWhere('name', '=', 'None')
@@ -164,7 +154,7 @@ class CreateFormTest extends ContractTestBase {
     }
 
     if (!$none && $legacy) {
-      OptionValue::update(TRUE)
+      OptionValue::update(FALSE)
         ->addWhere('id', '=', $legacy['id'])
         ->addValue('name', 'None')
         ->addValue('label', 'No Payment required')
@@ -173,7 +163,7 @@ class CreateFormTest extends ContractTestBase {
       $none = ['id' => $legacy['id']];
     }
     elseif ($none && $legacy) {
-      OptionValue::delete(TRUE)->addWhere('id', '=', $legacy['id'])->execute();
+      OptionValue::delete(FALSE)->addWhere('id', '=', $legacy['id'])->execute();
       \CRM_Core_PseudoConstant::flush();
     }
 
@@ -181,7 +171,7 @@ class CreateFormTest extends ContractTestBase {
       return;
     }
 
-    $row = OptionValue::get(TRUE)
+    $row = OptionValue::get(FALSE)
       ->addWhere('option_group_id.name', '=', 'payment_instrument')
       ->addWhere('option_group_id.is_active', '=', 1)
       ->setSelect(['value'])
@@ -192,7 +182,7 @@ class CreateFormTest extends ContractTestBase {
 
     $next = isset($row['value']) && is_numeric($row['value']) ? ((int) $row['value']) + 1 : 1;
 
-    OptionValue::create(TRUE)
+    OptionValue::create(FALSE)
       ->addValue('option_group_id.name', 'payment_instrument')
       ->addValue('label', 'No Payment required')
       ->addValue('name', 'None')
@@ -206,7 +196,7 @@ class CreateFormTest extends ContractTestBase {
   }
 
   private static function ensureContributionStatuses(int $groupId): void {
-    OptionValue::save(TRUE)
+    OptionValue::save(FALSE)
       ->addRecord([
         'option_group_id' => $groupId,
         'label' => 'In Progress',
@@ -218,7 +208,7 @@ class CreateFormTest extends ContractTestBase {
       ->setMatch(['option_group_id', 'name'])
       ->execute();
 
-    OptionValue::save(TRUE)
+    OptionValue::save(FALSE)
       ->addRecord([
         'option_group_id' => $groupId,
         'label' => 'Completed',
@@ -233,7 +223,7 @@ class CreateFormTest extends ContractTestBase {
 
   private function setupRecurContributionStatus(): void {
     if (self::$sharedContribStatusReady) {
-      $row = OptionValue::get(TRUE)
+      $row = OptionValue::get(FALSE)
         ->addWhere('option_group_id:name', '=', 'contribution_status')
         ->addWhere('name', '=', 'In Progress')
         ->setSelect(['value'])
@@ -242,7 +232,7 @@ class CreateFormTest extends ContractTestBase {
         ->first();
     }
     else {
-      $statusGroup = OptionGroup::save(TRUE)
+      $statusGroup = OptionGroup::save(FALSE)
         ->addRecord([
           'name' => 'contribution_status',
           'title' => 'Contribution Status',
@@ -253,7 +243,7 @@ class CreateFormTest extends ContractTestBase {
 
       self::ensureContributionStatuses((int) $statusGroup['id']);
 
-      $row = OptionValue::get(TRUE)
+      $row = OptionValue::get(FALSE)
         ->addWhere('option_group_id:name', '=', 'contribution_status')
         ->addWhere('name', '=', 'In Progress')
         ->setSelect(['value'])
@@ -313,6 +303,7 @@ class CreateFormTest extends ContractTestBase {
       ->getMock();
 
     $form->method('exportValues')->willReturn($validValues);
+
     // @phpstan-ignore assign.propertyType
     $form->controller = new class($cid) {
 

@@ -8,6 +8,8 @@
 
 declare(strict_types = 1);
 
+use Civi\Api4\Campaign;
+use Civi\Contract\Event\EligibleContractCampaigns;
 use CRM_Contract_ExtensionUtil as E;
 
 /**
@@ -68,28 +70,19 @@ class CRM_Contract_Configuration {
   /**
    * Allows you to adjust the list of eligible campaigns
    *
-   * @return array
+   * @return array<int, string>
    *   list of civicrm activity types that aber being automatically created,
    *   but should be suppressed or removed
    */
-  public static function getCampaignList() {
-    // default is all campaigns (pulled on first call)
-    static $all_campaigns = NULL;
-    if ($all_campaigns === NULL) {
-      $all_campaigns = ['' => E::ts('- none -')];
-      $campaign_query = civicrm_api3('Campaign', 'get', [
-        'sequential'   => 1,
-        'is_active'    => 1,
-        'option.limit' => 0,
-        'return'       => 'id,title',
-      ]);
-      foreach ($campaign_query['values'] as $campaign) {
-        $all_campaigns[$campaign['id']] = $campaign['title'];
-      }
-    }
+  public static function getCampaignList(): array {
+    $campaigns = ['' => E::ts('- none -')] + Campaign::get(FALSE)
+      ->addSelect('id', 'title')
+      ->execute()
+      ->indexBy('id')
+      ->column('title');
 
     // run a symfony event to restrict that
-    return \Civi\Contract\Event\EligibleContractCampaigns::getAllEligibleCampaigns($all_campaigns);
+    return EligibleContractCampaigns::getAllEligibleCampaigns($campaigns);
   }
 
   /**
@@ -121,6 +114,7 @@ class CRM_Contract_Configuration {
 
       // make sure they're there and enabled
       $eligible_payment_options_query = civicrm_api4('OptionValue', 'get', [
+        'checkPermissions' => FALSE,
         'select' => ['label', 'name', 'value'],
         'where' => [
           ['option_group_id:name', '=', 'payment_instrument'],

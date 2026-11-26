@@ -23,6 +23,7 @@ use Civi\ActionProvider\Parameter\ParameterBagInterface;
 use Civi\ActionProvider\Parameter\Specification;
 use Civi\ActionProvider\Parameter\SpecificationBag;
 
+use Civi\Api4\Contract;
 use CRM_Contract_ExtensionUtil as E;
 
 class ReviveContract extends AbstractAction {
@@ -94,10 +95,10 @@ class ReviveContract extends AbstractAction {
    * @return void
    */
   protected function doAction(ParameterBagInterface $parameters, ParameterBagInterface $output) {
-    $contract_data = ['action' => 'revive'];
+    $contract_data = [];
 
     // add basic fields to contract_data
-    foreach (['contact_id', 'contract_id', 'membership_type_id', 'date'] as $parameter_name) {
+    foreach (['contact_id', 'membership_type_id'] as $parameter_name) {
       $value = $parameters->getParameter($parameter_name);
       if (!empty($value)) {
         $contract_data[$parameter_name] = $value;
@@ -122,9 +123,14 @@ class ReviveContract extends AbstractAction {
       $contract_data['membership_payment.defer_payment_start'] = $config_defer_payment_start;
     }
 
-    // create mandate
     try {
-      $contract = \civicrm_api3('Contract', 'modify', $contract_data);
+      $contract = Contract::modify(FALSE)
+        ->setId($parameters->getParameter('contract_id'))
+        ->setAction('revive')
+        ->setDate($parameters->getParameter('date'))
+        ->setValues($contract_data)
+        ->execute()
+        ->single();
       $output->setParameter('contract_id', $contract['id']);
     }
     catch (\Exception $ex) {

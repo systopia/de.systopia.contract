@@ -19,10 +19,6 @@ declare(strict_types = 1);
  */
 class CRM_Contract_EngineStressTest extends CRM_Contract_ContractTestBase {
 
-  public function setUp() : void {
-    parent::setUp();
-  }
-
   /**
    * Test execution of multiple updates and conflict handling
    */
