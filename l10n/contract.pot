@@ -110,8 +110,8 @@ msgstr ""
 msgid "Reference Number"
 msgstr ""
 
-#: CRM/Contract/Form/Create.php
-msgid "Membership Number"
+#: CRM/Contract/Form/Create.php managed/20-CustomGroup_membership_general.mgd.php
+msgid "Contract Number"
 msgstr ""
 
 #: CRM/Contract/Form/Create.php Civi/Contract/Api4/Action/Contract/GetFieldsAction.php managed/20-CustomGroup_membership_general.mgd.php
@@ -675,10 +675,6 @@ msgid "Error Message"
 msgstr ""
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "directly process scheduled changes"
-msgstr ""
-
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Annual Amount"
 msgstr ""
 
@@ -1172,10 +1168,6 @@ msgstr ""
 
 #: managed/20-CustomGroup_membership_general.mgd.php
 msgid "General Information"
-msgstr ""
-
-#: managed/20-CustomGroup_membership_general.mgd.php
-msgid "Contract Number"
 msgstr ""
 
 #: managed/20-CustomGroup_membership_payment.mgd.php
