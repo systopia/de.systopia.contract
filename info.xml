@@ -21,6 +21,8 @@
     <ver>6.13</ver>
   </compatibility>
   <requires>
+    <ext>civi_contribute</ext>
+    <ext>civi_member</ext>
     <ext>org.project60.sepa</ext>
     <ext>org.project60.banking</ext>
   </requires>
