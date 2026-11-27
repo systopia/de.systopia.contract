@@ -34,6 +34,8 @@ use Systopia\TestFixtures\Fixtures\Builders\SepaCreditorBuilder;
 /**
  * @covers \Civi\Contract\Api4\Action\Contract\ModifyAction
  * @covers \Civi\Api4\Contract
+ *
+ * @group headless
  */
 final class ModifyActionTest extends AbstractSetupHeadless {
 
