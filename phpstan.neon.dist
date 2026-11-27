@@ -8,8 +8,12 @@ parameters:
 		# __call(). In many cases explicit methods like fetchWith() (or
 		# \CRM_Utils_String::parseOneOffStringThroughSmarty()) should be enough.
 		# Though if one of the implicit methods is used, this option has to be
-		# enabled.
+		# enabled. Obsolete with CiviCRM 6.20.
+		# https://github.com/civicrm/civicrm-core/pull/36493
 		implicitSmartyMethodsUsed: false
+		optionalExtensions:
+			- action-provider
+			- civi_campaign
 		scanFiles:
 			core:
 				- api/v3/Membership.php
@@ -31,9 +35,6 @@ parameters:
 	scanDirectories:
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/src/Framework
 		- mixin
-		- ../org.project60.sepa/
-		- ../org.project60.banking/
-		- ../action-provider/
 	bootstrapFiles:
 		- tools/phpunit/vendor/bin/.phpunit/phpunit/vendor/autoload.php
 		- phpstanBootstrap.php
@@ -73,6 +74,8 @@ parameters:
 parametersSchema:
 	civicrm: structure([
 		implicitSmartyMethodsUsed: bool()
+		# Optional extensions (i.e. not required in info.xml) that should be added to class loader.
+		?optionalExtensions: listOf(string())
 		?scanFiles: structure([
 			# Additional files inside the CiviCRM core directory to scan.
 			?core: listOf(string())

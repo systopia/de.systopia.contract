@@ -70,15 +70,24 @@ jobs:
           MATRIX_EXPERIMENTAL: ${{ matrix.experimental }}
           MATRIX_PREFER: ${{ matrix.prefer }}
         run: |
-          if [ "${MATRIX_PREFER}" = "prefer-lowest" ]; then
-            # Actually test with lowest possible versions.
-            export COMPOSER_NO_SECURITY_BLOCKING=1
-          fi
+          # Note: We used to have this only for prefer-lowest, though if this
+          # flag is omitted it might result in different versions of
+          # civicrm/civicrm-core and civicrm/civicrm-packages being installed.
+          # This is for example the case when PHP 8.1 is used because in
+          # civicrm-core 6.16 smarty/smarty was added as dependency, but the
+          # version compatible with PHP 8.1 has known security issues.
+          export COMPOSER_NO_BLOCKING=1
+
+          # Don't enforce all extensions to be installed.
+          export COMPOSER_IGNORE_PLATFORM_REQ="ext-*"
 
           if [ "${MATRIX_EXPERIMENTAL}" == "true" ]; then
             sed -E -i composer.json \
               -e 's/"minimum-stability":[^,]*/"minimum-stability": "dev"/' \
               -e 's/"prefer-stable":[^,]*/"prefer-stable": false/'
+            # Ignore upper bound of php requirement to test with development
+            # version of PHP, even if not allowed by some composer.json.
+            export COMPOSER_IGNORE_PLATFORM_REQ+=",php+"
           fi
 
           composer config --no-plugins allow-plugins.civicrm/composer-compile-plugin false
@@ -87,7 +96,7 @@ jobs:
           composer config --no-plugins allow-plugins.cweagans/composer-patches true
 
           composer config --json "extra.installer-paths.$(dirname $PWD)/{\$name}" '["type:civicrm-ext"]'
-          composer require --ignore-platform-reqs --no-progress composer/installers
+          composer require --no-progress composer/installers
 
           if [ -n "${INPUTS_CIVICRM_VERSION}" ]; then
             composer require --no-update "civicrm/civicrm-core:${INPUTS_CIVICRM_VERSION}" \
@@ -98,7 +107,7 @@ jobs:
 
           # Run with --no-scripts so ComposerHelper doesn't prevent installation
           # of civicrm packages.
-          composer update --no-scripts --no-progress --${MATRIX_PREFER} --optimize-autoloader --ignore-platform-reqs
+          composer update --no-scripts --no-progress --${MATRIX_PREFER} --optimize-autoloader
           composer composer-phpunit -- update --no-progress --optimize-autoloader
           composer composer-phpstan -- update --no-progress --optimize-autoloader
 
