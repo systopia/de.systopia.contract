@@ -169,8 +169,9 @@ msgid "Reference Number"
 msgstr "Referenznummer"
 
 #: CRM/Contract/Form/Create.php
-msgid "Membership Number"
-msgstr "Mitgliedsnummer"
+#: managed/20-CustomGroup_membership_general.mgd.php
+msgid "Contract Number"
+msgstr "Vertragsnummer"
 
 #: CRM/Contract/Form/Create.php
 #: Civi/Contract/Api4/Action/Contract/GetFieldsAction.php
@@ -866,10 +867,6 @@ msgid "Error Message"
 msgstr "Fehlermeldung"
 
 #: Civi/Contract/ActionProvider/Action/UpdateContract.php
-msgid "directly process scheduled changes"
-msgstr "Vertragsänderungen direkt verarbeiten"
-
-#: Civi/Contract/ActionProvider/Action/UpdateContract.php
 msgid "Annual Amount"
 msgstr "Jährlicher Betrag"
 
@@ -1392,10 +1389,6 @@ msgstr "Kündigungsdatum"
 #: managed/20-CustomGroup_membership_general.mgd.php
 msgid "General Information"
 msgstr "Allgemeine Informationen"
-
-#: managed/20-CustomGroup_membership_general.mgd.php
-msgid "Contract Number"
-msgstr "Vertragsnummer"
 
 #: managed/20-CustomGroup_membership_payment.mgd.php
 msgid "Payment Information"

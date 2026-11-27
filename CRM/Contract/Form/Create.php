@@ -238,7 +238,7 @@ class CRM_Contract_Form_Create extends CRM_Core_Form {
     $this->add(
       'text',
       'membership_contract',
-      E::ts('Membership Number'),
+      E::ts('Contract Number'),
       ['size' => 32, 'style' => 'text-align:left;'],
       FALSE
     );
